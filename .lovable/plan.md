@@ -1,73 +1,93 @@
-## Goal
+## What I found in the repo
 
-Bring your existing TanStack Start code from GitHub into this blank Lovable project, then enable Lovable Cloud as the backend.
+**Kingdom Protocol** — a Next.js 15 (App Router) + Supabase behavioral accountability app. Solid scope, all coexisting with the TanStack Start scaffold right now (which won't run as-is — `app/` and `src/routes/` both claim `/`).
 
-## Steps
+Inventory:
+- **Pages** (`app/`): landing, login, register, onboarding, how-it-works, dashboard, checkin, lanes (list/new/[id]/edit), partner (+ how-it-works), settings, admin (users/notifications)
+- **Server actions** (`lib/*/actions.ts`): checkin, lanes, profile, admin, supabase auth — heavy use of `'use server'`
+- **API routes**: 4 cron endpoints + push subscribe/unsubscribe
+- **Middleware**: Supabase auth + redirect rules for protected paths
+- **Supabase**: 8 migrations (profiles, lanes, push_subscriptions, partner invites, scripture, etc.) + RLS expected
+- **Other**: Web Push (VAPID), Resend invite emails, PWA manifest, Inter via `next/font`
 
-### 1. Connect this project to GitHub (you do this)
+Inline-style design system (no Tailwind classes used in the Next.js code) — gold `#c9a84c` on near-black `#0a0800`, dark UI throughout. We'll preserve this look.
 
-In the Lovable editor:
-- Click the **+** button in the chat input (bottom left) → **GitHub** → **Connect project**
-- Authorize the Lovable GitHub App
-- Choose the GitHub account/org where the repo should live
-- Click **Create Repository** — Lovable creates a fresh repo containing this blank project's code
+## Strategy
 
-### 2. Push your existing code into that repo (you do this, locally)
+This is a full Next.js → TanStack Start port, not a copy-paste. I'll do it in **phases** and validate the build at each step so we don't pile up errors.
 
-Since Lovable can't import an existing repo directly, you'll overlay your code onto the new one:
+### Phase 1 — Foundation & cleanup
+- Delete the placeholder `src/routes/index.tsx` content (will be replaced by real landing).
+- Move `app/globals.css` styles into `src/styles.css` (preserve fonts, theme color, etc.).
+- Load Inter via `<link>` in `__root.tsx` head (replace `next/font`).
+- Update `__root.tsx` meta: title "Kingdom Protocol", description, theme-color, manifest link, apple-web-app tags.
+- Copy `public/` assets (logo, manifest, icons, service worker if any).
+- Enable **Lovable Cloud** (provisions Supabase — DB, Auth, Storage, secrets).
+- Add secrets to Cloud: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_CONTACT_EMAIL`, `CRON_SECRET`, `ADMIN_EMAILS`, `RESEND_API_KEY`, `APP_URL`. (Supabase URL/anon/service keys are auto-wired by Cloud.)
 
-```bash
-# Clone the new repo Lovable just created
-git clone <new-lovable-repo-url> lovable-app
-cd lovable-app
+### Phase 2 — Database
+- Run the 8 SQL migrations (`supabase/migrations/001-008`) against Lovable Cloud as a single migration so RLS, tables, triggers, and seed data land intact.
+- Verify RLS policies on every table (security scan).
 
-# Copy your existing project's source over the top
-# (keep Lovable's package.json, vite.config.ts, wrangler.jsonc, tsconfig.json,
-#  src/router.tsx, src/routes/__root.tsx, src/start.ts, src/server.ts intact —
-#  these wire up the TanStack Start + Cloudflare Worker runtime)
+### Phase 3 — Supabase client layer
+Replace `lib/supabase/{client,server,actions}.ts` with the Lovable Cloud auto-generated clients:
+- Browser: `@/integrations/supabase/client`
+- Server (auth-aware): `@/integrations/supabase/auth-middleware`
+- Service role: `@/integrations/supabase/client.server`
 
-# Commit and push
-git add .
-git commit -m "Import existing code"
-git push
-```
+Drop `@supabase/ssr` and `next/headers` cookie plumbing — the auth middleware handles it.
 
-Changes sync back into Lovable automatically (two-way sync).
+### Phase 4 — Routing port (`app/` → `src/routes/`)
+Convert each Next.js page to a TanStack route file using flat dot-separated names. Route groups `(auth)` / `(dashboard)` become layout routes.
 
-### 3. I review and reconcile (after push)
+| Next.js | TanStack Start |
+|---|---|
+| `app/page.tsx` | `src/routes/index.tsx` |
+| `app/(auth)/login/page.tsx` | `src/routes/login.tsx` |
+| `app/(auth)/register/page.tsx` | `src/routes/register.tsx` |
+| `app/(dashboard)/layout.tsx` | `src/routes/_authenticated.tsx` (parent layout w/ Outlet) |
+| `app/(dashboard)/dashboard/page.tsx` | `src/routes/_authenticated.dashboard.tsx` |
+| `app/(dashboard)/checkin/page.tsx` | `src/routes/_authenticated.checkin.tsx` |
+| `app/(dashboard)/lanes/page.tsx` | `src/routes/_authenticated.lanes.index.tsx` |
+| `app/(dashboard)/lanes/new/page.tsx` | `src/routes/_authenticated.lanes.new.tsx` |
+| `app/(dashboard)/lanes/[id]/page.tsx` | `src/routes/_authenticated.lanes.$id.index.tsx` |
+| `app/(dashboard)/lanes/[id]/edit/page.tsx` | `src/routes/_authenticated.lanes.$id.edit.tsx` |
+| `app/(dashboard)/partner/page.tsx` | `src/routes/_authenticated.partner.index.tsx` |
+| `app/(dashboard)/settings/page.tsx` | `src/routes/_authenticated.settings.tsx` |
+| `app/admin/*` | `src/routes/_admin.*.tsx` (admin gate in `beforeLoad`) |
+| `app/onboarding/page.tsx` | `src/routes/_authenticated.onboarding.tsx` |
+| `app/how-it-works/page.tsx` | `src/routes/how-it-works.tsx` |
 
-Once your code is in, I'll:
-- Verify routes live in `src/routes/` (flat dot-separated naming, not `src/pages/`)
-- Confirm the bootstrap shell is intact (`src/router.tsx`, `src/routes/__root.tsx`, `src/routes/index.tsx`)
-- Check imports use `@tanstack/react-router` (not `react-router-dom`)
-- Replace the placeholder index if your code didn't already
-- Resolve any duplicate `/` route conflicts
-- Run typecheck/build to surface issues
+Auth gating: `_authenticated.tsx` uses `beforeLoad` to redirect unauthenticated users to `/login` (replaces `middleware.ts`). `_admin.tsx` checks `ADMIN_EMAILS`. After login, redirect to `/dashboard`.
 
-### 4. Enable Lovable Cloud
+Imports swap: `next/link` → `Link` from `@tanstack/react-router`; `next/navigation` (`useRouter`, `useParams`, `useSearchParams`) → TanStack equivalents; `next/image` → plain `<img>`; remove `'use client'` directives.
 
-After the code is verified working, I'll enable Lovable Cloud. This provisions:
-- PostgreSQL database
-- Auth (email, Google, Apple, etc.)
-- File storage
-- Server-side secrets
+### Phase 5 — Server actions → `createServerFn`
+Convert every `lib/*/actions.ts` function to `createServerFn` in `*.functions.ts` files (client-safe path), with Zod validators and the Supabase auth middleware. Components use `useServerFn` + TanStack Query mutations instead of `useTransition`.
 
-If your existing code already uses Supabase directly, we'll migrate it to use the auto-generated clients at:
-- `@/integrations/supabase/client` (browser)
-- `@/integrations/supabase/auth-middleware` (authenticated server functions)
-- `@/integrations/supabase/client.server` (admin / service role)
+### Phase 6 — API routes & cron
+- `app/api/push/subscribe/route.ts` → `src/routes/api/push/subscribe.ts` (TanStack server route, signature unchanged)
+- `app/api/cron/*` → `src/routes/api/public/cron/*.ts` (Cloud Workers cron-callable, verify `CRON_SECRET` header)
 
-And convert any backend calls to TanStack `createServerFn` (no Supabase Edge Functions needed — TanStack Start has its own server runtime on Cloudflare Workers).
+### Phase 7 — Notifications & emails
+- **Web Push**: `web-push` npm package is Node-only and won't run on Cloudflare Workers. Swap to native `crypto.subtle` with VAPID JWT signing, or call an external push relay. I'll use a Worker-compatible implementation.
+- **Resend**: works via fetch — keep it, just read `RESEND_API_KEY` from `process.env` inside `.handler()`.
+- **PWA service worker**: copy `public/sw.js` (or generate one) — TanStack Start serves `public/` directly.
+
+### Phase 8 — Cleanup, build, verify
+- Delete `app/`, `lib/supabase/`, `middleware.ts`, `components/` (after migrating to `src/components/`).
+- Remove Next.js deps (`next`, `@supabase/ssr`, etc.); keep what's already in `package.json` (already has TanStack Start + shadcn deps).
+- Run typecheck/build, fix what surfaces.
+- Visit each route, confirm auth flow, RLS, push subscribe, cron endpoint signature check.
+
+## Heads-up
+
+- **This is a large port** — expect multiple iterations and some manual QA from you (especially the partner-invite + push notification flows).
+- **Web Push on Cloudflare Workers** is the riskiest piece; I'll validate it works before declaring done.
+- **Inline-style design** is preserved as-is (it works fine in TanStack Start — no Tailwind conversion needed unless you want one later).
+- I'll **keep your git history intact** by working incrementally; nothing destructive.
 
 ## What you should do next
 
-1. Approve this plan
-2. Connect to GitHub via the **+** menu
-3. Push your code
-4. Tell me when it's pushed — I'll take over from step 3
-
-## Heads-up / constraints
-
-- **Server runtime is Cloudflare Workers** (with `nodejs_compat`). Node-only packages (`sharp`, `child_process`, native binaries, `puppeteer`, etc.) won't work server-side. If your code uses any, we'll need to swap them.
-- **Don't edit `src/routeTree.gen.ts`** — it's auto-generated.
-- **No `.env` files in Lovable** — secrets go through Lovable Cloud's secrets manager.
+1. Approve this plan.
+2. I'll start with Phase 1 (foundation + Cloud enable) and check in before moving to Phase 2 migrations.
