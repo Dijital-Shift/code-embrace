@@ -14,7 +14,246 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      checkins: {
+        Row: {
+          breach_explanation: string | null
+          checkin_date: string
+          checkin_id: string
+          completion_time: string | null
+          created_at: string
+          lane_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          breach_explanation?: string | null
+          checkin_date?: string
+          checkin_id?: string
+          completion_time?: string | null
+          created_at?: string
+          lane_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          breach_explanation?: string | null
+          checkin_date?: string
+          checkin_id?: string
+          completion_time?: string | null
+          created_at?: string
+          lane_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkins_lane_id_fkey"
+            columns: ["lane_id"]
+            isOneToOne: false
+            referencedRelation: "lanes"
+            referencedColumns: ["lane_id"]
+          },
+          {
+            foreignKeyName: "checkins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      lanes: {
+        Row: {
+          created_at: string
+          description: string | null
+          escalation_enabled: boolean
+          lane_id: string
+          lane_type: string
+          partner_email: string | null
+          partner_id: string | null
+          status: string
+          support_scripture: string[] | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          escalation_enabled?: boolean
+          lane_id?: string
+          lane_type?: string
+          partner_email?: string | null
+          partner_id?: string | null
+          status?: string
+          support_scripture?: string[] | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          escalation_enabled?: boolean
+          lane_id?: string
+          lane_type?: string
+          partner_email?: string | null
+          partner_id?: string | null
+          status?: string
+          support_scripture?: string[] | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lanes_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "lanes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          checkin_id: string | null
+          created_at: string
+          lane_id: string
+          message_content: string | null
+          notification_id: string
+          partner_id: string
+          sent_at: string | null
+          status: string
+          type: string
+        }
+        Insert: {
+          checkin_id?: string | null
+          created_at?: string
+          lane_id: string
+          message_content?: string | null
+          notification_id?: string
+          partner_id: string
+          sent_at?: string | null
+          status?: string
+          type: string
+        }
+        Update: {
+          checkin_id?: string | null
+          created_at?: string
+          lane_id?: string
+          message_content?: string | null
+          notification_id?: string
+          partner_id?: string
+          sent_at?: string | null
+          status?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_checkin_id_fkey"
+            columns: ["checkin_id"]
+            isOneToOne: false
+            referencedRelation: "checkins"
+            referencedColumns: ["checkin_id"]
+          },
+          {
+            foreignKeyName: "notifications_lane_id_fkey"
+            columns: ["lane_id"]
+            isOneToOne: false
+            referencedRelation: "lanes"
+            referencedColumns: ["lane_id"]
+          },
+          {
+            foreignKeyName: "notifications_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          bedtime: string
+          created_at: string
+          email: string
+          first_name: string | null
+          last_active: string | null
+          last_name: string | null
+          phone: string | null
+          reminder_utc_hour: number | null
+          status: string
+          timezone: string
+          user_id: string
+        }
+        Insert: {
+          bedtime?: string
+          created_at?: string
+          email: string
+          first_name?: string | null
+          last_active?: string | null
+          last_name?: string | null
+          phone?: string | null
+          reminder_utc_hour?: number | null
+          status?: string
+          timezone?: string
+          user_id: string
+        }
+        Update: {
+          bedtime?: string
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          last_active?: string | null
+          last_name?: string | null
+          phone?: string | null
+          reminder_utc_hour?: number | null
+          status?: string
+          timezone?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
