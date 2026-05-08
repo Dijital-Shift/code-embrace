@@ -22,6 +22,7 @@ import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
+import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -89,6 +90,12 @@ const ApiPublicHooksMissedCheckinsRoute =
     path: '/api/public/hooks/missed-checkins',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksEscalateMissedRoute =
+  ApiPublicHooksEscalateMissedRouteImport.update({
+    id: '/api/public/hooks/escalate-missed',
+    path: '/api/public/hooks/escalate-missed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRoutesByTo {
@@ -118,6 +126,7 @@ export interface FileRoutesByTo {
   '/lanes/new': typeof LanesNewRoute
   '/lanes': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRoutesById {
@@ -134,6 +143,7 @@ export interface FileRoutesById {
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRouteTypes {
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes'
     | '/api/push/subscribe'
+    | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   id:
     | '__root__'
@@ -181,6 +193,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   fileRoutesById: FileRoutesById
 }
@@ -197,6 +210,7 @@ export interface RootRouteChildren {
   LanesNewRoute: typeof LanesNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
+  ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
   ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
 }
 
@@ -293,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMissedCheckinsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/escalate-missed': {
+      id: '/api/public/hooks/escalate-missed'
+      path: '/api/public/hooks/escalate-missed'
+      fullPath: '/api/public/hooks/escalate-missed'
+      preLoaderRoute: typeof ApiPublicHooksEscalateMissedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -309,6 +330,7 @@ const rootRouteChildren: RootRouteChildren = {
   LanesNewRoute: LanesNewRoute,
   LanesIndexRoute: LanesIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
+  ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
   ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,
 }
 export const routeTree = rootRouteImport
