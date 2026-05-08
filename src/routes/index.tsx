@@ -19,10 +19,10 @@ function Landing() {
         <img
           src="/kingdom-protocol-logo.png"
           alt="Kingdom Protocol"
-          className="mb-6"
-          style={{ width: "clamp(280px, 60vw, 460px)", filter: "drop-shadow(0 0 40px rgba(201,168,76,0.35))" }}
+          className="block"
+          style={{ width: "clamp(260px, 56vw, 420px)", filter: "drop-shadow(0 0 40px rgba(201,168,76,0.35))" }}
         />
-        <p className="text-[0.75rem] text-[#888] mb-8 tracking-[0.25em] uppercase">Behavioral Accountability</p>
+        <p className="text-[0.7rem] text-[#888] mt-1 mb-8 tracking-[0.28em] uppercase">Behavioral Accountability</p>
         <div className="mb-10">
           <p className="text-[#c9a84c] text-sm italic leading-relaxed mb-2">
             "Two are better than one; because they have a good reward for their labour. For if they fall, the one will lift up his fellow: but woe to him that is alone when he falleth; for he hath not another to help him up."
