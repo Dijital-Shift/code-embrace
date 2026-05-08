@@ -54,7 +54,7 @@ function Login() {
   return (
     <main className="min-h-[100dvh] flex items-center justify-center px-6" style={{ background: "#0a0800" }}>
       <div className="w-full max-w-sm flex flex-col items-center">
-        <img src="/logo-full.png" alt="Kingdom Protocol" className="w-56 mb-2" />
+        <img src="/kingdom-protocol-logo.png" alt="Kingdom Protocol" className="w-44 mb-2" style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.3))" }} />
         <p className="text-sm text-[#666] mb-6">
           {step === "email" ? "Enter your email to continue" : `Code sent to ${email}`}
         </p>
