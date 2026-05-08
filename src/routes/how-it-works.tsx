@@ -17,8 +17,8 @@ function HowItWorks() {
       <div className="max-w-xl mx-auto">
         <Link to="/" className="text-[#555] text-sm">← Back</Link>
         <div className="text-center my-10">
-          <img src="/kingdom-protocol-logo.png" alt="" className="w-32 mx-auto mb-4" />
-          <p className="text-[#666] text-xs font-bold tracking-[0.25em]">STAY IN YOUR LANE</p>
+          <img src="/kingdom-protocol-logo.png" alt="" className="w-28 mx-auto" />
+          <p className="text-[#666] text-xs font-bold tracking-[0.25em] mt-1">STAY IN YOUR LANE</p>
         </div>
         <div className="flex flex-col gap-3 mb-8">
           {steps.map((s) => (
