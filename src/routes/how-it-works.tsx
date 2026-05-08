@@ -17,7 +17,7 @@ function HowItWorks() {
       <div className="max-w-xl mx-auto">
         <Link to="/" className="text-[#555] text-sm">← Back</Link>
         <div className="text-center my-10">
-          <img src="/logo-full.png" alt="" className="w-44 mx-auto mb-4" />
+          <img src="/kingdom-protocol-logo.png" alt="" className="w-32 mx-auto mb-4" />
           <p className="text-[#666] text-xs font-bold tracking-[0.25em]">STAY IN YOUR LANE</p>
         </div>
         <div className="flex flex-col gap-3 mb-8">
