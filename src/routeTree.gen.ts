@@ -23,6 +23,7 @@ import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
 import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
+import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -96,6 +97,12 @@ const ApiPublicHooksEscalateMissedRoute =
     path: '/api/public/hooks/escalate-missed',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksBedtimeReminderRoute =
+  ApiPublicHooksBedtimeReminderRouteImport.update({
+    id: '/api/public/hooks/bedtime-reminder',
+    path: '/api/public/hooks/bedtime-reminder',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
@@ -126,6 +134,7 @@ export interface FileRoutesByTo {
   '/lanes/new': typeof LanesNewRoute
   '/lanes': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
@@ -143,6 +152,7 @@ export interface FileRoutesById {
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   fileRoutesByTo: FileRoutesByTo
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes'
     | '/api/push/subscribe'
+    | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   id:
@@ -193,6 +205,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   fileRoutesById: FileRoutesById
@@ -210,6 +223,7 @@ export interface RootRouteChildren {
   LanesNewRoute: typeof LanesNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
+  ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
   ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
   ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
 }
@@ -314,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEscalateMissedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/bedtime-reminder': {
+      id: '/api/public/hooks/bedtime-reminder'
+      path: '/api/public/hooks/bedtime-reminder'
+      fullPath: '/api/public/hooks/bedtime-reminder'
+      preLoaderRoute: typeof ApiPublicHooksBedtimeReminderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -330,6 +351,7 @@ const rootRouteChildren: RootRouteChildren = {
   LanesNewRoute: LanesNewRoute,
   LanesIndexRoute: LanesIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
+  ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
   ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
   ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,
 }
