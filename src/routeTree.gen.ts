@@ -9,12 +9,72 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LanesIndexRouteImport } from './routes/lanes.index'
+import { Route as LanesNewRouteImport } from './routes/lanes.new'
+import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerRoute = PartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LanesIndexRoute = LanesIndexRouteImport.update({
+  id: '/lanes/',
+  path: '/lanes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LanesNewRoute = LanesNewRouteImport.update({
+  id: '/lanes/new',
+  path: '/lanes/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LanesIdRoute = LanesIdRouteImport.update({
+  id: '/lanes/$id',
+  path: '/lanes/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
@@ -25,37 +85,184 @@ const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/dashboard': typeof DashboardRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/partner': typeof PartnerRoute
+  '/settings': typeof SettingsRoute
+  '/lanes/$id': typeof LanesIdRoute
+  '/lanes/new': typeof LanesNewRoute
+  '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/dashboard': typeof DashboardRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/partner': typeof PartnerRoute
+  '/settings': typeof SettingsRoute
+  '/lanes/$id': typeof LanesIdRoute
+  '/lanes/new': typeof LanesNewRoute
+  '/lanes': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/dashboard': typeof DashboardRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/partner': typeof PartnerRoute
+  '/settings': typeof SettingsRoute
+  '/lanes/$id': typeof LanesIdRoute
+  '/lanes/new': typeof LanesNewRoute
+  '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/push/subscribe'
+  fullPaths:
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/how-it-works'
+    | '/login'
+    | '/onboarding'
+    | '/partner'
+    | '/settings'
+    | '/lanes/$id'
+    | '/lanes/new'
+    | '/lanes/'
+    | '/api/push/subscribe'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/push/subscribe'
-  id: '__root__' | '/' | '/api/push/subscribe'
+  to:
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/how-it-works'
+    | '/login'
+    | '/onboarding'
+    | '/partner'
+    | '/settings'
+    | '/lanes/$id'
+    | '/lanes/new'
+    | '/lanes'
+    | '/api/push/subscribe'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/how-it-works'
+    | '/login'
+    | '/onboarding'
+    | '/partner'
+    | '/settings'
+    | '/lanes/$id'
+    | '/lanes/new'
+    | '/lanes/'
+    | '/api/push/subscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckinRoute: typeof CheckinRoute
+  DashboardRoute: typeof DashboardRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
+  PartnerRoute: typeof PartnerRoute
+  SettingsRoute: typeof SettingsRoute
+  LanesIdRoute: typeof LanesIdRoute
+  LanesNewRoute: typeof LanesNewRoute
+  LanesIndexRoute: typeof LanesIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner': {
+      id: '/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lanes/': {
+      id: '/lanes/'
+      path: '/lanes'
+      fullPath: '/lanes/'
+      preLoaderRoute: typeof LanesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lanes/new': {
+      id: '/lanes/new'
+      path: '/lanes/new'
+      fullPath: '/lanes/new'
+      preLoaderRoute: typeof LanesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lanes/$id': {
+      id: '/lanes/$id'
+      path: '/lanes/$id'
+      fullPath: '/lanes/$id'
+      preLoaderRoute: typeof LanesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/push/subscribe': {
@@ -70,8 +277,28 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckinRoute: CheckinRoute,
+  DashboardRoute: DashboardRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
+  PartnerRoute: PartnerRoute,
+  SettingsRoute: SettingsRoute,
+  LanesIdRoute: LanesIdRoute,
+  LanesNewRoute: LanesNewRoute,
+  LanesIndexRoute: LanesIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
