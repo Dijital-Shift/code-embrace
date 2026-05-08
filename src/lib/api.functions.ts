@@ -393,3 +393,58 @@ export const getSettings = createServerFn({ method: 'GET' })
 export const getVapidPublicKey = createServerFn({ method: 'GET' }).handler(async () => {
   return { key: process.env.VAPID_PUBLIC_KEY || '' };
 });
+
+// ===== Admin =====
+async function assertAdmin(userId: string) {
+  const { data } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', userId).eq('role', 'admin').maybeSingle();
+  if (!data) throw new Error('Forbidden');
+}
+
+export const getAdminOverview = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const today = new Date().toISOString().split('T')[0];
+    const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekAgoStr = weekAgo.toISOString().split('T')[0];
+    const [users, lanes, doneT, missT, brT, failed, newWeek] = await Promise.all([
+      supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      supabaseAdmin.from('lanes').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      supabaseAdmin.from('checkins').select('*', { count: 'exact', head: true }).eq('checkin_date', today).eq('status', 'completed'),
+      supabaseAdmin.from('checkins').select('*', { count: 'exact', head: true }).eq('checkin_date', today).eq('status', 'missed'),
+      supabaseAdmin.from('checkins').select('*', { count: 'exact', head: true }).eq('checkin_date', today).eq('status', 'breached'),
+      supabaseAdmin.from('notifications').select('*', { count: 'exact', head: true }).eq('status', 'failed'),
+      supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', weekAgoStr),
+    ]);
+    return {
+      totalUsers: users.count ?? 0, activeLanes: lanes.count ?? 0,
+      todayCheckins: doneT.count ?? 0, todayMissed: missT.count ?? 0, todayBreaches: brT.count ?? 0,
+      failedNotifs: failed.count ?? 0, newUsersWeek: newWeek.count ?? 0,
+    };
+  });
+
+export const getAdminUsers = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const { data } = await supabaseAdmin.from('profiles')
+      .select('user_id, email, phone, status, created_at, last_active, timezone')
+      .order('created_at', { ascending: false });
+    return { users: data ?? [] };
+  });
+
+export const setUserStatus = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ user_id: z.string().uuid(), status: z.enum(['active', 'suspended']) }))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    await supabaseAdmin.from('profiles').update({ status: data.status }).eq('user_id', data.user_id);
+    return { ok: true };
+  });
+
+export const isAdmin = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', context.userId).eq('role', 'admin').maybeSingle();
+    return { admin: !!data };
+  });
