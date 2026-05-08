@@ -33,6 +33,9 @@ function Landing() {
           <Link to="/login" className="block py-4 rounded-xl bg-[#c9a84c] text-black font-bold" style={{ boxShadow: "0 0 24px rgba(201,168,76,0.25)" }}>
             Get Started
           </Link>
+          <Link to="/demo" className="block py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold">
+            See the demo
+          </Link>
           <Link to="/how-it-works" className="block py-3.5 rounded-xl border border-[#222] text-[#888] font-semibold">
             How it works
           </Link>
