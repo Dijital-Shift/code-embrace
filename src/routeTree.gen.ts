@@ -21,6 +21,7 @@ import { Route as LanesIndexRouteImport } from './routes/lanes.index'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
+import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -82,6 +83,12 @@ const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
   path: '/api/push/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksMissedCheckinsRoute =
+  ApiPublicHooksMissedCheckinsRouteImport.update({
+    id: '/api/public/hooks/missed-checkins',
+    path: '/api/public/hooks/missed-checkins',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/lanes/new': typeof LanesNewRoute
   '/lanes': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/api/public/hooks/missed-checkins'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes'
     | '/api/push/subscribe'
+    | '/api/public/hooks/missed-checkins'
   id:
     | '__root__'
     | '/'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/api/public/hooks/missed-checkins'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +197,7 @@ export interface RootRouteChildren {
   LanesNewRoute: typeof LanesNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
+  ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPushSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/missed-checkins': {
+      id: '/api/public/hooks/missed-checkins'
+      path: '/api/public/hooks/missed-checkins'
+      fullPath: '/api/public/hooks/missed-checkins'
+      preLoaderRoute: typeof ApiPublicHooksMissedCheckinsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,7 +309,18 @@ const rootRouteChildren: RootRouteChildren = {
   LanesNewRoute: LanesNewRoute,
   LanesIndexRoute: LanesIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
+  ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
