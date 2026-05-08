@@ -13,11 +13,16 @@ export const Route = createFileRoute("/")({
 function Landing() {
   return (
     <main className="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden" style={{ background: "#0a0800" }}>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.28) 0%, rgba(201,168,76,0.08) 45%, transparent 70%)" }} />
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center text-center">
-        <img src="/logo-full.png" alt="Kingdom Protocol" className="w-72 max-w-[80vw] mb-8" />
-        <p className="text-[0.8rem] text-[#666] mb-8 tracking-wide">Behavioral Accountability for the Kingdom-Minded</p>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.32) 0%, rgba(201,168,76,0.10) 45%, transparent 72%)" }} />
+      <div className="relative z-10 w-full max-w-md flex flex-col items-center text-center">
+        <img
+          src="/kingdom-protocol-logo.png"
+          alt="Kingdom Protocol"
+          className="mb-6"
+          style={{ width: "clamp(280px, 60vw, 460px)", filter: "drop-shadow(0 0 40px rgba(201,168,76,0.35))" }}
+        />
+        <p className="text-[0.75rem] text-[#888] mb-8 tracking-[0.25em] uppercase">Behavioral Accountability</p>
         <div className="mb-10">
           <p className="text-[#c9a84c] text-sm italic leading-relaxed mb-2">
             "Two are better than one; because they have a good reward for their labour. For if they fall, the one will lift up his fellow: but woe to him that is alone when he falleth; for he hath not another to help him up."
