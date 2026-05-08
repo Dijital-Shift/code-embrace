@@ -14,6 +14,7 @@ import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -49,6 +50,11 @@ const LoginRoute = LoginRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/checkin'
     | '/dashboard'
+    | '/demo'
     | '/how-it-works'
     | '/login'
     | '/onboarding'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/checkin'
     | '/dashboard'
+    | '/demo'
     | '/how-it-works'
     | '/login'
     | '/onboarding'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/checkin'
     | '/dashboard'
+    | '/demo'
     | '/how-it-works'
     | '/login'
     | '/onboarding'
@@ -227,6 +239,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CheckinRoute: typeof CheckinRoute
   DashboardRoute: typeof DashboardRoute
+  DemoRoute: typeof DemoRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -276,6 +289,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -363,6 +383,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CheckinRoute: CheckinRoute,
   DashboardRoute: DashboardRoute,
+  DemoRoute: DemoRoute,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
@@ -379,3 +400,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
