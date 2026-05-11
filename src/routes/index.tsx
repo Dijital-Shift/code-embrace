@@ -29,25 +29,19 @@ function Header() {
 
 function Hero() {
   return (
-    <section className="relative px-5 sm:px-8 pt-12 pb-20 overflow-hidden">
+    <section className="relative px-5 sm:px-8 pt-8 pb-16 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] pointer-events-none -z-0"
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[1.1fr,1fr] gap-8 sm:gap-10 items-center">
         <div className="min-w-0">
-          <img
-            src="/kingdom-protocol-logo.png"
-            alt="Kingdom Protocol"
-            className="block mb-6 h-12 sm:h-14 w-auto"
-            style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.4))" }}
-          />
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight text-white">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-[1.05] tracking-tight text-white">
             You don't fall in public.<br />
             <span style={{ color: GOLD }}>You fall in the silence.</span>
           </h1>
           <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-xl">
             Kingdom Protocol turns daily check-ins into a partner-watched signal. Miss the window, and someone who loves you knows before the breach does.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
               Join the waitlist
             </Link>
