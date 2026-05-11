@@ -34,12 +34,13 @@ function Hero() {
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-start">
         <div className="min-w-0">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">For the kingdom-minded · Accountability with a watchman</p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight text-white">
-            You don't fall in public.<br />
-            <span style={{ color: GOLD }}>You fall in the silence.</span>
+            Iron sharpens iron.<br />
+            <span style={{ color: GOLD }}>Silence dulls both.</span>
           </h1>
           <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-md">
-            Kingdom Protocol turns daily check-ins into a partner-watched signal. Miss the window, and someone who loves you knows before the breach does.
+            For the believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
