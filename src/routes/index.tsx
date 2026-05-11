@@ -3,10 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kingdom Protocol — Behavioral Accountability" },
-      { name: "description", content: "You don't fall in public. You fall in the silence. Partner-based accountability with escalation when you go quiet." },
-      { property: "og:title", content: "Kingdom Protocol — Behavioral Accountability" },
-      { property: "og:description", content: "You don't fall in public. You fall in the silence. Partner-based accountability with escalation when you go quiet." },
+      { title: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
+      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant — before the silence becomes a fall." },
+      { property: "og:title", content: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
+      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant — before the silence becomes a fall." },
       { property: "og:image", content: "/kingdom-protocol-logo.png" },
     ],
   }),
@@ -34,12 +34,13 @@ function Hero() {
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-start">
         <div className="min-w-0">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">For the kingdom-minded · Accountability with a watchman</p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight text-white">
-            You don't fall in public.<br />
-            <span style={{ color: GOLD }}>You fall in the silence.</span>
+            Iron sharpens iron.<br />
+            <span style={{ color: GOLD }}>Silence dulls both.</span>
           </h1>
           <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-md">
-            Kingdom Protocol turns daily check-ins into a partner-watched signal. Miss the window, and someone who loves you knows before the breach does.
+            For the believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
@@ -205,8 +206,10 @@ function Pricing() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Pay if you're serious.</h2>
-          <p className="text-[#a8a39a] text-lg max-w-xl mx-auto">Partners you alert are never charged. Only people creating lanes pay.</p>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Count the cost.</h2>
+          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
+            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building lanes pay.
+          </p>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {tiers.map((t) => (
@@ -241,6 +244,131 @@ function Pricing() {
   );
 }
 
+function WhoThisIsFor() {
+  const forItems = [
+    "has stopped pretending the silence is harmless",
+    "wants a brother or sister on the wall, not a dashboard",
+    "is ready to be seen on the days they'd rather hide",
+    "believes confession in the light beats covering in the dark",
+  ];
+  const notForItems = [
+    "wants a habit tracker without covenant",
+    "is looking for anonymity over accountability",
+    "expects software to do the work of a partner",
+    "is not ready to let another believer see the misses",
+  ];
+  return (
+    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Discernment</p>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Whom this is for.</h2>
+          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">"Be ye not unequally yoked." Choose honestly before you build.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-5">
+          <div className="rounded-2xl border border-[#c9a84c]/40 bg-[#100d05] p-7">
+            <p className="text-[0.65rem] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: GOLD }}>For the one who…</p>
+            <ul className="space-y-3">
+              {forItems.map((t) => (
+                <li key={t} className="flex items-start gap-3 text-sm text-[#c9c4ba] leading-relaxed">
+                  <span className="mt-1 text-base font-bold flex-shrink-0" style={{ color: GOLD }}>✓</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-7">
+            <p className="text-[0.65rem] tracking-[0.2em] uppercase font-semibold mb-4 text-[#666]">Not for the one who…</p>
+            <ul className="space-y-3">
+              {notForItems.map((t) => (
+                <li key={t} className="flex items-start gap-3 text-sm text-[#888] leading-relaxed">
+                  <span className="mt-1 text-base font-bold flex-shrink-0 text-[#555]">✕</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FAQ() {
+  const items = [
+    {
+      q: "Is this confession?",
+      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a partner who sees the silence early enough to call you back before the breach.",
+    },
+    {
+      q: "Who sees my misses?",
+      a: "Only the partner you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping. (James 5:16 — \"Confess your faults one to another.\")",
+    },
+    {
+      q: "What if my partner falls too?",
+      a: "That is why the escalation chain exists. If your partner goes silent on their own lanes, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
+    },
+    {
+      q: "Is this for women?",
+      a: "Yes. The protocol is the same. Choose a partner of the same conviction; the system does not assume a gender.",
+    },
+    {
+      q: "What does it cost partners?",
+      a: "Nothing. Partners you alert are never charged. Only those creating lanes pay. (Freely ye have received, freely give — Matthew 10:8.)",
+    },
+    {
+      q: "Why pay at all?",
+      a: "Because the labourer is worthy of his hire (1 Timothy 5:18), and this work stays unfunded by advertisers so the watchtower stays clean.",
+    },
+  ];
+  return (
+    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Plain answers</p>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Questions, answered plainly.</h2>
+        </div>
+        <div className="space-y-6">
+          {items.map((it) => (
+            <div key={it.q} className="rounded-xl border border-[#1f1b12] bg-[#0a0800] p-6">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-2">{it.q}</h3>
+              <p className="text-[#a8a39a] text-sm sm:text-base leading-relaxed">{it.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ClosingCall() {
+  return (
+    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+      <div className="max-w-3xl mx-auto text-center">
+        <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The call</p>
+        <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-8">Bear ye one another's burdens.</h2>
+        <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10 text-left">
+          <p className="text-[#c9a84c] italic text-lg sm:text-xl leading-relaxed">
+            "Brethren, if a man be overtaken in a fault, ye which are spiritual, restore such an one in the spirit of meekness; considering thyself, lest thou also be tempted. Bear ye one another's burdens, and so fulfil the law of Christ."
+          </p>
+          <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Galatians 6:1–2 · KJV</p>
+        </div>
+        <p className="mt-8 text-[#a8a39a] text-base sm:text-lg leading-relaxed">
+          If the silence has been louder than the prayer, step into the light. Take a watchman. Be one.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
+            Join the waitlist
+          </Link>
+          <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
+            See it move
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="px-5 sm:px-8 py-10 border-t border-[#1a1610] mt-10">
@@ -264,6 +392,9 @@ function Landing() {
       <ProblemTension />
       <SilenceRule />
       <Pricing />
+      <WhoThisIsFor />
+      <FAQ />
+      <ClosingCall />
       <Footer />
     </main>
   );
