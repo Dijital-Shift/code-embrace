@@ -3,10 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kingdom Protocol — Behavioral Accountability" },
-      { name: "description", content: "You don't fall in public. You fall in the silence. Partner-based accountability with escalation when you go quiet." },
-      { property: "og:title", content: "Kingdom Protocol — Behavioral Accountability" },
-      { property: "og:description", content: "You don't fall in public. You fall in the silence. Partner-based accountability with escalation when you go quiet." },
+      { title: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
+      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant — before the silence becomes a fall." },
+      { property: "og:title", content: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
+      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant — before the silence becomes a fall." },
       { property: "og:image", content: "/kingdom-protocol-logo.png" },
     ],
   }),
