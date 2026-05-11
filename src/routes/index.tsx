@@ -33,18 +33,18 @@ function Hero() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] pointer-events-none -z-0"
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[1.1fr,1fr] gap-8 sm:gap-10 items-center">
-        <div>
+        <div className="min-w-0">
           <img
             src="/kingdom-protocol-logo.png"
             alt="Kingdom Protocol"
-            className="block mb-8"
-            style={{ width: "clamp(220px, 38vw, 340px)", filter: "drop-shadow(0 0 40px rgba(201,168,76,0.35))" }}
+            className="block mb-6 h-12 sm:h-14 w-auto"
+            style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.4))" }}
           />
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight text-white">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight text-white">
             You don't fall in public.<br />
             <span style={{ color: GOLD }}>You fall in the silence.</span>
           </h1>
-          <p className="mt-5 text-[#a8a39a] text-lg leading-relaxed max-w-xl">
+          <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-xl">
             Kingdom Protocol turns daily check-ins into a partner-watched signal. Miss the window, and someone who loves you knows before the breach does.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -57,7 +57,9 @@ function Hero() {
           </div>
           <p className="mt-5 text-xs text-[#555] tracking-wider">v1.0 · shipping May 2026</p>
         </div>
-        <HeroMock />
+        <div className="min-w-0">
+          <HeroMock />
+        </div>
       </div>
     </section>
   );
