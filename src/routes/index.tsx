@@ -32,7 +32,7 @@ function Hero() {
     <section className="relative px-5 sm:px-8 pt-12 pb-20 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] pointer-events-none -z-0"
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
-      <div className="relative z-10 max-w-6xl mx-auto grid md:grid-cols-[1.1fr,1fr] gap-12 items-center">
+      <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[1.1fr,1fr] gap-8 sm:gap-10 items-center">
         <div>
           <img
             src="/kingdom-protocol-logo.png"
