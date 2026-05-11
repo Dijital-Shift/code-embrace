@@ -29,16 +29,16 @@ function Header() {
 
 function Hero() {
   return (
-    <section className="relative px-5 sm:px-8 pt-8 pb-16 overflow-hidden">
+    <section className="relative px-5 sm:px-8 pt-10 sm:pt-14 pb-16 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] pointer-events-none -z-0"
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
-      <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[1.1fr,1fr] gap-8 sm:gap-10 items-center">
+      <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-start">
         <div className="min-w-0">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-[1.05] tracking-tight text-white">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight text-white">
             You don't fall in public.<br />
             <span style={{ color: GOLD }}>You fall in the silence.</span>
           </h1>
-          <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-xl">
+          <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-md">
             Kingdom Protocol turns daily check-ins into a partner-watched signal. Miss the window, and someone who loves you knows before the breach does.
           </p>
           <div className="mt-8 flex gap-2">
