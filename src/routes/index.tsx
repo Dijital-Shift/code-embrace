@@ -392,6 +392,9 @@ function Landing() {
       <ProblemTension />
       <SilenceRule />
       <Pricing />
+      <WhoThisIsFor />
+      <FAQ />
+      <ClosingCall />
       <Footer />
     </main>
   );
