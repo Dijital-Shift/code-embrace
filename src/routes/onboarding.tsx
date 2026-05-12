@@ -32,7 +32,7 @@ function Onboarding() {
     <main className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: "#000" }}>
       <div className="w-full max-w-sm flex flex-col items-center text-center">
         <h1 className="text-[1.4rem] font-bold mb-2">Welcome to Kingdom Protocol</h1>
-        <p className="text-[#666] text-sm mb-8">What should your accountability partners call you?</p>
+        <p className="text-[#666] text-sm mb-8">What should your accountability watchmen call you?</p>
         <form onSubmit={submit} className="w-full flex flex-col gap-3">
           <div className="flex gap-3">
             <input required maxLength={50} value={first} onChange={(e) => setFirst(e.target.value)} placeholder="First name" className={inputCls} />

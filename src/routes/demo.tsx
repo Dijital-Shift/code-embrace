@@ -28,21 +28,21 @@ export const Route = createFileRoute("/demo")({
       {
         name: "description",
         content:
-          "End-to-end walkthrough of Kingdom Protocol — from a believer creating a lane through their accountability partner and admin oversight. One protocol, three views.",
+          "End-to-end walkthrough of Kingdom Protocol — from a believer creating a lane through their accountability watchman and admin oversight. One protocol, three views.",
       },
     ],
   }),
   component: Demo,
 });
 
-type Role = "user" | "partner" | "admin";
+type Role = "user" | "watchman" | "admin";
 
 const ROLE_META: Record<
   Role,
   { label: string; icon: React.ElementType; chipBg: string; frameBorder: string; titleBarBg: string }
 > = {
   user:    { label: "User",    icon: User,        chipBg: "bg-[#c9a84c] text-black",        frameBorder: "border-[#c9a84c]/40", titleBarBg: "bg-[#c9a84c]/10" },
-  partner: { label: "Partner", icon: Users,       chipBg: "bg-[#8a6f2e] text-white",        frameBorder: "border-[#8a6f2e]",    titleBarBg: "bg-[#8a6f2e]/30" },
+  watchman: { label: "Watchman", icon: Users,       chipBg: "bg-[#8a6f2e] text-white",        frameBorder: "border-[#8a6f2e]",    titleBarBg: "bg-[#8a6f2e]/30" },
   admin:   { label: "Admin",   icon: ShieldCheck, chipBg: "bg-[#3a2e14] text-[#c9a84c]",    frameBorder: "border-[#c9a84c]/30", titleBarBg: "bg-[#1a1408]" },
 };
 
@@ -71,7 +71,7 @@ function MockOnboard() {
   return (
     <div className="space-y-3">
       <div className="text-sm font-semibold text-white">Define your lane</div>
-      <div className="text-[11px] text-[#888]">Name the behavior. Set the boundary. Pick a partner.</div>
+      <div className="text-[11px] text-[#888]">Name the behavior. Set the boundary. Pick a watchman.</div>
       <div className="space-y-2">
         <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
           <div className="text-[10px] uppercase tracking-wider text-[#666]">Lane</div>
@@ -82,7 +82,7 @@ function MockOnboard() {
           <div className="text-sm text-white">10:30 PM · daily</div>
         </div>
         <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">Partner</div>
+          <div className="text-[10px] uppercase tracking-wider text-[#666]">Watchman</div>
           <div className="text-sm text-white">marcus@example.com</div>
         </div>
       </div>
@@ -104,7 +104,7 @@ function MockPartnerInvite() {
         <div className="mt-2 text-[11px] text-[#888]">Lane</div>
         <div className="text-sm text-white">Purity / no late-night browsing</div>
         <div className="mt-2 text-[11px] text-[#888]">Your role</div>
-        <div className="text-sm text-[#c9a84c]">Accountability partner — you'll see check-ins and missed days.</div>
+        <div className="text-sm text-[#c9a84c]">Accountability watchman — you'll see check-ins and missed days.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#888]">Decline</button>
@@ -123,7 +123,7 @@ function MockCheckin() {
         <div className="text-sm font-semibold text-white">Tonight's check-in</div>
         <span className="ml-auto"><Pill label="10:30 PM" tone="primary" /></span>
       </div>
-      <div className="text-[11px] text-[#888]">Purity / no late-night browsing — be honest, your partner sees this.</div>
+      <div className="text-[11px] text-[#888]">Purity / no late-night browsing — be honest, your watchman sees this.</div>
       <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => setPick("clean")}
@@ -147,7 +147,7 @@ function MockCheckin() {
         </button>
       </div>
       <textarea
-        placeholder="Optional note for your partner…"
+        placeholder="Optional note for your watchman…"
         className="w-full rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2 text-xs text-white placeholder-[#555]"
         rows={2}
         defaultValue="Long day. Tempted around 9 but walked instead."
@@ -225,7 +225,7 @@ function MockEscalation() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Send className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Outbound to partner</div>
+        <div className="text-sm font-semibold text-white">Outbound to watchman</div>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3 text-xs text-[#ddd]">
         <div className="text-[10px] uppercase tracking-wider text-[#666]">SMS · push · email</div>
@@ -323,7 +323,7 @@ function MockPrivacy() {
         </div>
         <div className="flex items-center gap-2 rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
           <Users className="h-4 w-4 text-[#8a6f2e]" />
-          <div className="flex-1 text-white">Partner</div>
+          <div className="flex-1 text-white">Watchman</div>
           <div className="text-[#888]">Check-ins + notes you choose to share</div>
         </div>
         <div className="flex items-center gap-2 rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
@@ -333,7 +333,7 @@ function MockPrivacy() {
         </div>
       </div>
       <div className="text-center text-[11px] italic text-[#888]">
-        Confession is a gift, not a leak. Notes belong to you and the partner you chose.
+        Confession is a gift, not a leak. Notes belong to you and the watchman you chose.
       </div>
     </div>
   );
@@ -358,17 +358,17 @@ const SCENES: Scene[] = [
     step: 1,
     role: "user",
     title: "You name the lane",
-    body: "Pick the behavior you want to stay clean in. Set the bedtime check-in window. Choose one trusted partner — not a group, not a pastor's inbox, one person who will actually answer.",
-    why: "Why it matters: vague accountability fails. A named lane with a named partner and a named hour is something you can actually live up to.",
+    body: "Pick the behavior you want to stay clean in. Set the bedtime check-in window. Choose one trusted watchman — not a group, not a pastor's inbox, one person who will actually answer.",
+    why: "Why it matters: vague accountability fails. A named lane with a named watchman and a named hour is something you can actually live up to.",
     render: MockOnboard,
   },
   {
     id: "invite",
     step: 2,
-    role: "partner",
-    title: "Your partner accepts",
+    role: "watchman",
+    title: "Your watchman accepts",
     body: "They get a single email. They see exactly what they're signing up for: which lane, what cadence, what they'll be shown. No mystery, no group chat.",
-    why: "Why it matters: a partner who knows the deal stays the partner. Surprises burn relationships.",
+    why: "Why it matters: a watchman who knows the deal stays the watchman. Surprises burn relationships.",
     render: MockPartnerInvite,
     divider: "Each night",
   },
@@ -377,7 +377,7 @@ const SCENES: Scene[] = [
     step: 3,
     role: "user",
     title: "Nightly check-in — clean or stumbled",
-    body: "Two buttons. Optional note. Submitted to your partner before bed. The friction is the point — every night, you tell the truth out loud.",
+    body: "Two buttons. Optional note. Submitted to your watchman before bed. The friction is the point — every night, you tell the truth out loud.",
     why: "Why it matters: most lanes don't fall to a single big choice. They fall to small unspoken nights. Saying it kills the secrecy.",
     render: MockCheckin,
   },
@@ -386,25 +386,25 @@ const SCENES: Scene[] = [
     step: 4,
     role: "user",
     title: "If you go silent, it notices",
-    body: "Miss the window and Kingdom Protocol marks it missed. You get one nudge. Your partner gets pinged. Avoidance is a status, not a hiding place.",
+    body: "Miss the window and Kingdom Protocol marks it missed. You get one nudge. Your watchman gets pinged. Avoidance is a status, not a hiding place.",
     why: "Why it matters: the worst nights are usually the silent ones. Silence has to mean something.",
     render: MockMissed,
   },
   {
-    id: "partner-view",
+    id: "watchman-view",
     step: 5,
-    role: "partner",
-    title: "Partner sees the week, not your soul",
+    role: "watchman",
+    title: "Watchman sees the week, not your soul",
     body: "Seven dots — clean, stumble, missed. Your notes if you shared them. They're equipped to actually help, not guess.",
-    why: "Why it matters: the partner role finally has a dashboard. They show up Wednesday morning with the right question.",
+    why: "Why it matters: the watchman role finally has a dashboard. They show up Wednesday morning with the right question.",
     render: MockPartnerView,
   },
   {
     id: "escalation",
     step: 6,
-    role: "partner",
+    role: "watchman",
     title: "Escalation is gentle and automatic",
-    body: "Partner is reached by SMS, push, or email when you miss. Tier two if still silent. Admin only on a pattern. No one is panicked, no one is forgotten.",
+    body: "Watchman is reached by SMS, push, or email when you miss. Tier two if still silent. Admin only on a pattern. No one is panicked, no one is forgotten.",
     why: "Why it matters: humans drop the ball. The protocol doesn't.",
     render: MockEscalation,
     divider: "Over time",
@@ -463,10 +463,10 @@ function Demo() {
             One protocol. <span className="text-[#c9a84c]">Three views.</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-[#aaa] md:text-lg">
-            Nine scenes following one believer's lane through their accountability partner and the admin who shepherds the cohort.
+            Nine scenes following one believer's lane through their accountability watchman and the admin who shepherds the cohort.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-2 text-xs">
-            {(["user", "partner", "admin"] as Role[]).map((r) => {
+            {(["user", "watchman", "admin"] as Role[]).map((r) => {
               const m = ROLE_META[r];
               return (
                 <span key={r} className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold", m.chipBg)}>
@@ -527,7 +527,7 @@ function Demo() {
           <Footprints className="mx-auto h-10 w-10 text-[#c9a84c]" />
           <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">Ready to walk it out?</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-[#aaa]">
-            Pick your lane. Pick your partner. Show up tonight.
+            Pick your lane. Pick your watchman. Show up tonight.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link to="/" className="rounded-md border border-[#2a2518] px-5 py-2.5 text-sm font-semibold text-[#c9a84c]">
