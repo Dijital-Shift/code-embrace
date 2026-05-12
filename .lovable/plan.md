@@ -1,89 +1,38 @@
-## Scope
+## Scope: landing page (`src/routes/index.tsx`) only
 
-Copy + content changes only to `src/routes/index.tsx`. No layout, color, or component-architecture changes. All copy stays in the existing kingdom/gold aesthetic and KJV voice already established (matches the Ecclesiastes 4:9–10 block).
+### 1. Rename "lane" → "path" (landing copy only)
+Touch only marketing copy on the landing page. Do NOT rename product code, routes, DB fields, or dashboard UI — that stays "lane" until a separate sweep.
 
-## 1. Hero rewrite
+Edits in `src/routes/index.tsx`:
+- HeroMock: `"1 silent lane"` → `"1 silent path"`
+- Pricing features:
+  - "2 lanes" → "2 paths"
+  - "Up to 10 lanes" → "Up to 10 paths"
+  - "Up to 5 partners (2 lanes each)" → "Up to 5 partners (2 paths each)"
+- Pricing subhead: "Only those building lanes pay." → "Only those building paths pay."
+- FAQ "What does it cost partners?": "those creating lanes pay" → "those walking the paths pay"
+- WhoThisIsFor / ClosingCall: no "lane" references, no change.
 
-Use Proverbs 27:17 framing, gender-neutral so it speaks to brothers and sisters alike.
+### 2. Center ClosingCall copy
+In `ClosingCall`, the Galatians quote card currently uses `text-left`. Change to `text-center`. Subhead paragraph and CTA row are already centered — leave them.
 
-- **Eyebrow** (new, small uppercase line above H1): `For the kingdom-minded · Accountability with a watchman`
-- **H1**: `Iron sharpens iron.` / `Silence dulls both.` (gold on second line, same split as current)
-- **Subhead**: `For the believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant with you — before the silence becomes a fall.`
-- CTAs unchanged (`Join the waitlist`, `See it move`).
-- Meta line unchanged (`v1.0 · shipping May 2026`).
-- Also update `head.meta` title + descriptions to match the new headline.
+### 3. Collapsible FAQ
+Replace the static FAQ block with the existing shadcn `Accordion` (`@/components/ui/accordion`, already in project).
+- `<Accordion type="single" collapsible>` — one open at a time, all closed by default
+- Each item: `AccordionItem` wrapping `AccordionTrigger` (the question) and `AccordionContent` (the answer)
+- Preserve current visual: dark `#0a0800` card per item, gold accent on hover/open, gold chevron
+- No new dependencies, no new files
 
-## 2. Pricing header rewrite
+### 4. Rework Receipts → scripture strip (Option B)
+In `SilenceRule`, delete the existing `Receipts` 3-column block and the `Receipt` helper component. Replace with a single quiet scripture strip directly under the thresholds:
 
-- **Eyebrow**: `Pricing` (unchanged)
-- **H2**: `Count the cost.`
-- **Sub**: `"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?" — Luke 14:28. Partners you alert are never charged. Only those building lanes pay.`
+- Container: rounded border `#1a1610`, bg `#0a0800`, generous padding, centered
+- Eyebrow: `Why three thresholds`
+- Quote (gold italic): *"A prudent man foreseeth the evil, and hideth himself: but the simple pass on, and are punished."*
+- Attribution: `Proverbs 22:3 · KJV`
 
-Tier copy itself stays as-is (Free / Full Access / Circle) — only the section header changes.
+No fake metrics. Keeps the section anchored in scripture.
 
-## 3. New sections under `<Pricing />`, before `<Footer />`
-
-Add three new sections, in this order, each as its own component, matching the existing section rhythm (`px-5 sm:px-8 py-20 border-t border-[#1a1610]`, max-w container, gold eyebrow, white H2, muted body).
-
-### 3a. `WhoThisIsFor` — "For whom and not for whom"
-
-Two-column grid (`md:grid-cols-2 gap-5`), card style matching `Threshold` cards.
-
-- **Eyebrow**: `Discernment`
-- **H2**: `Whom this is for.`
-- **Left card — "For the one who…"** (gold accent, ✓ bullets):
-  - has stopped pretending the silence is harmless
-  - wants a brother or sister on the wall, not a dashboard
-  - is ready to be seen on the days they'd rather hide
-  - believes confession in the light beats covering in the dark
-- **Right card — "Not for the one who…"** (muted accent, ✕ bullets):
-  - wants a habit tracker without covenant
-  - is looking for anonymity over accountability
-  - expects software to do the work of a partner
-  - is not ready to let another believer see the misses
-
-### 3b. `FAQ` — biblically framed
-
-Single column, max-w-3xl, simple Q/A blocks (no accordion — keeps SSR clean and matches the page's plainspoken voice). Each Q in white bold, A in muted body.
-
-- **Eyebrow**: `Plain answers`
-- **H2**: `Questions, answered plainly.`
-- Items (6):
-  1. **Is this confession?** No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a partner who sees the silence early enough to call you back before the breach.
-  2. **Who sees my misses?** Only the partner you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping. *(James 5:16 — "Confess your faults one to another.")*
-  3. **What if my partner falls too?** That is why the escalation chain exists. If your partner goes silent on their own lanes, your escalation contact is engaged. Two are better than one — three is a cord not quickly broken. *(Ecclesiastes 4:12)*
-  4. **Is this for women?** Yes. The protocol is the same. Choose a partner of the same conviction; the system does not assume a gender.
-  5. **What does it cost partners?** Nothing. Partners you alert are never charged. Only those creating lanes pay. *(Freely ye have received, freely give — Matthew 10:8.)*
-  6. **Why pay at all?** Because the labourer is worthy of his hire (1 Timothy 5:18), and this work stays unfunded by advertisers so the watchtower stays clean.
-
-### 3c. `ClosingCall` — final scripture + CTA
-
-Centered, max-w-3xl, dark card with gold border like the existing `ProblemTension` quote block.
-
-- **Eyebrow**: `The call`
-- **H2**: `Bear ye one another's burdens.`
-- **Quote block** (gold italic, like Ecclesiastes block):
-  > "Brethren, if a man be overtaken in a fault, ye which are spiritual, restore such an one in the spirit of meekness; considering thyself, lest thou also be tempted. Bear ye one another's burdens, and so fulfil the law of Christ."
-  > — Galatians 6:1–2 · KJV
-- **Closing line** under the quote: `If the silence has been louder than the prayer, step into the light. Take a watchman. Be one.`
-- **CTAs**: same two buttons as hero (`Join the waitlist` primary, `See it move` secondary), centered.
-
-## 4. Render order in `<Landing />`
-
-```text
-Header → Hero → ProblemTension → SilenceRule → Pricing → WhoThisIsFor → FAQ → ClosingCall → Footer
-```
-
-## Out of scope
-
-- No changes to `Header`, `ProblemTension`, `SilenceRule`, `Pricing` tier cards, `Footer`, `HeroMock`, routes, auth, pricing tiers, or styling tokens.
-- No new files, no new routes, no asset additions.
-- No business logic changes.
-
-## Acceptance
-
-- Hero shows new eyebrow + Proverbs-framed headline + inclusive subhead; gender-neutral.
-- Pricing header reads "Count the cost." with the Luke 14:28 sub.
-- Three new sections render in order under Pricing, in the existing visual language (gold eyebrow, white H2, muted body, gold-bordered cards where applicable).
-- No layout regressions at 414 / 768 / 841 / 1280 px.
-- `head.meta` updated to match the new hero headline so OG share matches the page.
+### Out of scope
+- Product code rename (lane → path in DB / routes / dashboard) — separate task if you want it later
+- Hero, Header, Pricing tiers, WhoThisIsFor, Footer, color tokens, new files, new routes
