@@ -45,13 +45,13 @@ function Hero() {
           </p>
           <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Join the waitlist
+              Start free
             </Link>
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
               See it move
             </Link>
           </div>
-          <p className="mt-5 text-xs text-[#555] tracking-wider">v1.0 · shipping May 2026</p>
+          <p className="mt-5 text-xs text-[#555] tracking-wider">Early access · free while we pair the first cohort</p>
         </div>
         <div className="min-w-0">
           <HeroMock />
@@ -166,8 +166,8 @@ function Pricing() {
       cadence: "forever",
       pitch: "Prove the loop on your own life.",
       features: ["2 paths", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
-      cta: "Join the waitlist",
-      enabled: false,
+      cta: "Start free",
+      enabled: true,
       featured: false,
     },
     {
@@ -176,8 +176,8 @@ function Pricing() {
       cadence: "/ month",
       pitch: "The serious tier. Every path, every partner.",
       features: ["Up to 10 paths", "Up to 5 partners (2 paths each)", "Escalation chain", "Push notifications", "Weekly recap"],
-      cta: "Join the waitlist",
-      enabled: false,
+      cta: "Start free",
+      enabled: true,
       featured: true,
     },
     {
@@ -200,6 +200,7 @@ function Pricing() {
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
             <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building paths pay.
           </p>
+          <p className="text-[#c9a84c] text-sm mt-4 max-w-2xl mx-auto">Free for everyone during early access. Paid tiers unlock when billing goes live — no card needed today.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {tiers.map((t) => (
@@ -220,12 +221,22 @@ function Pricing() {
                   </li>
                 ))}
               </ul>
-              <button
-                disabled
-                className={`w-full py-3 rounded-xl font-semibold text-sm ${t.featured ? "bg-[#c9a84c]/30 text-[#c9a84c]" : "border border-[#222] text-[#666]"}`}
-              >
-                {t.cta}
-              </button>
+              {t.enabled ? (
+                <Link
+                  to="/login"
+                  className={`w-full py-3 rounded-xl font-semibold text-sm text-center ${t.featured ? "bg-[#c9a84c] text-black" : "border border-[#c9a84c]/50 text-[#c9a84c]"}`}
+                  style={t.featured ? { boxShadow: "0 0 24px rgba(201,168,76,0.25)" } : undefined}
+                >
+                  {t.cta}
+                </Link>
+              ) : (
+                <button
+                  disabled
+                  className="w-full py-3 rounded-xl font-semibold text-sm border border-[#222] text-[#666]"
+                >
+                  {t.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -286,6 +297,10 @@ function WhoThisIsFor() {
 
 function FAQ() {
   const items = [
+    {
+      q: "Is it really free?",
+      a: "Yes. During early access every tier is free — no card, no trial timer. When billing turns on, you'll get notice before anything changes.",
+    },
     {
       q: "Is this confession?",
       a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a partner who sees the silence early enough to call you back before the breach.",
@@ -356,7 +371,7 @@ function ClosingCall() {
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-            Join the waitlist
+            Start free
           </Link>
           <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
             See it move

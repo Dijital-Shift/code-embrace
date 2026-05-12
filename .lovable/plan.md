@@ -1,38 +1,36 @@
-## Scope: landing page (`src/routes/index.tsx`) only
+## Scope: open up early access on the landing page
 
-### 1. Rename "lane" → "path" (landing copy only)
-Touch only marketing copy on the landing page. Do NOT rename product code, routes, DB fields, or dashboard UI — that stays "lane" until a separate sweep.
+Flip the landing from "waitlist coming soon" to "free early access, sign up now." No billing, no trial logic, no expiry. Landing copy + CTA only — product code stays as-is.
 
-Edits in `src/routes/index.tsx`:
-- HeroMock: `"1 silent lane"` → `"1 silent path"`
-- Pricing features:
-  - "2 lanes" → "2 paths"
-  - "Up to 10 lanes" → "Up to 10 paths"
-  - "Up to 5 partners (2 lanes each)" → "Up to 5 partners (2 paths each)"
-- Pricing subhead: "Only those building lanes pay." → "Only those building paths pay."
-- FAQ "What does it cost partners?": "those creating lanes pay" → "those walking the paths pay"
-- WhoThisIsFor / ClosingCall: no "lane" references, no change.
+### 1. Hero / top of `src/routes/index.tsx`
+- Remove or replace the "v1.0 · shipping May 2026" eyebrow with: `Early access · free while we pair the first cohort`
+- Primary CTA: change from waitlist language to `Start free` → links to `/login`
+- Secondary CTA (if present): `How it works` → `/how-it-works` (unchanged)
 
-### 2. Center ClosingCall copy
-In `ClosingCall`, the Galatians quote card currently uses `text-left`. Change to `text-center`. Subhead paragraph and CTA row are already centered — leave them.
+### 2. Pricing section
+- Section subhead: add one line under the existing subhead:
+  *"Free for everyone during early access. Paid tiers unlock when billing goes live — no card needed today."*
+- All three tier CTAs: swap `disabled` "Join the waitlist" buttons for active `Start free` links to `/login`
+- Keep the tier cards, prices, and feature lists exactly as they are — they describe the future paid structure, which is fine
 
-### 3. Collapsible FAQ
-Replace the static FAQ block with the existing shadcn `Accordion` (`@/components/ui/accordion`, already in project).
-- `<Accordion type="single" collapsible>` — one open at a time, all closed by default
-- Each item: `AccordionItem` wrapping `AccordionTrigger` (the question) and `AccordionContent` (the answer)
-- Preserve current visual: dark `#0a0800` card per item, gold accent on hover/open, gold chevron
-- No new dependencies, no new files
+### 3. FAQ
+- Add one new accordion item at the top:
+  - Q: *"Is it really free?"*
+  - A: *"Yes. During early access every tier is free — no card, no trial timer. When billing turns on, you'll get notice before anything changes."*
+- Existing items unchanged
 
-### 4. Rework Receipts → scripture strip (Option B)
-In `SilenceRule`, delete the existing `Receipts` 3-column block and the `Receipt` helper component. Replace with a single quiet scripture strip directly under the thresholds:
-
-- Container: rounded border `#1a1610`, bg `#0a0800`, generous padding, centered
-- Eyebrow: `Why three thresholds`
-- Quote (gold italic): *"A prudent man foreseeth the evil, and hideth himself: but the simple pass on, and are punished."*
-- Attribution: `Proverbs 22:3 · KJV`
-
-No fake metrics. Keeps the section anchored in scripture.
+### 4. ClosingCall
+- If the final CTA still says "Join the waitlist," change to `Start free` → `/login`
+- Leave the Galatians quote and centered layout alone
 
 ### Out of scope
-- Product code rename (lane → path in DB / routes / dashboard) — separate task if you want it later
-- Hero, Header, Pricing tiers, WhoThisIsFor, Footer, color tokens, new files, new routes
+- Stripe / Paddle / any billing wiring
+- Trial timers, expiry dates, usage caps
+- Onboarding flow changes, dashboard changes, product code
+- The `app/` vs `src/routes/` migration question — separate task
+- Auth itself — already works via `/login`
+
+### Technical notes
+- All edits in `src/routes/index.tsx`
+- CTAs use TanStack `<Link to="/login">` (already imported in that file)
+- No new dependencies, no new routes, no schema changes
