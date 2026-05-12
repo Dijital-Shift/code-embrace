@@ -198,7 +198,7 @@ function Pricing() {
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Count the cost.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
-            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building lanes pay.
+            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building paths pay.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
