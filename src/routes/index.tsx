@@ -200,6 +200,7 @@ function Pricing() {
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
             <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building paths pay.
           </p>
+          <p className="text-[#c9a84c] text-sm mt-4 max-w-2xl mx-auto">Free for everyone during early access. Paid tiers unlock when billing goes live — no card needed today.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {tiers.map((t) => (
