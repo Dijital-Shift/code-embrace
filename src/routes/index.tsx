@@ -318,14 +318,22 @@ function FAQ() {
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Plain answers</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Questions, answered plainly.</h2>
         </div>
-        <div className="space-y-6">
-          {items.map((it) => (
-            <div key={it.q} className="rounded-xl border border-[#1f1b12] bg-[#0a0800] p-6">
-              <h3 className="text-base sm:text-lg font-bold text-white mb-2">{it.q}</h3>
-              <p className="text-[#a8a39a] text-sm sm:text-base leading-relaxed">{it.a}</p>
-            </div>
+        <Accordion type="single" collapsible className="space-y-4">
+          {items.map((it, i) => (
+            <AccordionItem
+              key={it.q}
+              value={`item-${i}`}
+              className="rounded-xl border border-[#1f1b12] bg-[#0a0800] px-6 data-[state=open]:border-[#c9a84c]/40"
+            >
+              <AccordionTrigger className="text-left text-base sm:text-lg font-bold text-white hover:no-underline hover:text-[#c9a84c] data-[state=open]:text-[#c9a84c] [&>svg]:text-[#c9a84c]">
+                {it.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-[#a8a39a] text-sm sm:text-base leading-relaxed pb-5">
+                {it.a}
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   );
