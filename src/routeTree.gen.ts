@@ -22,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LanesIndexRouteImport } from './routes/lanes.index'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
 import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
@@ -92,6 +93,11 @@ const LanesIdRoute = LanesIdRouteImport.update({
   path: '/lanes/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
   id: '/api/push/subscribe',
   path: '/api/push/subscribe',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/lanes': typeof LanesIndexRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/settings'
+    | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
     | '/lanes/'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/settings'
+    | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
     | '/lanes'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/settings'
+    | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
     | '/lanes/'
@@ -245,6 +257,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PartnerRoute: typeof PartnerRoute
   SettingsRoute: typeof SettingsRoute
+  InviteTokenRoute: typeof InviteTokenRoute
   LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
@@ -347,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LanesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/push/subscribe': {
       id: '/api/push/subscribe'
       path: '/api/push/subscribe'
@@ -389,6 +409,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PartnerRoute: PartnerRoute,
   SettingsRoute: SettingsRoute,
+  InviteTokenRoute: InviteTokenRoute,
   LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
   LanesIndexRoute: LanesIndexRoute,
@@ -400,3 +421,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
