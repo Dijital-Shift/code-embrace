@@ -298,6 +298,10 @@ function WhoThisIsFor() {
 function FAQ() {
   const items = [
     {
+      q: "Is it really free?",
+      a: "Yes. During early access every tier is free — no card, no trial timer. When billing turns on, you'll get notice before anything changes.",
+    },
+    {
       q: "Is this confession?",
       a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a partner who sees the silence early enough to call you back before the breach.",
     },
