@@ -221,12 +221,22 @@ function Pricing() {
                   </li>
                 ))}
               </ul>
-              <button
-                disabled
-                className={`w-full py-3 rounded-xl font-semibold text-sm ${t.featured ? "bg-[#c9a84c]/30 text-[#c9a84c]" : "border border-[#222] text-[#666]"}`}
-              >
-                {t.cta}
-              </button>
+              {t.enabled ? (
+                <Link
+                  to="/login"
+                  className={`w-full py-3 rounded-xl font-semibold text-sm text-center ${t.featured ? "bg-[#c9a84c] text-black" : "border border-[#c9a84c]/50 text-[#c9a84c]"}`}
+                  style={t.featured ? { boxShadow: "0 0 24px rgba(201,168,76,0.25)" } : undefined}
+                >
+                  {t.cta}
+                </Link>
+              ) : (
+                <button
+                  disabled
+                  className="w-full py-3 rounded-xl font-semibold text-sm border border-[#222] text-[#666]"
+                >
+                  {t.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>
