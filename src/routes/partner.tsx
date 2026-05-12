@@ -34,7 +34,7 @@ function Partner() {
       {data?.showNudge && active.length > 0 && (
         <div className="p-5 rounded-xl border border-[#2a2000] mb-8" style={{ background: "#0a0800" }}>
           <p className="font-semibold mb-1 text-[#c9a84c]">You're holding someone accountable. Who's holding you?</p>
-          <p className="text-xs text-[#666] mb-3">Create your own lane and assign a partner.</p>
+          <p className="text-xs text-[#666] mb-3">Create your own lane and assign a Watchman.</p>
           <Link to="/lanes/new" className="inline-block px-5 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Create a Lane</Link>
         </div>
       )}
