@@ -5,7 +5,7 @@ import { getPartnerView } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 
 export const Route = createFileRoute("/partner")({
-  head: () => ({ meta: [{ title: "Partner — Kingdom Protocol" }] }),
+  head: () => ({ meta: [{ title: "Watchman — Kingdom Protocol" }] }),
   component: () => <AppLayout><Partner /></AppLayout>,
 });
 
