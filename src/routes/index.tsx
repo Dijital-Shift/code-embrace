@@ -45,13 +45,13 @@ function Hero() {
           </p>
           <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Join the waitlist
+              Start free
             </Link>
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
               See it move
             </Link>
           </div>
-          <p className="mt-5 text-xs text-[#555] tracking-wider">v1.0 · shipping May 2026</p>
+          <p className="mt-5 text-xs text-[#555] tracking-wider">Early access · free while we pair the first cohort</p>
         </div>
         <div className="min-w-0">
           <HeroMock />
