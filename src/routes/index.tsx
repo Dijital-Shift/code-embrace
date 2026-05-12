@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -75,7 +76,7 @@ function HeroMock() {
           <MockRow title="Late-night scroll" status="silent" />
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
-          <span className="text-xs text-[#888]">1 silent lane</span>
+          <span className="text-xs text-[#888]">1 silent path</span>
           <span className="text-xs font-semibold" style={{ color: GOLD }}>Partner pinged in 2h</span>
         </div>
       </div>
@@ -133,13 +134,12 @@ function SilenceRule() {
           <Threshold n="02" title="Miss two in 24h" body="Your partner is pinged. A real human, chosen by you, knows you've gone quiet." tone="warn" />
           <Threshold n="03" title="Miss three" body="Escalation contact notified. The chain you set up engages before the breach can." tone="alert" />
         </div>
-        <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-6 sm:p-8">
-          <p className="text-[0.7rem] tracking-[0.18em] uppercase text-[#666] mb-4">Receipts</p>
-          <div className="grid sm:grid-cols-3 gap-6">
-            <Receipt label="Signal" value="Missed window" detail="Check-in not submitted in the assigned interval." />
-            <Receipt label="Decision" value="Partner ping at T2" detail="Escalation contact engaged at T3." />
-            <Receipt label="Outcome" value="< 4h response" detail="Average partner response in private beta. Gated until real data." />
-          </div>
+        <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
+          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why three thresholds</p>
+          <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
+            "A prudent man foreseeth the evil, and hideth himself: but the simple pass on, and are punished."
+          </p>
+          <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Proverbs 22:3 · KJV</p>
         </div>
       </div>
     </section>
@@ -158,16 +158,6 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
   );
 }
 
-function Receipt({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return (
-    <div>
-      <p className="text-[0.6rem] tracking-[0.2em] uppercase text-[#555] mb-1.5">{label}</p>
-      <p className="text-white font-bold mb-1">{value}</p>
-      <p className="text-xs text-[#777] leading-relaxed">{detail}</p>
-    </div>
-  );
-}
-
 function Pricing() {
   const tiers = [
     {
@@ -175,7 +165,7 @@ function Pricing() {
       price: "$0",
       cadence: "forever",
       pitch: "Prove the loop on your own life.",
-      features: ["2 lanes", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
+      features: ["2 paths", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
       cta: "Join the waitlist",
       enabled: false,
       featured: false,
@@ -184,8 +174,8 @@ function Pricing() {
       name: "Full Access",
       price: "$12",
       cadence: "/ month",
-      pitch: "The serious tier. Every lane, every partner.",
-      features: ["Up to 10 lanes", "Up to 5 partners (2 lanes each)", "Escalation chain", "Push notifications", "Weekly recap"],
+      pitch: "The serious tier. Every path, every partner.",
+      features: ["Up to 10 paths", "Up to 5 partners (2 paths each)", "Escalation chain", "Push notifications", "Weekly recap"],
       cta: "Join the waitlist",
       enabled: false,
       featured: true,
@@ -208,7 +198,7 @@ function Pricing() {
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Count the cost.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
-            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building lanes pay.
+            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building paths pay.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
@@ -306,7 +296,7 @@ function FAQ() {
     },
     {
       q: "What if my partner falls too?",
-      a: "That is why the escalation chain exists. If your partner goes silent on their own lanes, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
+      a: "That is why the escalation chain exists. If your partner goes silent on their own paths, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
     },
     {
       q: "Is this for women?",
@@ -314,7 +304,7 @@ function FAQ() {
     },
     {
       q: "What does it cost partners?",
-      a: "Nothing. Partners you alert are never charged. Only those creating lanes pay. (Freely ye have received, freely give — Matthew 10:8.)",
+      a: "Nothing. Partners you alert are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
     },
     {
       q: "Why pay at all?",
@@ -328,14 +318,22 @@ function FAQ() {
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Plain answers</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Questions, answered plainly.</h2>
         </div>
-        <div className="space-y-6">
-          {items.map((it) => (
-            <div key={it.q} className="rounded-xl border border-[#1f1b12] bg-[#0a0800] p-6">
-              <h3 className="text-base sm:text-lg font-bold text-white mb-2">{it.q}</h3>
-              <p className="text-[#a8a39a] text-sm sm:text-base leading-relaxed">{it.a}</p>
-            </div>
+        <Accordion type="single" collapsible className="space-y-4">
+          {items.map((it, i) => (
+            <AccordionItem
+              key={it.q}
+              value={`item-${i}`}
+              className="rounded-xl border border-[#1f1b12] bg-[#0a0800] px-6 data-[state=open]:border-[#c9a84c]/40"
+            >
+              <AccordionTrigger className="text-left text-base sm:text-lg font-bold text-white hover:no-underline hover:text-[#c9a84c] data-[state=open]:text-[#c9a84c] [&>svg]:text-[#c9a84c]">
+                {it.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-[#a8a39a] text-sm sm:text-base leading-relaxed pb-5">
+                {it.a}
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   );
@@ -347,7 +345,7 @@ function ClosingCall() {
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The call</p>
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-8">Bear ye one another's burdens.</h2>
-        <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10 text-left">
+        <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10 text-center">
           <p className="text-[#c9a84c] italic text-lg sm:text-xl leading-relaxed">
             "Brethren, if a man be overtaken in a fault, ye which are spiritual, restore such an one in the spirit of meekness; considering thyself, lest thou also be tempted. Bear ye one another's burdens, and so fulfil the law of Christ."
           </p>
