@@ -48,7 +48,7 @@ function Settings() {
         <Link to="/dashboard" className="text-[#666]">←</Link>
         <h2 className="text-xl font-bold">Settings</h2>
       </div>
-      <p className="text-[#555] text-xs mb-8">Your bedtime sets when check-in reminders fire. Your phone goes to partners on breach or miss.</p>
+      <p className="text-[#555] text-xs mb-8">Your bedtime sets when check-in reminders fire. Your phone goes to watchmen on breach or miss.</p>
 
       <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="flex flex-col gap-6 max-w-md">
         <div className="flex gap-3">
@@ -68,7 +68,7 @@ function Settings() {
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ccc]">Phone Number</label>
           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 000 0000" className={inputCls} />
-          <p className="text-xs text-[#555]">Shared with partners only when a breach or miss occurs.</p>
+          <p className="text-xs text-[#555]">Shared with watchmen only when a breach or miss occurs.</p>
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ccc]">Bedtime</label>

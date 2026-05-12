@@ -5,9 +5,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
-      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant — before the silence becomes a fall." },
+      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a watchman in covenant — before the silence becomes a fall." },
       { property: "og:title", content: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
-      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant — before the silence becomes a fall." },
+      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, watched by a watchman in covenant — before the silence becomes a fall." },
       { property: "og:image", content: "/kingdom-protocol-logo.png" },
     ],
   }),
@@ -41,7 +41,7 @@ function Hero() {
             <span style={{ color: GOLD }}>Silence dulls both.</span>
           </h1>
           <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-md">
-            For the believer who refuses to walk alone. Daily check-ins, watched by a partner in covenant with you — before the silence becomes a fall.
+            For the believer who refuses to walk alone. Daily check-ins, watched by a watchman in covenant with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
@@ -77,7 +77,7 @@ function HeroMock() {
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
           <span className="text-xs text-[#888]">1 silent path</span>
-          <span className="text-xs font-semibold" style={{ color: GOLD }}>Partner pinged in 2h</span>
+          <span className="text-xs font-semibold" style={{ color: GOLD }}>Watchman pinged in 2h</span>
         </div>
       </div>
     </div>
@@ -131,7 +131,7 @@ function SilenceRule() {
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           <Threshold n="01" title="Miss one" body="Nothing. Life happens. The window closes and the day moves on." tone="muted" />
-          <Threshold n="02" title="Miss two in 24h" body="Your partner is pinged. A real human, chosen by you, knows you've gone quiet." tone="warn" />
+          <Threshold n="02" title="Miss two in 24h" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet." tone="warn" />
           <Threshold n="03" title="Miss three" body="Escalation contact notified. The chain you set up engages before the breach can." tone="alert" />
         </div>
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
@@ -173,10 +173,10 @@ function Pricing() {
           <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: GOLD }}>Early access</p>
           <h3 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">Free for everyone, right now.</h3>
           <p className="text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-6">
-            Every path, every partner, every notification. No card, no trial timer. While we pair the first cohort, the whole protocol is open.
+            Every path, every watchman, every notification. No card, no trial timer. While we pair the first cohort, the whole protocol is open.
           </p>
           <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 max-w-md mx-auto text-left mb-8">
-            {["Unlimited paths", "Partner pairing", "Escalation chain", "Daily check-ins", "Breach reporting", "Push notifications"].map((f) => (
+            {["Unlimited paths", "Watchman pairing", "Escalation chain", "Daily check-ins", "Breach reporting", "Push notifications"].map((f) => (
               <li key={f} className="flex items-start gap-2.5 text-sm text-[#c9c4ba]">
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
                 <span>{f}</span>
@@ -203,7 +203,7 @@ function WhoThisIsFor() {
   const notForItems = [
     "wants a habit tracker without covenant",
     "is looking for anonymity over accountability",
-    "expects software to do the work of a partner",
+    "expects software to do the work of a watchman",
     "is not ready to let another believer see the misses",
   ];
   return (
@@ -251,23 +251,23 @@ function FAQ() {
     },
     {
       q: "Is this confession?",
-      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a partner who sees the silence early enough to call you back before the breach.",
+      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a watchman who sees the silence early enough to call you back before the breach.",
     },
     {
       q: "Who sees my misses?",
-      a: "Only the partner you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping. (James 5:16 — \"Confess your faults one to another.\")",
+      a: "Only the watchman you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping. (James 5:16 — \"Confess your faults one to another.\")",
     },
     {
-      q: "What if my partner falls too?",
-      a: "That is why the escalation chain exists. If your partner goes silent on their own paths, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
+      q: "What if my watchman falls too?",
+      a: "That is why the escalation chain exists. If your watchman goes silent on their own paths, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
     },
     {
       q: "Is this for women?",
-      a: "Yes. The protocol is the same. Choose a partner of the same conviction; the system does not assume a gender.",
+      a: "Yes. The protocol is the same. Choose a watchman of the same conviction; the system does not assume a gender.",
     },
     {
-      q: "What does it cost partners?",
-      a: "Nothing. Partners you alert are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
+      q: "What does it cost watchmen?",
+      a: "Nothing. Watchmen you alert are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
     },
     {
       q: "Why pay at all?",
