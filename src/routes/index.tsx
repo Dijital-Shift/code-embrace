@@ -159,86 +159,34 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
 }
 
 function Pricing() {
-  const tiers = [
-    {
-      name: "Free",
-      price: "$0",
-      cadence: "forever",
-      pitch: "Prove the loop on your own life.",
-      features: ["2 paths", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
-      cta: "Start free",
-      enabled: true,
-      featured: false,
-    },
-    {
-      name: "Full Access",
-      price: "$12",
-      cadence: "/ month",
-      pitch: "The serious tier. Every path, every partner.",
-      features: ["Up to 10 paths", "Up to 5 partners (2 paths each)", "Escalation chain", "Push notifications", "Weekly recap"],
-      cta: "Start free",
-      enabled: true,
-      featured: true,
-    },
-    {
-      name: "Circle",
-      price: "Soon",
-      cadence: "",
-      pitch: "Closed groups. One payer, mutual oversight.",
-      features: ["Men's groups, recovery circles", "Mutual partner pairing inside the circle", "Admin oversight (no breach content)", "Two-layer fallback"],
-      cta: "Coming after launch",
-      enabled: false,
-      featured: false,
-    },
-  ];
   return (
     <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Count the cost.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
-            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28. Partners you alert are never charged. Only those building paths pay.
+            <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28
           </p>
-          <p className="text-[#c9a84c] text-sm mt-4 max-w-2xl mx-auto">Free for everyone during early access. Paid tiers unlock when billing goes live — no card needed today.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {tiers.map((t) => (
-            <div key={t.name} className={`rounded-2xl p-7 flex flex-col ${t.featured ? "border-2 border-[#c9a84c]/60 bg-[#100d05]" : "border border-[#1f1b12] bg-[#0a0800]"}`}
-              style={t.featured ? { boxShadow: "0 0 40px rgba(201,168,76,0.12)" } : undefined}>
-              {t.featured && <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: GOLD }}>Recommended</p>}
-              <h3 className="text-2xl font-bold text-white mb-1">{t.name}</h3>
-              <p className="text-sm text-[#888] mb-5">{t.pitch}</p>
-              <div className="mb-6">
-                <span className="text-4xl font-extrabold text-white">{t.price}</span>
-                {t.cadence && <span className="text-sm text-[#777] ml-1">{t.cadence}</span>}
-              </div>
-              <ul className="space-y-2.5 mb-7 flex-1">
-                {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#c9c4ba]">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              {t.enabled ? (
-                <Link
-                  to="/login"
-                  className={`w-full py-3 rounded-xl font-semibold text-sm text-center ${t.featured ? "bg-[#c9a84c] text-black" : "border border-[#c9a84c]/50 text-[#c9a84c]"}`}
-                  style={t.featured ? { boxShadow: "0 0 24px rgba(201,168,76,0.25)" } : undefined}
-                >
-                  {t.cta}
-                </Link>
-              ) : (
-                <button
-                  disabled
-                  className="w-full py-3 rounded-xl font-semibold text-sm border border-[#222] text-[#666]"
-                >
-                  {t.cta}
-                </button>
-              )}
-            </div>
-          ))}
+        <div className="rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-8 sm:p-10 text-center" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+          <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: GOLD }}>Early access</p>
+          <h3 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">Free for everyone, right now.</h3>
+          <p className="text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-6">
+            Every path, every partner, every notification. No card, no trial timer. While we pair the first cohort, the whole protocol is open.
+          </p>
+          <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 max-w-md mx-auto text-left mb-8">
+            {["Unlimited paths", "Partner pairing", "Escalation chain", "Daily check-ins", "Breach reporting", "Push notifications"].map((f) => (
+              <li key={f} className="flex items-start gap-2.5 text-sm text-[#c9c4ba]">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Link to="/login" className="inline-block px-8 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
+            Start free
+          </Link>
+          <p className="mt-5 text-xs text-[#666] tracking-wider">When billing turns on, early users get notice first — and grandfather rates.</p>
         </div>
       </div>
     </section>
