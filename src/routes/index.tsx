@@ -134,13 +134,12 @@ function SilenceRule() {
           <Threshold n="02" title="Miss two in 24h" body="Your partner is pinged. A real human, chosen by you, knows you've gone quiet." tone="warn" />
           <Threshold n="03" title="Miss three" body="Escalation contact notified. The chain you set up engages before the breach can." tone="alert" />
         </div>
-        <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-6 sm:p-8">
-          <p className="text-[0.7rem] tracking-[0.18em] uppercase text-[#666] mb-4">Receipts</p>
-          <div className="grid sm:grid-cols-3 gap-6">
-            <Receipt label="Signal" value="Missed window" detail="Check-in not submitted in the assigned interval." />
-            <Receipt label="Decision" value="Partner ping at T2" detail="Escalation contact engaged at T3." />
-            <Receipt label="Outcome" value="< 4h response" detail="Average partner response in private beta. Gated until real data." />
-          </div>
+        <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
+          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why three thresholds</p>
+          <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
+            "A prudent man foreseeth the evil, and hideth himself: but the simple pass on, and are punished."
+          </p>
+          <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Proverbs 22:3 · KJV</p>
         </div>
       </div>
     </section>
@@ -155,16 +154,6 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
       <p className="text-[0.65rem] tracking-[0.2em] uppercase font-semibold mb-3" style={{ color }}>Threshold {n}</p>
       <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
       <p className="text-sm text-[#a8a39a] leading-relaxed">{body}</p>
-    </div>
-  );
-}
-
-function Receipt({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return (
-    <div>
-      <p className="text-[0.6rem] tracking-[0.2em] uppercase text-[#555] mb-1.5">{label}</p>
-      <p className="text-white font-bold mb-1">{value}</p>
-      <p className="text-xs text-[#777] leading-relaxed">{detail}</p>
     </div>
   );
 }
