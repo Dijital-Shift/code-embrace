@@ -165,7 +165,7 @@ function Pricing() {
       price: "$0",
       cadence: "forever",
       pitch: "Prove the loop on your own life.",
-      features: ["2 lanes", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
+      features: ["2 paths", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
       cta: "Join the waitlist",
       enabled: false,
       featured: false,
