@@ -345,7 +345,7 @@ function ClosingCall() {
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The call</p>
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-8">Bear ye one another's burdens.</h2>
-        <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10 text-left">
+        <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10 text-center">
           <p className="text-[#c9a84c] italic text-lg sm:text-xl leading-relaxed">
             "Brethren, if a man be overtaken in a fault, ye which are spiritual, restore such an one in the spirit of meekness; considering thyself, lest thou also be tempted. Bear ye one another's burdens, and so fulfil the law of Christ."
           </p>
