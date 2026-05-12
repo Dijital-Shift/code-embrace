@@ -5,7 +5,7 @@ import { createLane } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 
 export const Route = createFileRoute("/lanes/new")({
-  head: () => ({ meta: [{ title: "New Lane — Kingdom Protocol" }] }),
+  head: () => ({ meta: [{ title: "New Path — Kingdom Protocol" }] }),
   component: () => <AppLayout><NewLane /></AppLayout>,
 });
 
@@ -15,7 +15,6 @@ function NewLane() {
   const [laneType, setLaneType] = useState<"avoid" | "complete">("avoid");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [partnerEmail, setPartnerEmail] = useState("");
   const [s1, setS1] = useState(""), [s2, setS2] = useState(""), [s3, setS3] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -29,14 +28,21 @@ function NewLane() {
       data: {
         title: title.trim(),
         description: description.trim() || null,
-        partner_email: partnerEmail.trim().toLowerCase(),
         lane_type: laneType,
         support_scripture: support,
       },
     });
     setBusy(false);
-    if ("error" in result && result.error) setErr(result.error);
-    else navigate({ to: "/lanes" });
+    if ("error" in result && result.error) {
+      setErr(result.error);
+      return;
+    }
+    if ("id" in result && result.id) {
+      // Go straight to the lane page so they can invite their Watchman next
+      navigate({ to: "/lanes/$id", params: { id: result.id }, search: { newlyCreated: true } as any });
+    } else {
+      navigate({ to: "/lanes" });
+    }
   }
 
   const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full";
@@ -45,12 +51,12 @@ function NewLane() {
     <div>
       <div className="flex items-center gap-4 mb-8">
         <Link to="/lanes" className="text-[#555] text-sm">←</Link>
-        <h2 className="text-xl font-bold">New Lane</h2>
+        <h2 className="text-xl font-bold">New Path</h2>
       </div>
 
       <form onSubmit={submit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Lane Type</label>
+          <label className="text-sm font-semibold text-[#ccc]">Path Type</label>
           <div className="flex gap-3">
             {(["avoid", "complete"] as const).map((t) => (
               <button
@@ -70,7 +76,7 @@ function NewLane() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">What's the lane?</label>
+          <label className="text-sm font-semibold text-[#ccc]">What's the path?</label>
           <input required maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)}
             placeholder={laneType === "avoid" ? "e.g. No alcohol" : "e.g. Daily workout"} className={inputCls} />
         </div>
@@ -92,17 +98,15 @@ function NewLane() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Accountability Partner Email</label>
-          <input type="email" required value={partnerEmail} onChange={(e) => setPartnerEmail(e.target.value)}
-            placeholder="partner@email.com" className={inputCls} />
-          <p className="text-xs text-[#555]">They'll receive an invite if they're not registered. Only notified if you miss a check-in.</p>
+        <div className="p-4 rounded-md border border-[#2a2518]" style={{ background: "#161210" }}>
+          <p className="text-sm text-[#ccc] font-semibold mb-1">A Watchman comes next</p>
+          <p className="text-xs text-[#666]">After you create the path, you'll get a private link to send to your Watchman. They accept in one tap — no email forms.</p>
         </div>
 
         {err && <p className="text-red-400 text-sm">{err}</p>}
 
         <button disabled={busy} className="py-3.5 bg-white text-black rounded-md font-semibold">
-          {busy ? "Creating…" : "Create Lane"}
+          {busy ? "Creating…" : "Create Path"}
         </button>
       </form>
     </div>

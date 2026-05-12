@@ -62,6 +62,42 @@ export type Database = {
           },
         ]
       }
+      lane_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          expires_at: string
+          invite_id: string
+          lane_id: string
+          owner_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          expires_at?: string
+          invite_id?: string
+          lane_id: string
+          owner_id: string
+          status?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          expires_at?: string
+          invite_id?: string
+          lane_id?: string
+          owner_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: []
+      }
       lanes: {
         Row: {
           created_at: string
@@ -280,6 +316,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_invite_preview: {
+        Args: { _token: string }
+        Returns: {
+          expired: boolean
+          lane_title: string
+          owner_email: string
+          owner_first_name: string
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

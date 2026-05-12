@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
-import { sendPartnerInvite } from './email.server';
+
 import { sendPushToUser } from './push.server';
 import {
   triggerBreachAlert,
@@ -119,54 +119,27 @@ export const createLane = createServerFn({ method: 'POST' })
     z.object({
       title: z.string().min(1).max(80),
       description: z.string().max(300).optional().nullable(),
-      partner_email: z.string().email(),
       lane_type: z.enum(['avoid', 'complete']),
       support_scripture: z.array(z.string().max(200)).max(3).optional(),
     }),
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId, claims } = context;
-    const partnerEmail = data.partner_email.trim().toLowerCase();
-    const myEmail = ((claims as any)?.email || '').toLowerCase();
-    if (partnerEmail === myEmail) return { error: 'You cannot assign yourself as a partner.' };
+    const { supabase, userId } = context;
 
     const { count: ownLaneCount } = await supabase.from('lanes')
       .select('lane_id', { count: 'exact', head: true })
       .eq('user_id', userId).eq('status', 'active');
-    if ((ownLaneCount ?? 0) >= 10) return { error: 'You have reached the maximum of 10 active lanes.' };
-
-    const { data: partnerProfile } = await supabaseAdmin
-      .from('profiles').select('user_id').eq('email', partnerEmail).maybeSingle();
-
-    if (partnerProfile) {
-      const { count } = await supabaseAdmin.from('lanes').select('lane_id', { count: 'exact', head: true })
-        .eq('partner_id', partnerProfile.user_id).eq('status', 'active');
-      if ((count ?? 0) >= 2) return { error: 'That partner already has 2 active lanes.' };
-    } else {
-      const { count } = await supabaseAdmin.from('lanes').select('lane_id', { count: 'exact', head: true })
-        .eq('partner_email', partnerEmail).eq('status', 'active').is('partner_id', null);
-      if ((count ?? 0) >= 2) return { error: 'That partner already has 2 active lanes pending.' };
-    }
+    if ((ownLaneCount ?? 0) >= 10) return { error: 'You have reached the maximum of 10 active paths.' };
 
     const scriptures = (data.support_scripture ?? []).map((s) => s.trim()).filter(Boolean);
     const { data: lane, error } = await supabase.from('lanes').insert({
       user_id: userId,
-      partner_id: partnerProfile?.user_id ?? null,
-      partner_email: partnerEmail,
       title: data.title.trim(),
       description: data.description?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
       lane_type: data.lane_type,
     }).select('lane_id').single();
     if (error) return { error: error.message };
-
-    if (!partnerProfile) {
-      try {
-        const { data: me } = await supabase.from('profiles').select('email, first_name, last_name').eq('user_id', userId).single();
-        const fromName = me?.first_name && me?.last_name ? `${me.first_name} ${me.last_name}` : null;
-        await sendPartnerInvite({ toEmail: partnerEmail, fromEmail: me?.email ?? myEmail, fromName, laneTitle: data.title });
-      } catch (e) { console.error('[invite]', e); }
-    }
     return { id: lane!.lane_id };
   });
 
