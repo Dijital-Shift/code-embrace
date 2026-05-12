@@ -76,7 +76,7 @@ function HeroMock() {
           <MockRow title="Late-night scroll" status="silent" />
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
-          <span className="text-xs text-[#888]">1 silent lane</span>
+          <span className="text-xs text-[#888]">1 silent path</span>
           <span className="text-xs font-semibold" style={{ color: GOLD }}>Partner pinged in 2h</span>
         </div>
       </div>
