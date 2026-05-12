@@ -296,7 +296,7 @@ function FAQ() {
     },
     {
       q: "What if my partner falls too?",
-      a: "That is why the escalation chain exists. If your partner goes silent on their own lanes, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
+      a: "That is why the escalation chain exists. If your partner goes silent on their own paths, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
     },
     {
       q: "Is this for women?",
@@ -304,7 +304,7 @@ function FAQ() {
     },
     {
       q: "What does it cost partners?",
-      a: "Nothing. Partners you alert are never charged. Only those creating lanes pay. (Freely ye have received, freely give — Matthew 10:8.)",
+      a: "Nothing. Partners you alert are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
     },
     {
       q: "Why pay at all?",
