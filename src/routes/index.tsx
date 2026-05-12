@@ -166,8 +166,8 @@ function Pricing() {
       cadence: "forever",
       pitch: "Prove the loop on your own life.",
       features: ["2 paths", "1 partner", "Daily check-ins", "Breach reporting", "Partner notifications"],
-      cta: "Join the waitlist",
-      enabled: false,
+      cta: "Start free",
+      enabled: true,
       featured: false,
     },
     {
@@ -176,8 +176,8 @@ function Pricing() {
       cadence: "/ month",
       pitch: "The serious tier. Every path, every partner.",
       features: ["Up to 10 paths", "Up to 5 partners (2 paths each)", "Escalation chain", "Push notifications", "Weekly recap"],
-      cta: "Join the waitlist",
-      enabled: false,
+      cta: "Start free",
+      enabled: true,
       featured: true,
     },
     {
