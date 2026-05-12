@@ -23,6 +23,7 @@ import { Route as LanesIndexRouteImport } from './routes/lanes.index'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
 import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
@@ -98,6 +99,11 @@ const InviteTokenRoute = InviteTokenRouteImport.update({
   path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteTokenWelcomeRoute = InviteTokenWelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => InviteTokenRoute,
+} as any)
 const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
   id: '/api/push/subscribe',
   path: '/api/push/subscribe',
@@ -133,11 +139,12 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
-  '/invite/$token': typeof InviteTokenRoute
+  '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
@@ -153,11 +160,12 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
-  '/invite/$token': typeof InviteTokenRoute
+  '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/lanes': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
@@ -174,11 +182,12 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
-  '/invite/$token': typeof InviteTokenRoute
+  '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes'
     | '/api/push/subscribe'
+    | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/lanes/new'
     | '/lanes/'
     | '/api/push/subscribe'
+    | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
@@ -257,7 +269,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PartnerRoute: typeof PartnerRoute
   SettingsRoute: typeof SettingsRoute
-  InviteTokenRoute: typeof InviteTokenRoute
+  InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
@@ -367,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invite/$token/welcome': {
+      id: '/invite/$token/welcome'
+      path: '/welcome'
+      fullPath: '/invite/$token/welcome'
+      preLoaderRoute: typeof InviteTokenWelcomeRouteImport
+      parentRoute: typeof InviteTokenRoute
+    }
     '/api/push/subscribe': {
       id: '/api/push/subscribe'
       path: '/api/push/subscribe'
@@ -398,6 +417,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface InviteTokenRouteChildren {
+  InviteTokenWelcomeRoute: typeof InviteTokenWelcomeRoute
+}
+
+const InviteTokenRouteChildren: InviteTokenRouteChildren = {
+  InviteTokenWelcomeRoute: InviteTokenWelcomeRoute,
+}
+
+const InviteTokenRouteWithChildren = InviteTokenRoute._addFileChildren(
+  InviteTokenRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -409,7 +440,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PartnerRoute: PartnerRoute,
   SettingsRoute: SettingsRoute,
-  InviteTokenRoute: InviteTokenRoute,
+  InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
   LanesIndexRoute: LanesIndexRoute,
