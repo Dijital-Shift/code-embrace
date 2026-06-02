@@ -20,6 +20,7 @@ import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LanesIndexRouteImport } from './routes/lanes.index'
+import { Route as PathsLibraryRouteImport } from './routes/paths.library'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
@@ -84,6 +85,11 @@ const LanesIndexRoute = LanesIndexRouteImport.update({
   path: '/lanes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathsLibraryRoute = PathsLibraryRouteImport.update({
+  id: '/paths/library',
+  path: '/paths/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LanesNewRoute = LanesNewRouteImport.update({
   id: '/lanes/new',
   path: '/lanes/new',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
+  '/paths/library': typeof PathsLibraryRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
+  '/paths/library': typeof PathsLibraryRoute
   '/lanes': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
+  '/paths/library': typeof PathsLibraryRoute
   '/lanes/': typeof LanesIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
+    | '/paths/library'
     | '/lanes/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
+    | '/paths/library'
     | '/lanes'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
+    | '/paths/library'
     | '/lanes/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
@@ -272,6 +284,7 @@ export interface RootRouteChildren {
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
+  PathsLibraryRoute: typeof PathsLibraryRoute
   LanesIndexRoute: typeof LanesIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/lanes'
       fullPath: '/lanes/'
       preLoaderRoute: typeof LanesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/library': {
+      id: '/paths/library'
+      path: '/paths/library'
+      fullPath: '/paths/library'
+      preLoaderRoute: typeof PathsLibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lanes/new': {
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
+  PathsLibraryRoute: PathsLibraryRoute,
   LanesIndexRoute: LanesIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
@@ -452,3 +473,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
