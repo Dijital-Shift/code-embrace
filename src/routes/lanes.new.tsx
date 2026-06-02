@@ -2,19 +2,17 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { createLane, listMyLanes } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { PATH_CATEGORIES, PATH_TEMPLATES, getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 
-const searchSchema = z.object({
-  template: fallback(z.string().optional(), undefined),
-});
+type LaneNewSearch = { template?: string };
 
 export const Route = createFileRoute("/lanes/new")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>): LaneNewSearch => ({
+    template: typeof search.template === "string" ? search.template : undefined,
+  }),
   head: () => ({ meta: [{ title: "New Path — Kingdom Protocol" }] }),
   component: () => <AppLayout><NewLane /></AppLayout>,
 });
