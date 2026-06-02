@@ -17,13 +17,17 @@ function Lanes() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-3">
           <Link to="/dashboard" className="text-[#666]">←</Link>
           <h2 className="text-xl font-bold">Paths</h2>
         </div>
         <Link to="/lanes/new" className="px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-xs">+ New Path</Link>
       </div>
+      <Link to="/paths/library" className="inline-block mb-8 text-xs text-[#c9a84c] font-semibold">
+        Browse path library →
+      </Link>
+
 
       {isLoading && <p className="text-[#555]">Loading…</p>}
       {!isLoading && lanes.length === 0 && <p className="text-[#444]">No paths yet. Create your first one.</p>}
