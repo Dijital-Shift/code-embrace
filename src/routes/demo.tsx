@@ -400,15 +400,16 @@ const SCENES: Scene[] = [
     render: MockPartnerView,
   },
   {
-    id: "escalation",
+    id: "streak-divider",
     step: 6,
-    role: "watchman",
-    title: "Escalation is gentle and automatic",
-    body: "Watchman is reached by SMS, push, or email when you miss. Tier two if still silent. Admin only on a pattern. No one is panicked, no one is forgotten.",
-    why: "Why it matters: humans drop the ball. The protocol doesn't.",
-    render: MockEscalation,
+    role: "user",
+    title: "",
+    body: "",
+    render: () => null,
     divider: "Over time",
-  },
+    hidden: true,
+  } as any,
+
   {
     id: "streak",
     step: 7,
