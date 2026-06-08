@@ -1,73 +1,59 @@
-## Path Library — concrete, scripture-backed paths to pick from
+Two parts: (A) the landing-page polish you already approved, (B) three new functional additions.
 
-A curated library of ~22 paths (avoid + complete) drawn straight from scripture (KJV). Two surfaces: a dedicated `/paths/library` browse page, and a "Pick from library" tab on the existing `/lanes/new`. Library content is locked code (no DB) for v1.
+---
 
-### What the user gets
+## A. Landing page (`src/routes/index.tsx` + one `<link>` in `__root.tsx`)
 
-- A discovery page grouping paths into 6 categories
-- A "Start this path" button on each → opens `/lanes/new?template={id}` with title, description, type (avoid/complete), and up to 3 KJV verses prefilled
-- The existing custom-path flow is untouched; the library is an alternative entry point
+1. **Header** — drop the logo image; render "Kingdom Protocol" as a majestic Cinzel display wordmark in gold.
+2. **Hero mock** — swap the three generic rows for real biblical paths from `path-templates.ts`: *Meditate on Scripture* (Held), *Pray three times a day* (Held), *Fast — no fried foods, ends Fri* (No check-in).
+3. **Whom this is for** — force `grid-cols-2` at every width; "Not for the one who…" gets red border, faint red tint, red ✕ marks, and red-tinted body text so it reads as a warning.
+4. **Pricing** — three cards side-by-side at every width (`grid-cols-3`), tighter mobile padding so 414px fits cleanly.
+5. **Footer** — remove "shipping May 2026"; remove redundant small logo+text pair; place a large readable logo image (h-20) centered above the "Built by Dijital Shift · v1.0" line.
+6. **Font load** — add Cinzel `<link>` to the existing fonts block in `src/routes/__root.tsx`.
 
-### The paths (KJV citations) — updated per feedback
+---
 
-**Devotion (mind on Christ)**
-1. Meditate on scripture day and night — Joshua 1:8; Psalm 1:2
-2. **Pray three times a day** — Daniel 6:10 ("kneeled upon his knees three times a day, and prayed"); Psalm 55:17 ("Evening, and morning, and at noon, will I pray")
-3. Fast weekly — Matthew 6:16–18; Isaiah 58:6
-4. **Worship** — Hebrews 10:25; Psalm 95:6
-5. **Keep silence (be still, slow to speak)** — Psalm 46:10; Ecclesiastes 3:7; James 1:19
+## B. New scope from this message
 
-**Body (the temple)**
-6. Daily exercise / strengthen the body — Hebrews 12:12; 1 Corinthians 6:19–20
-7. Eat with self-control (no gluttony) — Proverbs 23:2; Proverbs 25:16
-8. Guard sleep (rise early, keep watch) — Mark 1:35; Proverbs 6:9–11
+### B1. Path notes (your "fried foods" example)
+Personal-but-watchman-visible note attached to a path. Surfaced everywhere the path appears.
 
-**Purity**
-9. No fornication — 1 Corinthians 6:18; 1 Corinthians 6:9–10
-10. No pornography / lustful looking — Matthew 5:28; Job 31:1
-11. Flee youthful lusts (no masturbation) — 2 Timothy 2:22; 1 Thessalonians 4:3–5
+- **DB migration** — add `notes text` (nullable, max ~500 chars) to `public.lanes`.
+- **Create path** (`src/routes/lanes.new.tsx`) — add a *Notes (optional)* textarea below title/description with helper text "Anything your watchman should know — e.g. 'no fried foods', 'ends Friday 6pm'."
+- **Path detail** (`src/routes/lanes.$id.tsx`) — render notes block under the scripture, styled like a sticky note (`border-l-2`, muted gold).
+- **Watchman view** (`src/routes/partner.tsx`) — show notes inline on each path card so the watchman sees context without asking.
+- **Demo scene 2** (`src/routes/demo.tsx`) — add the notes line to the mock so the example reads "Fast · notes: no fried foods · ends Fri 6pm."
+- **Server fn** — extend `createPath`/`updatePath` in `src/lib/api.functions.ts` to accept/persist `notes`.
 
-**Substances**
-12. No drunkenness — Ephesians 5:18; Proverbs 20:1
-13. No drugs / sorcery — Galatians 5:19–21
-14. No smoking / defiling the temple — 1 Corinthians 3:16–17
+### B2. Two watchmen per path (restore original vision)
+Current schema: one `partner_id` column = one watchman max. That's why the demo copy currently says "One watchman max." Fix:
 
-**Speech**
-15. No lying — Ephesians 4:25; Proverbs 12:22
-16. No cursing / corrupt speech — Ephesians 4:29; James 3:10
-17. No gossip / talebearing — Proverbs 11:13; Leviticus 19:16
-18. Speak life (encourage daily) — Ephesians 4:29; Proverbs 18:21
+- **DB migration** — new `public.path_watchmen` join table (`path_id`, `watchman_id` or `watchman_email` for pending invites, `status`, `created_at`). Unique on `(path_id, watchman_email)`. Enforce max 2 active rows per `path_id` via trigger. Keep existing per-watchman cap (2 active paths per person) ported to the new table.
+- **Backfill** — copy existing `lanes.partner_id` / `partner_email` rows into `path_watchmen` so nothing breaks; leave the old columns in place for one release as a safety net.
+- **Code sweep** — `lanes.new.tsx` lets you invite up to 2 watchmen; `lanes.$id.tsx` `WatchmenPanel` lists both, lets you remove either; `partner.tsx` already works per-watchman row; invite token flow unchanged (one token per row).
+- **Copy** — kill every "one watchman max" / "one watchman per path" string across `demo.tsx`, `index.tsx` FAQ, `how-it-works.tsx`. Replace with "up to two watchmen per path."
+- **Push** — when a breach fires, ping all active watchmen on that path, not just one.
 
-**Heart & action**
-19. Give / tithe / care for the poor — Proverbs 19:17; Malachi 3:10
-20. Forgive quickly (no sundown anger) — Ephesians 4:26–27, 32
-21. Serve / visit the afflicted — James 1:27; Matthew 25:40
-22. **Honor parents — tell them you love them** — Exodus 20:12; Ephesians 6:2
-23. Work as unto the Lord (no slothfulness) — Colossians 3:23; Proverbs 6:6
+### B3. Streak model — falls don't reset (Proverbs 24:16)
+You're right, zeroing the counter is demoralizing and unscriptural. New model:
 
-### Files
+- **No reset.** Track `days_held` and `days_breached` independently over the path's lifetime. A breach increments breached, never decrements held.
+- **Display** on dashboard + path detail + demo scene 11:
+  - Big number: `days_held` ("days standing")
+  - Small number beside it: `days_breached` ("days fallen")
+  - Ratio line: "12 standing · 2 fallen — still rising."
+- **Scene 11 (`MockPathComplete` / breach scene in `demo.tsx`)** — add the verse callout:
+  > *"For a just man falleth seven times, and riseth up again."* — Proverbs 24:16 (KJV)
+- **Implementation** — no schema change needed; both counts derive from existing `checkins` rows (`status='held'` vs `status='breach'`). Add a small `getPathTotals(pathId)` server fn used by dashboard, detail, and partner views.
+- **Remove** any "streak broken" / "starting over" language from `checkin.tsx` and `dashboard.tsx`.
 
-- **New** `src/lib/path-templates.ts` — typed const array of `PathTemplate`: `id`, `category`, `title`, `description`, `lane_type: "avoid" | "complete"`, `support_scripture: string[]` (each entry: verse text + citation + "(KJV)"). Single source of truth.
-- **New** `src/routes/paths.library.tsx` → `/paths/library`. Grouped by category. Each card: title, Avoid/Complete chip, 1-line description, primary verse, "Start this path" button → `/lanes/new?template={id}`.
-- **New** `src/components/PathTemplateCard.tsx` — shared card used on both surfaces.
-- **Edit** `src/routes/lanes.new.tsx` —
-  - `validateSearch` for optional `template` param
-  - Prefill `title`, `description`, `lane_type`, `support_scripture` when `?template={id}` present + banner: "Starting from library: {title} · Clear template"
-  - Tab at top: "Pick from library" | "Custom path"; library tab renders condensed list of same templates with tap-to-prefill. Default to library tab when user has zero lanes, else custom.
-- **Edit** `src/routes/lanes.index.tsx` — secondary link under "+ New Path": "Browse path library →".
-- **Edit** `src/routes/index.tsx` — one-line CTA below Pricing or in hero: "Not sure where to start? Browse the path library →" (skip if too crowded; decide during build).
+---
 
-### Technical notes
+## Order of operations
+1. Migration for `lanes.notes` + new `path_watchmen` table (one migration, awaits your approval).
+2. Landing-page edits (A1–A6) — pure presentation, ship immediately after migration approval since they don't depend on it.
+3. Server fns + UI for notes (B1).
+4. Watchman fan-out across create / detail / partner / push / copy (B2).
+5. Streak rewrite + Proverbs 24:16 callout (B3).
 
-- Pure frontend. No DB changes, no server functions, no auth changes.
-- Verse strings include "(KJV)" suffix to match site voice.
-- Search-param prefill is one-way; clearing the banner empties the form.
-- All copy stays "Path" + "Watchman" per existing convention.
-
-### Out of scope
-
-- No DB table for templates (locked in code; easy migration later)
-- No admin UI, no favorites, no completion tracking
-- No filter/search UI (categories + scroll is enough for ~23 items)
-- No translations beyond KJV
-- No changes to check-in / dashboard / escalation flows
+No Paddle work, no other route restructure, no design system overhaul in this pass.
