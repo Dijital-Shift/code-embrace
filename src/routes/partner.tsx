@@ -75,6 +75,7 @@ function Partner() {
                       <p className="text-xs text-[#ccc] whitespace-pre-wrap">{lane.notes}</p>
                     </div>
                   )}
+                  {c?.status === "breached" && c.breach_explanation && (
                     <div className="p-2.5 rounded mb-3 border border-[#3d1515]" style={{ background: "#1a0a0a" }}>
                       <p className="text-[0.7rem] text-[#f87171] font-semibold mb-1">Breach explanation</p>
                       <p className="text-xs text-[#ccc]">{c.breach_explanation}</p>
