@@ -58,7 +58,7 @@ function Hero() {
               Start free
             </Link>
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
-              Come and see
+              How it works
             </Link>
           </div>
         </div>
@@ -83,7 +83,7 @@ function HeroMock() {
         <div className="space-y-3">
           <MockRow title="Meditate on Scripture" status="held" />
           <MockRow title="Pray three times a day" status="held" />
-          <MockRow title="Fast — no fried foods · ends Fri" status="silent" />
+          <MockRow title="Fast — no fried foods" status="silent" />
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
           <span className="text-xs text-[#888]">1 silent path</span>
@@ -98,12 +98,12 @@ function MockRow({ title, status }: { title: string; status: "held" | "silent" }
   const dot = status === "held" ? "#4ade80" : "#c9a84c";
   const label = status === "held" ? "Held" : "No check-in";
   return (
-    <div className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-[#0a0800] border border-[#1a1610]">
-      <div className="flex items-center gap-3">
-        <span className="w-2 h-2 rounded-full" style={{ background: dot, boxShadow: `0 0 8px ${dot}` }} />
-        <span className="text-sm text-white">{title}</span>
+    <div className="flex items-center justify-between gap-2 py-2.5 px-3 rounded-lg bg-[#0a0800] border border-[#1a1610]">
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: dot, boxShadow: `0 0 8px ${dot}` }} />
+        <span className="text-sm text-white truncate">{title}</span>
       </div>
-      <span className="text-[0.7rem] uppercase tracking-wider" style={{ color: dot }}>{label}</span>
+      <span className="text-[0.65rem] uppercase tracking-wider whitespace-nowrap flex-shrink-0" style={{ color: dot }}>{label}</span>
     </div>
   );
 }
@@ -249,6 +249,7 @@ function WhoThisIsFor() {
     "is looking for anonymity over accountability",
     "expects software to do the work of a watchman",
     "is not ready to let another believer see the misses",
+    "would rather perish in private than be saved in public",
   ];
   return (
     <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
