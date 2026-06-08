@@ -12,7 +12,7 @@ import {
   Lock,
   Mail,
   Moon,
-  Send,
+  
   Shield,
   ShieldCheck,
   Target,
