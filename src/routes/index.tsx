@@ -98,12 +98,12 @@ function MockRow({ title, status }: { title: string; status: "held" | "silent" }
   const dot = status === "held" ? "#4ade80" : "#c9a84c";
   const label = status === "held" ? "Held" : "No check-in";
   return (
-    <div className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-[#0a0800] border border-[#1a1610]">
-      <div className="flex items-center gap-3">
-        <span className="w-2 h-2 rounded-full" style={{ background: dot, boxShadow: `0 0 8px ${dot}` }} />
-        <span className="text-sm text-white">{title}</span>
+    <div className="flex items-center justify-between gap-2 py-2.5 px-3 rounded-lg bg-[#0a0800] border border-[#1a1610]">
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: dot, boxShadow: `0 0 8px ${dot}` }} />
+        <span className="text-sm text-white truncate">{title}</span>
       </div>
-      <span className="text-[0.7rem] uppercase tracking-wider" style={{ color: dot }}>{label}</span>
+      <span className="text-[0.65rem] uppercase tracking-wider whitespace-nowrap flex-shrink-0" style={{ color: dot }}>{label}</span>
     </div>
   );
 }
