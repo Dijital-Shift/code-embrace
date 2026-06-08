@@ -84,7 +84,7 @@ export const listMyLanes = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const { data } = await supabase
       .from('lanes')
-      .select('lane_id, title, description, status, created_at, partner_email, partner_id, lane_type, support_scripture, ends_at')
+      .select('lane_id, title, description, notes, status, created_at, partner_email, partner_id, lane_type, support_scripture, ends_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
     return data ?? [];
@@ -120,6 +120,7 @@ export const createLane = createServerFn({ method: 'POST' })
     z.object({
       title: z.string().min(1).max(80),
       description: z.string().max(300).optional().nullable(),
+      notes: z.string().max(500).optional().nullable(),
       lane_type: z.enum(['avoid', 'complete']),
       support_scripture: z.array(z.string().max(200)).max(3).optional(),
       ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
@@ -138,6 +139,7 @@ export const createLane = createServerFn({ method: 'POST' })
       user_id: userId,
       title: data.title.trim(),
       description: data.description?.trim() || null,
+      notes: data.notes?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
       lane_type: data.lane_type,
       ends_at: data.ends_at || null,
@@ -154,6 +156,7 @@ export const updateLane = createServerFn({ method: 'POST' })
       id: z.string().uuid(),
       title: z.string().min(1).max(80),
       description: z.string().max(300).optional().nullable(),
+      notes: z.string().max(500).optional().nullable(),
       support_scripture: z.array(z.string().max(200)).max(3).optional(),
       ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     }),
@@ -164,6 +167,7 @@ export const updateLane = createServerFn({ method: 'POST' })
     const { error } = await supabase.from('lanes').update({
       title: data.title.trim(),
       description: data.description?.trim() || null,
+      notes: data.notes?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
       ends_at: data.ends_at || null,
     }).eq('lane_id', data.id).eq('user_id', userId);
@@ -328,7 +332,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const today = todayStr();
     const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, description, status, created_at, user_id')
+      .select('lane_id, title, description, notes, status, created_at, user_id')
       .eq('partner_id', userId).order('status').order('created_at', { ascending: false });
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
     const ownerEmails = new Map<string, { email: string; phone: string | null }>();
