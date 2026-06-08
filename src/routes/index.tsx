@@ -58,7 +58,7 @@ function Hero() {
               Start free
             </Link>
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
-              Come and see
+              How it works
             </Link>
           </div>
         </div>
