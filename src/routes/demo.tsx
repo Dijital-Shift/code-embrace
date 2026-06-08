@@ -118,6 +118,10 @@ function MockOnboard() {
         <div className="text-[10px] uppercase tracking-wider text-[#666]">Path</div>
         <div className="text-sm text-white">Fast</div>
       </div>
+      <div className="rounded-md border border-[#c9a84c]/40 bg-[#1a1408] px-3 py-2">
+        <div className="text-[10px] uppercase tracking-wider text-[#c9a84c]">Notes — your watchman sees this</div>
+        <div className="text-[11px] text-white mt-0.5">No fried foods. Liquids only after 6pm.</div>
+      </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
         <div className="text-[10px] uppercase tracking-wider text-[#666]">Support scripture</div>
         <div className="text-[11px] italic text-[#c9a84c] mt-0.5">"When thou fastest, anoint thine head…" — Matt. 6:17</div>
@@ -137,17 +141,20 @@ function MockInviteWatchman() {
       <div className="flex items-center gap-2">
         <Users className="h-4 w-4 text-[#c9a84c]" />
         <div className="text-sm font-semibold text-white">Watchmen</div>
-        <span className="ml-auto text-[10px] text-[#666]">0/1</span>
+        <span className="ml-auto text-[10px] text-[#666]">1/2</span>
+      </div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
+        <div className="text-[11px] text-white">marcus@example.com</div>
+        <div className="text-[10px] text-[#4ade80]">Active · accepted yesterday</div>
       </div>
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3">
-        <div className="text-[11px] text-[#c9a84c] mb-2">Invite pending · expires in 47h</div>
+        <div className="text-[11px] text-[#c9a84c] mb-2">Second invite pending · expires in 47h</div>
         <div className="flex items-center gap-2">
           <input readOnly value="kingdom-protocol.app/invite/x9k…" className="flex-1 truncate rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[10px] text-[#888] outline-none" />
           <button className="rounded bg-[#c9a84c] px-2 py-1.5 text-[10px] font-bold text-black">Copy</button>
         </div>
       </div>
-      <div className="text-[11px] text-[#4ade80]">Link copied. Send it to your watchman by text or DM.</div>
-      <div className="text-[10px] leading-relaxed text-[#555]">One watchman per path. Links expire in 48 hours.</div>
+      <div className="text-[10px] leading-relaxed text-[#555]">Up to two watchmen per path. In the mouth of two witnesses (Matt. 18:16). Links expire in 48 hours.</div>
     </div>
   );
 }
@@ -342,14 +349,37 @@ function MockStreak() {
   return (
     <div className="space-y-3 text-center">
       <Target className="mx-auto h-8 w-8 text-[#c9a84c]" />
-      <div className="text-3xl font-extrabold text-white">28 days</div>
-      <div className="text-[11px] uppercase tracking-wider text-[#888]">Aligned · No lustful looking</div>
-      <div className="mx-auto grid max-w-[260px] grid-cols-7 gap-1">
-        {Array.from({ length: 28 }).map((_, i) => (
-          <div key={i} className="h-3 w-3 rounded-sm bg-[#c9a84c]/70" />
-        ))}
+      <div className="flex items-baseline justify-center gap-3">
+        <div>
+          <div className="text-3xl font-extrabold text-white">26</div>
+          <div className="text-[9px] uppercase tracking-wider text-[#4ade80]">Standing</div>
+        </div>
+        <div className="text-[#444] text-xl">·</div>
+        <div>
+          <div className="text-2xl font-bold text-[#f87171]">2</div>
+          <div className="text-[9px] uppercase tracking-wider text-[#f87171]">Fallen</div>
+        </div>
       </div>
-      <div className="text-[11px] italic text-[#888]">"Iron sharpens iron." — Prov 27:17</div>
+      <div className="text-[11px] uppercase tracking-wider text-[#888]">Fast · no fried foods</div>
+      <div className="text-[10px] text-[#aa9560]">26 standing · 2 fallen — still rising.</div>
+      <div className="mx-auto grid max-w-[260px] grid-cols-7 gap-1">
+        {Array.from({ length: 28 }).map((_, i) => {
+          const fell = i === 6 || i === 18;
+          return (
+            <div
+              key={i}
+              className="h-3 w-3 rounded-sm"
+              style={{ background: fell ? "rgba(248,113,113,0.6)" : "rgba(201,168,76,0.7)" }}
+            />
+          );
+        })}
+      </div>
+      <div className="rounded-md border border-[#c9a84c]/30 bg-[#1a1408] p-2.5 text-left">
+        <p className="text-[11px] italic text-[#c9a84c] leading-snug">
+          "For a just man falleth seven times, and riseth up again."
+        </p>
+        <p className="text-[9px] uppercase tracking-wider text-[#aa9560] mt-1">Proverbs 24:16 · KJV</p>
+      </div>
     </div>
   );
 }
@@ -404,9 +434,9 @@ const SCENES: Scene[] = [
     id: "invite",
     step: 3,
     role: "user",
-    title: "Generate a watchman invite",
-    body: "One invite link per path. Copy it, send by text or DM. No email forms, no group chats. One watchman max per path.",
-    why: "Why it matters: friction kills accountability. A one-tap link gets the watchman in tonight, not next week.",
+    title: "Invite up to two watchmen",
+    body: "One private invite link per watchman. Copy it, send by text or DM — no email forms, no group chats. Up to two watchmen per path, because in the mouth of two witnesses every word is established (Matt. 18:16).",
+    why: "Why it matters: one voice can be ignored. Two who love you can't.",
     render: MockInviteWatchman,
     divider: "Your watchman",
   },
@@ -479,9 +509,9 @@ const SCENES: Scene[] = [
     id: "streak",
     step: 11,
     role: "user",
-    title: "Streaks you actually earned",
-    body: "Days aligned stack visibly. Breaches don't reset you — they get logged honestly. The number is yours, not a gamified lie.",
-    why: "Why it matters: a true streak is fuel. A fake streak is shame waiting to happen.",
+    title: "Days standing, days fallen — both counted honestly",
+    body: "A breach doesn't reset you to zero. Days held stack visibly. Days fallen are logged honestly beside them. The just man falleth seven times and riseth up again — the number reminds you you're still rising.",
+    why: "Why it matters: a fake reset breeds shame. An honest ledger breeds repentance and resolve.",
     render: MockStreak,
   },
   {
