@@ -163,7 +163,7 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
   return (
     <div className="h-full rounded-2xl border border-[#1f1b12] bg-[#0f0c05] p-4 sm:p-6 relative overflow-hidden flex flex-col items-center text-center">
       <span className="absolute top-2 right-2 text-2xl sm:text-5xl font-extrabold opacity-15" style={{ color }}>{n}</span>
-      <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-2 sm:mb-3" style={{ color }}>Threshold {n}</p>
+      
       <h3 className="text-sm sm:text-xl font-bold text-white mb-1.5 sm:mb-2 leading-tight">{title}</h3>
       <p className="text-xs sm:text-sm text-[#a8a39a] leading-relaxed">{body}</p>
     </div>
