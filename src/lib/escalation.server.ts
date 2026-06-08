@@ -1,6 +1,7 @@
 import { sendPushToUser } from './push.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
+// Watchman is pinged immediately on a self-reported breach.
 export async function triggerBreachAlert(args: {
   checkinId: string; laneId: string; laneTitle: string; partnerId: string; userId: string;
 }) {
@@ -18,18 +19,36 @@ export async function triggerBreachAlert(args: {
   }
 }
 
-export async function notifyUserMissed(args: { laneTitle: string; userId: string; checkinId?: string; laneId?: string }) {
+// Sabbath skip — quiet notice to the watchman.
+export async function notifyPartnerSkip(args: { laneTitle: string; partnerId: string; userId: string }) {
+  const { data: u } = await supabaseAdmin.from('profiles').select('email').eq('user_id', args.userId).single();
+  await sendPushToUser(args.partnerId, {
+    title: `Sabbath — ${args.laneTitle}`,
+    body: `${u?.email ?? 'Your partner'} is observing the Sabbath. No check-in today.`,
+    url: '/partner',
+  });
+}
+
+// User missed today's check-in → nudge the user (not the watchman).
+export async function notifyUserMissed(args: { laneTitle: string; userId: string }) {
   await sendPushToUser(args.userId, {
     title: `Missed check-in — ${args.laneTitle}`,
-    body: "You didn't check in today. Submit before morning or your partner will be notified.",
+    body: "You didn't check in today. Submit before the day closes.",
     url: '/checkin',
   });
 }
 
+// Marks today's missing check-ins as `missed` and nudges the user.
+// Past `ends_at` lanes are auto-archived (path complete) and skipped.
 export async function markMissedCheckins() {
   const today = new Date().toISOString().split('T')[0];
+
+  // Auto-archive any active lanes whose end date has passed.
+  await supabaseAdmin.from('lanes').update({ status: 'archived' })
+    .eq('status', 'active').not('ends_at', 'is', null).lt('ends_at', today);
+
   const { data: activeLanes } = await supabaseAdmin.from('lanes')
-    .select('lane_id, partner_id, title, user_id').eq('status', 'active').eq('escalation_enabled', true);
+    .select('lane_id, partner_id, title, user_id').eq('status', 'active');
   if (!activeLanes?.length) return { processed: 0 };
   const { data: todayCheckins } = await supabaseAdmin.from('checkins').select('lane_id').eq('checkin_date', today);
   const checkedIds = new Set((todayCheckins ?? []).map((c: any) => c.lane_id));
@@ -38,29 +57,9 @@ export async function markMissedCheckins() {
     const { data: ci } = await supabaseAdmin.from('checkins').insert({
       lane_id: lane.lane_id, user_id: lane.user_id, checkin_date: today, status: 'missed',
     }).select('checkin_id').single();
-    if (ci) await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id, checkinId: ci.checkin_id, laneId: lane.lane_id });
+    if (ci) await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id });
   }
   return { processed: missed.length };
-}
-
-export async function escalateMissedToPartners() {
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-  const yStr = yesterday.toISOString().split('T')[0];
-  const { data: unresolved } = await supabaseAdmin.from('checkins')
-    .select('checkin_id, lane_id, user_id').eq('checkin_date', yStr).eq('status', 'missed');
-  if (!unresolved?.length) return { processed: 0 };
-  const laneIds = unresolved.map((c: any) => c.lane_id);
-  const { data: lanes } = await supabaseAdmin.from('lanes')
-    .select('lane_id, partner_id, title').in('lane_id', laneIds).eq('escalation_enabled', true);
-  const laneMap = new Map((lanes ?? []).map((l: any) => [l.lane_id, l]));
-  let processed = 0;
-  for (const ci of unresolved) {
-    const lane: any = laneMap.get(ci.lane_id);
-    if (!lane || !lane.partner_id) continue;
-    await notifyPartnerMissed({ checkinId: ci.checkin_id, laneId: lane.lane_id, laneTitle: lane.title, partnerId: lane.partner_id, userId: ci.user_id });
-    processed++;
-  }
-  return { processed };
 }
 
 export async function sendBedtimeReminders() {
@@ -80,36 +79,10 @@ export async function sendBedtimeReminders() {
     const pending = lanes.filter((l: any) => !checked.has(l.lane_id)).length;
     if (pending > 0) {
       await sendPushToUser(p.user_id, {
-        title: 'Check-in reminder', body: `${pending} lane${pending !== 1 ? 's' : ''} pending before bed.`, url: '/checkin',
+        title: 'Check-in reminder', body: `${pending} path${pending !== 1 ? 's' : ''} pending before bed.`, url: '/checkin',
       });
       sent++;
     }
   }
   return { sent };
-}
-
-export async function notifyPartnerSkip(args: { laneTitle: string; partnerId: string; userId: string }) {
-  const { data: u } = await supabaseAdmin.from('profiles').select('email').eq('user_id', args.userId).single();
-  await sendPushToUser(args.partnerId, {
-    title: `Sabbath — ${args.laneTitle}`,
-    body: `${u?.email ?? 'Your partner'} is observing the Sabbath. No check-in today.`,
-    url: '/partner',
-  });
-}
-
-export async function notifyPartnerMissed(args: {
-  checkinId: string; laneId: string; laneTitle: string; partnerId: string; userId: string;
-}) {
-  const { data: u } = await supabaseAdmin.from('profiles').select('email, phone').eq('user_id', args.userId).single();
-  const body = u?.phone ? `${u.email} missed their check-in. Phone: ${u.phone}` : `${u?.email} missed their check-in and didn't respond overnight.`;
-  const { data: notif } = await supabaseAdmin.from('notifications').insert({
-    lane_id: args.laneId, partner_id: args.partnerId, checkin_id: args.checkinId,
-    type: 'missed_checkin', status: 'pending', message_content: body,
-  }).select('notification_id').single();
-  const sent = await sendPushToUser(args.partnerId, { title: `Missed — ${args.laneTitle}`, body, url: '/partner' });
-  if (notif) {
-    await supabaseAdmin.from('notifications').update({
-      status: sent ? 'sent' : 'failed', sent_at: sent ? new Date().toISOString() : null,
-    }).eq('notification_id', notif.notification_id);
-  }
 }

@@ -42,8 +42,10 @@ function NewLane() {
   const [s1, setS1] = useState(tpl?.support_scripture[0] ?? "");
   const [s2, setS2] = useState(tpl?.support_scripture[1] ?? "");
   const [s3, setS3] = useState(tpl?.support_scripture[2] ?? "");
+  const [endsAt, setEndsAt] = useState<string>("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
 
   // When the template search param changes, re-prefill the form.
   useEffect(() => {
@@ -61,7 +63,9 @@ function NewLane() {
     setTitle("");
     setDescription("");
     setS1(""); setS2(""); setS3("");
+    setEndsAt("");
   }
+
 
   function pickTemplate(id: string) {
     navigate({ to: "/lanes/new", search: { template: id } });
@@ -79,8 +83,10 @@ function NewLane() {
         description: description.trim() || null,
         lane_type: laneType,
         support_scripture: support,
+        ends_at: endsAt || null,
       },
     });
+
     setBusy(false);
     if ("error" in result && result.error) {
       setErr(result.error);
@@ -201,6 +207,19 @@ function NewLane() {
               <input key={i} value={x.v} onChange={(e) => x.set(e.target.value)} placeholder={x.p} maxLength={200} className={inputCls + " mb-1"} />
             ))}
           </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#ccc]">Ends on <span className="text-[#444]">(optional)</span></label>
+            <input
+              type="date"
+              value={endsAt}
+              min={new Date().toISOString().split("T")[0]}
+              onChange={(e) => setEndsAt(e.target.value)}
+              className={inputCls}
+            />
+            <p className="text-[0.7rem] text-[#555]">Leave empty for ongoing. Set a date for a fast or any path with a finish line.</p>
+          </div>
+
 
           <div className="p-4 rounded-md border border-[#2a2518]" style={{ background: "#161210" }}>
             <p className="text-sm text-[#ccc] font-semibold mb-1">A Watchman comes next</p>

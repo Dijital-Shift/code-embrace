@@ -12,7 +12,7 @@ import {
   Lock,
   Mail,
   Moon,
-  Send,
+  
   Shield,
   ShieldCheck,
   Target,
@@ -220,33 +220,8 @@ function MockPartnerView() {
   );
 }
 
-function MockEscalation() {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Send className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Outbound to watchman</div>
-      </div>
-      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3 text-xs text-[#ddd]">
-        <div className="text-[10px] uppercase tracking-wider text-[#666]">SMS · push · email</div>
-        <div className="mt-2">
-          David missed his 10:30 check-in tonight. He had a 12-day clean streak going. Reach out gently.
-        </div>
-        <div className="mt-2 text-[10px] text-[#666]">Sent 10:45 PM · escalation tier 1</div>
-      </div>
-      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3 text-[11px] text-[#888]">
-        <div className="flex items-center justify-between">
-          <span>Tier 2 if still silent at</span>
-          <span className="text-white">11:30 PM</span>
-        </div>
-        <div className="mt-1 flex items-center justify-between">
-          <span>Admin alert if 3 misses / 7 days</span>
-          <span className="text-white">on</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+
+
 
 function MockStreak() {
   return (
@@ -400,42 +375,36 @@ const SCENES: Scene[] = [
     render: MockPartnerView,
   },
   {
-    id: "escalation",
-    step: 6,
-    role: "watchman",
-    title: "Escalation is gentle and automatic",
-    body: "Watchman is reached by SMS, push, or email when you miss. Tier two if still silent. Admin only on a pattern. No one is panicked, no one is forgotten.",
-    why: "Why it matters: humans drop the ball. The protocol doesn't.",
-    render: MockEscalation,
-    divider: "Over time",
-  },
-  {
     id: "streak",
-    step: 7,
+    step: 6,
     role: "user",
     title: "Streaks you actually earn",
     body: "Days clean stack visibly. Stumbles don't reset you — they get logged honestly. The number is yours, not a gamified lie.",
     why: "Why it matters: a true streak is fuel. A fake streak is shame waiting to happen.",
     render: MockStreak,
+    divider: "Over time",
   },
+
   {
     id: "oversight",
-    step: 8,
+    step: 7,
     role: "admin",
     title: "Admin sees the cohort, not the confession",
     body: "Pastor, men's group lead, or program admin sees who is active, check-in rate, and who is at risk. Never note contents. Never the words.",
     why: "Why it matters: leaders need signal to shepherd, not surveillance to judge. The platform draws that line for them.",
     render: MockAdminOversight,
   },
+
   {
     id: "privacy",
-    step: 9,
+    step: 8,
     role: "admin",
     title: "Who sees what — stated, not buried",
     body: "Three roles. Three permission tiers. Written on the wall of the app, not in a 14-page policy.",
     why: "Why it matters: trust is the whole product. If the privacy model isn't obvious, no one tells the truth.",
     render: MockPrivacy,
   },
+
 ];
 
 /* ---------------- Page ---------------- */

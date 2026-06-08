@@ -84,10 +84,11 @@ export const listMyLanes = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const { data } = await supabase
       .from('lanes')
-      .select('lane_id, title, description, status, created_at, partner_email, partner_id, lane_type, support_scripture')
+      .select('lane_id, title, description, status, created_at, partner_email, partner_id, lane_type, support_scripture, ends_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
     return data ?? [];
+
   });
 
 export const getLane = createServerFn({ method: 'GET' })
@@ -121,6 +122,7 @@ export const createLane = createServerFn({ method: 'POST' })
       description: z.string().max(300).optional().nullable(),
       lane_type: z.enum(['avoid', 'complete']),
       support_scripture: z.array(z.string().max(200)).max(3).optional(),
+      ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     }),
   )
   .handler(async ({ data, context }) => {
@@ -138,10 +140,12 @@ export const createLane = createServerFn({ method: 'POST' })
       description: data.description?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
       lane_type: data.lane_type,
+      ends_at: data.ends_at || null,
     }).select('lane_id').single();
     if (error) return { error: error.message };
     return { id: lane!.lane_id };
   });
+
 
 export const updateLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -151,6 +155,7 @@ export const updateLane = createServerFn({ method: 'POST' })
       title: z.string().min(1).max(80),
       description: z.string().max(300).optional().nullable(),
       support_scripture: z.array(z.string().max(200)).max(3).optional(),
+      ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     }),
   )
   .handler(async ({ data, context }) => {
@@ -160,10 +165,12 @@ export const updateLane = createServerFn({ method: 'POST' })
       title: data.title.trim(),
       description: data.description?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
+      ends_at: data.ends_at || null,
     }).eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
     return { success: true };
   });
+
 
 export const updateLaneStatus = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])

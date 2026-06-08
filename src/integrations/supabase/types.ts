@@ -102,7 +102,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          escalation_enabled: boolean
+          ends_at: string | null
           lane_id: string
           lane_type: string
           partner_email: string | null
@@ -115,7 +115,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          escalation_enabled?: boolean
+          ends_at?: string | null
           lane_id?: string
           lane_type?: string
           partner_email?: string | null
@@ -128,7 +128,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          escalation_enabled?: boolean
+          ends_at?: string | null
           lane_id?: string
           lane_type?: string
           partner_email?: string | null
