@@ -48,14 +48,14 @@ function Hero() {
               Start free
             </Link>
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
-              See it move
+              Come and see
             </Link>
           </div>
-          <p className="mt-5 text-xs text-[#555] tracking-wider">Early access · free while we pair the first cohort</p>
         </div>
         <div className="min-w-0">
           <HeroMock />
         </div>
+
       </div>
     </section>
   );
@@ -129,10 +129,11 @@ function SilenceRule() {
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Two thresholds. The quieter you get, the louder it becomes.</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
           <Threshold n="02" title="Stay silent or report a breach" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet — or that you fell." tone="warn" />
         </div>
+
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
           <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why two thresholds</p>
           <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
@@ -149,14 +150,15 @@ function SilenceRule() {
 function Threshold({ n, title, body, tone }: { n: string; title: string; body: string; tone: "muted" | "warn" | "alert" }) {
   const color = tone === "muted" ? "#666" : tone === "warn" ? GOLD : "#e8804a";
   return (
-    <div className="rounded-2xl border border-[#1f1b12] bg-[#0f0c05] p-6 relative overflow-hidden">
-      <span className="absolute top-4 right-5 text-5xl font-extrabold opacity-15" style={{ color }}>{n}</span>
-      <p className="text-[0.65rem] tracking-[0.2em] uppercase font-semibold mb-3" style={{ color }}>Threshold {n}</p>
-      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-sm text-[#a8a39a] leading-relaxed">{body}</p>
+    <div className="rounded-2xl border border-[#1f1b12] bg-[#0f0c05] p-4 sm:p-6 relative overflow-hidden">
+      <span className="absolute top-3 right-3 text-3xl sm:text-5xl font-extrabold opacity-15" style={{ color }}>{n}</span>
+      <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-2 sm:mb-3" style={{ color }}>Threshold {n}</p>
+      <h3 className="text-base sm:text-xl font-bold text-white mb-1.5 sm:mb-2 leading-tight">{title}</h3>
+      <p className="text-xs sm:text-sm text-[#a8a39a] leading-relaxed">{body}</p>
     </div>
   );
 }
+
 
 function Pricing() {
   return (
@@ -351,13 +353,14 @@ function ClosingCall() {
             Start free
           </Link>
           <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
-            See it move
+            Come and see
           </Link>
         </div>
       </div>
     </section>
   );
 }
+
 
 function Footer() {
   return (
@@ -381,11 +384,12 @@ function Landing() {
       <Hero />
       <ProblemTension />
       <SilenceRule />
-      <Pricing />
       <WhoThisIsFor />
+      <Pricing />
       <FAQ />
       <ClosingCall />
       <Footer />
     </main>
   );
 }
+

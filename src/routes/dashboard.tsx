@@ -33,7 +33,7 @@ function Dashboard() {
         <div className="p-5 rounded-xl border border-[#c9a84c33]" style={{ background: "linear-gradient(135deg, #0f0d00 0%, #0a0800 100%)" }}>
           <div className="flex justify-between items-center">
             <div>
-              <p className="font-semibold mb-1">{pendingCount} lane{pendingCount > 1 ? "s" : ""} need attention</p>
+              <p className="font-semibold mb-1">{pendingCount} path{pendingCount > 1 ? "s" : ""} need attention</p>
               <p className="text-[#888] text-sm">Check in before your bedtime window closes.</p>
             </div>
             <Link to="/checkin" className="px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-sm">Check In</Link>
@@ -42,20 +42,21 @@ function Dashboard() {
       ) : lanes.length > 0 ? (
         <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-[#4ade80] font-semibold">All clear.</p>
-          <p className="text-[#555] text-xs">Every lane checked in. Stay aligned.</p>
+          <p className="text-[#555] text-xs">Every path checked in. Stay aligned.</p>
         </div>
       ) : (
         <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
-          <p className="text-[#888] text-sm mb-4">No active lanes yet.</p>
-          <Link to="/lanes/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first lane</Link>
+          <p className="text-[#888] text-sm mb-4">No active paths yet.</p>
+          <Link to="/lanes/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
         </div>
       )}
 
       <div className="mt-8">
         <div className="flex justify-between items-center mb-3">
-          <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Active Lanes</p>
+          <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Active Paths</p>
           <Link to="/lanes/new" className="text-xs text-[#c9a84c] font-semibold">+ New</Link>
         </div>
+
         {lanes.length === 0 ? (
           <p className="text-[#333] text-sm">None yet.</p>
         ) : (

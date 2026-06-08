@@ -90,7 +90,8 @@ function Settings() {
 
       {archived.length > 0 && (
         <div className="mt-12">
-          <p className="text-[0.7rem] text-[#555] uppercase tracking-wider font-semibold mb-2">Archived Lanes</p>
+          <p className="text-[0.7rem] text-[#555] uppercase tracking-wider font-semibold mb-2">Archived Paths</p>
+
           <div className="flex flex-col gap-1.5">
             {archived.map((l) => (
               <div key={l.lane_id} className="flex justify-between items-center px-3 py-2 rounded border border-[#141414]" style={{ background: "#0a0a0a" }}>
