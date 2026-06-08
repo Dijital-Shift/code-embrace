@@ -134,7 +134,7 @@ function SilenceRule() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Two thresholds. The quieter you get, the louder it becomes.</p>
@@ -254,7 +254,7 @@ function WhoThisIsFor() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Discernment</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Whom this is for.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">"Be ye not unequally yoked." Choose honestly before you build.</p>
@@ -322,7 +322,7 @@ function FAQ() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Plain answers</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Questions, answered plainly.</h2>
         </div>
@@ -378,7 +378,7 @@ function ClosingCall() {
 
 function Footer() {
   return (
-    <footer className="px-5 sm:px-8 py-14 border-t border-[#1a1610] mt-10">
+    <footer className="px-5 sm:px-8 py-12 border-t border-[#2a2418] mt-4">
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
         <img
           src="/kingdom-protocol-logo.png"
