@@ -261,7 +261,7 @@ function WhoThisIsFor() {
         </div>
         <div className="grid grid-cols-2 gap-2 sm:gap-5">
           <div className="rounded-xl sm:rounded-2xl border border-[#c9a84c]/40 bg-[#100d05] p-3 sm:p-7">
-            <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-3 sm:mb-4" style={{ color: GOLD }}>For the one who…</p>
+            <p className="text-center text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-3 sm:mb-4" style={{ color: GOLD }}>For the one who…</p>
             <ul className="space-y-2 sm:space-y-3">
               {forItems.map((t) => (
                 <li key={t} className="flex items-start gap-1.5 sm:gap-3 text-[0.72rem] sm:text-sm text-[#c9c4ba] leading-relaxed">
