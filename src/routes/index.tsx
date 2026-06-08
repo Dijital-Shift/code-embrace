@@ -161,8 +161,8 @@ function SilenceRule() {
 function Threshold({ n, title, body, tone }: { n: string; title: string; body: string; tone: "muted" | "warn" | "alert" }) {
   const color = tone === "muted" ? "#666" : tone === "warn" ? GOLD : "#e8804a";
   return (
-    <div className="h-full rounded-2xl border border-[#1f1b12] bg-[#0f0c05] p-4 sm:p-6 relative overflow-hidden flex flex-col items-center text-center">
-      <span className="absolute top-2 right-2 text-2xl sm:text-5xl font-extrabold opacity-15" style={{ color }}>{n}</span>
+    <div className="h-full rounded-2xl border border-[#1f1b12] bg-[#0f0c05] px-4 pt-10 pb-4 sm:px-6 sm:pt-14 sm:pb-6 relative overflow-hidden flex flex-col items-center text-center">
+      <span className="absolute top-2 right-3 text-2xl sm:text-5xl font-extrabold opacity-25" style={{ color }}>{n}</span>
       
       <h3 className="text-sm sm:text-xl font-bold text-white mb-1.5 sm:mb-2 leading-tight">{title}</h3>
       <p className="text-xs sm:text-sm text-[#a8a39a] leading-relaxed">{body}</p>
