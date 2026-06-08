@@ -40,16 +40,17 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     ],
   },
   {
-    id: "fast-weekly",
+    id: "fast",
     category: "Devotion",
-    title: "Fast weekly",
-    description: "Set a weekly fast — in secret, not to be seen of men.",
+    title: "Fast",
+    description: "Set a fast unto the Lord — in secret, not to be seen of men. Note the type of fast and set an end date.",
     lane_type: "complete",
     support_scripture: [
       "When thou fastest, anoint thine head, and wash thy face; that thou appear not unto men to fast. — Matthew 6:17-18 (KJV)",
       "Is not this the fast that I have chosen? to loose the bands of wickedness… — Isaiah 58:6 (KJV)",
     ],
   },
+
   {
     id: "worship",
     category: "Devotion",
