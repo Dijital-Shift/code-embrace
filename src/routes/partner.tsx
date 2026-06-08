@@ -69,7 +69,12 @@ function Partner() {
                       <p className="text-xs font-semibold" style={{ color: todayCol }}>{todayLabel}</p>
                     </div>
                   </div>
-                  {c?.status === "breached" && c.breach_explanation && (
+                  {lane.notes && (
+                    <div className="mb-3 pl-2.5 border-l-2 border-[#c9a84c]/50">
+                      <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-0.5">Notes from them</p>
+                      <p className="text-xs text-[#ccc] whitespace-pre-wrap">{lane.notes}</p>
+                    </div>
+                  )}
                     <div className="p-2.5 rounded mb-3 border border-[#3d1515]" style={{ background: "#1a0a0a" }}>
                       <p className="text-[0.7rem] text-[#f87171] font-semibold mb-1">Breach explanation</p>
                       <p className="text-xs text-[#ccc]">{c.breach_explanation}</p>

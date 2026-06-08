@@ -39,6 +39,7 @@ function NewLane() {
   const [laneType, setLaneType] = useState<"avoid" | "complete">(tpl?.lane_type ?? "avoid");
   const [title, setTitle] = useState(tpl?.title ?? "");
   const [description, setDescription] = useState(tpl?.description ?? "");
+  const [notes, setNotes] = useState("");
   const [s1, setS1] = useState(tpl?.support_scripture[0] ?? "");
   const [s2, setS2] = useState(tpl?.support_scripture[1] ?? "");
   const [s3, setS3] = useState(tpl?.support_scripture[2] ?? "");
@@ -62,6 +63,7 @@ function NewLane() {
     navigate({ to: "/lanes/new", search: {} });
     setTitle("");
     setDescription("");
+    setNotes("");
     setS1(""); setS2(""); setS3("");
     setEndsAt("");
   }
@@ -81,6 +83,7 @@ function NewLane() {
       data: {
         title: title.trim(),
         description: description.trim() || null,
+        notes: notes.trim() || null,
         lane_type: laneType,
         support_scripture: support,
         ends_at: endsAt || null,
@@ -198,6 +201,21 @@ function NewLane() {
           </div>
 
           <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#ccc]">
+              Notes <span className="text-[#444]">(optional — your watchman will see these)</span>
+            </label>
+            <textarea
+              maxLength={500}
+              rows={2}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. 'No fried foods', 'Ends Friday 6pm', 'Liquids only'"
+              className={inputCls + " resize-none"}
+            />
+            <p className="text-[0.7rem] text-[#555]">Honest context helps your watchman walk this with you, not guess at it.</p>
+          </div>
+
+          <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ccc]">Support Scripture <span className="text-[#444]">(optional — up to 3)</span></label>
             {[
               { v: s1, set: setS1, p: "e.g. Prov. 27:17" },
@@ -222,8 +240,8 @@ function NewLane() {
 
 
           <div className="p-4 rounded-md border border-[#2a2518]" style={{ background: "#161210" }}>
-            <p className="text-sm text-[#ccc] font-semibold mb-1">A Watchman comes next</p>
-            <p className="text-xs text-[#666]">After you create the path, you'll get a private link to send to your Watchman. They accept in one tap — no email forms.</p>
+            <p className="text-sm text-[#ccc] font-semibold mb-1">Watchmen come next</p>
+            <p className="text-xs text-[#666]">After you create the path, you can invite up to two watchmen — private links, accepted in one tap.</p>
           </div>
 
           {err && <p className="text-red-400 text-sm">{err}</p>}

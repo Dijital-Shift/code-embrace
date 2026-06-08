@@ -31,10 +31,10 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     if (!lane) return { error: 'Path not found.' };
     if (lane.status === 'archived') return { error: 'Cannot invite Watchmen to an archived path.' };
 
-    // Hard cap: 2 Watchmen per path (counting current partner + pending invites)
-    if (lane.partner_id) {
-      return { error: 'CAP_REACHED', code: 'CAP_REACHED' as const };
-    }
+    // Hard cap: 2 active Watchmen per path (current attached + pending invites).
+    // NOTE: live multi-attach uses the legacy partner_id column today; the new
+    // path_watchmen join table will replace this read path in a follow-up.
+    const attached = lane.partner_id ? 1 : 0;
 
     const { count: pendingCount } = await supabase
       .from('lane_invites')
@@ -43,8 +43,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
       .eq('status', 'pending')
       .gt('expires_at', new Date().toISOString());
 
-    // For now path has 1 Watchman slot; if owner already has 2 pending invites block
-    if ((pendingCount ?? 0) >= 2) {
+    if (attached + (pendingCount ?? 0) >= 2) {
       return { error: 'CAP_REACHED', code: 'CAP_REACHED' as const };
     }
 

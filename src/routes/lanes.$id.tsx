@@ -71,6 +71,12 @@ function LaneDetail() {
         {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
           <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
         ))}
+        {lane.notes && (
+          <div className="mt-3 pl-3 border-l-2 border-[#c9a84c]/60">
+            <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
+            <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
+          </div>
+        )}
         <p className="text-xs text-[#666] mt-2">
           Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span>
           {lane.ends_at && (
@@ -192,13 +198,13 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
   }
 
   const slotCount = (hasWatchman ? 1 : 0) + activePending.length;
-  const atCap = slotCount >= 1;
+  const atCap = slotCount >= 2;
 
   return (
     <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
       <div className="flex items-center justify-between mb-3">
         <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Watchmen</p>
-        <span className="text-xs text-[#666]">{slotCount}/1</span>
+        <span className="text-xs text-[#666]">{slotCount}/2</span>
       </div>
 
       {hasWatchman && (
@@ -229,20 +235,18 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
         );
       })}
 
-      {!hasWatchman && (
-        <button
-          onClick={generate}
-          disabled={busy || atCap}
-          className="w-full py-3 rounded-md text-sm font-semibold"
-          style={{
-            background: atCap ? "#2a2518" : "#c9a84c",
-            color: atCap ? "#666" : "#000",
-            cursor: atCap ? "not-allowed" : "pointer",
-          }}
-        >
-          {busy ? "Generating…" : atCap ? "Invite pending" : "+ Invite Watchman"}
-        </button>
-      )}
+      <button
+        onClick={generate}
+        disabled={busy || atCap}
+        className="w-full py-3 rounded-md text-sm font-semibold"
+        style={{
+          background: atCap ? "#2a2518" : "#c9a84c",
+          color: atCap ? "#666" : "#000",
+          cursor: atCap ? "not-allowed" : "pointer",
+        }}
+      >
+        {busy ? "Generating…" : atCap ? "2 watchmen — at the limit" : slotCount === 0 ? "+ Invite Watchman" : "+ Invite second Watchman"}
+      </button>
 
       {copied && (
         <p className="text-xs text-[#4ade80] mt-3">
@@ -252,7 +256,7 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
       <p className="text-[0.7rem] text-[#555] mt-3 leading-relaxed">
-        Watchmen see your check-ins and get pinged when you breach or miss one. Links expire in 48 hours.
+        Up to two watchmen per path. They see your check-ins and get pinged when you breach or miss. Links expire in 48 hours.
       </p>
     </div>
   );
