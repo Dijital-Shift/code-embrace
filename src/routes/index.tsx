@@ -16,12 +16,22 @@ export const Route = createFileRoute("/")({
 
 const GOLD = "#c9a84c";
 
+const WORDMARK_FONT = "'Cinzel', 'Trajan Pro', Georgia, serif";
+
 function Header() {
   return (
     <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#1a1610]">
-      <Link to="/" className="flex items-center gap-2.5">
-        <img src="/kingdom-protocol-logo.png" alt="Kingdom Protocol" className="h-9 w-auto" style={{ filter: "drop-shadow(0 0 10px rgba(201,168,76,0.35))" }} />
-        <span className="hidden sm:inline text-[0.95rem] font-bold tracking-wide text-white">Kingdom Protocol</span>
+      <Link to="/" className="flex items-center">
+        <span
+          className="text-lg sm:text-xl font-semibold tracking-[0.18em] uppercase"
+          style={{
+            fontFamily: WORDMARK_FONT,
+            color: GOLD,
+            textShadow: "0 0 18px rgba(201,168,76,0.45)",
+          }}
+        >
+          Kingdom Protocol
+        </span>
       </Link>
       <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
     </header>
@@ -71,13 +81,13 @@ function HeroMock() {
           <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#c9a84c]">Window open</span>
         </div>
         <div className="space-y-3">
-          <MockRow title="Phone before bed" status="held" />
-          <MockRow title="Workout block" status="held" />
-          <MockRow title="Late-night scroll" status="silent" />
+          <MockRow title="Meditate on Scripture" status="held" />
+          <MockRow title="Pray three times a day" status="held" />
+          <MockRow title="Fast — no fried foods · ends Fri" status="silent" />
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
           <span className="text-xs text-[#888]">1 silent path</span>
-          <span className="text-xs font-semibold" style={{ color: GOLD }}>Watchman pinged in 2h</span>
+          <span className="text-xs font-semibold" style={{ color: GOLD }}>Watchmen pinged in 2h</span>
         </div>
       </div>
     </div>
@@ -172,50 +182,50 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-3 gap-2 sm:gap-5">
           {/* Free trial */}
-          <div className="rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-7 flex flex-col">
-            <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-2 text-[#888]">First 30 days</p>
-            <h3 className="text-2xl font-extrabold text-white mb-1">Free trial</h3>
-            <p className="text-[#666] text-sm mb-5">Full access. No card.</p>
-            <ul className="space-y-2 text-sm text-[#c9c4ba] flex-1">
-              {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting", "Push notifications"].map((f) => (
-                <li key={f} className="flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col">
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">30 days</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">Free trial</h3>
+            <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+              {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting"].map((f) => (
+                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-6 inline-block text-center px-5 py-3 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-sm">
+            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
               Start free
             </Link>
           </div>
 
           {/* Monthly */}
-          <div className="rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-7 flex flex-col">
-            <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-2 text-[#888]">After trial</p>
-            <h3 className="text-2xl font-extrabold text-white mb-1">$4.99<span className="text-base font-bold text-[#888]">/mo</span></h3>
-            <p className="text-[#666] text-sm mb-5">Month to month. Cancel anytime.</p>
-            <ul className="space-y-2 text-sm text-[#c9c4ba] flex-1">
-              {["Everything in free trial", "Cancel anytime", "Grandfathered if price changes"].map((f) => (
-                <li key={f} className="flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col">
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">After trial</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]">/mo</span></h3>
+            <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+              {["All trial features", "Cancel anytime", "Price-locked"].map((f) => (
+                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-6 inline-block text-center px-5 py-3 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-sm">
+            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
               Start free
             </Link>
           </div>
 
           {/* Lifetime */}
-          <div className="rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-7 flex flex-col relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[0.6rem] tracking-[0.2em] uppercase font-bold rounded-full" style={{ background: GOLD, color: "#000" }}>Recommended</span>
-            <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-2" style={{ color: GOLD }}>Once. Forever.</p>
-            <h3 className="text-2xl font-extrabold text-white mb-1">$99<span className="text-base font-bold text-[#888]"> lifetime</span></h3>
-            <p className="text-[#aa9560] text-sm mb-5">Buy it once. Walk it forever.</p>
-            <ul className="space-y-2 text-sm text-[#c9c4ba] flex-1">
-              {["Everything, always", "No renewals", "Pays for itself in ~20 months", "For the long obedience"].map((f) => (
-                <li key={f} className="flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
+          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+            <span className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]"> once</span></h3>
+            <p className="text-[#aa9560] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+              {["Everything, always", "No renewals", "Long obedience"].map((f) => (
+                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-6 inline-block text-center px-5 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-sm" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Start free → Lifetime
+            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
+              Lifetime
             </Link>
           </div>
         </div>
@@ -248,24 +258,27 @@ function WhoThisIsFor() {
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Whom this is for.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">"Be ye not unequally yoked." Choose honestly before you build.</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-5">
-          <div className="rounded-2xl border border-[#c9a84c]/40 bg-[#100d05] p-7">
-            <p className="text-[0.65rem] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: GOLD }}>For the one who…</p>
-            <ul className="space-y-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-5">
+          <div className="rounded-xl sm:rounded-2xl border border-[#c9a84c]/40 bg-[#100d05] p-3 sm:p-7">
+            <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-3 sm:mb-4" style={{ color: GOLD }}>For the one who…</p>
+            <ul className="space-y-2 sm:space-y-3">
               {forItems.map((t) => (
-                <li key={t} className="flex items-start gap-3 text-sm text-[#c9c4ba] leading-relaxed">
-                  <span className="mt-1 text-base font-bold flex-shrink-0" style={{ color: GOLD }}>✓</span>
+                <li key={t} className="flex items-start gap-1.5 sm:gap-3 text-[0.72rem] sm:text-sm text-[#c9c4ba] leading-relaxed">
+                  <span className="mt-0.5 sm:mt-1 text-sm sm:text-base font-bold flex-shrink-0" style={{ color: GOLD }}>✓</span>
                   <span>{t}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-7">
-            <p className="text-[0.65rem] tracking-[0.2em] uppercase font-semibold mb-4 text-[#666]">Not for the one who…</p>
-            <ul className="space-y-3">
+          <div
+            className="rounded-xl sm:rounded-2xl border-2 p-3 sm:p-7"
+            style={{ borderColor: "rgba(220,38,38,0.55)", background: "#1a0707" }}
+          >
+            <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-bold mb-3 sm:mb-4" style={{ color: "#f87171" }}>Not for the one who…</p>
+            <ul className="space-y-2 sm:space-y-3">
               {notForItems.map((t) => (
-                <li key={t} className="flex items-start gap-3 text-sm text-[#888] leading-relaxed">
-                  <span className="mt-1 text-base font-bold flex-shrink-0 text-[#555]">✕</span>
+                <li key={t} className="flex items-start gap-1.5 sm:gap-3 text-[0.72rem] sm:text-sm leading-relaxed" style={{ color: "#fca5a5" }}>
+                  <span className="mt-0.5 sm:mt-1 text-sm sm:text-base font-bold flex-shrink-0" style={{ color: "#ef4444" }}>✕</span>
                   <span>{t}</span>
                 </li>
               ))}
@@ -364,14 +377,19 @@ function ClosingCall() {
 
 function Footer() {
   return (
-    <footer className="px-5 sm:px-8 py-10 border-t border-[#1a1610] mt-10">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5">
-        <div className="flex items-center gap-2.5">
-          <img src="/kingdom-protocol-logo.png" alt="" className="h-7 w-auto" />
-          <span className="text-sm font-bold text-white">Kingdom Protocol</span>
+    <footer className="px-5 sm:px-8 py-14 border-t border-[#1a1610] mt-10">
+      <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+        <img
+          src="/kingdom-protocol-logo.png"
+          alt="Kingdom Protocol"
+          className="h-24 sm:h-28 w-auto"
+          style={{ filter: "drop-shadow(0 0 24px rgba(201,168,76,0.45))" }}
+        />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full pt-4 border-t border-[#1a1610]">
+          <Link to="/login" className="text-sm text-[#c9a84c] font-semibold order-2 sm:order-1">Sign in</Link>
+          <p className="text-xs text-[#555] tracking-wider text-center order-1 sm:order-2">Built by Dijital Shift · v1.0</p>
+          <span className="w-12 hidden sm:block order-3" />
         </div>
-        <p className="text-xs text-[#555] tracking-wider text-center">Built by Dijital Shift · v1.0 · shipping May 2026</p>
-        <Link to="/login" className="text-sm text-[#c9a84c] font-semibold">Sign in</Link>
       </div>
     </footer>
   );
