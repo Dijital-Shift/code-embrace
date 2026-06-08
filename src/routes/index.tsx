@@ -20,7 +20,7 @@ const WORDMARK_FONT = "'Cinzel', 'Trajan Pro', Georgia, serif";
 
 function Header() {
   return (
-    <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#1a1610]">
+    <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#2a2418]">
       <Link to="/" className="flex items-center">
         <span
           className="text-lg sm:text-xl font-semibold tracking-[0.18em] uppercase"
@@ -110,7 +110,7 @@ function MockRow({ title, status }: { title: string; status: "held" | "silent" }
 
 function ProblemTension() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-6">The Problem</p>
         <h2 className="text-3xl sm:text-4xl font-bold leading-tight text-white mb-6">
@@ -132,9 +132,9 @@ function ProblemTension() {
 
 function SilenceRule() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Two thresholds. The quieter you get, the louder it becomes.</p>
@@ -172,7 +172,7 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
 
 function Pricing() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
@@ -252,16 +252,16 @@ function WhoThisIsFor() {
     "would rather perish in private than be saved in public",
   ];
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Discernment</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Whom this is for.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">"Be ye not unequally yoked." Choose honestly before you build.</p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:gap-5">
           <div className="rounded-xl sm:rounded-2xl border border-[#c9a84c]/40 bg-[#100d05] p-3 sm:p-7">
-            <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-3 sm:mb-4" style={{ color: GOLD }}>For the one who…</p>
+            <p className="text-center text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold mb-3 sm:mb-4" style={{ color: GOLD }}>For the one who…</p>
             <ul className="space-y-2 sm:space-y-3">
               {forItems.map((t) => (
                 <li key={t} className="flex items-start gap-1.5 sm:gap-3 text-[0.72rem] sm:text-sm text-[#c9c4ba] leading-relaxed">
@@ -275,7 +275,7 @@ function WhoThisIsFor() {
             className="rounded-xl sm:rounded-2xl border-2 p-3 sm:p-7"
             style={{ borderColor: "rgba(220,38,38,0.55)", background: "#1a0707" }}
           >
-            <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-bold mb-3 sm:mb-4" style={{ color: "#f87171" }}>Not for the one who…</p>
+            <p className="text-center text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-bold mb-3 sm:mb-4" style={{ color: "#f87171" }}>Not for the one who…</p>
             <ul className="space-y-2 sm:space-y-3">
               {notForItems.map((t) => (
                 <li key={t} className="flex items-start gap-1.5 sm:gap-3 text-[0.72rem] sm:text-sm leading-relaxed" style={{ color: "#fca5a5" }}>
@@ -320,9 +320,9 @@ function FAQ() {
   ];
 
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Plain answers</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Questions, answered plainly.</h2>
         </div>
@@ -349,7 +349,7 @@ function FAQ() {
 
 function ClosingCall() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The call</p>
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-8">Bear ye one another's burdens.</h2>
@@ -378,7 +378,7 @@ function ClosingCall() {
 
 function Footer() {
   return (
-    <footer className="px-5 sm:px-8 py-14 border-t border-[#1a1610] mt-10">
+    <footer className="px-5 sm:px-8 py-12 border-t border-[#2a2418] mt-4">
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
         <img
           src="/kingdom-protocol-logo.png"
