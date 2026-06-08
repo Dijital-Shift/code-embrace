@@ -71,8 +71,14 @@ function LaneDetail() {
         {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
           <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
         ))}
-        <p className="text-xs text-[#666] mt-2">Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span></p>
+        <p className="text-xs text-[#666] mt-2">
+          Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span>
+          {lane.ends_at && (
+            <span className="ml-3">Ends <span className="text-[#c9a84c]">{lane.ends_at}</span></span>
+          )}
+        </p>
       </div>
+
 
       <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} />
 
