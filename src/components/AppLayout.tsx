@@ -5,11 +5,12 @@ import { AuthGate } from "@/components/AuthGate";
 
 const items = [
   { href: "/dashboard", icon: Home, label: "Home" },
-  { href: "/lanes", icon: Layers, label: "Lanes" },
+  { href: "/lanes", icon: Layers, label: "Paths" },
   { href: "/checkin", icon: CheckCircle, label: "Check In" },
-  { href: "/partner", icon: Users, label: "Partner" },
+  { href: "/partner", icon: Users, label: "Watchman" },
   { href: "/settings", icon: SettingsIcon, label: "Settings" },
 ] as const;
+
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();

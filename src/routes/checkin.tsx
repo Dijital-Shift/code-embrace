@@ -35,8 +35,8 @@ function CheckIn() {
   if (!lanes.length) {
     return (
       <div className="text-center pt-16">
-        <p className="text-[#555] mb-4">No active lanes.</p>
-        <Link to="/lanes/new" className="px-5 py-2 bg-white text-black rounded font-semibold">Create a Lane</Link>
+        <p className="text-[#555] mb-4">No active paths.</p>
+        <Link to="/lanes/new" className="px-5 py-2 bg-white text-black rounded font-semibold">Create a Path</Link>
       </div>
     );
   }
@@ -51,10 +51,11 @@ function CheckIn() {
 
       {allDone && (
         <div className="p-5 rounded-xl border border-[#166534] mb-8" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
-          <p className="font-semibold text-[#4ade80]">All lanes checked in.</p>
-          <p className="text-xs text-[#555]">Stay in your lane.</p>
+          <p className="font-semibold text-[#4ade80]">All paths checked in.</p>
+          <p className="text-xs text-[#555]">Walk on.</p>
         </div>
       )}
+
 
       {completeLanes.length > 0 && (
         <section className="mb-8">

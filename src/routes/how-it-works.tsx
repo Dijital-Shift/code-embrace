@@ -6,9 +6,9 @@ export const Route = createFileRoute("/how-it-works")({
 });
 
 const steps = [
-  { n: "01", title: "Create a Lane", body: "A lane is a behavior you're committing to. Either something you want to avoid — or something you want to complete. One lane, one focus. Up to 10 active at a time." },
-  { n: "02", title: "Assign a Watchman", body: "Every lane is watched by one person you trust. A watchman holds a maximum of 2 of your lanes — they only hear from the system when something goes wrong." },
-  { n: "03", title: "Check In Daily", body: "Once a day, near your bedtime, you get a push notification. Open the app, report each lane, done. Less than 30 seconds." },
+  { n: "01", title: "Pick a Path", body: "A path is a behavior you're committing to — something to avoid, or something to complete. Scripture-backed from the library, or build your own." },
+  { n: "02", title: "Assign a Watchman", body: "Every path is watched by one person you trust. One watchman per path. They only hear from the system when something goes wrong." },
+  { n: "03", title: "Check In Daily", body: "Once a day, near your bedtime, you get a push. Open the app, report each path, done. Less than 30 seconds." },
 ];
 
 function HowItWorks() {
@@ -18,7 +18,7 @@ function HowItWorks() {
         <Link to="/" className="text-[#555] text-sm">← Back</Link>
         <div className="text-center my-10">
           <img src="/kingdom-protocol-logo.png" alt="" className="w-28 mx-auto" />
-          <p className="text-[#666] text-xs font-bold tracking-[0.25em] mt-1">STAY IN YOUR LANE</p>
+          <p className="text-[#666] text-xs font-bold tracking-[0.25em] mt-1">WALK THE PATH</p>
         </div>
         <div className="flex flex-col gap-3 mb-8">
           {steps.map((s) => (
@@ -30,11 +30,11 @@ function HowItWorks() {
           ))}
           <div className="relative overflow-hidden p-5 rounded-xl border border-[#166534]" style={{ background: "#051a0a" }}>
             <h2 className="font-bold mb-2 text-[#4ade80]">Silence Means Aligned</h2>
-            <p className="text-sm text-[#999] leading-relaxed">When you're doing what you said you'd do, nobody hears anything. Complete silence. That's the system working.</p>
+            <p className="text-sm text-[#999] leading-relaxed">When you're walking what you said you'd walk, nobody hears anything. Complete silence. That's the system working.</p>
           </div>
           <div className="relative overflow-hidden p-5 rounded-xl border border-[#7f1d1d]" style={{ background: "#1a0505" }}>
-            <h2 className="font-bold mb-2 text-[#f87171]">Breach or Miss — Watchman Notified</h2>
-            <p className="text-sm text-[#999] leading-relaxed">Report a breach and your watchman is notified immediately. Miss a check-in and you get a nudge first. No response by morning — your watchman is notified.</p>
+            <h2 className="font-bold mb-2 text-[#f87171]">Breach or Miss — Watchman Pinged</h2>
+            <p className="text-sm text-[#999] leading-relaxed">Report a breach and your watchman is pinged immediately. Miss a check-in and you get a nudge first. Stay silent — your watchman is pinged.</p>
           </div>
         </div>
         <div className="text-center mt-10">

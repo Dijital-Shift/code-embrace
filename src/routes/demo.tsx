@@ -9,13 +9,12 @@ import {
   Eye,
   Flag,
   Footprints,
-  Lock,
+  Heart,
   Mail,
   Moon,
-  
-  Shield,
-  ShieldCheck,
+  Send,
   Target,
+  Trophy,
   User,
   Users,
 } from "lucide-react";
@@ -24,26 +23,25 @@ import logo from "@/assets/kingdom-protocol-logo.png";
 export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
-      { title: "Kingdom Protocol demo — every role, every step" },
+      { title: "Kingdom Protocol demo — user and watchman, side by side" },
       {
         name: "description",
         content:
-          "End-to-end walkthrough of Kingdom Protocol — from a believer creating a lane through their accountability watchman and admin oversight. One protocol, three views.",
+          "End-to-end walkthrough of Kingdom Protocol — pick a path, name your watchman, check in nightly, and let the silence be heard.",
       },
     ],
   }),
   component: Demo,
 });
 
-type Role = "user" | "watchman" | "admin";
+type Role = "user" | "watchman";
 
 const ROLE_META: Record<
   Role,
   { label: string; icon: React.ElementType; chipBg: string; frameBorder: string; titleBarBg: string }
 > = {
-  user:    { label: "User",    icon: User,        chipBg: "bg-[#c9a84c] text-black",        frameBorder: "border-[#c9a84c]/40", titleBarBg: "bg-[#c9a84c]/10" },
-  watchman: { label: "Watchman", icon: Users,       chipBg: "bg-[#8a6f2e] text-white",        frameBorder: "border-[#8a6f2e]",    titleBarBg: "bg-[#8a6f2e]/30" },
-  admin:   { label: "Admin",   icon: ShieldCheck, chipBg: "bg-[#3a2e14] text-[#c9a84c]",    frameBorder: "border-[#c9a84c]/30", titleBarBg: "bg-[#1a1408]" },
+  user:     { label: "User",     icon: User,  chipBg: "bg-[#c9a84c] text-black", frameBorder: "border-[#c9a84c]/40", titleBarBg: "bg-[#c9a84c]/10" },
+  watchman: { label: "Watchman", icon: Users, chipBg: "bg-[#8a6f2e] text-white", frameBorder: "border-[#8a6f2e]",    titleBarBg: "bg-[#8a6f2e]/30" },
 };
 
 function cn(...c: (string | false | null | undefined)[]) {
@@ -65,28 +63,91 @@ function Pill({ label, tone = "muted" }: { label: string; tone?: Tone }) {
   );
 }
 
-/* ---------------- Mock screens ---------------- */
+/* ---------------- Mock screens (mirror the real app) ---------------- */
+
+function MockPathLibrary() {
+  const items: { title: string; type: "avoid" | "complete"; verse: string }[] = [
+    { title: "Pray three times a day", type: "complete", verse: "Daniel 6:10" },
+    { title: "Fast", type: "complete", verse: "Matthew 6:17-18" },
+    { title: "No pornography / lustful looking", type: "avoid", verse: "Job 31:1" },
+    { title: "No drunkenness", type: "avoid", verse: "Eph. 5:18" },
+    { title: "Forgive quickly — no sundown anger", type: "complete", verse: "Eph. 4:26" },
+    { title: "No corrupt speech", type: "avoid", verse: "Eph. 4:29" },
+  ];
+  return (
+    <div className="space-y-3">
+      <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a84c]">Devotion · Purity · Speech</div>
+      <div className="text-sm font-semibold text-white">Path Library</div>
+      <div className="text-[11px] text-[#888]">Scripture-backed paths. Tap one to start.</div>
+      <div className="grid grid-cols-1 gap-2">
+        {items.map((p) => {
+          const isAvoid = p.type === "avoid";
+          return (
+            <div key={p.title} className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="text-[12px] font-semibold leading-snug text-white">{p.title}</div>
+                <span
+                  className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider"
+                  style={{ background: isAvoid ? "#2a1410" : "#102a14", color: isAvoid ? "#f87171" : "#4ade80" }}
+                >
+                  {isAvoid ? "Avoid" : "Complete"}
+                </span>
+              </div>
+              <div className="mt-1 text-[10px] italic text-[#9a8b5c]">— {p.verse} (KJV)</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function MockOnboard() {
   return (
     <div className="space-y-3">
-      <div className="text-sm font-semibold text-white">Define your lane</div>
-      <div className="text-[11px] text-[#888]">Name the behavior. Set the boundary. Pick a watchman.</div>
-      <div className="space-y-2">
-        <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">Lane</div>
-          <div className="text-sm text-white">Purity / no late-night browsing</div>
+      <div className="text-sm font-semibold text-white">New Path</div>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-md border border-white bg-[#1e1a10] px-2.5 py-2 text-center">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-white">Complete</div>
         </div>
-        <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">Bedtime check-in</div>
-          <div className="text-sm text-white">10:30 PM · daily</div>
-        </div>
-        <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">Watchman</div>
-          <div className="text-sm text-white">marcus@example.com</div>
+        <div className="rounded-md border border-[#222] bg-[#161210] px-2.5 py-2 text-center">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-[#555]">Avoid</div>
         </div>
       </div>
-      <button className="w-full rounded-md bg-[#c9a84c] py-2 text-sm font-bold text-black">Send invite</button>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
+        <div className="text-[10px] uppercase tracking-wider text-[#666]">Path</div>
+        <div className="text-sm text-white">Fast</div>
+      </div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
+        <div className="text-[10px] uppercase tracking-wider text-[#666]">Support scripture</div>
+        <div className="text-[11px] italic text-[#c9a84c] mt-0.5">"When thou fastest, anoint thine head…" — Matt. 6:17</div>
+      </div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
+        <div className="text-[10px] uppercase tracking-wider text-[#666]">Ends on</div>
+        <div className="text-sm text-white">Dec 20, 2026</div>
+      </div>
+      <button className="w-full rounded-md bg-white py-2 text-sm font-bold text-black">Create Path</button>
+    </div>
+  );
+}
+
+function MockInviteWatchman() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Users className="h-4 w-4 text-[#c9a84c]" />
+        <div className="text-sm font-semibold text-white">Watchmen</div>
+        <span className="ml-auto text-[10px] text-[#666]">0/1</span>
+      </div>
+      <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3">
+        <div className="text-[11px] text-[#c9a84c] mb-2">Invite pending · expires in 47h</div>
+        <div className="flex items-center gap-2">
+          <input readOnly value="kingdom-protocol.app/invite/x9k…" className="flex-1 truncate rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[10px] text-[#888] outline-none" />
+          <button className="rounded bg-[#c9a84c] px-2 py-1.5 text-[10px] font-bold text-black">Copy</button>
+        </div>
+      </div>
+      <div className="text-[11px] text-[#4ade80]">Link copied. Send it to your watchman by text or DM.</div>
+      <div className="text-[10px] leading-relaxed text-[#555]">One watchman per path. Links expire in 48 hours.</div>
     </div>
   );
 }
@@ -101,10 +162,10 @@ function MockPartnerInvite() {
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
         <div className="text-[11px] text-[#888]">From</div>
         <div className="text-sm text-white">David Chen</div>
-        <div className="mt-2 text-[11px] text-[#888]">Lane</div>
-        <div className="text-sm text-white">Purity / no late-night browsing</div>
+        <div className="mt-2 text-[11px] text-[#888]">Path</div>
+        <div className="text-sm text-white">Fast · ends Dec 20</div>
         <div className="mt-2 text-[11px] text-[#888]">Your role</div>
-        <div className="text-sm text-[#c9a84c]">Accountability watchman — you'll see check-ins and missed days.</div>
+        <div className="text-sm text-[#c9a84c]">Watchman — pinged when he misses or breaks the fast.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#888]">Decline</button>
@@ -115,67 +176,103 @@ function MockPartnerInvite() {
 }
 
 function MockCheckin() {
-  const [pick, setPick] = React.useState<"clean" | "stumbled" | null>("clean");
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Moon className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Tonight's check-in</div>
-        <span className="ml-auto"><Pill label="10:30 PM" tone="primary" /></span>
+        <div className="text-sm font-semibold text-white">Check-In</div>
+        <span className="ml-auto"><Pill label="Tonight" tone="primary" /></span>
       </div>
-      <div className="text-[11px] text-[#888]">Purity / no late-night browsing — be honest, your watchman sees this.</div>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          onClick={() => setPick("clean")}
-          className={cn(
-            "rounded-md border py-3 text-center transition-colors",
-            pick === "clean" ? "border-[#c9a84c] bg-[#c9a84c]/10" : "border-[#2a2518] bg-[#161210]",
-          )}
-        >
-          <CheckCircle2 className="mx-auto h-5 w-5 text-[#c9a84c]" />
-          <div className="mt-1 text-xs font-semibold text-white">Clean</div>
-        </button>
-        <button
-          onClick={() => setPick("stumbled")}
-          className={cn(
-            "rounded-md border py-3 text-center transition-colors",
-            pick === "stumbled" ? "border-[#c9a84c] bg-[#c9a84c]/10" : "border-[#2a2518] bg-[#161210]",
-          )}
-        >
-          <Flag className="mx-auto h-5 w-5 text-[#c9a84c]" />
-          <div className="mt-1 text-xs font-semibold text-white">Stumbled</div>
-        </button>
+
+      <div className="text-[10px] font-bold uppercase tracking-wider text-[#666]">Complete</div>
+      <div className="flex items-center gap-3 rounded-xl border border-[#166534] px-3 py-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4ade80] text-[10px] font-bold text-black">✓</span>
+        <span className="flex-1 text-sm text-[#4ade80]">Pray three times</span>
+        <span className="text-[10px] text-[#4ade80]">Done</span>
       </div>
-      <textarea
-        placeholder="Optional note for your watchman…"
-        className="w-full rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2 text-xs text-white placeholder-[#555]"
-        rows={2}
-        defaultValue="Long day. Tempted around 9 but walked instead."
-      />
-      <button className="w-full rounded-md bg-[#c9a84c] py-2 text-sm font-bold text-black">Submit check-in</button>
+      <div className="flex items-center gap-3 rounded-xl border border-[#2a2518] bg-[#161210] px-3 py-3">
+        <span className="h-5 w-5 rounded-full border-2 border-[#333]" />
+        <span className="flex-1 text-sm text-white">Fast</span>
+      </div>
+
+      <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#666]">Avoid</div>
+      <div className="rounded-xl border border-[#2a2518] bg-[#161210] p-3">
+        <div className="mb-2 text-sm font-semibold text-white">No lustful looking</div>
+        <div className="mb-2 text-[11px] text-[#666]">Did you avoid this today?</div>
+        <div className="grid grid-cols-2 gap-2">
+          <button className="rounded-lg border border-[#4ade80] py-2 text-xs font-semibold text-[#4ade80]" style={{ background: "#052e16" }}>Yes — aligned</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">No — breach</button>
+        </div>
+      </div>
     </div>
   );
 }
 
-function MockMissed() {
+function MockBreachConfess() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Flag className="h-4 w-4 text-red-400" />
+        <div className="text-sm font-semibold text-white">Breach — be honest</div>
+      </div>
+      <div className="rounded-xl border border-[#2a2518] bg-[#161210] p-3">
+        <div className="text-sm font-semibold text-white">No lustful looking</div>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Yes — aligned</button>
+          <button className="rounded-lg border border-[#f87171] py-2 text-xs font-semibold text-[#f87171]" style={{ background: "#2d0d0d" }}>No — breach</button>
+        </div>
+        <textarea
+          rows={2}
+          readOnly
+          defaultValue="Scrolled too long. Caught it, closed the phone, prayed."
+          className="mt-3 w-full resize-none rounded-lg border border-[#222] bg-[#161210] p-2.5 text-xs text-white outline-none"
+        />
+        <button className="mt-2 w-full rounded-lg py-2 text-sm font-semibold text-white" style={{ background: "#7f1d1d" }}>Submit — Breach</button>
+      </div>
+      <div className="text-[10px] italic text-[#666]">Confess your faults one to another. — James 5:16</div>
+    </div>
+  );
+}
+
+function MockMissedNudge() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Bell className="h-4 w-4 text-[#c9a84c]" />
+        <div className="text-sm font-semibold text-white">Nudge — you missed last night</div>
+      </div>
+      <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3 text-xs text-[#c9a84c]">
+        Your fast went un-checked. Your watchman hasn't been pinged yet — submit before morning.
+      </div>
+      <div className="rounded-xl border border-[#f59e0b]/40 bg-[#0d0a04] p-3">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Missed yesterday · submit before 7AM</div>
+        <div className="mt-2 text-sm font-semibold text-white">Fast</div>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Aligned</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Breach</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MockWatchmanPing() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Bell className="h-4 w-4 text-red-400" />
-        <div className="text-sm font-semibold text-white">Missed check-in</div>
-        <span className="ml-auto"><Pill label="auto" tone="danger" /></span>
+        <div className="text-sm font-semibold text-white">Watchman alert</div>
+        <span className="ml-auto"><Pill label="just now" tone="danger" /></span>
       </div>
-      <div className="rounded-md border border-red-900/40 bg-red-950/30 p-3 text-xs text-red-200">
-        David didn't check in by 10:30 PM. Silence is a signal — reach out.
-      </div>
-      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3 text-[11px] text-[#888]">
-        <div className="mb-1 text-[10px] uppercase tracking-wider text-[#666]">Streak before tonight</div>
-        <div className="text-sm text-white">12 days clean</div>
+      <div className="rounded-md border border-red-900/40 bg-red-950/30 p-3">
+        <div className="text-xs font-semibold text-red-200">David went silent on his fast.</div>
+        <div className="mt-1 text-[11px] text-red-300/70">No check-in two nights running. Silence is a signal — reach out.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#888]">Snooze 30m</button>
-        <button className="rounded-md bg-[#c9a84c] py-2 text-xs font-bold text-black">Text David</button>
+        <a className="rounded-md bg-white py-2 text-center text-xs font-bold text-black">Call</a>
+        <a className="rounded-md py-2 text-center text-xs font-bold text-white" style={{ background: "#1a1a1a", border: "1px solid #222" }}>Text</a>
       </div>
+      <div className="text-[10px] italic text-[#666]">A brother is born for adversity. — Prov. 17:17</div>
     </div>
   );
 }
@@ -194,7 +291,7 @@ function MockPartnerView() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Eye className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">David — past 7 days</div>
+        <div className="text-sm font-semibold text-white">David — Fast · past 7 days</div>
       </div>
       <div className="grid grid-cols-7 gap-1">
         {days.map((x) => (
@@ -212,23 +309,41 @@ function MockPartnerView() {
         ))}
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
-        <div className="text-[10px] uppercase tracking-wider text-[#666]">Note · Wed</div>
-        <div className="mt-1 text-xs text-white">"Stumbled around 9. Walked it off, prayed, slept early."</div>
+        <div className="text-[10px] uppercase tracking-wider text-[#666]">Breach note · Wed</div>
+        <div className="mt-1 text-xs text-white">"Broke the fast at lunch — was at a work thing. Owning it."</div>
       </div>
-      <button className="w-full rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#c9a84c]">Send encouragement</button>
     </div>
   );
 }
 
-
-
+function MockEncourage() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Heart className="h-4 w-4 text-[#c9a84c]" />
+        <div className="text-sm font-semibold text-white">Send encouragement</div>
+      </div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
+        <textarea
+          rows={3}
+          readOnly
+          defaultValue="Saw the miss. Tomorrow's a new mercy — Lamentations 3:22-23. I'm praying for you tonight."
+          className="w-full resize-none rounded-md border border-[#222] bg-[#0d0a04] p-2 text-xs text-white outline-none"
+        />
+      </div>
+      <button className="flex w-full items-center justify-center gap-2 rounded-md bg-[#c9a84c] py-2 text-sm font-bold text-black">
+        <Send className="h-3.5 w-3.5" /> Send to David
+      </button>
+    </div>
+  );
+}
 
 function MockStreak() {
   return (
     <div className="space-y-3 text-center">
       <Target className="mx-auto h-8 w-8 text-[#c9a84c]" />
       <div className="text-3xl font-extrabold text-white">28 days</div>
-      <div className="text-[11px] uppercase tracking-wider text-[#888]">Current streak · purity lane</div>
+      <div className="text-[11px] uppercase tracking-wider text-[#888]">Aligned · No lustful looking</div>
       <div className="mx-auto grid max-w-[260px] grid-cols-7 gap-1">
         {Array.from({ length: 28 }).map((_, i) => (
           <div key={i} className="h-3 w-3 rounded-sm bg-[#c9a84c]/70" />
@@ -239,77 +354,16 @@ function MockStreak() {
   );
 }
 
-function MockAdminOversight() {
-  const rows = [
-    { user: "David C.", lane: "Purity", state: "Active", streak: "28d", tone: "primary" as Tone },
-    { user: "Marcus W.", lane: "Sobriety", state: "Active", streak: "61d", tone: "primary" as Tone },
-    { user: "Jonah R.", lane: "Anger", state: "At risk", streak: "0d", tone: "danger" as Tone },
-    { user: "Eli T.", lane: "Tongue", state: "Stumble", streak: "3d", tone: "accent" as Tone },
-  ];
+function MockPathComplete() {
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Shield className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Cohort oversight</div>
-        <span className="ml-auto"><Pill label="this week" tone="primary" /></span>
+    <div className="space-y-3 text-center">
+      <Trophy className="mx-auto h-9 w-9 text-[#c9a84c]" />
+      <div className="text-lg font-bold text-white">Fast complete</div>
+      <div className="text-xs text-[#888]">21 days · Nov 29 → Dec 20</div>
+      <div className="rounded-md border border-[#166534] p-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
+        <div className="text-[11px] text-[#4ade80]">Auto-archived. Watchman notified — path completed honorably.</div>
       </div>
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-md border border-[#2a2518] bg-[#161210] py-2">
-          <div className="text-lg font-bold text-white">42</div>
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">Active</div>
-        </div>
-        <div className="rounded-md border border-[#2a2518] bg-[#161210] py-2">
-          <div className="text-lg font-bold text-[#c9a84c]">94%</div>
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">Check-in rate</div>
-        </div>
-        <div className="rounded-md border border-[#2a2518] bg-[#161210] py-2">
-          <div className="text-lg font-bold text-red-300">3</div>
-          <div className="text-[10px] uppercase tracking-wider text-[#666]">At risk</div>
-        </div>
-      </div>
-      <div className="divide-y divide-[#2a2518] rounded-md border border-[#2a2518]">
-        {rows.map((r) => (
-          <div key={r.user} className="flex items-center gap-2 px-3 py-2 text-xs">
-            <div className="min-w-0 flex-1">
-              <div className="truncate font-semibold text-white">{r.user}</div>
-              <div className="text-[10px] text-[#666]">{r.lane}</div>
-            </div>
-            <Pill label={r.state} tone={r.tone} />
-            <div className="w-12 text-right font-mono text-[11px] text-[#aaa]">{r.streak}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MockPrivacy() {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Lock className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Who sees what</div>
-      </div>
-      <div className="space-y-2 text-xs">
-        <div className="flex items-center gap-2 rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <User className="h-4 w-4 text-[#c9a84c]" />
-          <div className="flex-1 text-white">You</div>
-          <div className="text-[#888]">All of it</div>
-        </div>
-        <div className="flex items-center gap-2 rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <Users className="h-4 w-4 text-[#8a6f2e]" />
-          <div className="flex-1 text-white">Watchman</div>
-          <div className="text-[#888]">Check-ins + notes you choose to share</div>
-        </div>
-        <div className="flex items-center gap-2 rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-          <ShieldCheck className="h-4 w-4 text-[#c9a84c]" />
-          <div className="flex-1 text-white">Admin</div>
-          <div className="text-[#888]">Counts &amp; risk only — never note contents</div>
-        </div>
-      </div>
-      <div className="text-center text-[11px] italic text-[#888]">
-        Confession is a gift, not a leak. Notes belong to you and the watchman you chose.
-      </div>
+      <div className="text-[11px] italic text-[#888]">"Is not this the fast that I have chosen?" — Isa 58:6</div>
     </div>
   );
 }
@@ -329,82 +383,116 @@ type Scene = {
 
 const SCENES: Scene[] = [
   {
-    id: "lane",
+    id: "library",
     step: 1,
     role: "user",
-    title: "You name the lane",
-    body: "Pick the behavior you want to stay clean in. Set the bedtime check-in window. Choose one trusted watchman — not a group, not a pastor's inbox, one person who will actually answer.",
-    why: "Why it matters: vague accountability fails. A named lane with a named watchman and a named hour is something you can actually live up to.",
+    title: "Pick a path — straight from the Word",
+    body: "Open the library. Every path is scripture-backed and labeled Avoid or Complete. Build your own too — but start with what He already commanded.",
+    why: "Why it matters: vague accountability fails. A named path with a verse behind it is something you can actually walk.",
+    render: MockPathLibrary,
+  },
+  {
+    id: "configure",
+    step: 2,
+    role: "user",
+    title: "Name it. Set a finish line if it has one.",
+    body: "Pick the type, prefill the scripture, set an Ends-on date for fasts and time-bound paths. Ongoing paths leave it blank.",
+    why: "Why it matters: a fast without a finish line drifts. A path with one ends honorably.",
     render: MockOnboard,
   },
   {
     id: "invite",
-    step: 2,
+    step: 3,
+    role: "user",
+    title: "Generate a watchman invite",
+    body: "One invite link per path. Copy it, send by text or DM. No email forms, no group chats. One watchman max per path.",
+    why: "Why it matters: friction kills accountability. A one-tap link gets the watchman in tonight, not next week.",
+    render: MockInviteWatchman,
+    divider: "Your watchman",
+  },
+  {
+    id: "accept",
+    step: 4,
     role: "watchman",
     title: "Your watchman accepts",
-    body: "They get a single email. They see exactly what they're signing up for: which lane, what cadence, what they'll be shown. No mystery, no group chat.",
+    body: "They tap the link and see exactly what they're signing up for: which path, what cadence, what they'll be shown. No mystery.",
     why: "Why it matters: a watchman who knows the deal stays the watchman. Surprises burn relationships.",
     render: MockPartnerInvite,
     divider: "Each night",
   },
   {
     id: "checkin",
-    step: 3,
+    step: 5,
     role: "user",
-    title: "Nightly check-in — clean or stumbled",
-    body: "Two buttons. Optional note. Submitted to your watchman before bed. The friction is the point — every night, you tell the truth out loud.",
-    why: "Why it matters: most lanes don't fall to a single big choice. They fall to small unspoken nights. Saying it kills the secrecy.",
+    title: "Nightly check-in — one screen, two columns",
+    body: "Complete paths tap-to-done. Avoid paths choose Aligned or Breach. The whole thing takes under thirty seconds.",
+    why: "Why it matters: most paths don't fall to one big choice. They fall to small unspoken nights.",
     render: MockCheckin,
   },
   {
-    id: "missed",
-    step: 4,
+    id: "breach",
+    step: 6,
     role: "user",
-    title: "If you go silent, it notices",
-    body: "Miss the window and Kingdom Protocol marks it missed. You get one nudge. Your watchman gets pinged. Avoidance is a status, not a hiding place.",
+    title: "Stumbled? Confess it honestly.",
+    body: "Pick breach, write one line. It goes straight to your watchman. The friction is the point.",
+    why: "Why it matters: confession in the light beats covering in the dark. The system makes the light the easy path.",
+    render: MockBreachConfess,
+  },
+  {
+    id: "nudge",
+    step: 7,
+    role: "user",
+    title: "Miss one night — get a nudge",
+    body: "Silence isn't a hiding place. You get a private nudge first thing, with a chance to submit yesterday before 7AM.",
+    why: "Why it matters: life happens. One missed night shouldn't drag in a watchman if you can still own it.",
+    render: MockMissedNudge,
+  },
+  {
+    id: "ping",
+    step: 8,
+    role: "watchman",
+    title: "Stay silent — your watchman is pinged",
+    body: "Breach or two-night silence, your watchman gets a push with one-tap call or text. They show up before the fall, not after.",
     why: "Why it matters: the worst nights are usually the silent ones. Silence has to mean something.",
-    render: MockMissed,
+    render: MockWatchmanPing,
   },
   {
     id: "watchman-view",
-    step: 5,
+    step: 9,
     role: "watchman",
     title: "Watchman sees the week, not your soul",
-    body: "Seven dots — clean, stumble, missed. Your notes if you shared them. They're equipped to actually help, not guess.",
-    why: "Why it matters: the watchman role finally has a dashboard. They show up Wednesday morning with the right question.",
+    body: "Seven dots — aligned, breach, missed. Your breach notes if you wrote them. They show up Wednesday with the right question.",
+    why: "Why it matters: the watchman role finally has a screen. Equipped to help, not guess.",
     render: MockPartnerView,
   },
   {
-    id: "streak",
-    step: 6,
-    role: "user",
-    title: "Streaks you actually earn",
-    body: "Days clean stack visibly. Stumbles don't reset you — they get logged honestly. The number is yours, not a gamified lie.",
-    why: "Why it matters: a true streak is fuel. A fake streak is shame waiting to happen.",
-    render: MockStreak,
+    id: "encourage",
+    step: 10,
+    role: "watchman",
+    title: "Send a word in season",
+    body: "One field. Speak life. The system never writes for them — every word comes from a real person.",
+    why: "Why it matters: encouragement that's written by a friend lands. Auto-affirmations don't.",
+    render: MockEncourage,
     divider: "Over time",
   },
-
   {
-    id: "oversight",
-    step: 7,
-    role: "admin",
-    title: "Admin sees the cohort, not the confession",
-    body: "Pastor, men's group lead, or program admin sees who is active, check-in rate, and who is at risk. Never note contents. Never the words.",
-    why: "Why it matters: leaders need signal to shepherd, not surveillance to judge. The platform draws that line for them.",
-    render: MockAdminOversight,
+    id: "streak",
+    step: 11,
+    role: "user",
+    title: "Streaks you actually earned",
+    body: "Days aligned stack visibly. Breaches don't reset you — they get logged honestly. The number is yours, not a gamified lie.",
+    why: "Why it matters: a true streak is fuel. A fake streak is shame waiting to happen.",
+    render: MockStreak,
   },
-
   {
-    id: "privacy",
-    step: 8,
-    role: "admin",
-    title: "Who sees what — stated, not buried",
-    body: "Three roles. Three permission tiers. Written on the wall of the app, not in a 14-page policy.",
-    why: "Why it matters: trust is the whole product. If the privacy model isn't obvious, no one tells the truth.",
-    render: MockPrivacy,
+    id: "complete",
+    step: 12,
+    role: "user",
+    title: "Time-bound paths finish honorably",
+    body: "When the Ends-on date hits, the path auto-archives. Your watchman gets a one-time completion ping — not a missed nudge.",
+    why: "Why it matters: a fast that ends well is a covenant kept. The system honors the finish line.",
+    render: MockPathComplete,
   },
-
 ];
 
 /* ---------------- Page ---------------- */
@@ -429,13 +517,13 @@ function Demo() {
           style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
         <div className="mx-auto max-w-3xl px-6 py-16 text-center md:py-20 relative">
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-            One protocol. <span className="text-[#c9a84c]">Three views.</span>
+            One path. <span className="text-[#c9a84c]">Two people.</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-[#aaa] md:text-lg">
-            Nine scenes following one believer's lane through their accountability watchman and the admin who shepherds the cohort.
+            Twelve scenes following one believer's path and the watchman who walks it with them. Every screen below is what you'll actually see in the app.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-2 text-xs">
-            {(["user", "watchman", "admin"] as Role[]).map((r) => {
+            {(["user", "watchman"] as Role[]).map((r) => {
               const m = ROLE_META[r];
               return (
                 <span key={r} className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold", m.chipBg)}>
@@ -473,7 +561,7 @@ function Demo() {
                       <span className="h-2 w-2 rounded-full bg-red-500/40" />
                       <span className="h-2 w-2 rounded-full bg-[#c9a84c]/60" />
                       <span className="h-2 w-2 rounded-full bg-[#666]/40" />
-                      <span className="ml-1 font-mono text-[10px] text-[#666]">kingdom-protocol.lovable.app</span>
+                      <span className="ml-1 font-mono text-[10px] text-[#666]">kingdom-protocol.app</span>
                     </div>
                     <div className="p-5">
                       <Mock />
@@ -496,7 +584,7 @@ function Demo() {
           <Footprints className="mx-auto h-10 w-10 text-[#c9a84c]" />
           <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">Ready to walk it out?</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-[#aaa]">
-            Pick your lane. Pick your watchman. Show up tonight.
+            Pick your path. Pick your watchman. Show up tonight.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link to="/" className="rounded-md border border-[#2a2518] px-5 py-2.5 text-sm font-semibold text-[#c9a84c]">
@@ -508,7 +596,7 @@ function Demo() {
           </div>
           <p className="mt-8 text-[11px] tracking-wider text-[#444]">
             <Clock className="inline h-3 w-3 mr-1" />
-            One lane at a time. One night at a time.
+            One path at a time. One night at a time.
           </p>
         </div>
       </main>
