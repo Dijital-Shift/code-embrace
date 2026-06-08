@@ -105,6 +105,7 @@ export type Database = {
           ends_at: string | null
           lane_id: string
           lane_type: string
+          notes: string | null
           partner_email: string | null
           partner_id: string | null
           status: string
@@ -118,6 +119,7 @@ export type Database = {
           ends_at?: string | null
           lane_id?: string
           lane_type?: string
+          notes?: string | null
           partner_email?: string | null
           partner_id?: string | null
           status?: string
@@ -131,6 +133,7 @@ export type Database = {
           ends_at?: string | null
           lane_id?: string
           lane_type?: string
+          notes?: string | null
           partner_email?: string | null
           partner_id?: string | null
           status?: string
@@ -207,6 +210,48 @@ export type Database = {
           {
             foreignKeyName: "notifications_partner_id_fkey"
             columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      path_watchmen: {
+        Row: {
+          created_at: string
+          id: string
+          path_id: string
+          status: string
+          watchman_email: string
+          watchman_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path_id: string
+          status?: string
+          watchman_email: string
+          watchman_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path_id?: string
+          status?: string
+          watchman_email?: string
+          watchman_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "path_watchmen_path_id_fkey"
+            columns: ["path_id"]
+            isOneToOne: false
+            referencedRelation: "lanes"
+            referencedColumns: ["lane_id"]
+          },
+          {
+            foreignKeyName: "path_watchmen_watchman_id_fkey"
+            columns: ["watchman_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
