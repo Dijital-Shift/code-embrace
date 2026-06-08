@@ -275,7 +275,7 @@ function WhoThisIsFor() {
             className="rounded-xl sm:rounded-2xl border-2 p-3 sm:p-7"
             style={{ borderColor: "rgba(220,38,38,0.55)", background: "#1a0707" }}
           >
-            <p className="text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-bold mb-3 sm:mb-4" style={{ color: "#f87171" }}>Not for the one who…</p>
+            <p className="text-center text-[0.55rem] sm:text-[0.65rem] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-bold mb-3 sm:mb-4" style={{ color: "#f87171" }}>Not for the one who…</p>
             <ul className="space-y-2 sm:space-y-3">
               {notForItems.map((t) => (
                 <li key={t} className="flex items-start gap-1.5 sm:gap-3 text-[0.72rem] sm:text-sm leading-relaxed" style={{ color: "#fca5a5" }}>
