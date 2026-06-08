@@ -249,6 +249,7 @@ function WhoThisIsFor() {
     "is looking for anonymity over accountability",
     "expects software to do the work of a watchman",
     "is not ready to let another believer see the misses",
+    "would rather perish in private than be saved in public",
   ];
   return (
     <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
