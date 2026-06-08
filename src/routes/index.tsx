@@ -127,15 +127,14 @@ function SilenceRule() {
         <div className="text-center mb-14">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
-          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes.</p>
+          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Two thresholds. The quieter you get, the louder it becomes.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          <Threshold n="01" title="Miss one" body="Nothing. Life happens. The window closes and the day moves on." tone="muted" />
-          <Threshold n="02" title="Miss two in 24h" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet." tone="warn" />
-          <Threshold n="03" title="Miss three" body="Escalation contact notified. The chain you set up engages before the breach can." tone="alert" />
+        <div className="grid md:grid-cols-2 gap-5">
+          <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
+          <Threshold n="02" title="Stay silent or report a breach" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet — or that you fell." tone="warn" />
         </div>
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
-          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why three thresholds</p>
+          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why two thresholds</p>
           <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
             "A prudent man foreseeth the evil, and hideth himself: but the simple pass on, and are punished."
           </p>
@@ -145,6 +144,7 @@ function SilenceRule() {
     </section>
   );
 }
+
 
 function Threshold({ n, title, body, tone }: { n: string; title: string; body: string; tone: "muted" | "warn" | "alert" }) {
   const color = tone === "muted" ? "#666" : tone === "warn" ? GOLD : "#e8804a";
@@ -161,37 +161,69 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
 function Pricing() {
   return (
     <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Count the cost.</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
             <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28
           </p>
         </div>
-        <div className="rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-8 sm:p-10 text-center" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
-          <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: GOLD }}>Early access</p>
-          <h3 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">Free for everyone, right now.</h3>
-          <p className="text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-6">
-            Every path, every watchman, every notification. No card, no trial timer. While we pair the first cohort, the whole protocol is open.
-          </p>
-          <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 max-w-md mx-auto text-left mb-8">
-            {["Unlimited paths", "Watchman pairing", "Escalation chain", "Daily check-ins", "Breach reporting", "Push notifications"].map((f) => (
-              <li key={f} className="flex items-start gap-2.5 text-sm text-[#c9c4ba]">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
-          <Link to="/login" className="inline-block px-8 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-            Start free
-          </Link>
-          <p className="mt-5 text-xs text-[#666] tracking-wider">When billing turns on, early users get notice first — and grandfather rates.</p>
+
+        <div className="grid md:grid-cols-3 gap-5">
+          {/* Free trial */}
+          <div className="rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-7 flex flex-col">
+            <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-2 text-[#888]">First 30 days</p>
+            <h3 className="text-2xl font-extrabold text-white mb-1">Free trial</h3>
+            <p className="text-[#666] text-sm mb-5">Full access. No card.</p>
+            <ul className="space-y-2 text-sm text-[#c9c4ba] flex-1">
+              {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting", "Push notifications"].map((f) => (
+                <li key={f} className="flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+              ))}
+            </ul>
+            <Link to="/login" className="mt-6 inline-block text-center px-5 py-3 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-sm">
+              Start free
+            </Link>
+          </div>
+
+          {/* Monthly */}
+          <div className="rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-7 flex flex-col">
+            <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-2 text-[#888]">After trial</p>
+            <h3 className="text-2xl font-extrabold text-white mb-1">$4.99<span className="text-base font-bold text-[#888]">/mo</span></h3>
+            <p className="text-[#666] text-sm mb-5">Month to month. Cancel anytime.</p>
+            <ul className="space-y-2 text-sm text-[#c9c4ba] flex-1">
+              {["Everything in free trial", "Cancel anytime", "Grandfathered if price changes"].map((f) => (
+                <li key={f} className="flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+              ))}
+            </ul>
+            <Link to="/login" className="mt-6 inline-block text-center px-5 py-3 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-sm">
+              Start free
+            </Link>
+          </div>
+
+          {/* Lifetime */}
+          <div className="rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-7 flex flex-col relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[0.6rem] tracking-[0.2em] uppercase font-bold rounded-full" style={{ background: GOLD, color: "#000" }}>Recommended</span>
+            <p className="text-[0.6rem] tracking-[0.2em] uppercase font-bold mb-2" style={{ color: GOLD }}>Once. Forever.</p>
+            <h3 className="text-2xl font-extrabold text-white mb-1">$99<span className="text-base font-bold text-[#888]"> lifetime</span></h3>
+            <p className="text-[#aa9560] text-sm mb-5">Buy it once. Walk it forever.</p>
+            <ul className="space-y-2 text-sm text-[#c9c4ba] flex-1">
+              {["Everything, always", "No renewals", "Pays for itself in ~20 months", "For the long obedience"].map((f) => (
+                <li key={f} className="flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
+              ))}
+            </ul>
+            <Link to="/login" className="mt-6 inline-block text-center px-5 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-sm" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
+              Start free → Lifetime
+            </Link>
+          </div>
         </div>
+
+        <p className="mt-8 text-center text-xs text-[#666] tracking-wider">Watchmen are always free. They walk with you, not with a bill.</p>
       </div>
     </section>
   );
 }
+
 
 function WhoThisIsFor() {
   const forItems = [
@@ -247,7 +279,7 @@ function FAQ() {
   const items = [
     {
       q: "Is it really free?",
-      a: "Yes. During early access every tier is free — no card, no trial timer. When billing turns on, you'll get notice before anything changes.",
+      a: "Free for 30 days when you sign up — no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
     },
     {
       q: "Is this confession?",
@@ -258,22 +290,19 @@ function FAQ() {
       a: "Only the watchman you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping. (James 5:16 — \"Confess your faults one to another.\")",
     },
     {
-      q: "What if my watchman falls too?",
-      a: "That is why the escalation chain exists. If your watchman goes silent on their own paths, your escalation contact is engaged. Two are better than one — and a threefold cord is not quickly broken. (Ecclesiastes 4:12)",
-    },
-    {
       q: "Is this for women?",
       a: "Yes. The protocol is the same. Choose a watchman of the same conviction; the system does not assume a gender.",
     },
     {
       q: "What does it cost watchmen?",
-      a: "Nothing. Watchmen you alert are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
+      a: "Nothing. Watchmen are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
     },
     {
       q: "Why pay at all?",
       a: "Because the labourer is worthy of his hire (1 Timothy 5:18), and this work stays unfunded by advertisers so the watchtower stays clean.",
     },
   ];
+
   return (
     <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
       <div className="max-w-3xl mx-auto">
