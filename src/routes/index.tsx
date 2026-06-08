@@ -83,7 +83,7 @@ function HeroMock() {
         <div className="space-y-3">
           <MockRow title="Meditate on Scripture" status="held" />
           <MockRow title="Pray three times a day" status="held" />
-          <MockRow title="Fast — no fried foods · ends Fri" status="silent" />
+          <MockRow title="Fast — no fried foods" status="silent" />
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
           <span className="text-xs text-[#888]">1 silent path</span>
