@@ -20,7 +20,7 @@ const WORDMARK_FONT = "'Cinzel', 'Trajan Pro', Georgia, serif";
 
 function Header() {
   return (
-    <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#1a1610]">
+    <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#2a2418]">
       <Link to="/" className="flex items-center">
         <span
           className="text-lg sm:text-xl font-semibold tracking-[0.18em] uppercase"
@@ -110,7 +110,7 @@ function MockRow({ title, status }: { title: string; status: "held" | "silent" }
 
 function ProblemTension() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-6">The Problem</p>
         <h2 className="text-3xl sm:text-4xl font-bold leading-tight text-white mb-6">
@@ -132,7 +132,7 @@ function ProblemTension() {
 
 function SilenceRule() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-14">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
@@ -172,7 +172,7 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
 
 function Pricing() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
@@ -252,7 +252,7 @@ function WhoThisIsFor() {
     "would rather perish in private than be saved in public",
   ];
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-14">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Discernment</p>
@@ -320,7 +320,7 @@ function FAQ() {
   ];
 
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-14">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Plain answers</p>
@@ -349,7 +349,7 @@ function FAQ() {
 
 function ClosingCall() {
   return (
-    <section className="px-5 sm:px-8 py-20 border-t border-[#1a1610]">
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The call</p>
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-8">Bear ye one another's burdens.</h2>
