@@ -38,28 +38,60 @@ export async function notifyUserMissed(args: { laneTitle: string; userId: string
   });
 }
 
-// Marks today's missing check-ins as `missed` and nudges the user.
-// Past `ends_at` lanes are auto-archived (path complete) and skipped.
+// Marks today's missing check-ins as `missed`, nudges the user, and pings the
+// assigned watchman (Silence Rule threshold 2). Idempotent — safe to re-run.
 export async function markMissedCheckins() {
   const today = new Date().toISOString().split('T')[0];
 
-  // Auto-archive any active lanes whose end date has passed.
   await supabaseAdmin.from('lanes').update({ status: 'archived' })
     .eq('status', 'active').not('ends_at', 'is', null).lt('ends_at', today);
 
   const { data: activeLanes } = await supabaseAdmin.from('lanes')
     .select('lane_id, partner_id, title, user_id').eq('status', 'active');
-  if (!activeLanes?.length) return { processed: 0 };
+  if (!activeLanes?.length) return { processed: 0, watchmenPinged: 0 };
   const { data: todayCheckins } = await supabaseAdmin.from('checkins').select('lane_id').eq('checkin_date', today);
   const checkedIds = new Set((todayCheckins ?? []).map((c: any) => c.lane_id));
   const missed = activeLanes.filter((l: any) => !checkedIds.has(l.lane_id));
+
+  let watchmenPinged = 0;
   for (const lane of missed) {
-    const { data: ci } = await supabaseAdmin.from('checkins').insert({
+    // Insert (or fetch) today's missed check-in. Unique on (lane_id, checkin_date).
+    let { data: ci } = await supabaseAdmin.from('checkins').insert({
       lane_id: lane.lane_id, user_id: lane.user_id, checkin_date: today, status: 'missed',
     }).select('checkin_id').single();
-    if (ci) await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id });
+    if (!ci) {
+      const existing = await supabaseAdmin.from('checkins')
+        .select('checkin_id').eq('lane_id', lane.lane_id).eq('checkin_date', today).maybeSingle();
+      ci = existing.data;
+    }
+    if (!ci) continue;
+
+    await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id });
+
+    // Threshold 2 — ping the watchman. Skip if already pinged for this check-in.
+    if (!lane.partner_id) continue;
+    const { data: prior } = await supabaseAdmin.from('notifications')
+      .select('notification_id').eq('checkin_id', ci.checkin_id).eq('type', 'missed_checkin').maybeSingle();
+    if (prior) continue;
+
+    const { data: u } = await supabaseAdmin.from('profiles')
+      .select('email').eq('user_id', lane.user_id).single();
+    const body = `${u?.email ?? 'Your partner'} went silent on "${lane.title}" today. Reach out.`;
+    const { data: notif } = await supabaseAdmin.from('notifications').insert({
+      lane_id: lane.lane_id, partner_id: lane.partner_id, checkin_id: ci.checkin_id,
+      type: 'missed_checkin', status: 'pending', message_content: body,
+    }).select('notification_id').single();
+    const sent = await sendPushToUser(lane.partner_id, {
+      title: `Silence — ${lane.title}`, body, url: '/partner',
+    });
+    if (notif) {
+      await supabaseAdmin.from('notifications').update({
+        status: sent ? 'sent' : 'failed', sent_at: sent ? new Date().toISOString() : null,
+      }).eq('notification_id', notif.notification_id);
+    }
+    if (sent) watchmenPinged++;
   }
-  return { processed: missed.length };
+  return { processed: missed.length, watchmenPinged };
 }
 
 export async function sendBedtimeReminders() {
