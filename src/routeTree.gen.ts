@@ -27,6 +27,7 @@ import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
+import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
 import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -120,6 +121,12 @@ const ApiPublicHooksMissedCheckinsRoute =
     path: '/api/public/hooks/missed-checkins',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksEscalateMissedRoute =
+  ApiPublicHooksEscalateMissedRouteImport.update({
+    id: '/api/public/hooks/escalate-missed',
+    path: '/api/public/hooks/escalate-missed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksBedtimeReminderRoute =
   ApiPublicHooksBedtimeReminderRouteImport.update({
     id: '/api/public/hooks/bedtime-reminder',
@@ -146,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
+  '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRoutesByTo {
@@ -167,6 +175,7 @@ export interface FileRoutesByTo {
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
+  '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRoutesById {
@@ -189,6 +198,7 @@ export interface FileRoutesById {
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
+  '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
 }
 export interface FileRouteTypes {
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
+    | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
+    | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   id:
     | '__root__'
@@ -254,6 +266,7 @@ export interface FileRouteTypes {
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
+    | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
   fileRoutesById: FileRoutesById
 }
@@ -275,6 +288,7 @@ export interface RootRouteChildren {
   LanesIndexRoute: typeof LanesIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
+  ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
   ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
 }
 
@@ -406,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMissedCheckinsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/escalate-missed': {
+      id: '/api/public/hooks/escalate-missed'
+      path: '/api/public/hooks/escalate-missed'
+      fullPath: '/api/public/hooks/escalate-missed'
+      preLoaderRoute: typeof ApiPublicHooksEscalateMissedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/bedtime-reminder': {
       id: '/api/public/hooks/bedtime-reminder'
       path: '/api/public/hooks/bedtime-reminder'
@@ -446,6 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   LanesIndexRoute: LanesIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
+  ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
   ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,
 }
 export const routeTree = rootRouteImport
