@@ -16,11 +16,13 @@ function generateToken(): string {
 // Owner creates an invite link for a lane
 export const createLaneInvite = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ laneId: z.string().uuid() }))
+  .inputValidator(z.object({
+    laneId: z.string().uuid(),
+    relationship: z.string().max(24).optional().nullable(),
+  }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // Verify ownership and get current Watchman state
     const { data: lane } = await supabase
       .from('lanes')
       .select('lane_id, user_id, partner_id, status')
@@ -31,9 +33,6 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     if (!lane) return { error: 'Path not found.' };
     if (lane.status === 'archived') return { error: 'Cannot invite Watchmen to an archived path.' };
 
-    // Hard cap: 2 active Watchmen per path (current attached + pending invites).
-    // NOTE: live multi-attach uses the legacy partner_id column today; the new
-    // path_watchmen join table will replace this read path in a follow-up.
     const attached = lane.partner_id ? 1 : 0;
 
     const { count: pendingCount } = await supabase
@@ -48,10 +47,12 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     }
 
     const token = generateToken();
+    const rel = data.relationship?.trim() || null;
     const { error } = await supabase.from('lane_invites').insert({
       lane_id: data.laneId,
       owner_id: userId,
       token,
+      relationship: rel,
     });
 
     if (error) return { error: error.message };
@@ -85,10 +86,9 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     const { userId, claims } = context;
     const accepterEmail = ((claims as any)?.email || '').toLowerCase();
 
-    // Read invite via admin (we trust the token)
     const { data: invite } = await supabaseAdmin
       .from('lane_invites')
-      .select('invite_id, lane_id, owner_id, status, expires_at')
+      .select('invite_id, lane_id, owner_id, status, expires_at, relationship')
       .eq('token', data.token)
       .maybeSingle();
 
@@ -100,7 +100,6 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     }
     if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
 
-    // Get lane
     const { data: lane } = await supabaseAdmin
       .from('lanes')
       .select('lane_id, title, partner_id, status')
@@ -114,7 +113,6 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     }
     if (lane.partner_id) return { error: 'This path already has a Watchman.' };
 
-    // Watchman lane cap (existing trigger enforces 2; pre-check for nicer error)
     const { count: myWatchmanCount } = await supabaseAdmin
       .from('lanes')
       .select('lane_id', { count: 'exact', head: true })
@@ -125,15 +123,17 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       return { error: "You're already watching 2 paths. That's the limit." };
     }
 
-    // Attach Watchman
     const { error: updErr } = await supabaseAdmin
       .from('lanes')
-      .update({ partner_id: userId, partner_email: accepterEmail })
+      .update({
+        partner_id: userId,
+        partner_email: accepterEmail,
+        partner_relationship: invite.relationship ?? null,
+      })
       .eq('lane_id', invite.lane_id);
 
     if (updErr) return { error: updErr.message };
 
-    // Mark invite accepted
     await supabaseAdmin
       .from('lane_invites')
       .update({ status: 'accepted', accepted_by: userId, accepted_at: new Date().toISOString() })
@@ -166,7 +166,7 @@ export const listLaneInvites = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const { data: rows } = await supabase
       .from('lane_invites')
-      .select('invite_id, token, status, expires_at, created_at, accepted_at')
+      .select('invite_id, token, status, expires_at, created_at, accepted_at, relationship')
       .eq('lane_id', data.laneId)
       .eq('owner_id', userId)
       .order('created_at', { ascending: false })
