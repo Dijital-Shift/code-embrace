@@ -119,7 +119,7 @@ function ProblemTension() {
           Monday you were certain. Tuesday you were tired. By Thursday you're lying to a notification, and the streak you built is a number you stopped looking at. The app meant to help you wanted eleven taps and a mood emoji. You gave it neither. The thing you swore off on Sunday is already in your hand. You fell in the dark. Nobody knows. That's the worst part.
         </p>
         <p className="text-white text-lg sm:text-xl font-medium leading-relaxed mb-10">
-          What you actually need is small, quiet, and human. One honest tap when the day is done. One person who notices the silence and reaches for you.
+          What you actually need is small, quiet, and human. One honest tap when the day is done. One person who notices the silence and reaches out to you.
         </p>
         <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10">
           <p className="text-[#c9a84c] italic text-lg sm:text-xl leading-relaxed">
