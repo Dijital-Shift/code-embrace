@@ -297,12 +297,12 @@ function WhoThisIsFor() {
 function FAQ() {
   const items = [
     {
-      q: "Is it really free?",
-      a: "Free for 30 days when you sign up — no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
-    },
-    {
       q: "Is this confession?",
       a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a watchman who sees the silence early enough to call you back before the breach.",
+    },
+    {
+      q: "What stops me from lying?",
+      a: "Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins. \"For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.\" — Luke 12:2. If you came here to game it, this isn't your tool yet. Come ready to be seen.",
     },
     {
       q: "Who sees my misses?",
@@ -313,20 +313,20 @@ function FAQ() {
       a: "Yes. The protocol is the same. Choose a watchman of the same conviction; the system does not assume a gender.",
     },
     {
-      q: "What does it cost watchmen?",
-      a: "Nothing. Watchmen are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
+      q: "What inspired you to build this?",
+      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you — it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you — one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
+    },
+    {
+      q: "Is it really free?",
+      a: "Free for 30 days when you sign up — no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
     },
     {
       q: "Why pay at all?",
       a: "Because the labourer is worthy of his hire (1 Timothy 5:18), and this work stays unfunded by advertisers so the watchtower stays clean.",
     },
     {
-      q: "What inspired you to build this?",
-      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you — it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you — one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
-    },
-    {
-      q: "What stops me from lying?",
-      a: "Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins. \"For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.\" — Luke 12:2. If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+      q: "What does it cost watchmen?",
+      a: "Nothing. Watchmen are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
     },
     {
       q: "What does the Word say about lying and being watched?",
