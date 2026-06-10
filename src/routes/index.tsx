@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 
 const GOLD = "#c9a84c";
 
-const WORDMARK_FONT = "'Cinzel', 'Trajan Pro', Georgia, serif";
+
 
 function Header() {
   return (
