@@ -113,10 +113,13 @@ function ProblemTension() {
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-6">The Problem</p>
         <h2 className="text-3xl sm:text-4xl font-bold leading-tight text-white mb-6">
-          Accountability apps tell on you <em className="not-italic" style={{ color: GOLD }}>after</em> the breach.
+          The <em className="not-italic" style={{ color: GOLD }}>quiet</em> break.
         </h2>
-        <p className="text-[#a8a39a] text-lg leading-relaxed mb-10">
-          Reports, logs, weekly emails. By the time anyone sees them, the damage is a week old. The real failure happened in the quiet — the missed check-in nobody noticed.
+        <p className="text-[#a8a39a] text-lg leading-relaxed mb-6 text-left sm:text-center">
+          Monday you were certain. Tuesday you were tired. By Thursday you're lying to a notification, and the streak you built is a number you stopped looking at. The app meant to help you wanted eleven taps and a mood emoji. You gave it neither. The thing you swore off on Sunday is already in your hand. You fell in the dark. Nobody knows. That's the worst part.
+        </p>
+        <p className="text-white text-lg sm:text-xl font-medium leading-relaxed mb-10">
+          What you actually need is small, quiet, and human. One honest tap when the day is done. One person who notices the silence and reaches for you.
         </p>
         <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10">
           <p className="text-[#c9a84c] italic text-lg sm:text-xl leading-relaxed">
