@@ -1,59 +1,102 @@
-Two parts: (A) the landing-page polish you already approved, (B) three new functional additions.
+# Polish pass v2 — honesty, gender, relationship, referrals, micro-prompt
 
----
+## 1. FAQ — two new entries (`src/routes/index.tsx`)
 
-## A. Landing page (`src/routes/index.tsx` + one `<link>` in `__root.tsx`)
+**Q: "What stops me from lying?"**
+A: Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins. "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known." — Luke 12:2. If you came here to game it, this isn't your tool yet. Come ready to be seen.
 
-1. **Header** — drop the logo image; render "Kingdom Protocol" as a majestic Cinzel display wordmark in gold.
-2. **Hero mock** — swap the three generic rows for real biblical paths from `path-templates.ts`: *Meditate on Scripture* (Held), *Pray three times a day* (Held), *Fast — no fried foods, ends Fri* (No check-in).
-3. **Whom this is for** — force `grid-cols-2` at every width; "Not for the one who…" gets red border, faint red tint, red ✕ marks, and red-tinted body text so it reads as a warning.
-4. **Pricing** — three cards side-by-side at every width (`grid-cols-3`), tighter mobile padding so 414px fits cleanly.
-5. **Footer** — remove "shipping May 2026"; remove redundant small logo+text pair; place a large readable logo image (h-20) centered above the "Built by Dijital Shift · v1.0" line.
-6. **Font load** — add Cinzel `<link>` to the existing fonts block in `src/routes/__root.tsx`.
+**Q: "What does the Word say about lying and being watched?"**
+A: Plainly:
+- "Lying lips are abomination to the LORD: but they that deal truly are his delight." — Proverbs 12:22
+- "But I say unto you, That every idle word that men shall speak, they shall give account thereof in the day of judgment." — Matthew 12:36
+- "The LORD is in his holy temple, the LORD's throne is in heaven: his eyes behold, his eyelids try, the children of men." — Psalm 11:4
+- "The eyes of the LORD are in every place, beholding the evil and the good." — Proverbs 15:3
+- "The eyes of the Lord are ten thousand times brighter than the sun, beholding all the ways of men, and considering the most secret parts." — Sirach 23:19
+- "He hath commanded no man to do wickedly, neither hath he given any man licence to sin." — Sirach 15:20 *(close paraphrase of the 16:17 / 17:19–20 thrust — "say not thou, I shall be hidden from the Lord… his eyes are upon the ways of every man, and he seeth into secret places.")*
+What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later.
 
----
+> Note: apocryphal citations (Sirach) included per your direction. We'll label them as Sirach so users know the source.
 
-## B. New scope from this message
+## 2. Demo copy — gender-neutral pronoun (`src/routes/demo.tsx`)
 
-### B1. Path notes (your "fried foods" example)
-Personal-but-watchman-visible note attached to a path. Surfaced everywhere the path appears.
+Line 175: `"…pinged when he misses or breaks the fast."` → `"…pinged when they miss or break the fast."` Sweep `src/routes/` and `src/components/` for stray "he misses / she misses."
 
-- **DB migration** — add `notes text` (nullable, max ~500 chars) to `public.lanes`.
-- **Create path** (`src/routes/lanes.new.tsx`) — add a *Notes (optional)* textarea below title/description with helper text "Anything your watchman should know — e.g. 'no fried foods', 'ends Friday 6pm'."
-- **Path detail** (`src/routes/lanes.$id.tsx`) — render notes block under the scripture, styled like a sticky note (`border-l-2`, muted gold).
-- **Watchman view** (`src/routes/partner.tsx`) — show notes inline on each path card so the watchman sees context without asking.
-- **Demo scene 2** (`src/routes/demo.tsx`) — add the notes line to the mock so the example reads "Fast · notes: no fried foods · ends Fri 6pm."
-- **Server fn** — extend `createPath`/`updatePath` in `src/lib/api.functions.ts` to accept/persist `notes`.
+## 3. Gender capture — Male/Female, copy stays neutral
 
-### B2. Two watchmen per path (restore original vision)
-Current schema: one `partner_id` column = one watchman max. That's why the demo copy currently says "One watchman max." Fix:
+**Why now** (per your reasoning): future pairing for users without a watchman; same-gender pastoral fit; cheap now, painful to backfill later.
 
-- **DB migration** — new `public.path_watchmen` join table (`path_id`, `watchman_id` or `watchman_email` for pending invites, `status`, `created_at`). Unique on `(path_id, watchman_email)`. Enforce max 2 active rows per `path_id` via trigger. Keep existing per-watchman cap (2 active paths per person) ported to the new table.
-- **Backfill** — copy existing `lanes.partner_id` / `partner_email` rows into `path_watchmen` so nothing breaks; leave the old columns in place for one release as a safety net.
-- **Code sweep** — `lanes.new.tsx` lets you invite up to 2 watchmen; `lanes.$id.tsx` `WatchmenPanel` lists both, lets you remove either; `partner.tsx` already works per-watchman row; invite token flow unchanged (one token per row).
-- **Copy** — kill every "one watchman max" / "one watchman per path" string across `demo.tsx`, `index.tsx` FAQ, `how-it-works.tsx`. Replace with "up to two watchmen per path."
-- **Push** — when a breach fires, ping all active watchmen on that path, not just one.
+**Migration**: add `gender text` to `public.profiles` with CHECK `gender in ('male','female')`, nullable.
 
-### B3. Streak model — falls don't reset (Proverbs 24:16)
-You're right, zeroing the counter is demoralizing and unscriptural. New model:
+**Onboarding** (`src/routes/onboarding.tsx`): required two-button choice — **Male** / **Female**. Helper: *"This is how the Father made you. We use it for pairing and pastoral fit, not for public display."*
 
-- **No reset.** Track `days_held` and `days_breached` independently over the path's lifetime. A breach increments breached, never decrements held.
-- **Display** on dashboard + path detail + demo scene 11:
-  - Big number: `days_held` ("days standing")
-  - Small number beside it: `days_breached` ("days fallen")
-  - Ratio line: "12 standing · 2 fallen — still rising."
-- **Scene 11 (`MockPathComplete` / breach scene in `demo.tsx`)** — add the verse callout:
-  > *"For a just man falleth seven times, and riseth up again."* — Proverbs 24:16 (KJV)
-- **Implementation** — no schema change needed; both counts derive from existing `checkins` rows (`status='held'` vs `status='breach'`). Add a small `getPathTotals(pathId)` server fn used by dashboard, detail, and partner views.
-- **Remove** any "streak broken" / "starting over" language from `checkin.tsx` and `dashboard.tsx`.
+**Settings** (`src/routes/settings.tsx`): editable radio.
 
----
+**Existing users**: soft prompt on `/dashboard` first visit until set; dismissible to settings.
 
-## Order of operations
-1. Migration for `lanes.notes` + new `path_watchmen` table (one migration, awaits your approval).
-2. Landing-page edits (A1–A6) — pure presentation, ship immediately after migration approval since they don't depend on it.
-3. Server fns + UI for notes (B1).
-4. Watchman fan-out across create / detail / partner / push / copy (B2).
-5. Streak rewrite + Proverbs 24:16 callout (B3).
+User-facing copy stays gender-neutral everywhere ("they," "watchman" as role).
 
-No Paddle work, no other route restructure, no design system overhaul in this pass.
+## 4. Watchman relationship tag
+
+**Migration**: add `relationship text` to `public.path_watchmen`, nullable. Free string capped at 24 chars; UI offers presets but allows custom.
+
+Presets: **Dad, Mom, Brother, Sister, Husband, Wife, Son, Daughter, Pastor, Friend, Mentor, Other**.
+
+**Where it shows**:
+- Path detail Watchmen panel — `"Dad · alex@email.com"`.
+- Partner page — *"Walking with: Brother"* under the path owner's name.
+- Invite flow — owner picks relationship when sending the invite (optional).
+
+Role term **"watchman" stays unchanged.** Relationship is the closeness tag.
+
+## 5. Referrals — share link + quiet ledger
+
+**Migration**: `public.referrals` (`referrer_id`, `referred_user_id` nullable, `code text unique`, `created_at`, `claimed_at`). Standard GRANTs, RLS scoped to referrer.
+
+**`handle_new_user` update**: if `raw_user_meta_data->>'ref'` matches a code, stamp `referred_user_id` + `claimed_at`.
+
+**Server fns** (`src/lib/referrals.functions.ts`):
+- `getMyReferralCode()` — get or create.
+- `getMyReferralLedger()` — `{ invited, walking }`.
+
+**UI** — card on `/dashboard` and `/settings`:
+- Headline: **"Call someone to the wall."** *(gender-neutral — replaces "Bring a brother…")*
+- Sub: *"Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing."*
+- Copy-link button → `/?ref=CODE`.
+- Ledger: *"You've invited **N** · **M** are walking."*
+
+Landing page captures `?ref=CODE` to `localStorage` and passes through signup metadata. No banner.
+
+*(Internal: future surprise appreciation reads from `referrals.claimed_at`. Not user-facing.)*
+
+## 6. Watchman micro-prompt after first encouragement
+
+**Migration**: 
+- `public.encouragements` (`watchman_id`, `lane_id`, `owner_id`, `body`, `created_at`). RLS: watchman + lane owner read own; watchman insert when active on lane.
+- `profiles.dismissed_watchman_prompt boolean default false`.
+
+**Server fn**: `sendEncouragement({ laneId, body })` — verifies active watchman, inserts row + a `notifications` row (type `encouragement`) so the owner sees it.
+
+**Partner page UI** (`src/routes/partner.tsx`):
+- Each active lane card: small "Send encouragement" textarea (280 chars) + Send.
+- After the watchman's **first** encouragement, one-time card above assignments — **only if the watchman has zero active lanes of their own**:
+  - *"You just held someone up. The watch goes both ways — start your own path when you're ready."*
+  - **Start a path** → `/lanes/new` · **Not now** → sets `dismissed_watchman_prompt = true`.
+- If the watchman already walks their own paths, suppress the micro-prompt entirely (they don't need the nudge).
+
+## Files touched
+
+- `src/routes/index.tsx` — 2 FAQ items, `?ref=` capture, referral card surface.
+- `src/routes/demo.tsx` — pronoun fix.
+- `src/routes/onboarding.tsx`, `src/routes/settings.tsx` — gender field, dashboard soft prompt for existing users.
+- `src/routes/dashboard.tsx` — referral card, gender soft prompt.
+- `src/routes/lanes.$id.tsx`, `src/routes/lanes.new.tsx` — relationship tag on watchman invite + display.
+- `src/routes/partner.tsx` — relationship label, encouragement send UI, one-time micro-prompt.
+- `src/lib/api.functions.ts` — gender on profile, relationship on watchman, `sendEncouragement`, extended `getPartnerView` (with `myActiveLaneCount` for micro-prompt gating).
+- New `src/lib/referrals.functions.ts`.
+- Migrations: `profiles.gender` + `dismissed_watchman_prompt`, `path_watchmen.relationship`, `referrals` table, `encouragements` table, `handle_new_user` update.
+
+## Out of scope
+
+- Rewards/gift cards (data captured, no UI).
+- Push notification on encouragement (uses existing in-app notification row).
+- Pairing/matchmaking by gender (data captured for v2).
