@@ -106,6 +106,7 @@ export type Database = {
           invite_id: string
           lane_id: string
           owner_id: string
+          relationship: string | null
           status: string
           token: string
         }
@@ -117,6 +118,7 @@ export type Database = {
           invite_id?: string
           lane_id: string
           owner_id: string
+          relationship?: string | null
           status?: string
           token: string
         }
@@ -128,6 +130,7 @@ export type Database = {
           invite_id?: string
           lane_id?: string
           owner_id?: string
+          relationship?: string | null
           status?: string
           token?: string
         }
@@ -143,6 +146,7 @@ export type Database = {
           notes: string | null
           partner_email: string | null
           partner_id: string | null
+          partner_relationship: string | null
           status: string
           support_scripture: string[] | null
           title: string
@@ -157,6 +161,7 @@ export type Database = {
           notes?: string | null
           partner_email?: string | null
           partner_id?: string | null
+          partner_relationship?: string | null
           status?: string
           support_scripture?: string[] | null
           title: string
@@ -171,6 +176,7 @@ export type Database = {
           notes?: string | null
           partner_email?: string | null
           partner_id?: string | null
+          partner_relationship?: string | null
           status?: string
           support_scripture?: string[] | null
           title?: string
