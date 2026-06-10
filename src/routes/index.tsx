@@ -294,19 +294,67 @@ function WhoThisIsFor() {
   );
 }
 
+type Verse = { text: string; ref: string };
+type FaqItem = {
+  q: string;
+  a?: string;
+  intro?: string;
+  verses?: Verse[];
+  closing?: string;
+};
+
+function VerseBlock({ verses }: { verses: Verse[] }) {
+  return (
+    <div className="space-y-4 my-4">
+      {verses.map((v, i) => (
+        <blockquote
+          key={i}
+          className="border-l-2 pl-4 py-1"
+          style={{ borderColor: "rgba(201,168,76,0.45)" }}
+        >
+          <p
+            className="italic text-[0.95rem] sm:text-base leading-relaxed"
+            style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "#c9a84c" }}
+          >
+            “{v.text}”
+          </p>
+          <p className="mt-2 text-[0.65rem] tracking-[0.18em] uppercase font-medium text-white/80">
+            {v.ref}
+          </p>
+        </blockquote>
+      ))}
+    </div>
+  );
+}
+
 function FAQ() {
-  const items = [
+  const items: FaqItem[] = [
     {
       q: "Is this confession?",
       a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a watchman who sees the silence early enough to call you back before the breach.",
     },
     {
       q: "What stops me from lying?",
-      a: "Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins. \"For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.\" — Luke 12:2. If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+      intro:
+        "Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins.",
+      verses: [
+        {
+          text: "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.",
+          ref: "Luke 12:2",
+        },
+      ],
+      closing: "If you came here to game it, this isn't your tool yet. Come ready to be seen.",
     },
     {
       q: "Who sees my misses?",
-      a: "Only the watchman you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping. (James 5:16 — \"Confess your faults one to another.\")",
+      intro:
+        "Only the watchman you chose. Not the public. Not a feed. Not us beyond what the system requires to deliver the ping.",
+      verses: [
+        {
+          text: "Confess your faults one to another, and pray one for another, that ye may be healed.",
+          ref: "James 5:16",
+        },
+      ],
     },
     {
       q: "Is this for women?",
@@ -322,15 +370,56 @@ function FAQ() {
     },
     {
       q: "Why pay at all?",
-      a: "Because the labourer is worthy of his hire (1 Timothy 5:18), and this work stays unfunded by advertisers so the watchtower stays clean.",
+      intro:
+        "Because the labourer is worthy of his hire, and this work stays unfunded by advertisers so the watchtower stays clean.",
+      verses: [
+        {
+          text: "For the scripture saith… The labourer is worthy of his reward.",
+          ref: "1 Timothy 5:18",
+        },
+      ],
     },
     {
       q: "What does it cost watchmen?",
-      a: "Nothing. Watchmen are never charged. Only those walking the paths pay. (Freely ye have received, freely give — Matthew 10:8.)",
+      intro: "Nothing. Watchmen are never charged. Only those walking the paths pay.",
+      verses: [
+        {
+          text: "Freely ye have received, freely give.",
+          ref: "Matthew 10:8",
+        },
+      ],
     },
     {
       q: "What does the Word say about lying and being watched?",
-      a: "Plainly: \"Lying lips are abomination to the LORD: but they that deal truly are his delight.\" — Proverbs 12:22. \"But I say unto you, That every idle word that men shall speak, they shall give account thereof in the day of judgment.\" — Matthew 12:36. \"The LORD is in his holy temple, the LORD's throne is in heaven: his eyes behold, his eyelids try, the children of men.\" — Psalm 11:4. \"The eyes of the LORD are in every place, beholding the evil and the good.\" — Proverbs 15:3. \"The eyes of the Lord are ten thousand times brighter than the sun, beholding all the ways of men, and considering the most secret parts.\" — Sirach 23:19. \"Say not thou, I am hid from the Lord; shall any remember me from above?… his eyes are upon the ways of every man, and he seeth into secret places.\" — Sirach 16:17, 17:19–20 (paraphrased from KJV Apocrypha). What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later.",
+      intro: "Plainly:",
+      verses: [
+        {
+          text: "Lying lips are abomination to the LORD: but they that deal truly are his delight.",
+          ref: "Proverbs 12:22",
+        },
+        {
+          text: "But I say unto you, That every idle word that men shall speak, they shall give account thereof in the day of judgment.",
+          ref: "Matthew 12:36",
+        },
+        {
+          text: "The LORD is in his holy temple, the LORD's throne is in heaven: his eyes behold, his eyelids try, the children of men.",
+          ref: "Psalm 11:4",
+        },
+        {
+          text: "The eyes of the LORD are in every place, beholding the evil and the good.",
+          ref: "Proverbs 15:3",
+        },
+        {
+          text: "The eyes of the Lord are ten thousand times brighter than the sun, beholding all the ways of men, and considering the most secret parts.",
+          ref: "Sirach 23:19",
+        },
+        {
+          text: "Say not thou, I am hid from the Lord; shall any remember me from above?… his eyes are upon the ways of every man, and he seeth into secret places.",
+          ref: "Sirach 16:17, 17:19–20 (paraphrased, KJV Apocrypha)",
+        },
+      ],
+      closing:
+        "What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later.",
     },
   ];
 
@@ -352,7 +441,15 @@ function FAQ() {
                 {it.q}
               </AccordionTrigger>
               <AccordionContent className="text-[#a8a39a] text-sm sm:text-base leading-relaxed pb-4">
-                {it.a}
+                {it.a ? (
+                  <p>{it.a}</p>
+                ) : (
+                  <>
+                    {it.intro && <p>{it.intro}</p>}
+                    {it.verses && <VerseBlock verses={it.verses} />}
+                    {it.closing && <p className="mt-2">{it.closing}</p>}
+                  </>
+                )}
               </AccordionContent>
             </AccordionItem>
           ))}

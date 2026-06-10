@@ -1,30 +1,58 @@
-## Recommended FAQ order
+## The problem
 
-Yes — reorder. Right now pricing leads, then a "Is this confession?" definitional question, then privacy gets buried mid-list, and the heaviest scripture-stack lands at the end where most readers have already left. The list should follow how a first-time visitor's questions actually form: *what is this → can I trust it → who sees me → does it fit me → what does it cost → the deeper why.*
+Right now, every FAQ answer — including the heavy scripture one ("What does the Word say about lying and being watched?") — is a single wall of prose. Verses run together inside one paragraph, separated only by quote marks and em-dashes. The Word gets no breathing room and reads like filler.
 
-### Proposed order
+## The fix
 
-1. **Is this confession?** — defines the category up front. Without this, every other answer is read through the wrong lens.
-2. **What stops me from lying?** — the first objection anyone has about an honor-system tool. Answering it early earns the rest of the page trust.
-3. **Who sees my misses?** — privacy. The #1 silent blocker for this kind of app; cannot be buried.
-4. **Is this for women?** — fit / inclusion. Quick yes, removes a bounce reason.
-5. **What inspired you to build this?** — origin / credibility. Lands well *after* trust is established, not cold at position 7.
-6. **Is it really free?** — pricing, once they actually want it.
-7. **Why pay at all?** — natural follow-up to pricing.
-8. **What does it cost watchmen?** — closes the pricing block cleanly.
-9. **What does the Word say about lying and being watched?** — heaviest scripture stack. Belongs last as the "for those who want to go deeper" capstone, not as a mid-list wall of text.
+Change the FAQ answer shape from a plain string to support **structured content**: an intro line, a list of verses (each rendered on its own), and a closing line. Scripture gets typography that reveres it; plain answers stay plain.
 
-### Why this works
+### Data shape
 
-- **Definition before defense before price.** Today the page asks for money (Q1) before telling the reader what the thing even is.
-- **Privacy moves up from #3 to #3-by-design.** Same slot numerically, but now it sits inside a trust cluster (confession → lying → privacy) instead of being sandwiched between cost questions.
-- **All three pricing questions cluster together** (6–7–8) so a reader scanning for cost finds them as a block instead of hunting.
-- **The scripture-heavy answer ends the section** — a strong close for committed readers, not a wall that scares off skimmers.
+```ts
+type FaqItem = {
+  q: string;
+  a?: string;                      // for plain prose answers (unchanged)
+  intro?: string;                  // optional lead-in
+  verses?: { text: string; ref: string }[];  // each verse renders standalone
+  closing?: string;                // optional closing line
+};
+```
 
-### Not changing
+Only the "What does the Word say…" item gets converted to `verses`. The other 8 stay as `a` strings — they're already fine.
 
-Question copy, answer copy, styling, accordion behavior. Reorder only.
+### Visual treatment for verses
 
-### My recommendation
+Each verse rendered as its own block:
 
-Do it. The reorder is low-risk (pure sequence change) and meaningfully improves how the page reads cold. Want me to apply it as-is, or swap any pairs first?
+- Verse text: serif font (Georgia / system serif via `font-serif`), italic, gold (`#c9a84c`), slightly larger leading, indented left with a thin gold left-border (`border-l-2 border-[#c9a84c]/40 pl-4`)
+- Reference: small, uppercase, tracked, white/muted, on its own line under the verse (matches the Ecclesiastes verse treatment already used on the landing hero — keeps the site visually consistent)
+- Vertical spacing between verses (`space-y-4`) so each one is honored, not crowded
+- Intro and closing rendered as normal answer prose above/below the verse block
+
+### The "What does the Word say…" item, restructured
+
+- **Intro:** "Plainly:"
+- **Verses (each its own block):**
+  1. "Lying lips are abomination to the LORD: but they that deal truly are his delight." — Proverbs 12:22
+  2. "But I say unto you, That every idle word that men shall speak, they shall give account thereof in the day of judgment." — Matthew 12:36
+  3. "The LORD is in his holy temple, the LORD's throne is in heaven: his eyes behold, his eyelids try, the children of men." — Psalm 11:4
+  4. "The eyes of the LORD are in every place, beholding the evil and the good." — Proverbs 15:3
+  5. "The eyes of the Lord are ten thousand times brighter than the sun, beholding all the ways of men, and considering the most secret parts." — Sirach 23:19
+  6. "Say not thou, I am hid from the Lord; shall any remember me from above?… his eyes are upon the ways of every man, and he seeth into secret places." — Sirach 16:17, 17:19–20 (paraphrased, KJV Apocrypha)
+- **Closing:** "What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later."
+
+### Also worth applying
+
+The other items with inline scripture references — "Who sees my misses?" (James 5:16), "Why pay at all?" (1 Timothy 5:18), "What does it cost watchmen?" (Matthew 10:8), and "What stops me from lying?" (Luke 12:2) — currently bury the citation in parentheses mid-sentence. I'll lift each of those single citations into the same verse-block treatment underneath the prose, so scripture is consistently set apart everywhere it appears in the FAQ.
+
+## Scope
+
+- File: `src/routes/index.tsx`, only the `FAQ` component (lines ~297-360)
+- No copy changes to questions or prose answers — only the scripture portions get restructured into verse blocks
+- No new dependencies; serif comes from Tailwind's `font-serif` (or a `font-family: Georgia, serif` inline if needed)
+- No changes elsewhere in the page
+
+## Technical notes
+
+- Render logic: if `verses` exists, map them into styled blocks; otherwise render `a` as before
+- Each verse uses the same visual pattern as the hero Ecclesiastes verse (italic gold body + uppercase tracked reference) so the site has one unified scripture treatment
