@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { getDashboard } from "@/lib/api.functions";
+import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 
 export const Route = createFileRoute("/dashboard")({
@@ -11,7 +13,10 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const fn = useServerFn(getDashboard);
+  const refFn = useServerFn(getMyReferral);
   const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fn() });
+  const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
+  const [copied, setCopied] = useState(false);
 
   if (isLoading) return <p className="text-[#555]">Loading…</p>;
   const lanes = data?.lanes ?? [];
@@ -19,6 +24,8 @@ function Dashboard() {
   const checkedIds = new Set(todayCheckins.map((c) => c.lane_id));
   const pendingCount = lanes.filter((l) => !checkedIds.has(l.lane_id)).length;
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
+  const needsGender = data?.profile && !((data.profile as any).gender);
+  const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
 
   return (
     <div>
@@ -28,6 +35,13 @@ function Dashboard() {
         </p>
         <h2 className="text-3xl font-extrabold tracking-tight">{greeting}</h2>
       </div>
+
+      {needsGender && (
+        <Link to="/settings" className="block mb-5 p-4 rounded-xl border border-[#3a2f12] no-underline" style={{ background: "#1e1808" }}>
+          <p className="text-sm text-[#c9a84c] font-semibold">One quick detail — male or female?</p>
+          <p className="text-xs text-[#aa9560] mt-1">Tap to set it in Settings. Used for pastoral fit, never public.</p>
+        </Link>
+      )}
 
       {pendingCount > 0 ? (
         <div className="p-5 rounded-xl border border-[#c9a84c33]" style={{ background: "linear-gradient(135deg, #0f0d00 0%, #0a0800 100%)" }}>
@@ -75,6 +89,31 @@ function Dashboard() {
           </div>
         )}
       </div>
+
+      {ref && "code" in ref && (
+        <div className="mt-8 p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
+          <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
+          <p className="text-xs text-[#888] mb-4 leading-relaxed">
+            Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing.
+          </p>
+          <div className="flex items-center gap-2">
+            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#aaa] outline-none" />
+            <button
+              type="button"
+              onClick={async () => {
+                try { await navigator.clipboard.writeText(refUrl); } catch {}
+                setCopied(true); setTimeout(() => setCopied(false), 2000);
+              }}
+              className="text-xs px-3 py-2 bg-[#c9a84c] text-black rounded font-semibold"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+          <p className="text-[0.7rem] text-[#555] mt-3">
+            You've invited <span className="text-[#c9a84c] font-semibold">{ref.invited}</span> · <span className="text-[#c9a84c] font-semibold">{ref.walking}</span> are walking.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

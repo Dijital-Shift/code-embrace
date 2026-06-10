@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getSettings, updateProfile } from "@/lib/api.functions";
+import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 
 const TIMEZONES = ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Phoenix", "America/Anchorage", "Pacific/Honolulu"];
@@ -15,16 +16,20 @@ export const Route = createFileRoute("/settings")({
 function Settings() {
   const fn = useServerFn(getSettings);
   const update = useServerFn(updateProfile);
+  const refFn = useServerFn(getMyReferral);
   const { data, isLoading, refetch } = useQuery({ queryKey: ["settings"], queryFn: () => fn() });
+  const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
   const [phone, setPhone] = useState("");
   const [bedtime, setBedtime] = useState("22:00");
   const [tz, setTz] = useState("America/Chicago");
+  const [gender, setGender] = useState<"male" | "female" | "">("");
   const [saved, setSaved] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const m = useMutation({
-    mutationFn: () => update({ data: { first_name: first, last_name: last, phone, bedtime, timezone: tz } }),
+    mutationFn: () => update({ data: { first_name: first, last_name: last, phone, bedtime, timezone: tz, gender: gender || null } }),
     onSuccess: (r: any) => { if (r?.error) setErr(r.error); else { setSaved(true); refetch(); } },
   });
 
@@ -35,12 +40,14 @@ function Settings() {
       setPhone(data.profile.phone ?? "");
       setBedtime((data.profile.bedtime ?? "22:00:00").slice(0, 5));
       setTz(data.profile.timezone ?? "America/Chicago");
+      setGender(((data.profile as any).gender ?? "") as "male" | "female" | "");
     }
   }, [data]);
 
   if (isLoading) return <p className="text-[#555]">Loading…</p>;
   const archived = data?.archivedLanes ?? [];
   const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full";
+  const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
 
   return (
     <div>
@@ -60,6 +67,27 @@ function Settings() {
             <label className="text-sm font-semibold text-[#ccc]">Last Name</label>
             <input value={last} onChange={(e) => setLast(e.target.value)} maxLength={50} className={inputCls} />
           </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold text-[#ccc]">Male or Female</label>
+          <div className="grid grid-cols-2 gap-2">
+            {(["male", "female"] as const).map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => setGender(g)}
+                className="py-3 rounded-md border text-sm font-semibold capitalize"
+                style={{
+                  background: gender === g ? "#c9a84c" : "#111",
+                  color: gender === g ? "#000" : "#fff",
+                  borderColor: gender === g ? "#c9a84c" : "#222",
+                }}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-[#555]">Used for pastoral fit — never public.</p>
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ccc]">Email</label>
@@ -87,6 +115,31 @@ function Settings() {
           {m.isPending ? "Saving…" : "Save"}
         </button>
       </form>
+
+      {ref && "code" in ref && (
+        <div className="mt-12 max-w-md p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
+          <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
+          <p className="text-xs text-[#888] mb-4 leading-relaxed">
+            Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing.
+          </p>
+          <div className="flex items-center gap-2">
+            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#aaa] outline-none" />
+            <button
+              type="button"
+              onClick={async () => {
+                try { await navigator.clipboard.writeText(refUrl); } catch {}
+                setCopied(true); setTimeout(() => setCopied(false), 2000);
+              }}
+              className="text-xs px-3 py-2 bg-[#c9a84c] text-black rounded font-semibold"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+          <p className="text-[0.7rem] text-[#555] mt-3">
+            You've invited <span className="text-[#c9a84c] font-semibold">{ref.invited}</span> · <span className="text-[#c9a84c] font-semibold">{ref.walking}</span> are walking.
+          </p>
+        </div>
+      )}
 
       {archived.length > 0 && (
         <div className="mt-12">
