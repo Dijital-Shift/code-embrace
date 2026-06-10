@@ -20,7 +20,11 @@ export const getMyProfile = createServerFn({ method: 'GET' })
 
 export const saveOnboarding = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ first_name: z.string().min(1).max(50), last_name: z.string().min(1).max(50) }))
+  .inputValidator(z.object({
+    first_name: z.string().min(1).max(50),
+    last_name: z.string().min(1).max(50),
+    gender: z.enum(['male', 'female']),
+  }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { error } = await supabase.from('profiles').update(data).eq('user_id', userId);
@@ -37,6 +41,7 @@ export const updateProfile = createServerFn({ method: 'POST' })
       phone: z.string().max(30).optional().nullable(),
       bedtime: z.string(),
       timezone: z.string(),
+      gender: z.enum(['male', 'female']).optional().nullable(),
     }),
   )
   .handler(async ({ data, context }) => {
@@ -51,12 +56,22 @@ export const updateProfile = createServerFn({ method: 'POST' })
       utcOffset = (parseInt(tzStr) - parseInt(utcStr) + 24) % 24;
     } catch {}
     const reminder_utc_hour = ((reminderHour - utcOffset) + 24) % 24;
-    const { error } = await supabase.from('profiles').update({
+    const baseUpdate = {
       first_name: data.first_name || null, last_name: data.last_name || null,
       phone: data.phone || null, bedtime: data.bedtime, timezone: data.timezone, reminder_utc_hour,
-    }).eq('user_id', userId);
+    };
+    const update = data.gender ? { ...baseUpdate, gender: data.gender } : baseUpdate;
+    const { error } = await supabase.from('profiles').update(update).eq('user_id', userId);
     if (error) return { error: error.message };
     return { success: true };
+  });
+
+export const dismissWatchmanPrompt = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await supabase.from('profiles').update({ dismissed_watchman_prompt: true }).eq('user_id', userId);
+    return { ok: true };
   });
 
 // Auto-link pending lanes after login (call after sign-in client-side)
@@ -224,7 +239,7 @@ export const getDashboard = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const today = todayStr();
     const [{ data: profile }, { data: lanes }, { data: todayChks }] = await Promise.all([
-      supabase.from('profiles').select('first_name').eq('user_id', userId).single(),
+      supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
     ]);
@@ -332,13 +347,13 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const today = todayStr();
     const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, description, notes, status, created_at, user_id')
+      .select('lane_id, title, description, notes, status, created_at, user_id, partner_relationship')
       .eq('partner_id', userId).order('status').order('created_at', { ascending: false });
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
-    const ownerEmails = new Map<string, { email: string; phone: string | null }>();
+    const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null }>();
     if (userIds.length) {
-      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone').in('user_id', userIds);
-      for (const p of ps ?? []) ownerEmails.set(p.user_id, { email: p.email, phone: p.phone });
+      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name').in('user_id', userIds);
+      for (const p of ps ?? []) ownerEmails.set(p.user_id, { email: p.email, phone: p.phone, first_name: p.first_name });
     }
     const laneIds = (lanes ?? []).map((l) => l.lane_id);
     const { data: todayChks } = laneIds.length
@@ -354,11 +369,48 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       .eq('partner_id', userId).order('sent_at', { ascending: false }).limit(20);
     const { count: ownLaneCount } = await supabase.from('lanes').select('lane_id', { count: 'exact', head: true })
       .eq('user_id', userId).eq('status', 'active');
+    const { count: myEncouragementCount } = await supabase.from('encouragements')
+      .select('id', { count: 'exact', head: true }).eq('watchman_id', userId);
+    const { data: profile } = await supabase.from('profiles')
+      .select('dismissed_watchman_prompt').eq('user_id', userId).maybeSingle();
     return {
       lanes: (lanes ?? []).map((l) => ({ ...l, owner: ownerEmails.get(l.user_id) ?? null })),
       todayCheckins: todayChks ?? [], history: history ?? [],
-      notifications: notifications ?? [], showNudge: (ownLaneCount ?? 0) === 0,
+      notifications: notifications ?? [],
+      showNudge: (ownLaneCount ?? 0) === 0,
+      myActiveLaneCount: ownLaneCount ?? 0,
+      myEncouragementCount: myEncouragementCount ?? 0,
+      dismissedWatchmanPrompt: !!profile?.dismissed_watchman_prompt,
     };
+  });
+
+export const sendEncouragement = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ laneId: z.string().uuid(), body: z.string().min(1).max(280) }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: lane } = await supabase.from('lanes')
+      .select('lane_id, user_id, title, status')
+      .eq('lane_id', data.laneId).eq('partner_id', userId).maybeSingle();
+    if (!lane || lane.status !== 'active') return { error: 'You are not an active watchman on this path.' };
+    const body = data.body.trim();
+    const { error } = await supabase.from('encouragements').insert({
+      watchman_id: userId, lane_id: data.laneId, owner_id: lane.user_id, body,
+    });
+    if (error) return { error: error.message };
+    // Mirror to notifications so the owner sees it in-app.
+    await supabaseAdmin.from('notifications').insert({
+      lane_id: data.laneId, partner_id: lane.user_id, type: 'encouragement',
+      status: 'sent', message_content: body, sent_at: new Date().toISOString(),
+    });
+    try {
+      await sendPushToUser(lane.user_id, {
+        title: `Encouragement — ${lane.title}`,
+        body,
+        url: '/dashboard',
+      });
+    } catch {}
+    return { success: true };
   });
 
 // ===== Settings =====
@@ -367,7 +419,7 @@ export const getSettings = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from('profiles')
-      .select('email, first_name, last_name, phone, timezone, bedtime').eq('user_id', userId).single();
+      .select('email, first_name, last_name, phone, timezone, bedtime, gender').eq('user_id', userId).single();
     const { data: archived } = await supabase.from('lanes')
       .select('lane_id, title, created_at').eq('user_id', userId).eq('status', 'archived').order('created_at', { ascending: false });
     return { profile: profile ?? null, archivedLanes: archived ?? [] };

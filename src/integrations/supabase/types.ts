@@ -62,6 +62,41 @@ export type Database = {
           },
         ]
       }
+      encouragements: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          lane_id: string
+          owner_id: string
+          watchman_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          lane_id: string
+          owner_id: string
+          watchman_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          lane_id?: string
+          owner_id?: string
+          watchman_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encouragements_lane_id_fkey"
+            columns: ["lane_id"]
+            isOneToOne: false
+            referencedRelation: "lanes"
+            referencedColumns: ["lane_id"]
+          },
+        ]
+      }
       lane_invites: {
         Row: {
           accepted_at: string | null
@@ -71,6 +106,7 @@ export type Database = {
           invite_id: string
           lane_id: string
           owner_id: string
+          relationship: string | null
           status: string
           token: string
         }
@@ -82,6 +118,7 @@ export type Database = {
           invite_id?: string
           lane_id: string
           owner_id: string
+          relationship?: string | null
           status?: string
           token: string
         }
@@ -93,6 +130,7 @@ export type Database = {
           invite_id?: string
           lane_id?: string
           owner_id?: string
+          relationship?: string | null
           status?: string
           token?: string
         }
@@ -108,6 +146,7 @@ export type Database = {
           notes: string | null
           partner_email: string | null
           partner_id: string | null
+          partner_relationship: string | null
           status: string
           support_scripture: string[] | null
           title: string
@@ -122,6 +161,7 @@ export type Database = {
           notes?: string | null
           partner_email?: string | null
           partner_id?: string | null
+          partner_relationship?: string | null
           status?: string
           support_scripture?: string[] | null
           title: string
@@ -136,6 +176,7 @@ export type Database = {
           notes?: string | null
           partner_email?: string | null
           partner_id?: string | null
+          partner_relationship?: string | null
           status?: string
           support_scripture?: string[] | null
           title?: string
@@ -221,6 +262,7 @@ export type Database = {
           created_at: string
           id: string
           path_id: string
+          relationship: string | null
           status: string
           watchman_email: string
           watchman_id: string | null
@@ -229,6 +271,7 @@ export type Database = {
           created_at?: string
           id?: string
           path_id: string
+          relationship?: string | null
           status?: string
           watchman_email: string
           watchman_id?: string | null
@@ -237,6 +280,7 @@ export type Database = {
           created_at?: string
           id?: string
           path_id?: string
+          relationship?: string | null
           status?: string
           watchman_email?: string
           watchman_id?: string | null
@@ -262,8 +306,10 @@ export type Database = {
         Row: {
           bedtime: string
           created_at: string
+          dismissed_watchman_prompt: boolean
           email: string
           first_name: string | null
+          gender: string | null
           last_active: string | null
           last_name: string | null
           phone: string | null
@@ -275,8 +321,10 @@ export type Database = {
         Insert: {
           bedtime?: string
           created_at?: string
+          dismissed_watchman_prompt?: boolean
           email: string
           first_name?: string | null
+          gender?: string | null
           last_active?: string | null
           last_name?: string | null
           phone?: string | null
@@ -288,8 +336,10 @@ export type Database = {
         Update: {
           bedtime?: string
           created_at?: string
+          dismissed_watchman_prompt?: boolean
           email?: string
           first_name?: string | null
+          gender?: string | null
           last_active?: string | null
           last_name?: string | null
           phone?: string | null
@@ -334,6 +384,33 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      referrals: {
+        Row: {
+          claimed_at: string | null
+          code: string
+          created_at: string
+          id: string
+          referred_user_id: string | null
+          referrer_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          referred_user_id?: string | null
+          referrer_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          referred_user_id?: string | null
+          referrer_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

@@ -15,6 +15,15 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+function useCaptureReferral() {
+  if (typeof window === "undefined") return;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref) window.localStorage.setItem("kp_ref", ref.toLowerCase());
+  } catch {}
+}
+
 const GOLD = "#c9a84c";
 
 
@@ -312,6 +321,14 @@ function FAQ() {
       q: "What inspired you to build this?",
       a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you — it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you — one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
     },
+    {
+      q: "What stops me from lying?",
+      a: "Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins. \"For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.\" — Luke 12:2. If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+    },
+    {
+      q: "What does the Word say about lying and being watched?",
+      a: "Plainly: \"Lying lips are abomination to the LORD: but they that deal truly are his delight.\" — Proverbs 12:22. \"But I say unto you, That every idle word that men shall speak, they shall give account thereof in the day of judgment.\" — Matthew 12:36. \"The LORD is in his holy temple, the LORD's throne is in heaven: his eyes behold, his eyelids try, the children of men.\" — Psalm 11:4. \"The eyes of the LORD are in every place, beholding the evil and the good.\" — Proverbs 15:3. \"The eyes of the Lord are ten thousand times brighter than the sun, beholding all the ways of men, and considering the most secret parts.\" — Sirach 23:19. \"Say not thou, I am hid from the Lord; shall any remember me from above?… his eyes are upon the ways of every man, and he seeth into secret places.\" — Sirach 16:17, 17:19–20 (paraphrased from KJV Apocrypha). What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later.",
+    },
   ];
 
   return (
@@ -401,6 +418,7 @@ function Footer() {
 }
 
 function Landing() {
+  if (typeof window !== "undefined") useCaptureReferral();
   return (
     <main className="min-h-[100dvh]" style={{ background: "#0a0800" }}>
       <Header />
