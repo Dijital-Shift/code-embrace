@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Wordmark } from "@/components/Wordmark";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({ meta: [{ title: "How it works — Kingdom Protocol" }] }),
@@ -15,7 +16,10 @@ function HowItWorks() {
   return (
     <main className="min-h-screen px-6 py-8 pb-20" style={{ background: "#0a0800", color: "#fff" }}>
       <div className="max-w-xl mx-auto">
-        <Link to="/" className="text-[#555] text-sm">← Back</Link>
+        <div className="flex items-center justify-between mb-8">
+          <Wordmark size="sm" />
+          <Link to="/" className="text-[#555] text-sm">← Back</Link>
+        </div>
         <div className="text-center my-10">
           <img src="/kingdom-protocol-logo.png" alt="" className="w-28 mx-auto" />
           <p className="text-[#666] text-xs font-bold tracking-[0.25em] mt-1">WALK THE PATH</p>
