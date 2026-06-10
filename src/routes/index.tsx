@@ -318,6 +318,10 @@ function FAQ() {
       q: "Why pay at all?",
       a: "Because the labourer is worthy of his hire (1 Timothy 5:18), and this work stays unfunded by advertisers so the watchtower stays clean.",
     },
+    {
+      q: "What inspired you to build this?",
+      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you — it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you — one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
+    },
   ];
 
   return (
