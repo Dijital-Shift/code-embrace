@@ -56,11 +56,11 @@ export const updateProfile = createServerFn({ method: 'POST' })
       utcOffset = (parseInt(tzStr) - parseInt(utcStr) + 24) % 24;
     } catch {}
     const reminder_utc_hour = ((reminderHour - utcOffset) + 24) % 24;
-    const update: Record<string, any> = {
+    const baseUpdate = {
       first_name: data.first_name || null, last_name: data.last_name || null,
       phone: data.phone || null, bedtime: data.bedtime, timezone: data.timezone, reminder_utc_hour,
     };
-    if (data.gender) update.gender = data.gender;
+    const update = data.gender ? { ...baseUpdate, gender: data.gender } : baseUpdate;
     const { error } = await supabase.from('profiles').update(update).eq('user_id', userId);
     if (error) return { error: error.message };
     return { success: true };
