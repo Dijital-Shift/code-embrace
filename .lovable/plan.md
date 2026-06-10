@@ -1,37 +1,30 @@
-## Make the FAQ feel proportionate
+## Recommended FAQ order
 
-The FAQ currently uses the same heading scale as the hero-level sections and bolds every question at `lg`. For a dense Q&A list it reads heavier than the surrounding narrative. Pull it back one step on every axis — heading, trigger, padding, content — so it feels like reference material, not another headline section.
+Yes — reorder. Right now pricing leads, then a "Is this confession?" definitional question, then privacy gets buried mid-list, and the heaviest scripture-stack lands at the end where most readers have already left. The list should follow how a first-time visitor's questions actually form: *what is this → can I trust it → who sees me → does it fit me → what does it cost → the deeper why.*
 
-### Changes (all in `src/routes/index.tsx`, `FAQ()` ~lines 338–360)
+### Proposed order
 
-1. **Section H2** — drop one size
-   - From: `text-3xl sm:text-5xl font-bold`
-   - To:   `text-2xl sm:text-4xl font-semibold`
-
-2. **Eyebrow + heading spacing** — tighten
-   - `mb-10` → `mb-8` on the header wrapper
-   - `mb-4` → `mb-3` on the H2
-
-3. **Accordion item chrome** — slimmer
-   - `px-6` → `px-5`
-   - `space-y-4` → `space-y-3` on the Accordion
-   - `rounded-xl` stays
-
-4. **Question trigger** — calmer weight, smaller on desktop
-   - From: `text-base sm:text-lg font-bold`
-   - To:   `text-[0.95rem] sm:text-base font-semibold`
-
-5. **Answer body** — already `text-sm sm:text-base`, leave as-is, but trim bottom padding `pb-5` → `pb-4`.
-
-6. **Section vertical rhythm** — match the lighter feel
-   - `py-14` → `py-12`
+1. **Is this confession?** — defines the category up front. Without this, every other answer is read through the wrong lens.
+2. **What stops me from lying?** — the first objection anyone has about an honor-system tool. Answering it early earns the rest of the page trust.
+3. **Who sees my misses?** — privacy. The #1 silent blocker for this kind of app; cannot be buried.
+4. **Is this for women?** — fit / inclusion. Quick yes, removes a bounce reason.
+5. **What inspired you to build this?** — origin / credibility. Lands well *after* trust is established, not cold at position 7.
+6. **Is it really free?** — pricing, once they actually want it.
+7. **Why pay at all?** — natural follow-up to pricing.
+8. **What does it cost watchmen?** — closes the pricing block cleanly.
+9. **What does the Word say about lying and being watched?** — heaviest scripture stack. Belongs last as the "for those who want to go deeper" capstone, not as a mid-list wall of text.
 
 ### Why this works
-- Heading drops from ~48px to ~36px on desktop, so it stops competing with the true hero/CTA headings.
-- Questions go from bold-lg to semibold-base, which is the standard FAQ weight (readable, scannable, not shouting).
-- Slightly tighter padding + gaps makes the list feel like one cohesive block instead of 10 oversized cards.
+
+- **Definition before defense before price.** Today the page asks for money (Q1) before telling the reader what the thing even is.
+- **Privacy moves up from #3 to #3-by-design.** Same slot numerically, but now it sits inside a trust cluster (confession → lying → privacy) instead of being sandwiched between cost questions.
+- **All three pricing questions cluster together** (6–7–8) so a reader scanning for cost finds them as a block instead of hunting.
+- **The scripture-heavy answer ends the section** — a strong close for committed readers, not a wall that scares off skimmers.
 
 ### Not changing
-- Colors, gold accents, open-state styling, content copy, accordion behavior. Purely a typographic/spacing right-size.
 
-Want me to apply this, or adjust any of the sizes first (e.g. keep the H2 bigger, only shrink the questions)?
+Question copy, answer copy, styling, accordion behavior. Reorder only.
+
+### My recommendation
+
+Do it. The reorder is low-risk (pure sequence change) and meaningfully improves how the page reads cold. Want me to apply it as-is, or swap any pairs first?
