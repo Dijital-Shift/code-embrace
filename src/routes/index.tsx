@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Wordmark } from "@/components/Wordmark";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,23 +17,12 @@ export const Route = createFileRoute("/")({
 
 const GOLD = "#c9a84c";
 
-const WORDMARK_FONT = "'Cinzel', 'Trajan Pro', Georgia, serif";
+
 
 function Header() {
   return (
     <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#2a2418]">
-      <Link to="/" className="flex items-center">
-        <span
-          className="text-lg sm:text-xl font-semibold tracking-[0.18em] uppercase"
-          style={{
-            fontFamily: WORDMARK_FONT,
-            color: GOLD,
-            textShadow: "0 0 18px rgba(201,168,76,0.45)",
-          }}
-        >
-          Kingdom Protocol
-        </span>
-      </Link>
+      <Wordmark />
       <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
     </header>
   );
@@ -364,15 +354,19 @@ function ClosingCall() {
           </p>
           <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Galatians 6:1–2 · KJV</p>
         </div>
-        <p className="mt-8 text-[#a8a39a] text-base sm:text-lg leading-relaxed">
-          If the silence has been louder than the prayer, step into the light. Take a watchman. Be one.
-        </p>
+        <div className="mt-8 text-[#a8a39a] text-base sm:text-lg leading-relaxed space-y-3 max-w-2xl mx-auto text-left sm:text-center">
+          <p>Silence is where the enemy works. Light is where the brethren stand.</p>
+          <p>If the silence has been louder than your prayer, step into the light — take a watchman, be one.</p>
+          <p className="italic text-[#c9a84c] text-base">
+            "Confess your faults one to another, and pray one for another, that ye may be healed." — James 5:16
+          </p>
+        </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
             Start free
           </Link>
           <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
-            Come and see
+            How it works
           </Link>
         </div>
       </div>
@@ -388,13 +382,18 @@ function Footer() {
         <img
           src="/kingdom-protocol-logo.png"
           alt="Kingdom Protocol"
-          className="h-24 sm:h-28 w-auto"
+          className="h-32 sm:h-40 w-auto"
           style={{ filter: "drop-shadow(0 0 24px rgba(201,168,76,0.45))" }}
         />
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full pt-4 border-t border-[#1a1610]">
-          <Link to="/login" className="text-sm text-[#c9a84c] font-semibold order-2 sm:order-1">Sign in</Link>
-          <p className="text-xs text-[#555] tracking-wider text-center order-1 sm:order-2">Built by Dijital Shift · v1.0</p>
-          <span className="w-12 hidden sm:block order-3" />
+        <div className="grid grid-cols-3 items-center gap-4 w-full">
+          <span className="hidden sm:block" />
+          <p className="text-xs text-[#555] tracking-wider text-center col-span-2 sm:col-span-1">Built by Dijital Shift · v1.0</p>
+          <div className="hidden sm:flex justify-end">
+            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
+          </div>
+          <div className="col-span-3 flex justify-center sm:hidden">
+            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold">Sign in</Link>
+          </div>
         </div>
       </div>
     </footer>

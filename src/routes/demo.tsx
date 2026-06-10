@@ -18,7 +18,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import logo from "@/assets/kingdom-protocol-logo.png";
+import { Wordmark } from "@/components/Wordmark";
 
 export const Route = createFileRoute("/demo")({
   head: () => ({
@@ -168,7 +168,7 @@ function MockPartnerInvite() {
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
         <div className="text-[11px] text-[#888]">From</div>
-        <div className="text-sm text-white">David Chen</div>
+        <div className="text-sm text-white">David Jones</div>
         <div className="mt-2 text-[11px] text-[#888]">Path</div>
         <div className="text-sm text-white">Fast · ends Dec 20</div>
         <div className="mt-2 text-[11px] text-[#888]">Your role</div>
@@ -252,7 +252,7 @@ function MockMissedNudge() {
         Your fast went un-checked. Your watchman hasn't been pinged yet — submit before morning.
       </div>
       <div className="rounded-xl border border-[#f59e0b]/40 bg-[#0d0a04] p-3">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Missed yesterday · submit before 7AM</div>
+        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Missed yesterday · submit before 10AM</div>
         <div className="mt-2 text-sm font-semibold text-white">Fast</div>
         <div className="mt-2 grid grid-cols-2 gap-2">
           <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Aligned</button>
@@ -473,7 +473,7 @@ const SCENES: Scene[] = [
     step: 7,
     role: "user",
     title: "Miss one night — get a nudge",
-    body: "Silence isn't a hiding place. You get a private nudge first thing, with a chance to submit yesterday before 7AM.",
+    body: "Silence isn't a hiding place. You get a private nudge first thing, with a chance to submit yesterday before 10AM.",
     why: "Why it matters: life happens. One missed night shouldn't drag in a watchman if you can still own it.",
     render: MockMissedNudge,
   },
@@ -491,7 +491,7 @@ const SCENES: Scene[] = [
     step: 9,
     role: "watchman",
     title: "Watchman sees the week, not your soul",
-    body: "Seven dots — aligned, breach, missed. Your breach notes if you wrote them. They show up Wednesday with the right question.",
+    body: "Seven dots — aligned, breach, missed. Your breach notes if you wrote them.",
     why: "Why it matters: the watchman role finally has a screen. Equipped to help, not guess.",
     render: MockPartnerView,
   },
@@ -520,7 +520,7 @@ const SCENES: Scene[] = [
     role: "user",
     title: "Time-bound paths finish honorably",
     body: "When the Ends-on date hits, the path auto-archives. Your watchman gets a one-time completion ping — not a missed nudge.",
-    why: "Why it matters: a fast that ends well is a covenant kept. The system honors the finish line.",
+    why: "Why it matters: a fast that ends well is a vow kept. The system honors the finish line.",
     render: MockPathComplete,
   },
 ];
@@ -532,10 +532,7 @@ function Demo() {
     <div className="min-h-screen text-white" style={{ background: "#0a0800" }}>
       <header className="sticky top-0 z-30 border-b border-[#2a2518]/60 backdrop-blur" style={{ background: "rgba(10,8,0,0.8)" }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Kingdom Protocol" className="h-8 w-8 object-contain" />
-            <span className="font-semibold tracking-tight">Kingdom Protocol</span>
-          </Link>
+          <Wordmark size="sm" />
           <Link to="/" className="inline-flex items-center gap-2 rounded-md border border-[#2a2518] px-3 py-1.5 text-xs font-semibold text-[#c9a84c]">
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
@@ -624,10 +621,12 @@ function Demo() {
               Get started <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <p className="mt-8 text-[11px] tracking-wider text-[#444]">
-            <Clock className="inline h-3 w-3 mr-1" />
-            One path at a time. One night at a time.
-          </p>
+          <div className="mx-auto mt-10 max-w-xl rounded-xl border border-[#c9a84c]/25 bg-[#0f0c05] p-6">
+            <p className="italic text-[#c9a84c] text-sm sm:text-base leading-relaxed">
+              "Iron sharpeneth iron; so a man sharpeneth the countenance of his friend."
+            </p>
+            <p className="mt-3 text-white text-[0.65rem] tracking-[0.18em] uppercase">Proverbs 27:17 · KJV</p>
+          </div>
         </div>
       </main>
     </div>
