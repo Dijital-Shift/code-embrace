@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
@@ -39,6 +40,11 @@ const TermsRoute = TermsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnerRoute = PartnerRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
+  '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
+  '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
+  '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/partner'
+    | '/privacy'
     | '/settings'
     | '/terms'
     | '/invite/$token'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/partner'
+    | '/privacy'
     | '/settings'
     | '/terms'
     | '/invite/$token'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/partner'
+    | '/privacy'
     | '/settings'
     | '/terms'
     | '/invite/$token'
@@ -292,6 +304,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   PartnerRoute: typeof PartnerRoute
+  PrivacyRoute: typeof PrivacyRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partner': {
@@ -479,6 +499,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   PartnerRoute: PartnerRoute,
+  PrivacyRoute: PrivacyRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
