@@ -576,6 +576,7 @@ function Landing() {
   if (typeof window !== "undefined") useCaptureReferral();
   return (
     <main className="min-h-[100dvh]" style={{ background: "#0a0800" }}>
+      <PaymentTestModeBanner />
       <Header />
       <Hero />
       <ProblemTension />
