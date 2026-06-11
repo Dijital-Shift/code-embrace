@@ -233,9 +233,13 @@ function Pricing() {
                 <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Lifetime
-            </Link>
+            <CheckoutCTA
+              priceId="kp_lifetime_once"
+              loggedOutLabel="Lifetime"
+              loggedInLabel="Buy lifetime"
+              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
+              style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
+            />
           </div>
         </div>
 
