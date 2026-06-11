@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Wordmark } from "@/components/Wordmark";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -173,6 +176,46 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
 }
 
 
+function CheckoutCTA({
+  priceId,
+  loggedOutLabel,
+  loggedInLabel,
+  className,
+  style,
+}: {
+  priceId: string;
+  loggedOutLabel: string;
+  loggedInLabel: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const { user, loading } = useAuth();
+  const { openCheckout, loading: checkoutLoading } = usePaddleCheckout();
+  const navigate = useNavigate();
+
+  if (loading || !user) {
+    return (
+      <Link to="/login" className={className} style={style}>
+        {loggedOutLabel}
+      </Link>
+    );
+  }
+  return (
+    <button
+      type="button"
+      disabled={checkoutLoading}
+      onClick={() => openCheckout({ priceId }).catch((e) => {
+        console.error(e);
+        navigate({ to: "/login" });
+      })}
+      className={className}
+      style={style}
+    >
+      {checkoutLoading ? "Loading…" : loggedInLabel}
+    </button>
+  );
+}
+
 function Pricing() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
@@ -211,9 +254,12 @@ function Pricing() {
                 <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
-              Start free
-            </Link>
+            <CheckoutCTA
+              priceId="kp_premium_monthly"
+              loggedOutLabel="Start free"
+              loggedInLabel="Subscribe"
+              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm"
+            />
           </div>
 
           {/* Lifetime */}
@@ -227,9 +273,13 @@ function Pricing() {
                 <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Lifetime
-            </Link>
+            <CheckoutCTA
+              priceId="kp_lifetime_once"
+              loggedOutLabel="Lifetime"
+              loggedInLabel="Buy lifetime"
+              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
+              style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
+            />
           </div>
         </div>
 
@@ -526,6 +576,7 @@ function Landing() {
   if (typeof window !== "undefined") useCaptureReferral();
   return (
     <main className="min-h-[100dvh]" style={{ background: "#0a0800" }}>
+      <PaymentTestModeBanner />
       <Header />
       <Hero />
       <ProblemTension />
