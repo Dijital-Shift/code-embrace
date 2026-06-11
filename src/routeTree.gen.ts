@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RefundRouteImport } from './routes/refund'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -40,6 +41,11 @@ const TermsRoute = TermsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/privacy'
+    | '/refund'
     | '/settings'
     | '/terms'
     | '/invite/$token'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/privacy'
+    | '/refund'
     | '/settings'
     | '/terms'
     | '/invite/$token'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/privacy'
+    | '/refund'
     | '/settings'
     | '/terms'
     | '/invite/$token'
@@ -305,6 +317,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PartnerRoute: typeof PartnerRoute
   PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PartnerRoute: PartnerRoute,
   PrivacyRoute: PrivacyRoute,
+  RefundRoute: RefundRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
