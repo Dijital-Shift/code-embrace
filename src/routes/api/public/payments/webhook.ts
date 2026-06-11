@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createClient } from '@supabase/supabase-js';
-import { verifyWebhook, EventName, type PaddleEnv } from '@/lib/paddle.server';
+import { verifyWebhook, getPaddleClient, EventName, type PaddleEnv } from '@/lib/paddle.server';
 
 let _supabase: any = null;
 function getSupabase(): any {
