@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -30,6 +31,11 @@ import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
 import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/settings'
+    | '/terms'
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/settings'
+    | '/terms'
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/partner'
     | '/settings'
+    | '/terms'
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PartnerRoute: typeof PartnerRoute
   SettingsRoute: typeof SettingsRoute
+  TermsRoute: typeof TermsRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
@@ -294,6 +307,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PartnerRoute: PartnerRoute,
   SettingsRoute: SettingsRoute,
+  TermsRoute: TermsRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
