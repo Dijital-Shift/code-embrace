@@ -176,6 +176,46 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
 }
 
 
+function CheckoutCTA({
+  priceId,
+  loggedOutLabel,
+  loggedInLabel,
+  className,
+  style,
+}: {
+  priceId: string;
+  loggedOutLabel: string;
+  loggedInLabel: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const { user, loading } = useAuth();
+  const { openCheckout, loading: checkoutLoading } = usePaddleCheckout();
+  const navigate = useNavigate();
+
+  if (loading || !user) {
+    return (
+      <Link to="/login" className={className} style={style}>
+        {loggedOutLabel}
+      </Link>
+    );
+  }
+  return (
+    <button
+      type="button"
+      disabled={checkoutLoading}
+      onClick={() => openCheckout({ priceId }).catch((e) => {
+        console.error(e);
+        navigate({ to: "/login" });
+      })}
+      className={className}
+      style={style}
+    >
+      {checkoutLoading ? "Loading…" : loggedInLabel}
+    </button>
+  );
+}
+
 function Pricing() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
