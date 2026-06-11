@@ -94,6 +94,28 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
     environment: env,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'paddle_subscription_id' });
+
+  // Auto-cancel any active monthly subs so the user doesn't double-pay.
+  const { data: monthlySubs } = await getSupabase()
+    .from('subscriptions')
+    .select('paddle_subscription_id')
+    .eq('user_id', userId)
+    .eq('environment', env)
+    .eq('product_id', 'kp_premium')
+    .in('status', ['active', 'trialing', 'past_due']);
+
+  if (monthlySubs?.length) {
+    const paddle = getPaddleClient(env);
+    for (const s of monthlySubs as Array<{ paddle_subscription_id: string }>) {
+      try {
+        await paddle.subscriptions.cancel(s.paddle_subscription_id, {
+          effectiveFrom: 'next_billing_period',
+        });
+      } catch (e) {
+        console.error('Failed to auto-cancel monthly', s.paddle_subscription_id, e);
+      }
+    }
+  }
 }
 
 async function handleWebhook(req: Request, env: PaddleEnv) {
