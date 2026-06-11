@@ -502,6 +502,11 @@ function Footer() {
           className="h-32 sm:h-40 w-auto"
           style={{ filter: "drop-shadow(0 0 24px rgba(201,168,76,0.45))" }}
         />
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[#777]">
+          <Link to="/terms" className="hover:text-[#c9a84c]">Terms</Link>
+          <Link to="/privacy" className="hover:text-[#c9a84c]">Privacy</Link>
+          <Link to="/refund" className="hover:text-[#c9a84c]">Refund Policy</Link>
+        </div>
         <div className="grid grid-cols-3 items-center gap-4 w-full">
           <span className="hidden sm:block" />
           <p className="text-xs text-[#555] tracking-wider text-center col-span-2 sm:col-span-1">Built by Dijital Shift · v1.0</p>
