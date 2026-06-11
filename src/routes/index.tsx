@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Wordmark } from "@/components/Wordmark";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
