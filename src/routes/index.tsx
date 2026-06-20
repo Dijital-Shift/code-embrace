@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Wordmark } from "@/components/Wordmark";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
-import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
@@ -190,8 +190,7 @@ function CheckoutCTA({
   style?: React.CSSProperties;
 }) {
   const { user, loading } = useAuth();
-  const { openCheckout, loading: checkoutLoading } = usePaddleCheckout();
-  const navigate = useNavigate();
+  const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
 
   if (loading || !user) {
     return (
@@ -201,18 +200,37 @@ function CheckoutCTA({
     );
   }
   return (
-    <button
-      type="button"
-      disabled={checkoutLoading}
-      onClick={() => openCheckout({ priceId }).catch((e) => {
-        console.error(e);
-        navigate({ to: "/login" });
-      })}
-      className={className}
-      style={style}
-    >
-      {checkoutLoading ? "Loading…" : loggedInLabel}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => openCheckout({
+          priceId,
+          customerEmail: user.email,
+          userId: user.id,
+          returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+        })}
+        className={className}
+        style={style}
+      >
+        {loggedInLabel}
+      </button>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
+          <div className="w-full max-w-2xl mt-8 bg-white rounded-2xl overflow-hidden">
+            <div className="flex justify-end p-2">
+              <button
+                type="button"
+                onClick={closeCheckout}
+                className="text-gray-600 hover:text-black px-3 py-1 text-sm font-medium"
+              >
+                Close
+              </button>
+            </div>
+            {checkoutElement}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

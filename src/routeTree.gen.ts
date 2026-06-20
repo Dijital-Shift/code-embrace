@@ -27,8 +27,10 @@ import { Route as PathsLibraryRouteImport } from './routes/paths.library'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
 import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
 import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
@@ -123,6 +125,11 @@ const InviteTokenRoute = InviteTokenRouteImport.update({
   path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InviteTokenWelcomeRoute = InviteTokenWelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
@@ -133,6 +140,12 @@ const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
   path: '/api/push/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMissedCheckinsRoute =
   ApiPublicHooksMissedCheckinsRouteImport.update({
     id: '/api/public/hooks/missed-checkins',
@@ -166,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
@@ -176,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -191,6 +206,7 @@ export interface FileRoutesByTo {
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
@@ -201,6 +217,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -217,6 +234,7 @@ export interface FileRoutesById {
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
@@ -227,6 +245,7 @@ export interface FileRoutesById {
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -244,6 +263,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/settings'
     | '/terms'
+    | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
@@ -254,6 +274,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -269,6 +290,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/settings'
     | '/terms'
+    | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
@@ -279,6 +301,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -294,6 +317,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/settings'
     | '/terms'
+    | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
@@ -304,6 +328,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -320,6 +345,7 @@ export interface RootRouteChildren {
   RefundRoute: typeof RefundRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
@@ -329,6 +355,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
   ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
   ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -459,6 +486,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invite/$token/welcome': {
       id: '/invite/$token/welcome'
       path: '/welcome'
@@ -471,6 +505,13 @@ declare module '@tanstack/react-router' {
       path: '/api/push/subscribe'
       fullPath: '/api/push/subscribe'
       preLoaderRoute: typeof ApiPushSubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/missed-checkins': {
@@ -523,6 +564,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundRoute: RefundRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
@@ -532,6 +574,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
   ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
   ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

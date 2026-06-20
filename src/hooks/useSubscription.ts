@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export interface Subscription {
-  paddle_subscription_id: string;
+  stripe_subscription_id: string;
   product_id: string;
   price_id: string;
   status: string;
@@ -18,12 +18,13 @@ export function useSubscription() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const env = getPaddleEnvironment();
+  let env: string;
+  try { env = getStripeEnvironment(); } catch { env = "sandbox"; }
 
   async function refetch(userId: string) {
     const { data } = await supabase
       .from("subscriptions")
-      .select("paddle_subscription_id, product_id, price_id, status, current_period_end, cancel_at_period_end, environment")
+      .select("stripe_subscription_id, product_id, price_id, status, current_period_end, cancel_at_period_end, environment")
       .eq("user_id", userId)
       .eq("environment", env)
       .order("created_at", { ascending: false })
@@ -50,12 +51,12 @@ export function useSubscription() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, env]);
 
-  const isLifetime = subscription?.product_id === "kp_lifetime" && subscription?.status === "active";
+  const isLifetime = subscription?.price_id === "kp_lifetime_once" && subscription?.status === "active";
   const isActive = !!subscription && (
     isLifetime ||
     (["active", "trialing", "past_due"].includes(subscription.status) &&
       (!subscription.current_period_end || new Date(subscription.current_period_end) > new Date())) ||
-    (subscription.status === "canceled" && subscription.current_period_end && new Date(subscription.current_period_end) > new Date())
+    (subscription.status === "canceled" && !!subscription.current_period_end && new Date(subscription.current_period_end) > new Date())
   );
 
   return { subscription, isActive, isLifetime, loading };
