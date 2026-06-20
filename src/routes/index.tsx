@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Wordmark } from "@/components/Wordmark";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
-import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
@@ -190,8 +190,7 @@ function CheckoutCTA({
   style?: React.CSSProperties;
 }) {
   const { user, loading } = useAuth();
-  const { openCheckout, loading: checkoutLoading } = usePaddleCheckout();
-  const navigate = useNavigate();
+  const { openCheckout } = useStripeCheckout();
 
   if (loading || !user) {
     return (
@@ -203,15 +202,16 @@ function CheckoutCTA({
   return (
     <button
       type="button"
-      disabled={checkoutLoading}
-      onClick={() => openCheckout({ priceId }).catch((e) => {
-        console.error(e);
-        navigate({ to: "/login" });
+      onClick={() => openCheckout({
+        priceId,
+        customerEmail: user.email,
+        userId: user.id,
+        returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
       })}
       className={className}
       style={style}
     >
-      {checkoutLoading ? "Loading…" : loggedInLabel}
+      {loggedInLabel}
     </button>
   );
 }
