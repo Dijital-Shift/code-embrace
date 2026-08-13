@@ -26,11 +26,11 @@ Schedules after the fix:
 
 Push works in preview. Before relying on it: verify the service worker is served at the published domain, the VAPID key resolves in production, and a real ping lands on a phone. Dead subscriptions get pruned automatically. If Safari/iOS refuses, the email fallback already covers the same alert.
 
-## 4. Email sending domain
+## 4. Email sending domain (deferred — waiting on DNS)
 
-Invites and watchman alerts currently send from the shared `onboarding@resend.dev` sender, which in practice only reaches your own address — invitations to your wife or brother would not arrive.
+`kingdomprotocol.app` is mid-transfer to Cloudflare, so this step is parked until it resolves. Invites and watchman alerts keep using the shared `onboarding@resend.dev` sender in the meantime, which in practice only reaches your own address.
 
-Fix: set up and verify a sending domain for Kingdom Protocol so invites, breach alerts, and weekly recaps deliver to anyone.
+What happens now instead: the sender address is read from one configurable setting, so the day the domain resolves it is a one-line switch with no code rework. Everything else ships without it.
 
 ## 5. Final walkthrough before you use it
 
