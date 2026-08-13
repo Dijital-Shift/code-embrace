@@ -65,8 +65,11 @@ function Welcome() {
         setPushStatus("denied");
         return;
       }
+      // Register the service worker first — `ready` never resolves without one.
+      await navigator.serviceWorker.register("/sw.js", { scope: "/" });
       const reg = await navigator.serviceWorker.ready;
-      const vapid = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+      const vapidRes = await vapidFn().catch(() => null);
+      const vapid = vapidRes?.key;
       if (!vapid) {
         setPushStatus("denied");
         return;
