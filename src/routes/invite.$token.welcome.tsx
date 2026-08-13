@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { acceptLaneInvite, getInvitePreview } from "@/lib/invites.functions";
+import { getVapidPublicKey } from "@/lib/api.functions";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,6 +17,7 @@ function Welcome() {
   const navigate = useNavigate();
   const acceptFn = useServerFn(acceptLaneInvite);
   const previewFn = useServerFn(getInvitePreview);
+  const vapidFn = useServerFn(getVapidPublicKey);
 
   const [ownerName, setOwnerName] = useState<string | null>(null);
   const [pushStatus, setPushStatus] = useState<"idle" | "asking" | "granted" | "denied">("idle");
@@ -65,8 +67,11 @@ function Welcome() {
         setPushStatus("denied");
         return;
       }
+      // Register the service worker first — `ready` never resolves without one.
+      await navigator.serviceWorker.register("/sw.js", { scope: "/" });
       const reg = await navigator.serviceWorker.ready;
-      const vapid = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+      const vapidRes = await vapidFn().catch(() => null);
+      const vapid = vapidRes?.key;
       if (!vapid) {
         setPushStatus("denied");
         return;
