@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { createLane, listMyLanes } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { AccessGate } from "@/components/AccessBanner";
 import { PATH_CATEGORIES, PATH_TEMPLATES, getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/lanes/new")({
     template: typeof search.template === "string" ? search.template : undefined,
   }),
   head: () => ({ meta: [{ title: "New Path — Kingdom Protocol" }] }),
-  component: () => <AppLayout><NewLane /></AppLayout>,
+  component: () => <AppLayout><AccessGate action="Creating a new path"><NewLane /></AccessGate></AppLayout>,
 });
 
 function NewLane() {
