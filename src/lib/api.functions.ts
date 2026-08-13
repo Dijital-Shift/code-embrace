@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 import { sendPushToUser } from './push.server';
+import { requireAccess } from './access.server';
 import {
   triggerBreachAlert,
   notifyPartnerSkip,
@@ -144,6 +145,9 @@ export const createLane = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
+
     const { count: ownLaneCount } = await supabase.from('lanes')
       .select('lane_id', { count: 'exact', head: true })
       .eq('user_id', userId).eq('status', 'active');
@@ -267,6 +271,8 @@ export const logComplete = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ laneId: z.string().uuid() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
     await supabase.from('checkins').upsert(
       { lane_id: data.laneId, user_id: userId, checkin_date: todayStr(), status: 'completed', completion_time: new Date().toISOString() },
       { onConflict: 'lane_id,checkin_date' },
@@ -298,6 +304,8 @@ export const submitCheckin = createServerFn({ method: 'POST' })
   }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
     if (data.response === 'breach' && !data.explanation?.trim()) return { error: 'Explanation required when reporting a breach.' };
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
@@ -326,6 +334,8 @@ export const skipCheckin = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ laneId: z.string().uuid() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Lane not found.' };
