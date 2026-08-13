@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getDashboard } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { AccessBanner } from "@/components/AccessBanner";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Kingdom Protocol" }] }),
@@ -35,6 +36,8 @@ function Dashboard() {
         </p>
         <h2 className="text-3xl font-extrabold tracking-tight">{greeting}</h2>
       </div>
+
+      <AccessBanner />
 
       {needsGender && (
         <Link to="/settings" className="block mb-5 p-4 rounded-xl border border-[#3a2f12] no-underline" style={{ background: "#1e1808" }}>

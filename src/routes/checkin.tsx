@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getCheckinPage, logComplete, revertComplete, submitCheckin, skipCheckin } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { AccessGate, AccessBanner, useAccessState } from "@/components/AccessBanner";
 
 export const Route = createFileRoute("/checkin")({
   head: () => ({ meta: [{ title: "Check-In — Kingdom Protocol" }] }),
@@ -13,8 +14,21 @@ export const Route = createFileRoute("/checkin")({
 function CheckIn() {
   const fn = useServerFn(getCheckinPage);
   const { data, isLoading } = useQuery({ queryKey: ["checkin"], queryFn: () => fn() });
+  const { data: access } = useAccessState();
 
   if (isLoading) return <p className="text-[#555]">Loading…</p>;
+  if (access && !access.hasAccess) {
+    return (
+      <div>
+        <div className="flex items-center gap-3 mb-6">
+          <Link to="/dashboard" className="text-[#666]">←</Link>
+          <h2 className="text-xl font-bold">Check-In</h2>
+        </div>
+        <AccessGate action="Checking in">{null}</AccessGate>
+      </div>
+    );
+  }
+
   const lanes = data?.lanes ?? [];
   const checkins = data?.checkins ?? [];
   const today = data?.today ?? "";
@@ -48,6 +62,8 @@ function CheckIn() {
         <h2 className="text-xl font-bold">Check-In</h2>
       </div>
       <p className="text-[#666] text-xs mb-8">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+
+      <AccessBanner />
 
       {allDone && (
         <div className="p-5 rounded-xl border border-[#166534] mb-8" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>

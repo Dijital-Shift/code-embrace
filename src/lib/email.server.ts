@@ -1,5 +1,7 @@
 // Resend email — pure fetch, Worker-compatible.
-const APP_URL = 'https://kingdom-protocol.lovable.app';
+// Configurable so the sender/domain swaps over with one setting once
+// kingdomprotocol.app finishes DNS — no code change needed.
+const APP_URL = process.env.APP_URL || 'https://kingdomprotocol.lovable.app';
 const FROM = process.env.RESEND_FROM_EMAIL || 'Kingdom Protocol <onboarding@resend.dev>';
 
 export async function sendPartnerInvite(opts: {
