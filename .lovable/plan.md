@@ -42,4 +42,4 @@ End-to-end on the published site: sign up fresh → onboarding (name, gender, ti
 - Access helper: a `has_access(user_id)` security-definer function plus a client hook wrapping `useSubscription` + trial date, so gating is consistent on both sides.
 - Server functions that create paths and record check-ins call the access check before writing.
 - Cron: `cron.unschedule` + re-`schedule` jobs 1-3 against `project--<id>.lovable.app`, keeping the existing `apikey` header that `checkCronAuth` validates.
-- Email: verified domain via the email setup flow, then set `RESEND_FROM_EMAIL` to the verified address.
+- Email: sender pulled from a single `RESEND_FROM_EMAIL` setting with the current fallback; domain verification happens once Cloudflare finishes the transfer.
