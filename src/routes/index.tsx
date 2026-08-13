@@ -487,7 +487,7 @@ function FAQ() {
         },
       ],
       closing:
-        "What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later.",
+        "What's done in the dark comes to the light. Better to be seen by a watchman now than exposed at the throne later.",
     },
   ];
 
