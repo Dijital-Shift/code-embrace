@@ -17,6 +17,7 @@ function Welcome() {
   const navigate = useNavigate();
   const acceptFn = useServerFn(acceptLaneInvite);
   const previewFn = useServerFn(getInvitePreview);
+  const vapidFn = useServerFn(getVapidPublicKey);
 
   const [ownerName, setOwnerName] = useState<string | null>(null);
   const [pushStatus, setPushStatus] = useState<"idle" | "asking" | "granted" | "denied">("idle");
