@@ -147,7 +147,7 @@ function SilenceRule() {
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
           <Threshold n="02" title="Silence or breach" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet — or that you fell." tone="warn" />
-          <Threshold n="03" title="Watchman responds" body="They reach out — a call, a verse, a meet-up. The loop closes with a brother, not a banner." tone="alert" />
+          <Threshold n="03" title="Watchman responds" body="They reach out — a call, a verse, a meet-up. The loop closes with a watchman, not a banner." tone="alert" />
         </div>
 
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
