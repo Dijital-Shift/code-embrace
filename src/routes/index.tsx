@@ -142,7 +142,7 @@ function SilenceRule() {
         <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
-          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a brother shows up.</p>
+          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
