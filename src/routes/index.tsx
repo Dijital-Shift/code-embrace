@@ -142,12 +142,12 @@ function SilenceRule() {
         <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
-          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a brother shows up.</p>
+          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
           <Threshold n="02" title="Silence or breach" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet — or that you fell." tone="warn" />
-          <Threshold n="03" title="Watchman responds" body="They reach out — a call, a verse, a meet-up. The loop closes with a brother, not a banner." tone="alert" />
+          <Threshold n="03" title="Watchman responds" body="They reach out — a call, a verse, a meet-up. The loop closes with a watchman, not a banner." tone="alert" />
         </div>
 
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
@@ -487,7 +487,7 @@ function FAQ() {
         },
       ],
       closing:
-        "What's done in the dark comes to the light. Better to be seen by a brother now than exposed at the throne later.",
+        "What's done in the dark comes to the light. Better to be seen by a watchman now than exposed at the throne later.",
     },
   ];
 
