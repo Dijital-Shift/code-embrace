@@ -26,3 +26,9 @@ export function getStripe(): Promise<Stripe | null> {
 export function getStripeEnvironment(): StripeEnv {
   return paymentsEnvironment();
 }
+
+export function isPaymentsConfigured(): boolean {
+  return Boolean(
+    clientToken?.startsWith('pk_test_') || clientToken?.startsWith('pk_live_'),
+  );
+}
