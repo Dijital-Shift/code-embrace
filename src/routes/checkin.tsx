@@ -14,8 +14,21 @@ export const Route = createFileRoute("/checkin")({
 function CheckIn() {
   const fn = useServerFn(getCheckinPage);
   const { data, isLoading } = useQuery({ queryKey: ["checkin"], queryFn: () => fn() });
+  const { data: access } = useAccessState();
 
   if (isLoading) return <p className="text-[#555]">Loading…</p>;
+  if (access && !access.hasAccess) {
+    return (
+      <div>
+        <div className="flex items-center gap-3 mb-6">
+          <Link to="/dashboard" className="text-[#666]">←</Link>
+          <h2 className="text-xl font-bold">Check-In</h2>
+        </div>
+        <AccessGate action="Checking in">{null}</AccessGate>
+      </div>
+    );
+  }
+
   const lanes = data?.lanes ?? [];
   const checkins = data?.checkins ?? [];
   const today = data?.today ?? "";
