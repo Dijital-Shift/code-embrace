@@ -316,6 +316,7 @@ export type Database = {
           reminder_utc_hour: number | null
           status: string
           timezone: string
+          trial_ends_at: string | null
           user_id: string
         }
         Insert: {
@@ -331,6 +332,7 @@ export type Database = {
           reminder_utc_hour?: number | null
           status?: string
           timezone?: string
+          trial_ends_at?: string | null
           user_id: string
         }
         Update: {
@@ -346,6 +348,7 @@ export type Database = {
           reminder_utc_hour?: number | null
           status?: string
           timezone?: string
+          trial_ends_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -496,6 +499,7 @@ export type Database = {
           status: string
         }[]
       }
+      has_access: { Args: { _user_id: string }; Returns: boolean }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
