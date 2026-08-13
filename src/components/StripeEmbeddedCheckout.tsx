@@ -1,5 +1,5 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
-import { getStripe, getStripeEnvironment } from "@/lib/stripe";
+import { getStripe, getStripeEnvironment, isPaymentsConfigured } from "@/lib/stripe";
 import { createCheckoutSession } from "@/utils/payments.functions";
 
 interface Props {
@@ -24,6 +24,18 @@ export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnU
     if (!result.clientSecret) throw new Error("Stripe did not return a client secret");
     return result.clientSecret;
   };
+
+  if (!isPaymentsConfigured()) {
+    return (
+      <div id="checkout" className="p-6 text-center">
+        <p className="text-sm font-semibold text-[#c9a84c] mb-2">Checkout isn't open yet.</p>
+        <p className="text-xs text-[#888] leading-relaxed">
+          Payments are still being finalized. Email us and we'll set you up manually —
+          your access won't be delayed.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div id="checkout">
