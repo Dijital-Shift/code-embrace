@@ -78,7 +78,7 @@ function Dashboard() {
             {lanes.map((lane) => {
               const checked = checkedIds.has(lane.lane_id);
               return (
-                <Link key={lane.lane_id} to="/lanes/$id" params={{ id: lane.lane_id }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
+                <Link key={lane.lane_id} to="/lanes/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
                   <span className="text-sm font-medium">{lane.title}</span>
                   <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color: checked ? "#4ade80" : "#c9a84c", background: checked ? "#052e16" : "#1a1400" }}>
                     {checked ? "Done" : "Pending"}
