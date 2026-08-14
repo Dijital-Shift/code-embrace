@@ -53,7 +53,7 @@ function Hero() {
             <span style={{ color: GOLD }}>Silence dulls both.</span>
           </h1>
           <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-md">
-            For the believer who refuses to walk alone. Daily check-ins, partnered with a watchman in covenant with you — before the silence becomes a fall.
+            For the believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
             <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
