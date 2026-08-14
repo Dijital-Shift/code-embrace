@@ -50,7 +50,7 @@ export function PathTemplateCard({
   }
   return (
     <Link
-      to="/lanes/new"
+      to="/paths/new"
       search={{ template: template.id }}
       className={cls}
       style={style}

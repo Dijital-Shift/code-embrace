@@ -22,8 +22,11 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PathsIndexRouteImport } from './routes/paths.index'
 import { Route as LanesIndexRouteImport } from './routes/lanes.index'
+import { Route as PathsNewRouteImport } from './routes/paths.new'
 import { Route as PathsLibraryRouteImport } from './routes/paths.library'
+import { Route as PathsIdRouteImport } from './routes/paths.$id'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
 import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
@@ -101,14 +104,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathsIndexRoute = PathsIndexRouteImport.update({
+  id: '/paths/',
+  path: '/paths/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LanesIndexRoute = LanesIndexRouteImport.update({
   id: '/lanes/',
   path: '/lanes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathsNewRoute = PathsNewRouteImport.update({
+  id: '/paths/new',
+  path: '/paths/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PathsLibraryRoute = PathsLibraryRouteImport.update({
   id: '/paths/library',
   path: '/paths/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsIdRoute = PathsIdRouteImport.update({
+  id: '/paths/$id',
+  path: '/paths/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LanesNewRoute = LanesNewRouteImport.update({
@@ -190,8 +208,11 @@ export interface FileRoutesByFullPath {
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
+  '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
+  '/paths/new': typeof PathsNewRoute
   '/lanes/': typeof LanesIndexRoute
+  '/paths/': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -218,8 +239,11 @@ export interface FileRoutesByTo {
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
+  '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
+  '/paths/new': typeof PathsNewRoute
   '/lanes': typeof LanesIndexRoute
+  '/paths': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -247,8 +271,11 @@ export interface FileRoutesById {
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
+  '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
+  '/paths/new': typeof PathsNewRoute
   '/lanes/': typeof LanesIndexRoute
+  '/paths/': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -277,8 +304,11 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
+    | '/paths/$id'
     | '/paths/library'
+    | '/paths/new'
     | '/lanes/'
+    | '/paths/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
@@ -305,8 +335,11 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
+    | '/paths/$id'
     | '/paths/library'
+    | '/paths/new'
     | '/lanes'
+    | '/paths'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
@@ -333,8 +366,11 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/lanes/$id'
     | '/lanes/new'
+    | '/paths/$id'
     | '/paths/library'
+    | '/paths/new'
     | '/lanes/'
+    | '/paths/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
@@ -362,8 +398,11 @@ export interface RootRouteChildren {
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
+  PathsIdRoute: typeof PathsIdRoute
   PathsLibraryRoute: typeof PathsLibraryRoute
+  PathsNewRoute: typeof PathsNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
+  PathsIndexRoute: typeof PathsIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
   ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
@@ -465,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paths/': {
+      id: '/paths/'
+      path: '/paths'
+      fullPath: '/paths/'
+      preLoaderRoute: typeof PathsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lanes/': {
       id: '/lanes/'
       path: '/lanes'
@@ -472,11 +518,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LanesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paths/new': {
+      id: '/paths/new'
+      path: '/paths/new'
+      fullPath: '/paths/new'
+      preLoaderRoute: typeof PathsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/paths/library': {
       id: '/paths/library'
       path: '/paths/library'
       fullPath: '/paths/library'
       preLoaderRoute: typeof PathsLibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/$id': {
+      id: '/paths/$id'
+      path: '/paths/$id'
+      fullPath: '/paths/$id'
+      preLoaderRoute: typeof PathsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lanes/new': {
@@ -589,8 +649,11 @@ const rootRouteChildren: RootRouteChildren = {
   InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
+  PathsIdRoute: PathsIdRoute,
   PathsLibraryRoute: PathsLibraryRoute,
+  PathsNewRoute: PathsNewRoute,
   LanesIndexRoute: LanesIndexRoute,
+  PathsIndexRoute: PathsIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
   ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
