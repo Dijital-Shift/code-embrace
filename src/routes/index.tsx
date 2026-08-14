@@ -316,7 +316,7 @@ function WhoThisIsFor() {
     "believes confession in the light beats covering in the dark",
   ];
   const notForItems = [
-    "wants a habit tracker without covenant",
+    "wants a habit tracker without agreement",
     "is looking for anonymity over accountability",
     "expects software to do the work of a watchman",
     "is not ready to let another believer see the misses",
@@ -404,7 +404,7 @@ function FAQ() {
     {
       q: "What stops me from lying?",
       intro:
-        "Nothing in the software — and that's the point. This is a covenant, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins.",
+        "Nothing in the software — and that's the point. This is an agreement, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins.",
       verses: [
         {
           text: "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.",
