@@ -11,7 +11,7 @@ import {
 } from "@/lib/invites.functions";
 import { AppLayout } from "@/components/AppLayout";
 
-export const Route = createFileRoute("/lanes/$id")({
+export const Route = createFileRoute("/paths/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
     newlyCreated: s.newlyCreated === true || s.newlyCreated === "true",
   }),
@@ -37,7 +37,7 @@ function LaneDetail() {
     mutationFn: () => deleteFn({ data: { id } }),
     onSuccess: (r: any) => {
       if (r?.error) setErr(r.error);
-      else window.location.href = "/lanes";
+      else window.location.href = "/paths";
     },
   });
 
@@ -54,7 +54,7 @@ function LaneDetail() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <Link to="/lanes" className="text-[#555] text-sm">← Paths</Link>
+          <Link to="/paths" className="text-[#555] text-sm">← Paths</Link>
           <h2 className="text-xl font-bold">{lane.title}</h2>
         </div>
       </div>

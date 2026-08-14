@@ -50,7 +50,7 @@ function CheckIn() {
     return (
       <div className="text-center pt-16">
         <p className="text-[#555] mb-4">No active paths.</p>
-        <Link to="/lanes/new" className="px-5 py-2 bg-white text-black rounded font-semibold">Create a Path</Link>
+        <Link to="/paths/new" className="px-5 py-2 bg-white text-black rounded font-semibold">Create a Path</Link>
       </div>
     );
   }

@@ -25,7 +25,7 @@ function Library() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-2">
-        <Link to="/lanes" className="text-[#666]">
+        <Link to="/paths" className="text-[#666]">
           ←
         </Link>
         <h2 className="text-xl font-bold">Path Library</h2>
@@ -60,7 +60,7 @@ function Library() {
           The library is a starting place, not a ceiling. Build your own path with your own Scripture.
         </p>
         <Link
-          to="/lanes/new"
+          to="/paths/new"
           className="inline-block px-4 py-2 rounded-md border border-[#c9a84c]/50 text-[#c9a84c] font-semibold text-xs"
         >
           Create a custom path →

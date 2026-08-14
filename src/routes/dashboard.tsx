@@ -64,14 +64,14 @@ function Dashboard() {
       ) : (
         <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-[#888] text-sm mb-4">No active paths yet.</p>
-          <Link to="/lanes/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
+          <Link to="/paths/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
         </div>
       )}
 
       <div className="mt-8">
         <div className="flex justify-between items-center mb-3">
           <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Active Paths</p>
-          <Link to="/lanes/new" className="text-xs text-[#c9a84c] font-semibold">+ New</Link>
+          <Link to="/paths/new" className="text-xs text-[#c9a84c] font-semibold">+ New</Link>
         </div>
 
         {lanes.length === 0 ? (
@@ -81,7 +81,7 @@ function Dashboard() {
             {lanes.map((lane) => {
               const checked = checkedIds.has(lane.lane_id);
               return (
-                <Link key={lane.lane_id} to="/lanes/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
+                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
                   <span className="text-sm font-medium">{lane.title}</span>
                   <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color: checked ? "#4ade80" : "#c9a84c", background: checked ? "#052e16" : "#1a1400" }}>
                     {checked ? "Done" : "Pending"}

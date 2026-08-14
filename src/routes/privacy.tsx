@@ -31,7 +31,7 @@ function PrivacyPage() {
             <ul className="ml-6 list-disc space-y-1">
               <li><strong>Account data</strong> — name, email, password hash, phone number (optional).</li>
               <li><strong>Profile & preferences</strong> — timezone, bedtime, accountability partners.</li>
-              <li><strong>Behavioral data</strong> — lanes (commitments), check-ins, breach reports, missed-check-in events.</li>
+              <li><strong>Behavioral data</strong> — paths (commitments), check-ins, breach reports, missed-check-in events.</li>
               <li><strong>Support communications</strong> — messages you send us.</li>
               <li><strong>Technical data</strong> — IP address, device identifiers, browser/user-agent, basic usage telemetry, push-notification tokens.</li>
             </ul>

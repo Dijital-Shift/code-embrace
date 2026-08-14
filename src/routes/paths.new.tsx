@@ -10,7 +10,7 @@ import { PathTemplateCard } from "@/components/PathTemplateCard";
 
 type LaneNewSearch = { template?: string };
 
-export const Route = createFileRoute("/lanes/new")({
+export const Route = createFileRoute("/paths/new")({
   validateSearch: (search: Record<string, unknown>): LaneNewSearch => ({
     template: typeof search.template === "string" ? search.template : undefined,
   }),
@@ -61,7 +61,7 @@ function NewLane() {
   }, [templateId]);
 
   function clearTemplate() {
-    navigate({ to: "/lanes/new", search: {} });
+    navigate({ to: "/paths/new", search: {} });
     setTitle("");
     setDescription("");
     setNotes("");
@@ -71,7 +71,7 @@ function NewLane() {
 
 
   function pickTemplate(id: string) {
-    navigate({ to: "/lanes/new", search: { template: id } });
+    navigate({ to: "/paths/new", search: { template: id } });
     setTab("custom");
   }
 
@@ -97,9 +97,9 @@ function NewLane() {
       return;
     }
     if ("id" in result && result.id) {
-      navigate({ to: "/lanes/$id", params: { id: result.id }, search: { newlyCreated: true } as any });
+      navigate({ to: "/paths/$id", params: { id: result.id }, search: { newlyCreated: true } as any });
     } else {
-      navigate({ to: "/lanes" });
+      navigate({ to: "/paths" });
     }
   }
 
@@ -108,7 +108,7 @@ function NewLane() {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Link to="/lanes" className="text-[#555] text-sm">←</Link>
+        <Link to="/paths" className="text-[#555] text-sm">←</Link>
         <h2 className="text-xl font-bold">New Path</h2>
       </div>
 

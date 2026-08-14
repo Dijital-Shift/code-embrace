@@ -54,7 +54,7 @@ function Partner() {
           <p className="font-semibold mb-1 text-[#c9a84c]">You just held someone up.</p>
           <p className="text-xs text-[#aa9560] mb-3">The watch goes both ways — start your own path when you're ready.</p>
           <div className="flex gap-2">
-            <Link to="/lanes/new" className="inline-block px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Start a path</Link>
+            <Link to="/paths/new" className="inline-block px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Start a path</Link>
             <button onClick={() => dismissMut.mutate()} className="text-xs text-[#666] px-3 py-2">Not now</button>
           </div>
         </div>
@@ -64,14 +64,14 @@ function Partner() {
         <div className="p-5 rounded-xl border border-[#2a2000] mb-8" style={{ background: "#0a0800" }}>
           <p className="font-semibold mb-1 text-[#c9a84c]">You're holding someone up. Who's holding you?</p>
           <p className="text-xs text-[#666] mb-3">The watch goes both ways. Start your own path when you're ready — no rush.</p>
-          <Link to="/lanes/new" className="inline-block px-5 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Start a path of your own</Link>
+          <Link to="/paths/new" className="inline-block px-5 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Start a path of your own</Link>
         </div>
       )}
 
       {lanes.length === 0 && (
         <div className="text-center pt-12">
           <p className="text-[#555] text-sm mb-4">No paths assigned to you yet.</p>
-          <Link to="/lanes/new" className="inline-block px-5 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Set up your own</Link>
+          <Link to="/paths/new" className="inline-block px-5 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">Set up your own</Link>
         </div>
       )}
 

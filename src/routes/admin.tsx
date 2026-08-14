@@ -34,7 +34,7 @@ function AdminPage() {
 
   const stats = [
     { label: "Active Users", v: ov?.totalUsers ?? 0 },
-    { label: "Active Lanes", v: ov?.activeLanes ?? 0 },
+    { label: "Active Paths", v: ov?.activeLanes ?? 0 },
     { label: "New This Week", v: ov?.newUsersWeek ?? 0 },
     { label: "Today Aligned", v: ov?.todayCheckins ?? 0, c: "#4ade80" },
     { label: "Today Missed", v: ov?.todayMissed ?? 0, c: "#f59e0b" },

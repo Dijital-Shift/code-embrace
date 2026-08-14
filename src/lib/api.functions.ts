@@ -207,7 +207,7 @@ export const updateLaneStatus = createServerFn({ method: 'POST' })
       try {
         await sendPushToUser(lane.partner_id, {
           title: `Lane archived — ${lane.title}`,
-          body: 'Your partner has archived this accountability lane.',
+          body: 'Your watchman has archived this path.',
           url: '/partner',
         });
       } catch {}
@@ -221,11 +221,11 @@ export const deleteLane = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: lane } = await supabase.from('lanes').select('created_at').eq('lane_id', data.id).eq('user_id', userId).single();
-    if (!lane) return { error: 'Lane not found.' };
+    if (!lane) return { error: 'Path not found.' };
     const ageMin = (Date.now() - new Date(lane.created_at).getTime()) / 60000;
-    if (ageMin > 10) return { error: 'Lanes older than 10 minutes cannot be deleted. Use Archive instead.' };
+    if (ageMin > 10) return { error: 'Paths older than 10 minutes cannot be deleted. Use Archive instead.' };
     const { count } = await supabase.from('checkins').select('checkin_id', { count: 'exact', head: true }).eq('lane_id', data.id);
-    if ((count ?? 0) > 0) return { error: 'This lane already has check-ins. Use Archive instead.' };
+    if ((count ?? 0) > 0) return { error: 'This path already has check-ins. Use Archive instead.' };
     const { error } = await supabase.from('lanes').delete().eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
     return { success: true };
@@ -309,7 +309,7 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     if (data.response === 'breach' && !data.explanation?.trim()) return { error: 'Explanation required when reporting a breach.' };
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
-    if (!lane) return { error: 'Lane not found or inactive.' };
+    if (!lane) return { error: 'Path not found or inactive.' };
     const { data: missedY } = await supabase.from('checkins').select('checkin_id')
       .eq('lane_id', data.laneId).eq('checkin_date', yesterdayStr()).eq('status', 'missed').maybeSingle();
     const target = missedY ? yesterdayStr() : todayStr();
@@ -338,7 +338,7 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     if (denied) return denied;
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
-    if (!lane) return { error: 'Lane not found.' };
+    if (!lane) return { error: 'Path not found.' };
     const { error } = await supabase.from('checkins').upsert({
       lane_id: data.laneId, user_id: userId, checkin_date: todayStr(),
       status: 'skipped', completion_time: new Date().toISOString(),
