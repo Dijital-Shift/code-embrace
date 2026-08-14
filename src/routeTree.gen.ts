@@ -22,10 +22,10 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as LanesIndexRouteImport } from './routes/lanes.index'
+import { Route as PathsIndexRouteImport } from './routes/paths.index'
+import { Route as PathsNewRouteImport } from './routes/paths.new'
 import { Route as PathsLibraryRouteImport } from './routes/paths.library'
-import { Route as LanesNewRouteImport } from './routes/lanes.new'
-import { Route as LanesIdRouteImport } from './routes/lanes.$id'
+import { Route as PathsIdRouteImport } from './routes/paths.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
@@ -101,9 +101,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LanesIndexRoute = LanesIndexRouteImport.update({
-  id: '/lanes/',
-  path: '/lanes/',
+const PathsIndexRoute = PathsIndexRouteImport.update({
+  id: '/paths/',
+  path: '/paths/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsNewRoute = PathsNewRouteImport.update({
+  id: '/paths/new',
+  path: '/paths/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PathsLibraryRoute = PathsLibraryRouteImport.update({
@@ -111,14 +116,9 @@ const PathsLibraryRoute = PathsLibraryRouteImport.update({
   path: '/paths/library',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LanesNewRoute = LanesNewRouteImport.update({
-  id: '/lanes/new',
-  path: '/lanes/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LanesIdRoute = LanesIdRouteImport.update({
-  id: '/lanes/$id',
-  path: '/lanes/$id',
+const PathsIdRoute = PathsIdRouteImport.update({
+  id: '/paths/$id',
+  path: '/paths/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InviteTokenRoute = InviteTokenRouteImport.update({
@@ -188,10 +188,10 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
-  '/lanes/$id': typeof LanesIdRoute
-  '/lanes/new': typeof LanesNewRoute
+  '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
-  '/lanes/': typeof LanesIndexRoute
+  '/paths/new': typeof PathsNewRoute
+  '/paths/': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -216,10 +216,10 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
-  '/lanes/$id': typeof LanesIdRoute
-  '/lanes/new': typeof LanesNewRoute
+  '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
-  '/lanes': typeof LanesIndexRoute
+  '/paths/new': typeof PathsNewRoute
+  '/paths': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -245,10 +245,10 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
-  '/lanes/$id': typeof LanesIdRoute
-  '/lanes/new': typeof LanesNewRoute
+  '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
-  '/lanes/': typeof LanesIndexRoute
+  '/paths/new': typeof PathsNewRoute
+  '/paths/': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -275,10 +275,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/checkout/return'
     | '/invite/$token'
-    | '/lanes/$id'
-    | '/lanes/new'
+    | '/paths/$id'
     | '/paths/library'
-    | '/lanes/'
+    | '/paths/new'
+    | '/paths/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
@@ -303,10 +303,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/checkout/return'
     | '/invite/$token'
-    | '/lanes/$id'
-    | '/lanes/new'
+    | '/paths/$id'
     | '/paths/library'
-    | '/lanes'
+    | '/paths/new'
+    | '/paths'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
@@ -331,10 +331,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/checkout/return'
     | '/invite/$token'
-    | '/lanes/$id'
-    | '/lanes/new'
+    | '/paths/$id'
     | '/paths/library'
-    | '/lanes/'
+    | '/paths/new'
+    | '/paths/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/api/public/hooks/bedtime-reminder'
@@ -360,10 +360,10 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
-  LanesIdRoute: typeof LanesIdRoute
-  LanesNewRoute: typeof LanesNewRoute
+  PathsIdRoute: typeof PathsIdRoute
   PathsLibraryRoute: typeof PathsLibraryRoute
-  LanesIndexRoute: typeof LanesIndexRoute
+  PathsNewRoute: typeof PathsNewRoute
+  PathsIndexRoute: typeof PathsIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
   ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
@@ -465,11 +465,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lanes/': {
-      id: '/lanes/'
-      path: '/lanes'
-      fullPath: '/lanes/'
-      preLoaderRoute: typeof LanesIndexRouteImport
+    '/paths/': {
+      id: '/paths/'
+      path: '/paths'
+      fullPath: '/paths/'
+      preLoaderRoute: typeof PathsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/new': {
+      id: '/paths/new'
+      path: '/paths/new'
+      fullPath: '/paths/new'
+      preLoaderRoute: typeof PathsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paths/library': {
@@ -479,18 +486,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathsLibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lanes/new': {
-      id: '/lanes/new'
-      path: '/lanes/new'
-      fullPath: '/lanes/new'
-      preLoaderRoute: typeof LanesNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lanes/$id': {
-      id: '/lanes/$id'
-      path: '/lanes/$id'
-      fullPath: '/lanes/$id'
-      preLoaderRoute: typeof LanesIdRouteImport
+    '/paths/$id': {
+      id: '/paths/$id'
+      path: '/paths/$id'
+      fullPath: '/paths/$id'
+      preLoaderRoute: typeof PathsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invite/$token': {
@@ -587,10 +587,10 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
-  LanesIdRoute: LanesIdRoute,
-  LanesNewRoute: LanesNewRoute,
+  PathsIdRoute: PathsIdRoute,
   PathsLibraryRoute: PathsLibraryRoute,
-  LanesIndexRoute: LanesIndexRoute,
+  PathsNewRoute: PathsNewRoute,
+  PathsIndexRoute: PathsIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
   ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
