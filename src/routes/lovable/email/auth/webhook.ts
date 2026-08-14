@@ -12,12 +12,12 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 const EMAIL_SUBJECTS: Record<string, string> = {
-  signup: 'Confirm your email',
-  invite: "You've been invited",
-  magiclink: 'Your login link',
-  recovery: 'Reset your password',
+  signup: 'Your Kingdom Protocol confirmation code',
+  invite: "You've been invited to Kingdom Protocol",
+  magiclink: 'Your Kingdom Protocol sign-in code',
+  recovery: 'Reset your Kingdom Protocol password',
   email_change: 'Confirm your new email',
-  reauthentication: 'Your verification code',
+  reauthentication: 'Your Kingdom Protocol verification code',
 }
 
 // Template mapping
@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "kingdomprotocol"
+const SITE_NAME = "Kingdom Protocol"
 const SENDER_DOMAIN = "notify.kingdomprotocol.app"
 const ROOT_DOMAIN = "kingdomprotocol.app"
 const FROM_DOMAIN = "kingdomprotocol.app"
