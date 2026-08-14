@@ -288,6 +288,7 @@ export type Database = {
       }
       notifications: {
         Row: {
+          channel: string | null
           checkin_id: string | null
           created_at: string
           lane_id: string
@@ -299,6 +300,7 @@ export type Database = {
           type: string
         }
         Insert: {
+          channel?: string | null
           checkin_id?: string | null
           created_at?: string
           lane_id: string
@@ -310,6 +312,7 @@ export type Database = {
           type: string
         }
         Update: {
+          channel?: string | null
           checkin_id?: string | null
           created_at?: string
           lane_id?: string
