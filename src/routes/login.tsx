@@ -73,9 +73,12 @@ function Login() {
     <main className="min-h-[100dvh] flex items-center justify-center px-6" style={{ background: "#0a0800" }}>
       <div className="w-full max-w-sm flex flex-col items-center">
         <img src="/kingdom-protocol-logo.png" alt="Kingdom Protocol" className="w-40 block" style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.3))" }} />
-        <p className="text-sm text-[#666] mt-1 mb-6">
-          {step === "email" ? "Enter your email to continue" : `Code sent to ${email}`}
+        <p className="text-sm text-[#666] mt-1 mb-6 text-center">
+          {step === "email"
+            ? "Enter your email to continue"
+            : `Enter the 6-digit code we sent to ${email}`}
         </p>
+
         {step === "email" ? (
           <>
             <button
@@ -114,13 +117,14 @@ function Login() {
               type="text"
               required
               autoFocus
-              maxLength={8}
+              maxLength={6}
               inputMode="numeric"
-              placeholder="Enter code"
+              placeholder="000000"
               value={token}
-              onChange={(e) => setToken(e.target.value)}
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, ""))}
               className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
             />
+            <p className="text-[0.7rem] text-[#555] text-center">The code expires in 10 minutes.</p>
             {err && <p className="text-red-400 text-xs">{err}</p>}
             <button disabled={busy} className="py-3 bg-white text-black rounded-md font-semibold">
               {busy ? "Verifying…" : "Verify"}
@@ -128,6 +132,7 @@ function Login() {
             <button type="button" onClick={() => setStep("email")} className="text-[#555] text-xs">
               Use a different email
             </button>
+
           </form>
         )}
         <Link to="/" className="mt-8 text-xs text-[#444]">← Back home</Link>
