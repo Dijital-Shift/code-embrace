@@ -1,7 +1,11 @@
 // Transactional email via Lovable's managed email system.
 // Emails are pre-rendered here and enqueued into the `transactional_emails`
 // pgmq queue; the queue processor route handles sending, retries and backoff.
+import { createElement } from 'react';
+import { render } from '@react-email/render';
 import { createClient } from '@supabase/supabase-js';
+import { InviteEmail } from './email-templates/invite';
+
 
 const APP_URL = process.env.APP_URL || 'https://kingdomprotocol.app';
 const SENDER_DOMAIN = 'notify.kingdomprotocol.app';
