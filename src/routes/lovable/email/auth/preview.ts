@@ -47,6 +47,8 @@ const SAMPLE_DATA: Record<string, object> = {
     siteName: SITE_NAME,
     siteUrl: SAMPLE_PROJECT_URL,
     confirmationUrl: SAMPLE_PROJECT_URL,
+    inviterName: 'Marcus Jones',
+    pathTitle: 'Fast — no fried foods',
   },
   email_change: {
     siteName: SITE_NAME,
