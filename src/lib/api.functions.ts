@@ -206,7 +206,7 @@ export const updateLaneStatus = createServerFn({ method: 'POST' })
     if (data.status === 'archived' && lane?.partner_id) {
       try {
         await sendPushToUser(lane.partner_id, {
-          title: `Lane archived — ${lane.title}`,
+          title: `Path archived — ${lane.title}`,
           body: 'Your watchman has archived this path.',
           url: '/partner',
         });
