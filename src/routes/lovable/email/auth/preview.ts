@@ -18,7 +18,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "kingdomprotocol"
+const SITE_NAME = "Kingdom Protocol"
 const ROOT_DOMAIN = "kingdomprotocol.app"
 
 // Sample data for preview mode ONLY (not used in actual email sending).
