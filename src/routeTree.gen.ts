@@ -28,6 +28,7 @@ import { Route as PathsNewRouteImport } from './routes/paths.new'
 import { Route as PathsLibraryRouteImport } from './routes/paths.library'
 import { Route as PathsIdRouteImport } from './routes/paths.$id'
 import { Route as LanesNewRouteImport } from './routes/lanes.new'
+import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
@@ -133,6 +134,11 @@ const LanesNewRoute = LanesNewRouteImport.update({
   path: '/lanes/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LanesIdRoute = LanesIdRouteImport.update({
+  id: '/lanes/$id',
+  path: '/lanes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InviteTokenRoute = InviteTokenRouteImport.update({
   id: '/invite/$token',
   path: '/invite/$token',
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
+  '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
+  '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
+  '/lanes/$id': typeof LanesIdRoute
   '/lanes/new': typeof LanesNewRoute
   '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/checkout/return'
     | '/invite/$token'
+    | '/lanes/$id'
     | '/lanes/new'
     | '/paths/$id'
     | '/paths/library'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/checkout/return'
     | '/invite/$token'
+    | '/lanes/$id'
     | '/lanes/new'
     | '/paths/$id'
     | '/paths/library'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/checkout/return'
     | '/invite/$token'
+    | '/lanes/$id'
     | '/lanes/new'
     | '/paths/$id'
     | '/paths/library'
@@ -384,6 +396,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
+  LanesIdRoute: typeof LanesIdRoute
   LanesNewRoute: typeof LanesNewRoute
   PathsIdRoute: typeof PathsIdRoute
   PathsLibraryRoute: typeof PathsLibraryRoute
@@ -533,6 +546,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LanesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lanes/$id': {
+      id: '/lanes/$id'
+      path: '/lanes/$id'
+      fullPath: '/lanes/$id'
+      preLoaderRoute: typeof LanesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invite/$token': {
       id: '/invite/$token'
       path: '/invite/$token'
@@ -627,6 +647,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
+  LanesIdRoute: LanesIdRoute,
   LanesNewRoute: LanesNewRoute,
   PathsIdRoute: PathsIdRoute,
   PathsLibraryRoute: PathsLibraryRoute,
