@@ -23,6 +23,7 @@ import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PathsIndexRouteImport } from './routes/paths.index'
+import { Route as LanesIndexRouteImport } from './routes/lanes.index'
 import { Route as PathsNewRouteImport } from './routes/paths.new'
 import { Route as PathsLibraryRouteImport } from './routes/paths.library'
 import { Route as PathsIdRouteImport } from './routes/paths.$id'
@@ -104,6 +105,11 @@ const IndexRoute = IndexRouteImport.update({
 const PathsIndexRoute = PathsIndexRouteImport.update({
   id: '/paths/',
   path: '/paths/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LanesIndexRoute = LanesIndexRouteImport.update({
+  id: '/lanes/',
+  path: '/lanes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PathsNewRoute = PathsNewRouteImport.update({
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
   '/paths/new': typeof PathsNewRoute
+  '/lanes/': typeof LanesIndexRoute
   '/paths/': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
   '/paths/new': typeof PathsNewRoute
+  '/lanes': typeof LanesIndexRoute
   '/paths': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/paths/$id': typeof PathsIdRoute
   '/paths/library': typeof PathsLibraryRoute
   '/paths/new': typeof PathsNewRoute
+  '/lanes/': typeof LanesIndexRoute
   '/paths/': typeof PathsIndexRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/paths/$id'
     | '/paths/library'
     | '/paths/new'
+    | '/lanes/'
     | '/paths/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/paths/$id'
     | '/paths/library'
     | '/paths/new'
+    | '/lanes'
     | '/paths'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/paths/$id'
     | '/paths/library'
     | '/paths/new'
+    | '/lanes/'
     | '/paths/'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
@@ -363,6 +375,7 @@ export interface RootRouteChildren {
   PathsIdRoute: typeof PathsIdRoute
   PathsLibraryRoute: typeof PathsLibraryRoute
   PathsNewRoute: typeof PathsNewRoute
+  LanesIndexRoute: typeof LanesIndexRoute
   PathsIndexRoute: typeof PathsIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
@@ -470,6 +483,13 @@ declare module '@tanstack/react-router' {
       path: '/paths'
       fullPath: '/paths/'
       preLoaderRoute: typeof PathsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lanes/': {
+      id: '/lanes/'
+      path: '/lanes'
+      fullPath: '/lanes/'
+      preLoaderRoute: typeof LanesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paths/new': {
@@ -590,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathsIdRoute: PathsIdRoute,
   PathsLibraryRoute: PathsLibraryRoute,
   PathsNewRoute: PathsNewRoute,
+  LanesIndexRoute: LanesIndexRoute,
   PathsIndexRoute: PathsIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
