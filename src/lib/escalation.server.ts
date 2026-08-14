@@ -1,4 +1,5 @@
 import { sendPushToUser } from './push.server';
+import { sendSms, SMS_BREACH, SMS_SILENCE } from './sms.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 // Watchman is pinged immediately on a self-reported breach.
@@ -12,12 +13,21 @@ export async function triggerBreachAlert(args: {
     type: 'breach_report', status: 'pending', message_content: body,
   }).select('notification_id').single();
   const sent = await sendPushToUser(args.partnerId, { title: `Breach — ${args.laneTitle}`, body, url: '/partner' });
+
+  // Fallback only — never dual-send. Generic copy; no details over SMS.
+  let channel: 'push' | 'sms' | null = sent ? 'push' : null;
+  if (!sent) {
+    const { data: p } = await supabaseAdmin.from('profiles').select('phone').eq('user_id', args.partnerId).single();
+    if (await sendSms(p?.phone, SMS_BREACH)) channel = 'sms';
+  }
+
   if (notif) {
     await supabaseAdmin.from('notifications').update({
-      status: sent ? 'sent' : 'failed', sent_at: sent ? new Date().toISOString() : null,
+      status: channel ? 'sent' : 'failed', sent_at: channel ? new Date().toISOString() : null, channel,
     }).eq('notification_id', notif.notification_id);
   }
 }
+
 
 // Sabbath skip — quiet notice to the watchman.
 export async function notifyPartnerSkip(args: { laneTitle: string; partnerId: string; userId: string }) {
