@@ -9,9 +9,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
-      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in covenant — before the silence becomes a fall." },
+      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement — before the silence becomes a fall." },
       { property: "og:title", content: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
-      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in covenant — before the silence becomes a fall." },
+      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement — before the silence becomes a fall." },
       { property: "og:image", content: "/kingdom-protocol-logo.png" },
     ],
   }),
