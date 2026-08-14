@@ -13,7 +13,7 @@ import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 const EMAIL_SUBJECTS: Record<string, string> = {
   signup: 'Your Kingdom Protocol confirmation code',
-  invite: "You've been invited to Kingdom Protocol",
+  invite: 'You have been asked to stand watch',
   magiclink: 'Your Kingdom Protocol sign-in code',
   recovery: 'Reset your Kingdom Protocol password',
   email_change: 'Confirm your new email',
