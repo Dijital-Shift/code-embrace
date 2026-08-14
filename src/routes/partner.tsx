@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
+
 
 export const Route = createFileRoute("/partner")({
   head: () => ({ meta: [{ title: "Watchman — Kingdom Protocol" }] }),
@@ -38,6 +40,8 @@ function Partner() {
 
   return (
     <div>
+      <WatchmanPushPrompt />
+
       <div className="mb-8">
         <div className="flex justify-between items-start">
           <h2 className="text-xl font-bold mb-1">Your Assignments</h2>

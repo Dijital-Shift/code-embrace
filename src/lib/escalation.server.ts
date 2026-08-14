@@ -1,4 +1,5 @@
 import { sendPushToUser } from './push.server';
+import { sendSms, SMS_BREACH, SMS_SILENCE } from './sms.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 // Watchman is pinged immediately on a self-reported breach.
@@ -12,12 +13,21 @@ export async function triggerBreachAlert(args: {
     type: 'breach_report', status: 'pending', message_content: body,
   }).select('notification_id').single();
   const sent = await sendPushToUser(args.partnerId, { title: `Breach — ${args.laneTitle}`, body, url: '/partner' });
+
+  // Fallback only — never dual-send. Generic copy; no details over SMS.
+  let channel: 'push' | 'sms' | null = sent ? 'push' : null;
+  if (!sent) {
+    const { data: p } = await supabaseAdmin.from('profiles').select('phone').eq('user_id', args.partnerId).single();
+    if (await sendSms(p?.phone, SMS_BREACH)) channel = 'sms';
+  }
+
   if (notif) {
     await supabaseAdmin.from('notifications').update({
-      status: sent ? 'sent' : 'failed', sent_at: sent ? new Date().toISOString() : null,
+      status: channel ? 'sent' : 'failed', sent_at: channel ? new Date().toISOString() : null, channel,
     }).eq('notification_id', notif.notification_id);
   }
 }
+
 
 // Sabbath skip — quiet notice to the watchman.
 export async function notifyPartnerSkip(args: { laneTitle: string; partnerId: string; userId: string }) {
@@ -117,14 +127,22 @@ export async function markMissedCheckins() {
 
     await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id });
 
-    // Threshold 2 — ping the watchman. Skip if already pinged for this check-in.
+    // Threshold 2 — the watchman is only pinged on a SILENCE STREAK:
+    // yesterday missed AND the day before also missed. Day 1 is the user's alone.
     if (!lane.partner_id) continue;
+    const dayBefore = prevDay(yesterdayLocal);
+    const { data: priorMiss } = await supabaseAdmin.from('checkins')
+      .select('checkin_id').eq('lane_id', lane.lane_id).eq('checkin_date', dayBefore)
+      .eq('status', 'missed').maybeSingle();
+    if (!priorMiss) continue; // day 1 — user only
+
+    // Dedup: never ping twice for the same check-in.
     const { data: prior } = await supabaseAdmin.from('notifications')
       .select('notification_id').eq('checkin_id', ci.checkin_id).eq('type', 'missed_checkin').maybeSingle();
     if (prior) continue;
 
     const email = emailMap.get(lane.user_id);
-    const body = `${email ?? 'Your partner'} went silent on "${lane.title}" yesterday. Reach out.`;
+    const body = `${email ?? 'Your partner'} has gone silent on "${lane.title}" two days running. Reach out.`;
     const { data: notif } = await supabaseAdmin.from('notifications').insert({
       lane_id: lane.lane_id, partner_id: lane.partner_id, checkin_id: ci.checkin_id,
       type: 'missed_checkin', status: 'pending', message_content: body,
@@ -132,12 +150,21 @@ export async function markMissedCheckins() {
     const sent = await sendPushToUser(lane.partner_id, {
       title: `Silence — ${lane.title}`, body, url: '/partner',
     });
+
+    // Fallback only — never dual-send. Generic copy over SMS.
+    let channel: 'push' | 'sms' | null = sent ? 'push' : null;
+    if (!sent) {
+      const { data: pp } = await supabaseAdmin.from('profiles').select('phone').eq('user_id', lane.partner_id).single();
+      if (await sendSms(pp?.phone, SMS_SILENCE)) channel = 'sms';
+    }
+
     if (notif) {
       await supabaseAdmin.from('notifications').update({
-        status: sent ? 'sent' : 'failed', sent_at: sent ? new Date().toISOString() : null,
+        status: channel ? 'sent' : 'failed', sent_at: channel ? new Date().toISOString() : null, channel,
       }).eq('notification_id', notif.notification_id);
     }
-    if (sent) watchmenPinged++;
+    if (channel) watchmenPinged++;
+
   }
   return { processed, watchmenPinged };
 }
