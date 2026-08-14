@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RefundRouteImport } from './routes/refund'
@@ -45,6 +46,11 @@ import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksEscalateMissedRouteImport } from './routes/api/public/hooks/escalate-missed'
 import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
@@ -356,6 +365,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/settings'
     | '/terms'
+    | '/unsubscribe'
     | '/checkout/return'
     | '/email/unsubscribe'
     | '/invite/$token'
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/settings'
     | '/terms'
+    | '/unsubscribe'
     | '/checkout/return'
     | '/email/unsubscribe'
     | '/invite/$token'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/settings'
     | '/terms'
+    | '/unsubscribe'
     | '/checkout/return'
     | '/email/unsubscribe'
     | '/invite/$token'
@@ -468,6 +480,7 @@ export interface RootRouteChildren {
   RefundRoute: typeof RefundRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
@@ -493,6 +506,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -767,6 +787,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundRoute: RefundRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
