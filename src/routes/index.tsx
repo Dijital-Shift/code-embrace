@@ -478,13 +478,14 @@ function FAQ() {
           ref: "Proverbs 15:3",
         },
         {
-          text: "The eyes of the Lord are ten thousand times brighter than the sun, beholding all the ways of men, and considering the most secret parts.",
-          ref: "Sirach 23:19",
+          text: "Neither is there any creature that is not manifest in his sight: but all things are naked and opened unto the eyes of him with whom we have to do.",
+          ref: "Hebrews 4:13",
         },
         {
-          text: "Say not thou, I am hid from the Lord; shall any remember me from above?… his eyes are upon the ways of every man, and he seeth into secret places.",
-          ref: "Sirach 16:17, 17:19–20 (paraphrased, KJV Apocrypha)",
+          text: "Can any hide himself in secret places that I shall not see him? saith the LORD. Do not I fill heaven and earth? saith the LORD.",
+          ref: "Jeremiah 23:24",
         },
+
       ],
       closing:
         "What's done in the dark comes to the light. Better to be seen by a watchman now than exposed at the throne later.",
