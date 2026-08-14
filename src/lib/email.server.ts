@@ -1,8 +1,79 @@
-// Resend email — pure fetch, Worker-compatible.
-// Configurable so the sender/domain swaps over with one setting once
-// kingdomprotocol.app finishes DNS — no code change needed.
-const APP_URL = process.env.APP_URL || 'https://kingdomprotocol.lovable.app';
-const FROM = process.env.RESEND_FROM_EMAIL || 'Kingdom Protocol <onboarding@resend.dev>';
+// Transactional email via Lovable's managed email system.
+// Emails are pre-rendered here and enqueued into the `transactional_emails`
+// pgmq queue; the queue processor route handles sending, retries and backoff.
+import { createClient } from '@supabase/supabase-js';
+
+const APP_URL = process.env.APP_URL || 'https://kingdomprotocol.app';
+const SENDER_DOMAIN = 'notify.kingdomprotocol.app';
+const FROM = `Kingdom Protocol <hello@${SENDER_DOMAIN}>`;
+
+function adminClient() {
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+async function enqueue(opts: {
+  to: string;
+  subject: string;
+  html: string;
+  label: string;
+}) {
+  const supabase = adminClient();
+  if (!supabase) {
+    console.warn('[email] Supabase env not configured; skipping send');
+    return;
+  }
+
+  const normalized = opts.to.toLowerCase();
+  const { data: suppressed } = await supabase
+    .from('suppressed_emails')
+    .select('id')
+    .eq('email', normalized)
+    .maybeSingle();
+  if (suppressed) {
+    console.log('[email] recipient suppressed; skipping send');
+    return;
+  }
+
+  const messageId = crypto.randomUUID();
+  await supabase.from('email_send_log').insert({
+    message_id: messageId,
+    template_name: opts.label,
+    recipient_email: opts.to,
+    status: 'pending',
+  });
+
+  const { error } = await supabase.rpc('enqueue_email', {
+    queue_name: 'transactional_emails',
+    payload: {
+      message_id: messageId,
+      to: opts.to,
+      from: FROM,
+      sender_domain: SENDER_DOMAIN,
+      subject: opts.subject,
+      html: opts.html,
+      purpose: 'transactional',
+      label: opts.label,
+      idempotency_key: messageId,
+      queued_at: new Date().toISOString(),
+    },
+  });
+
+  if (error) {
+    console.error('[email] enqueue failed', error);
+    await supabase.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: opts.label,
+      recipient_email: opts.to,
+      status: 'failed',
+      error_message: 'Failed to enqueue email',
+    });
+  }
+}
 
 export async function sendPartnerInvite(opts: {
   toEmail: string;
@@ -10,11 +81,6 @@ export async function sendPartnerInvite(opts: {
   fromName?: string | null;
   laneTitle: string;
 }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.warn('[email] RESEND_API_KEY not set; skipping invite');
-    return;
-  }
   const displayName = opts.fromName ?? opts.fromEmail;
   const html = `
     <div style="font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:2rem;background:#fff;color:#111">
@@ -29,15 +95,11 @@ export async function sendPartnerInvite(opts: {
       <a href="${APP_URL}/login?email=${encodeURIComponent(opts.toEmail)}" style="display:inline-block;padding:.875rem 2rem;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:700;font-size:.95rem">Accept &amp; Join</a>
       <p style="color:#bbb;font-size:.75rem;margin-top:2rem;border-top:1px solid #eee;padding-top:1rem">Ignore this if you weren't expecting it. No account will be created unless you click above.</p>
     </div>`;
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      from: FROM,
-      to: opts.toEmail,
-      subject: `${displayName} added you as an accountability partner`,
-      html,
-    }),
+
+  await enqueue({
+    to: opts.toEmail,
+    subject: `${displayName} added you as an accountability partner`,
+    html,
+    label: 'partner_invite',
   });
-  if (!res.ok) console.error('[email] resend failed', res.status, await res.text());
 }
