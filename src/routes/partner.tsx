@@ -40,6 +40,8 @@ function Partner() {
 
   return (
     <div>
+      <WatchmanPushPrompt />
+
       <div className="mb-8">
         <div className="flex justify-between items-start">
           <h2 className="text-xl font-bold mb-1">Your Assignments</h2>
