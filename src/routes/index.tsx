@@ -12,8 +12,12 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement — before the silence becomes a fall." },
       { property: "og:title", content: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
       { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement — before the silence becomes a fall." },
-      { property: "og:image", content: "/kingdom-protocol-logo.png" },
+      { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { property: "og:url", content: "https://kingdomprotocol.app/" },
+      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://kingdomprotocol.app/" }],
+
   }),
   component: Landing,
 });
