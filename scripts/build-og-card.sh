@@ -27,9 +27,9 @@ magick -size 1200x630 "xc:$BG" \
 
 # Right column copy
 magick "$TMP/base.png" \
-  -font "$FONT_SERIF" -pointsize 66 -fill "$GOLD" -kerning 6 \
+  -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD" -kerning 4 \
   -annotate +560+250 "KINGDOM PROTOCOL" \
-  -font "$FONT_SANS" -pointsize 38 -fill "#f2eee4" -kerning 0 \
+  -font "$FONT_SANS" -pointsize 34 -fill "#f2eee4" -kerning 0 \
   -annotate +560+315 "Accountability with a watchman." \
   "$TMP/withtext.png"
 
