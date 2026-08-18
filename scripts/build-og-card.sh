@@ -34,7 +34,6 @@ magick "$TMP/base.png" \
   "$TMP/withtext.png"
 
 # Verse block (wrapped), dimmed
-magick -background none -fill "#8f8straight" -size 1x1 xc:none "$TMP/noop.png" 2>/dev/null || true
 magick -background none -fill "#9a917d" -font "$FONT_ITAL" -pointsize 25 \
   -size 570x caption:"\"But if the watchman see the sword come, and blow not the trumpet... his blood will I require at the watchman's hand.\"" \
   "$TMP/verse.png"
