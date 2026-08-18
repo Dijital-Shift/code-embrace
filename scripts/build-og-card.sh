@@ -59,8 +59,8 @@ magick -background none -fill "$GOLD" -font "$FONT_SANS" -pointsize 22 -kerning 
   "$TMP/ref.png"
 
 magick "$TMP/withrule.png" \
-  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+392 -composite \
-  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+528 -composite \
+  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+420 -composite \
+  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+580 -composite \
   "$OUT"
 
 echo "wrote $OUT"
