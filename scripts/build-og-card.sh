@@ -36,16 +36,16 @@ magick "$TMP/base.png" \
   -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD" -kerning 4 \
   -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
   -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#f2eee4" -kerning 0 \
-  -annotate +${COL_X}+322 "$TAGLINE" \
+  -annotate +${COL_X}+350 "$TAGLINE" \
   "$TMP/withtext.png"
 
 # Measure the rendered tagline so the rule matches its own width.
 TAG_W=$(magick -font "$FONT_TAG" -pointsize $TAG_SIZE label:"$TAGLINE" -format "%w" info:)
 
-# Thin gold rule directly under the tagline, centered on the tagline width.
+# Thin gold rule between the wordmark and the tagline, centered on the tagline width.
 magick "$TMP/withtext.png" \
   \( -size ${TAG_W}x1 "xc:$GOLD" -alpha set -channel A -evaluate set 30% +channel \) \
-  -gravity northwest -geometry +${COL_X}+352 -composite \
+  -gravity northwest -geometry +${COL_X}+285 -composite \
   "$TMP/withrule.png"
 
 # Verse block (wrapped), dimmed
