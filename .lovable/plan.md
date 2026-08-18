@@ -1,29 +1,39 @@
-# New share card with the watchtower + shofar seal
+# Silence Rule verse swap + compact share card
 
-Rebuild `public/og-card.jpg` (1200x630) using the uploaded gold seal art in place of the throne image. Share-card only — no site logo, icons, favicon, or PWA assets change.
+## 1. Silence Rule verse (src/routes/index.tsx)
 
-## Layout
+Replace the closing scripture block under "The Silence Rule" (currently Ezekiel 33:6) with:
+
+> "I have set watchmen upon thy walls, O Jerusalem, which shall never hold their peace day nor night... keep not silence."
+> Isaiah 62:6 · KJV
+
+Same box, same gold italic type, same placement — only the verse text and citation change.
+
+## 2. Compact share card
+
+New static PNG at `public/og-card.png`, 1200x630 on `#0a0800`, built for thumbnail legibility: one centered stack, large elements, no marketing hero layout.
 
 ```text
-+----------------------------------------------------------+
-|              |  KINGDOM PROTOCOL   (Cinzel, gold)         |
-|   [ gold     |  Accountability with a watchman.           |
-|     seal ]   |  ------------------------------            |
-|              |  "But if the watchman see the sword come,  |
-|              |   and blow not the trumpet... his blood    |
-|              |   will I require at the watchman's hand."  |
-|              |  Ezekiel 33:6 (KJV)                        |
-+----------------------------------------------------------+
++--------------------------------------+
+|            [ logo mark ]             |
+|         KINGDOM PROTOCOL             |  Cinzel, #c9a84c
+|   Accountability with a watchman.    |  white, medium
+|                                      |
+|  "But if the watchman see the sword  |  small, dim gold
+|  come, and blow not the trumpet...   |
+|  his blood will I require at the     |
+|  watchman's hand." Ezekiel 33:6 KJV  |
++--------------------------------------+
 ```
 
-- Background: near-black (`#0a0800`) to match the current card.
-- Left: the seal, sized to fill the left third with breathing room.
-- Right: wordmark, tagline, thin gold rule, then the Ezekiel excerpt in a smaller italic serif with the citation in gold.
+- Mark: `public/kingdom-protocol-logo.png` for now, composited from a single source path so swapping in the watchtower/shofar icon later is a one-line change and a re-run.
+- Build is scripted (`scripts/build-og-card.sh`, ImageMagick) and committed, so regenerating with a new mark is one command.
 
-## Technical detail
+### Meta changes
 
-- Composite with ImageMagick from `/mnt/user-uploads/ChatGPT_Image_Aug_18_2026_03_01_05_PM.png`, output to `public/og-card.jpg`.
-- Filename and meta tags stay as-is (`https://kingdomprotocol.app/og-card.jpg` in `src/routes/__root.tsx` and `src/routes/index.tsx`), so nothing else needs editing.
-- Preview the result before finishing.
+- `src/routes/index.tsx` and `src/routes/__root.tsx`: point `og:image` / `twitter:image` at `https://kingdomprotocol.app/og-card.png`.
+- Add `twitter:card: summary_large_image` to the homepage head (root already has it).
+- Title/description copy untouched.
+- Old `public/og-card.jpg` removed.
 
-Note: platforms cache link previews, so shared links may show the old card until they re-scrape.
+I'll reply with the live URL of the rendered PNG for review. Link previews cache, so shared links may show the old card until platforms re-scrape.
