@@ -11,6 +11,12 @@ GOLD="#c9a84c"
 FONT_SERIF="${FONT_SERIF:-/tmp/ogfonts/Cinzel.ttf}"
 FONT_SANS="${FONT_SANS:-/tmp/ogfonts/WorkSans-Regular.ttf}"
 FONT_ITAL="${FONT_ITAL:-/tmp/ogfonts/WorkSans-Italic.ttf}"
+FONT_TAG="${FONT_TAG:-/tmp/ogfonts/CormorantGaramond-Italic.ttf}"
+
+COL_X=560         # left edge of the right column
+COL_W=570         # width of the right column
+TAGLINE="Accountability with a watchman."
+TAG_SIZE=44
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -25,22 +31,36 @@ magick -size 1200x630 "xc:$BG" \
   \( -size 2x430 "xc:$GOLD" \) -gravity west -geometry +500+0 -composite \
   "$TMP/base.png"
 
-# Right column copy
+# Wordmark + tagline (tagline in Cormorant Garamond Italic)
 magick "$TMP/base.png" \
   -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD" -kerning 4 \
-  -annotate +560+250 "KINGDOM PROTOCOL" \
-  -font "$FONT_SANS" -pointsize 34 -fill "#f2eee4" -kerning 0 \
-  -annotate +560+315 "Accountability with a watchman." \
+  -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
+  -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#f2eee4" -kerning 0 \
+  -annotate +${COL_X}+322 "$TAGLINE" \
   "$TMP/withtext.png"
+
+# Measure the rendered tagline so the rule matches its own width.
+TAG_W=$(magick -font "$FONT_TAG" -pointsize $TAG_SIZE label:"$TAGLINE" -format "%w" info:)
+
+# Thin gold rule directly under the tagline, centered on the tagline width.
+magick "$TMP/withtext.png" \
+  \( -size ${TAG_W}x1 "xc:$GOLD" -alpha set -channel A -evaluate set 30% +channel \) \
+  -gravity northwest -geometry +${COL_X}+352 -composite \
+  "$TMP/withrule.png"
 
 # Verse block (wrapped), dimmed
 magick -background none -fill "#9a917d" -font "$FONT_ITAL" -pointsize 25 \
-  -size 570x caption:"\"But if the watchman see the sword come, and blow not the trumpet... his blood will I require at the watchman's hand.\"" \
+  -size ${COL_W}x caption:"\"But if the watchman see the sword come, and blow not the trumpet... his blood will I require at the watchman's hand.\"" \
   "$TMP/verse.png"
 
-magick "$TMP/withtext.png" "$TMP/verse.png" -gravity northwest -geometry +560+380 -composite \
-  -font "$FONT_SANS" -pointsize 22 -fill "$GOLD" -kerning 3 \
-  -gravity northwest -annotate +560+520 "EZEKIEL 33:6 · KJV" \
+# Reference, right-aligned to the verse block's right edge.
+magick -background none -fill "$GOLD" -font "$FONT_SANS" -pointsize 22 -kerning 3 \
+  -size ${COL_W}x -gravity east caption:"EZEKIEL 33:6 · KJV" \
+  "$TMP/ref.png"
+
+magick "$TMP/withrule.png" \
+  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+392 -composite \
+  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+528 -composite \
   "$OUT"
 
 echo "wrote $OUT"
