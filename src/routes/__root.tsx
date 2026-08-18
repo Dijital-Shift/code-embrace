@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Behavioral accountability through watchman-based oversight." },
       { property: "og:title", content: "Kingdom Protocol" },
       { property: "og:description", content: "Behavioral accountability through watchman-based oversight." },
-      { property: "og:image", content: "/kingdom-protocol-logo.png" },
+      { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "/kingdom-protocol-logo.png" },
+      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -89,10 +89,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" },
-      { rel: "icon", type: "image/png", href: "/kingdom-protocol-logo.png" },
-      { rel: "apple-touch-icon", href: "/kingdom-protocol-logo.png" },
+      { rel: "icon", type: "image/png", sizes: "64x64", href: "/favicon.png" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.json" },
     ],
+
 
   }),
   shellComponent: RootShell,
