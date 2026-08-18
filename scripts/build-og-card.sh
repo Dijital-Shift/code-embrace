@@ -31,20 +31,23 @@ magick -size 1200x630 "xc:$BG" \
   \( -size 2x430 "xc:$GOLD" \) -gravity west -geometry +500+0 -composite \
   "$TMP/base.png"
 
+# Measure the wordmark so the rule spans its full width.
+WORDMARK_W=$(magick -font "$FONT_SERIF" -pointsize 46 -kerning 4 label:"KINGDOM PROTOCOL" -format "%w" info:)
+# Measure the tagline so it can be centered under the wordmark.
+TAG_W=$(magick -font "$FONT_TAG" -pointsize $TAG_SIZE label:"$TAGLINE" -format "%w" info:)
+TAG_OFFSET=$((COL_X + (WORDMARK_W - TAG_W) / 2))
+
 # Wordmark + tagline (tagline in Cormorant Garamond Italic)
 magick "$TMP/base.png" \
   -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD" -kerning 4 \
   -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
   -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#f2eee4" -kerning 0 \
-  -annotate +${COL_X}+350 "$TAGLINE" \
+  -annotate +${TAG_OFFSET}+350 "$TAGLINE" \
   "$TMP/withtext.png"
 
-# Measure the rendered tagline so the rule matches its own width.
-TAG_W=$(magick -font "$FONT_TAG" -pointsize $TAG_SIZE label:"$TAGLINE" -format "%w" info:)
-
-# Thin gold rule between the wordmark and the tagline, centered on the tagline width.
+# Thin gold rule between the wordmark and the tagline, spanning the wordmark width.
 magick "$TMP/withtext.png" \
-  \( -size ${TAG_W}x1 "xc:$GOLD" -alpha set -channel A -evaluate set 30% +channel \) \
+  \( -size ${WORDMARK_W}x1 "xc:$GOLD" -alpha set -channel A -evaluate set 30% +channel \) \
   -gravity northwest -geometry +${COL_X}+285 -composite \
   "$TMP/withrule.png"
 
