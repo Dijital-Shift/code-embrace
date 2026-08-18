@@ -12,9 +12,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
       { property: "og:title", content: "Kingdom Protocol — Kingdom-minded accountability." },
       { property: "og:description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
-      { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { property: "og:image", content: "https://kingdomprotocol.app/og-card.png" },
       { property: "og:url", content: "https://kingdomprotocol.app/" },
-      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.png" },
     ],
     links: [{ rel: "canonical", href: "https://kingdomprotocol.app/" }],
 
