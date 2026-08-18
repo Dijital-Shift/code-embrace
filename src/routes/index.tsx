@@ -8,10 +8,10 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
-      { name: "description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement — before the silence becomes a fall." },
-      { property: "og:title", content: "Kingdom Protocol — Iron sharpens iron. Silence dulls both." },
-      { property: "og:description", content: "For the kingdom-minded believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement — before the silence becomes a fall." },
+      { title: "Kingdom Protocol — Kingdom-minded accountability." },
+      { name: "description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
+      { property: "og:title", content: "Kingdom Protocol — Kingdom-minded accountability." },
+      { property: "og:description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
       { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
       { property: "og:url", content: "https://kingdomprotocol.app/" },
       { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
