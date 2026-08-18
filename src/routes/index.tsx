@@ -12,9 +12,10 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
       { property: "og:title", content: "Kingdom Protocol — Kingdom-minded accountability." },
       { property: "og:description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
-      { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { property: "og:image", content: "https://kingdomprotocol.app/og-card.png" },
       { property: "og:url", content: "https://kingdomprotocol.app/" },
-      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.png" },
     ],
     links: [{ rel: "canonical", href: "https://kingdomprotocol.app/" }],
 
@@ -157,9 +158,9 @@ function SilenceRule() {
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
           <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why three thresholds</p>
           <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
-            "But if the watchman see the sword come, and blow not the trumpet, and the people be not warned… his blood will I require at the watchman's hand."
+            "I have set watchmen upon thy walls, O Jerusalem, which shall never hold their peace day nor night… keep not silence."
           </p>
-          <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Ezekiel 33:6 · KJV</p>
+          <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Isaiah 62:6 · KJV</p>
         </div>
       </div>
     </section>

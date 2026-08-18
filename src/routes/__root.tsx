@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Behavioral accountability through watchman-based oversight." },
       { property: "og:title", content: "Kingdom Protocol" },
       { property: "og:description", content: "Behavioral accountability through watchman-based oversight." },
-      { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { property: "og:image", content: "https://kingdomprotocol.app/og-card.png" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+      { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
