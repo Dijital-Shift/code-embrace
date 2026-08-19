@@ -10,6 +10,7 @@ import {
   removeWatchman,
 } from "@/lib/invites.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { statusColor, statusLabel } from "@/lib/status";
 
 export const Route = createFileRoute("/paths/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -113,7 +114,7 @@ function LaneDetail() {
             {checkins.map((c) => (
               <div key={c.checkin_date} className="flex justify-between px-3 py-2 rounded border border-[#2a2518]" style={{ background: "#161210" }}>
                 <span className="text-sm">{c.checkin_date}</span>
-                <span className="text-xs capitalize" style={{ color: statusColor[c.status] ?? "#444" }}>{c.status}</span>
+                <span className="text-xs" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
               </div>
             ))}
           </div>

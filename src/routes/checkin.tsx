@@ -85,7 +85,7 @@ function CheckIn() {
 
       {avoidLate.length > 0 && (
         <section className="mb-8">
-          <p className="text-[0.65rem] text-[#f59e0b] uppercase tracking-wider mb-2 font-semibold">Missed Yesterday — Submit Before 7AM</p>
+          <p className="text-[0.65rem] text-[#f59e0b] uppercase tracking-wider mb-2 font-semibold">Silent Yesterday — Submit Before 10AM</p>
           <div className="flex flex-col gap-2">
             {avoidLate.map((l) => <AvoidForm key={l.lane_id} lane={l} isLate />)}
           </div>
@@ -103,7 +103,7 @@ function CheckIn() {
               return (
                 <div key={l.lane_id} className="flex justify-between items-center px-4 py-3.5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
                   <span className="text-sm">{l.title}</span>
-                  <span className="text-xs capitalize" style={{ color }}>{c.status === "completed" ? "Aligned" : "Breach"}</span>
+                  <span className="text-xs capitalize" style={{ color }}>{c.status === "completed" ? "Held" : "Breach"}</span>
                 </div>
               );
             })}
@@ -160,7 +160,7 @@ function CompleteRow({ laneId, title, done: doneInit }: { laneId: string; title:
           {done ? "✓" : busy ? "…" : ""}
         </span>
         <span className="flex-1" style={{ color: done ? "#4ade80" : "#fff" }}>{title}</span>
-        {done && <span className="text-[#4ade80] text-xs">Done</span>}
+        {done && <span className="text-[#4ade80] text-xs">Held</span>}
       </button>
       {canRevert && <button onClick={undo} className="text-[#555] text-[0.72rem] underline mr-3">Undo (within 30 min)</button>}
       {!done && <button onClick={doSkip} className="text-[#4a3a10] text-[0.72rem] underline">Skip — Sabbath</button>}
@@ -197,7 +197,7 @@ function AvoidForm({ lane, isLate = false }: { lane: { lane_id: string; title: s
   if (skipped) return <div className="p-4 rounded-xl border border-[#3d2c00]" style={{ background: "#0d0a00" }}><p className="text-[#c9a84c] font-semibold">{lane.title} — Sabbath</p></div>;
   if (submitted) {
     const ok = resp === "aligned";
-    return <div className="p-4 rounded-xl" style={{ background: "#161210", border: `1px solid ${ok ? "#166534" : "#7f1d1d"}` }}><p className="font-semibold" style={{ color: ok ? "#4ade80" : "#f87171" }}>{lane.title} — {ok ? "Aligned" : "Breach reported"}</p></div>;
+    return <div className="p-4 rounded-xl" style={{ background: "#161210", border: `1px solid ${ok ? "#166534" : "#7f1d1d"}` }}><p className="font-semibold" style={{ color: ok ? "#4ade80" : "#f87171" }}>{lane.title} — {ok ? "Held" : "Breach reported"}</p></div>;
   }
 
   return (
@@ -207,7 +207,7 @@ function AvoidForm({ lane, isLate = false }: { lane: { lane_id: string; title: s
       {lane.description && <p className="text-xs text-[#555]">{lane.description}</p>}
       <p className="text-xs text-[#666]">Did you avoid this today?</p>
       <div className="flex gap-2">
-        <button type="button" onClick={() => setResp("aligned")} className="flex-1 py-3 rounded-lg text-sm" style={{ border: `1px solid ${resp === "aligned" ? "#4ade80" : "#222"}`, background: resp === "aligned" ? "#052e16" : "#161210", color: resp === "aligned" ? "#4ade80" : "#666" }}>Yes — aligned</button>
+        <button type="button" onClick={() => setResp("aligned")} className="flex-1 py-3 rounded-lg text-sm" style={{ border: `1px solid ${resp === "aligned" ? "#4ade80" : "#222"}`, background: resp === "aligned" ? "#052e16" : "#161210", color: resp === "aligned" ? "#4ade80" : "#666" }}>Yes — held</button>
         <button type="button" onClick={() => setResp("breach")} className="flex-1 py-3 rounded-lg text-sm" style={{ border: `1px solid ${resp === "breach" ? "#f87171" : "#222"}`, background: resp === "breach" ? "#2d0d0d" : "#161210", color: resp === "breach" ? "#f87171" : "#666" }}>No — breach</button>
       </div>
       {resp === "breach" && (
@@ -217,7 +217,7 @@ function AvoidForm({ lane, isLate = false }: { lane: { lane_id: string; title: s
       {err && <p className="text-red-400 text-xs">{err}</p>}
       {resp && (
         <button disabled={busy} className="w-full py-3 rounded-lg font-semibold text-sm" style={{ background: resp === "aligned" ? "#fff" : "#7f1d1d", color: resp === "aligned" ? "#000" : "#fff" }}>
-          {busy ? "Submitting…" : resp === "aligned" ? "Submit — Aligned" : "Submit — Breach"}
+          {busy ? "Submitting…" : resp === "aligned" ? "Submit — Held" : "Submit — Breach"}
         </button>
       )}
       <button type="button" onClick={doSkip} className="text-[#4a3a10] text-[0.72rem] underline">Skip — Sabbath</button>

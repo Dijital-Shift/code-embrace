@@ -195,7 +195,7 @@ function MockCheckin() {
       <div className="flex items-center gap-3 rounded-xl border border-[#166534] px-3 py-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4ade80] text-[10px] font-bold text-black">✓</span>
         <span className="flex-1 text-sm text-[#4ade80]">Pray three times</span>
-        <span className="text-[10px] text-[#4ade80]">Done</span>
+        <span className="text-[10px] text-[#4ade80]">Held</span>
       </div>
       <div className="flex items-center gap-3 rounded-xl border border-[#2a2518] bg-[#161210] px-3 py-3">
         <span className="h-5 w-5 rounded-full border-2 border-[#333]" />
@@ -207,7 +207,7 @@ function MockCheckin() {
         <div className="mb-2 text-sm font-semibold text-white">No lustful looking</div>
         <div className="mb-2 text-[11px] text-[#666]">Did you avoid this today?</div>
         <div className="grid grid-cols-2 gap-2">
-          <button className="rounded-lg border border-[#4ade80] py-2 text-xs font-semibold text-[#4ade80]" style={{ background: "#052e16" }}>Yes — aligned</button>
+          <button className="rounded-lg border border-[#4ade80] py-2 text-xs font-semibold text-[#4ade80]" style={{ background: "#052e16" }}>Yes — held</button>
           <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">No — breach</button>
         </div>
       </div>
@@ -225,7 +225,7 @@ function MockBreachConfess() {
       <div className="rounded-xl border border-[#2a2518] bg-[#161210] p-3">
         <div className="text-sm font-semibold text-white">No lustful looking</div>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Yes — aligned</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Yes — held</button>
           <button className="rounded-lg border border-[#f87171] py-2 text-xs font-semibold text-[#f87171]" style={{ background: "#2d0d0d" }}>No — breach</button>
         </div>
         <textarea
@@ -252,10 +252,10 @@ function MockMissedNudge() {
         Your fast went un-checked. Your watchman hasn't been pinged yet — submit before morning.
       </div>
       <div className="rounded-xl border border-[#f59e0b]/40 bg-[#0d0a04] p-3">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Missed yesterday · submit before 10AM</div>
+        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Silent yesterday · submit before 10AM</div>
         <div className="mt-2 text-sm font-semibold text-white">Fast</div>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Aligned</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Held</button>
           <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Breach</button>
         </div>
       </div>
@@ -273,7 +273,7 @@ function MockWatchmanPing() {
       </div>
       <div className="rounded-md border border-red-900/40 bg-red-950/30 p-3">
         <div className="text-xs font-semibold text-red-200">David went silent on his fast.</div>
-        <div className="mt-1 text-[11px] text-red-300/70">No check-in two nights running. Silence is a signal — reach out.</div>
+        <div className="mt-1 text-[11px] text-red-300/70">Silent two nights running. Silence is a signal — reach out.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <a className="rounded-md bg-white py-2 text-center text-xs font-bold text-black">Call</a>
@@ -455,7 +455,7 @@ const SCENES: Scene[] = [
     step: 5,
     role: "user",
     title: "Nightly check-in — one screen, two columns",
-    body: "Complete paths tap-to-done. Avoid paths choose Aligned or Breach. The whole thing takes under thirty seconds.",
+    body: "Complete paths tap to hold. Avoid paths choose Held or Breach. The whole thing takes under thirty seconds.",
     why: "Why it matters: most paths don't fall to one big choice. They fall to small unspoken nights.",
     render: MockCheckin,
   },

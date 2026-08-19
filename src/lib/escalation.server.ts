@@ -42,8 +42,8 @@ export async function notifyPartnerSkip(args: { laneTitle: string; partnerId: st
 // Nudge the user that yesterday's check-in is overdue.
 export async function notifyUserMissed(args: { laneTitle: string; userId: string }) {
   await sendPushToUser(args.userId, {
-    title: `Missed check-in — ${args.laneTitle}`,
-    body: "You went silent yesterday. The grace window has closed.",
+    title: `Silent — ${args.laneTitle}`,
+    body: "Yesterday went silent — no check-in. The grace window has closed.",
     url: '/checkin',
   });
 }
