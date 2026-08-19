@@ -48,7 +48,7 @@ function LaneDetail() {
   const checkins = data?.checkins ?? [];
   const ageMin = (Date.now() - new Date(lane.created_at).getTime()) / 60000;
   const canDelete = ageMin <= 10 && checkins.length === 0;
-  const statusColor: Record<string, string> = { completed: "#4ade80", breached: "#f87171", missed: "#f59e0b", skipped: "#c9a84c", pending: "#444" };
+  
 
   return (
     <div>
