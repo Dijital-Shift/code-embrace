@@ -23,6 +23,8 @@ function Dashboard() {
   const lanes = data?.lanes ?? [];
   const todayCheckins = data?.todayCheckins ?? [];
   const checkedIds = new Set(todayCheckins.map((c) => c.lane_id));
+  const standing = data?.standing ?? 0;
+  const fallen = data?.fallen ?? 0;
   const pendingCount = lanes.filter((l) => !checkedIds.has(l.lane_id)).length;
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
   const needsGender = data?.profile && !((data.profile as any).gender);
@@ -104,7 +106,7 @@ function Dashboard() {
                 <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
                   <span className="text-sm font-medium">{lane.title}</span>
                   <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color: checked ? "#4ade80" : "#c9a84c", background: checked ? "#052e16" : "#1a1400" }}>
-                    {checked ? "Done" : "Pending"}
+                    {checked ? "Held" : "Open"}
                   </span>
                 </Link>
               );
