@@ -47,7 +47,7 @@ function RefundPage() {
           </section>
         </div>
 
-        <p className="mt-12 text-xs text-muted-foreground">Built by Dijital Shift</p>
+        <p className="mt-12 text-xs text-muted-foreground">Dijital · System 2</p>
       </div>
     </main>
   );
