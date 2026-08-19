@@ -21,9 +21,14 @@ TAG_SIZE=44
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-# Mark: drop the white plate around the seal, fit into the left column.
+# Mark: drop the white plate, square it, then mask to a circle so the seal
+# sits on the card background instead of inside a visible box.
 magick "$MARK" -fuzz 12% -transparent white -trim +repage \
-  -resize 380x380 "$TMP/mark.png"
+  -background none -gravity center -extent "%[fx:max(w,h)]x%[fx:max(w,h)]" \
+  -resize 400x400 "$TMP/sq.png"
+magick -size 400x400 xc:none -fill white -draw "circle 200,200 200,2" "$TMP/mask.png"
+magick "$TMP/sq.png" "$TMP/mask.png" -alpha off -compose CopyOpacity -composite "$TMP/mark.png"
+
 
 magick -size 1200x630 "xc:$BG" \
   "$TMP/mark.png" -gravity west -geometry +60+0 -composite \
