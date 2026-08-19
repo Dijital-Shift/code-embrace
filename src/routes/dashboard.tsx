@@ -68,6 +68,26 @@ function Dashboard() {
         </div>
       )}
 
+      {(standing + fallen) > 0 && (
+        <div className="mt-8 p-5 rounded-xl border border-[#2a2518] text-center" style={{ background: "#161210" }}>
+          <div className="flex items-baseline justify-center gap-4">
+            <div>
+              <div className="text-3xl font-extrabold text-[#4ade80]">{standing}</div>
+              <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Standing</div>
+            </div>
+            <span className="text-[#444] text-xl">·</span>
+            <div>
+              <div className="text-2xl font-bold text-[#f87171]">{fallen}</div>
+              <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Fallen</div>
+            </div>
+          </div>
+          <p className="text-[0.7rem] text-[#aa9560] mt-3">{standing} standing · {fallen} fallen — still rising.</p>
+          <p className="text-[0.65rem] italic text-[#666] mt-1">
+            For a just man falleth seven times, and riseth up again. — Proverbs 24:16
+          </p>
+        </div>
+      )}
+
       <div className="mt-8">
         <div className="flex justify-between items-center mb-3">
           <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Active Paths</p>
