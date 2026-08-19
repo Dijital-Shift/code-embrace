@@ -221,7 +221,7 @@ export function Shell({
               <br />
               You only hear from us when it matters. Silence means they&rsquo;re standing.
             </Text>
-            <Text style={credit}>Dijital &middot; System 2</Text>
+            <Text style={credit}>Dijital System &middot; 02</Text>
           </Section>
         </Container>
       </Body>

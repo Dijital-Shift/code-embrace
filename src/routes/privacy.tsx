@@ -91,7 +91,7 @@ function PrivacyPage() {
           </section>
         </div>
 
-        <p className="mt-12 text-xs text-muted-foreground">Dijital · System 2</p>
+        <p className="mt-12 text-xs text-muted-foreground">Dijital System · 02</p>
       </div>
     </main>
   );
