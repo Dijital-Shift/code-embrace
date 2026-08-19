@@ -156,7 +156,6 @@ function SilenceRule() {
         </div>
 
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
-          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-5">Why three thresholds</p>
           <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
             "I have set watchmen upon thy walls, O Jerusalem, which shall never hold their peace day nor night… keep not silence."
           </p>
