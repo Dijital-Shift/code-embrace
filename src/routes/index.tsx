@@ -103,7 +103,7 @@ function HeroMock() {
 
 function MockRow({ title, status }: { title: string; status: "held" | "silent" }) {
   const dot = status === "held" ? "#4ade80" : "#c9a84c";
-  const label = status === "held" ? "Held" : "No check-in";
+  const label = status === "held" ? "Held" : "Silent";
   return (
     <div className="flex items-center justify-between gap-2 py-2.5 px-3 rounded-lg bg-[#0a0800] border border-[#1a1610]">
       <div className="flex items-center gap-3 min-w-0">
