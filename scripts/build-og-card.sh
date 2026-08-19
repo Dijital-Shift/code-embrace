@@ -21,13 +21,16 @@ TAG_SIZE=44
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-# Mark: drop the white plate, square it, then mask to a circle so the seal
-# sits on the card background instead of inside a visible box.
+# Mark: drop the white plate, square it with a little breathing room, then mask
+# to a soft-edged circle just inside the square so the outer gold ring never
+# gets clipped or stair-stepped against the card background.
 magick "$MARK" -fuzz 12% -transparent white -trim +repage \
-  -background none -gravity center -extent "%[fx:max(w,h)]x%[fx:max(w,h)]" \
-  -resize 400x400 "$TMP/sq.png"
-magick -size 400x400 xc:none -fill white -draw "circle 200,200 200,2" "$TMP/mask.png"
+  -background none -gravity center -extent "%[fx:max(w,h)+8]x%[fx:max(w,h)+8]" \
+  -filter Lanczos -resize 400x400 "$TMP/sq.png"
+magick -size 400x400 xc:none -fill white -antialias \
+  -draw "circle 199.5,199.5 199.5,3.5" -blur 0x0.6 "$TMP/mask.png"
 magick "$TMP/sq.png" "$TMP/mask.png" -alpha off -compose CopyOpacity -composite "$TMP/mark.png"
+
 
 
 magick -size 1200x630 "xc:$BG" \
