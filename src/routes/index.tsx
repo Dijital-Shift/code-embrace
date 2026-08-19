@@ -578,13 +578,13 @@ function Footer() {
 
         <div className="mt-6 flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
           <Wordmark asLink={false} />
-          <span className="hidden sm:block w-px h-6 bg-[#c9a84c]/35" />
-          <p className="text-sm italic text-[#a8a39a]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+          <span className="hidden sm:block w-px h-6 bg-[#c9a84c]/55" />
+          <p className="text-base italic text-[#f0e8d8]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", textShadow: "0 0 22px rgba(201,168,76,0.25)" }}>
             Accountability with a watchman.
           </p>
         </div>
 
-        <div className="mt-8 w-full h-px" style={{ background: "linear-gradient(to right, transparent, rgba(201,168,76,0.35), transparent)" }} />
+        <div className="mt-8 w-full h-px" style={{ background: "linear-gradient(to right, transparent, rgba(201,168,76,0.45), transparent)" }} />
 
         <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col items-center sm:items-start gap-3">
@@ -599,10 +599,10 @@ function Footer() {
           </div>
 
           <div className="text-center sm:text-right">
-            <p className="text-sm italic leading-relaxed text-[#8f887b] max-w-sm ml-auto" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+            <p className="text-base italic leading-relaxed text-[#e8dec6] max-w-sm ml-auto" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", textShadow: "0 0 18px rgba(201,168,76,0.18)" }}>
               "I will stand upon my watch, and set me upon the tower, and will watch to see what he will say unto me."
             </p>
-            <p className="mt-2 text-[0.65rem] tracking-[0.22em] uppercase" style={{ color: GOLD }}>Habakkuk 2:1 · KJV</p>
+            <p className="mt-2 text-[0.7rem] tracking-[0.22em] uppercase" style={{ color: GOLD }}>Habakkuk 2:1 · KJV</p>
           </div>
         </div>
 
