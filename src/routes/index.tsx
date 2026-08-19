@@ -583,7 +583,7 @@ function Footer() {
         </div>
         <div className="grid grid-cols-3 items-center gap-4 w-full">
           <span className="hidden sm:block" />
-          <p className="text-xs text-[#555] tracking-wider text-center col-span-2 sm:col-span-1">Built by Dijital Shift · v1.0</p>
+          <p className="text-xs text-[#555] tracking-wider text-center col-span-2 sm:col-span-1">Dijital · System 2</p>
           <div className="hidden sm:flex justify-end">
             <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
           </div>
