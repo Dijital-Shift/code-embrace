@@ -6,6 +6,7 @@ set -euo pipefail
 
 MARK="${1:-assets/og-mark.png}"
 OUT="public/og-card.png"
+OUT_JPG="public/og-card.jpg"
 BG="#0a0800"
 GOLD="#c9a84c"
 FONT_SERIF="${FONT_SERIF:-/tmp/ogfonts/Cinzel.ttf}"
@@ -74,4 +75,8 @@ magick "$TMP/withrule.png" \
   "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+580 -composite \
   "$OUT"
 
-echo "wrote $OUT"
+# JPEG export — iMessage/WhatsApp/LinkedIn prefer a compact JPEG over a large PNG.
+magick "$OUT" -background "$BG" -flatten -strip -quality 88 \
+  -sampling-factor 4:2:0 -interlace none "$OUT_JPG"
+
+echo "wrote $OUT and $OUT_JPG"
