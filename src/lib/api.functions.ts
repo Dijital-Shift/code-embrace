@@ -242,12 +242,22 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const today = todayStr();
-    const [{ data: profile }, { data: lanes }, { data: todayChks }] = await Promise.all([
+    const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: allChks }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
+      supabase.from('checkins').select('checkin_date, status').eq('user_id', userId).in('status', ['completed', 'breached', 'missed']),
     ]);
-    return { profile: profile ?? null, lanes: lanes ?? [], todayCheckins: todayChks ?? [] };
+    // A day counts as "standing" only if nothing fell on it; any breach or silence
+    // marks the whole day fallen. Breaches never reset the standing count.
+    const dayFell = new Map<string, boolean>();
+    for (const c of allChks ?? []) {
+      const fell = c.status === 'breached' || c.status === 'missed';
+      dayFell.set(c.checkin_date, (dayFell.get(c.checkin_date) ?? false) || fell);
+    }
+    let standing = 0, fallen = 0;
+    for (const fell of dayFell.values()) fell ? fallen++ : standing++;
+    return { profile: profile ?? null, lanes: lanes ?? [], todayCheckins: todayChks ?? [], standing, fallen };
   });
 
 export const getCheckinPage = createServerFn({ method: 'GET' })
