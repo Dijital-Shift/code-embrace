@@ -567,33 +567,51 @@ function ClosingCall() {
 
 function Footer() {
   return (
-    <footer className="px-5 sm:px-8 py-12 border-t border-[#2a2418] mt-4">
-      <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+    <footer className="px-5 sm:px-8 py-14 border-t border-[#2a2418] mt-4">
+      <div className="max-w-5xl mx-auto flex flex-col items-center">
         <img
           src="/kingdom-protocol-logo.png"
           alt="Kingdom Protocol"
           className="h-32 sm:h-40 w-auto"
           style={{ filter: "drop-shadow(0 0 24px rgba(201,168,76,0.45))" }}
         />
-        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[#777]">
-          <Link to="/terms" className="hover:text-[#c9a84c]">Terms</Link>
-          <Link to="/privacy" className="hover:text-[#c9a84c]">Privacy</Link>
-          <Link to="/refund" className="hover:text-[#c9a84c]">Refund Policy</Link>
+
+        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
+          <Wordmark asLink={false} />
+          <span className="hidden sm:block w-px h-6 bg-[#c9a84c]/35" />
+          <p className="text-sm italic text-[#a8a39a]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+            Accountability with a watchman.
+          </p>
         </div>
-        <div className="grid grid-cols-3 items-center gap-4 w-full">
-          <span className="hidden sm:block" />
-          <p className="text-xs text-[#555] tracking-wider text-center col-span-2 sm:col-span-1">Dijital · System 2</p>
-          <div className="hidden sm:flex justify-end">
-            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
+
+        <div className="mt-8 w-full h-px" style={{ background: "linear-gradient(to right, transparent, rgba(201,168,76,0.35), transparent)" }} />
+
+        <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 items-start">
+          <div className="flex flex-col items-center sm:items-start gap-3">
+            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold tracking-wide hover:opacity-80">Sign in</Link>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs text-[#777]">
+              <Link to="/terms" className="hover:text-[#c9a84c]">Terms</Link>
+              <span className="text-[#3a342a]">·</span>
+              <Link to="/privacy" className="hover:text-[#c9a84c]">Privacy</Link>
+              <span className="text-[#3a342a]">·</span>
+              <Link to="/refund" className="hover:text-[#c9a84c]">Refund Policy</Link>
+            </div>
           </div>
-          <div className="col-span-3 flex justify-center sm:hidden">
-            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold">Sign in</Link>
+
+          <div className="text-center sm:text-right">
+            <p className="text-sm italic leading-relaxed text-[#8f887b] max-w-sm ml-auto" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+              "I will stand upon my watch, and set me upon the tower, and will watch to see what he will say unto me."
+            </p>
+            <p className="mt-2 text-[0.65rem] tracking-[0.22em] uppercase" style={{ color: GOLD }}>Habakkuk 2:1 · KJV</p>
           </div>
         </div>
+
+        <p className="mt-10 text-xs text-[#555] tracking-wider text-center">Dijital System · 02</p>
       </div>
     </footer>
   );
 }
+
 
 function Landing() {
   if (typeof window !== "undefined") useCaptureReferral();
