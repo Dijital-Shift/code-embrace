@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
       { property: "og:url", content: "https://kingdomprotocol.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Kingdom Protocol — Kingdom-minded accountability." },
+      { name: "twitter:title", content: "Kingdom Protocol - Accountability with a watchman" },
       { name: "twitter:description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
       { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg?v=2" },
       { name: "twitter:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
