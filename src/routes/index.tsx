@@ -639,9 +639,9 @@ function Footer() {
 
           <div className="text-center sm:text-right">
             <p className="text-base italic leading-relaxed text-[#e8dec6] max-w-sm ml-auto" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", textShadow: "0 0 18px rgba(201,168,76,0.18)" }}>
-              "I will stand upon my watch, and set me upon the tower, and will watch to see what he will say unto me."
+              "So thou, O son of man, I have set thee a watchman unto the house of Israel; therefore thou shalt hear the word at my mouth, and warn them from me."
             </p>
-            <p className="mt-2 text-[0.7rem] tracking-[0.22em] uppercase" style={{ color: GOLD }}>Habakkuk 2:1 · KJV</p>
+            <p className="mt-2 text-[0.7rem] tracking-[0.22em] uppercase" style={{ color: GOLD }}>Ezekiel 33:7 · KJV</p>
           </div>
         </div>
 
