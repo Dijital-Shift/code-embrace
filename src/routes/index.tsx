@@ -299,7 +299,7 @@ function Pricing() {
           </div>
 
           {/* Lifetime */}
-          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col items-center text-center relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+          <div className="lifetime-card rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 p-3 sm:p-7 flex flex-col items-center text-center relative overflow-hidden">
             <span className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]"> once</span></h3>
@@ -513,7 +513,13 @@ function FAQ() {
     },
     {
       q: "I don't want to use this anymore. What does that mean?",
-      a: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
+      intro: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
+      verses: [
+        {
+          text: "Two are better than one; because they have a good reward for their labour. For if they fall, the one will lift up his fellow: but woe to him that is alone when he falleth; for he hath not another to help him up.",
+          ref: "Ecclesiastes 4:9\u201310 \u00b7 KJV",
+        },
+      ],
     },
   ];
 
