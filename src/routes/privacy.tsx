@@ -51,7 +51,7 @@ function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">4. Who we share it with</h2>
             <ul className="ml-6 list-disc space-y-1">
-              <li><strong>Accountability partners you assign</strong> — they receive your name and (only when a breach or missed check-in occurs) your phone number, so they can reach out.</li>
+              <li><strong>Accountability partners you assign</strong> — they receive your name and (only when you breach or go silent) your phone number, so they can reach out.</li>
               <li><strong>Service providers / subprocessors</strong> — hosting and database (Supabase), transactional email (Resend), application hosting (Cloudflare / Lovable).</li>
               <li><strong>Merchant of Record</strong> — Paddle.com handles all sales, subscription management, payments, tax compliance, and invoicing. See Paddle's <a className="underline" href="https://www.paddle.com/legal/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>.</li>
               <li><strong>Professional advisers</strong> — legal and accounting, where necessary.</li>
