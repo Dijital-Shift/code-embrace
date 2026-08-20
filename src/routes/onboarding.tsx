@@ -34,14 +34,14 @@ function Onboarding() {
     <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12" style={{ background: "#000" }}>
       <div className="w-full max-w-sm flex flex-col items-center text-center">
         <h1 className="text-[1.4rem] font-bold mb-2">Welcome to Kingdom Protocol</h1>
-        <p className="text-[#666] text-sm mb-8">A few quick details so your watchmen know who they're walking with.</p>
+        <p className="text-[#a8a094] text-sm mb-8">A few quick details so your watchmen know who they're walking with.</p>
         <form onSubmit={submit} className="w-full flex flex-col gap-4">
           <div className="flex gap-3">
             <input required maxLength={50} value={first} onChange={(e) => setFirst(e.target.value)} placeholder="First name" className={inputCls} />
             <input required maxLength={50} value={last} onChange={(e) => setLast(e.target.value)} placeholder="Last name" className={inputCls} />
           </div>
           <div className="flex flex-col gap-2 text-left">
-            <label className="text-xs uppercase tracking-wider text-[#888] font-semibold">Male or Female</label>
+            <label className="text-xs uppercase tracking-wider text-[#b8b0a4] font-semibold">Male or Female</label>
             <div className="grid grid-cols-2 gap-2">
               {(["male", "female"] as const).map((g) => (
                 <button
@@ -59,7 +59,7 @@ function Onboarding() {
                 </button>
               ))}
             </div>
-            <p className="text-[0.7rem] text-[#555] leading-relaxed">This is how the Father made you. We use it for pastoral fit, not for public display.</p>
+            <p className="text-[0.7rem] text-[#9e968a] leading-relaxed">This is how the Father made you. We use it for pastoral fit, not for public display.</p>
           </div>
           {err && <p className="text-red-400 text-xs">{err}</p>}
           <button disabled={busy} className="py-3.5 bg-white text-black rounded-md font-semibold">

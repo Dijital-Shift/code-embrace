@@ -29,7 +29,7 @@ export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnU
     return (
       <div id="checkout" className="p-6 text-center">
         <p className="text-sm font-semibold text-[#c9a84c] mb-2">Checkout isn't open yet.</p>
-        <p className="text-xs text-[#888] leading-relaxed">
+        <p className="text-xs text-[#b8b0a4] leading-relaxed">
           Payments are still being finalized. Email us and we'll set you up manually —
           your access won't be delayed.
         </p>

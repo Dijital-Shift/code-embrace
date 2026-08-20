@@ -18,27 +18,27 @@ function HowItWorks() {
       <div className="max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <Wordmark size="sm" />
-          <Link to="/" className="text-[#555] text-sm">← Back</Link>
+          <Link to="/" className="text-[#9e968a] text-sm">← Back</Link>
         </div>
         <div className="text-center my-10">
           <img src="/kingdom-protocol-logo.png" alt="" className="w-28 mx-auto" />
-          <p className="text-[#666] text-xs font-bold tracking-[0.25em] mt-1">WALK THE PATH</p>
+          <p className="text-[#a8a094] text-xs font-bold tracking-[0.25em] mt-1">WALK THE PATH</p>
         </div>
         <div className="flex flex-col gap-3 mb-8">
           {steps.map((s) => (
             <div key={s.n} className="relative overflow-hidden p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
               <span className="absolute -top-1 right-3 text-[5rem] font-extrabold leading-none pointer-events-none select-none" style={{ color: "rgba(255,255,255,0.04)" }}>{s.n}</span>
               <h2 className="font-bold mb-2 relative">{s.title}</h2>
-              <p className="text-sm text-[#999] leading-relaxed relative">{s.body}</p>
+              <p className="text-sm text-[#c0b8ac] leading-relaxed relative">{s.body}</p>
             </div>
           ))}
           <div className="relative overflow-hidden p-5 rounded-xl border border-[#166534]" style={{ background: "#051a0a" }}>
             <h2 className="font-bold mb-2 text-[#4ade80]">Silence Means Aligned</h2>
-            <p className="text-sm text-[#999] leading-relaxed">When you're walking what you said you'd walk, nobody hears anything. Complete silence. That's the system working.</p>
+            <p className="text-sm text-[#c0b8ac] leading-relaxed">When you're walking what you said you'd walk, nobody hears anything. Complete silence. That's the system working.</p>
           </div>
           <div className="relative overflow-hidden p-5 rounded-xl border border-[#7f1d1d]" style={{ background: "#1a0505" }}>
             <h2 className="font-bold mb-2 text-[#f87171]">Breach or Miss — Watchman Pinged</h2>
-            <p className="text-sm text-[#999] leading-relaxed">Report a breach and your watchman is pinged immediately. Miss a check-in and you get a nudge first. Stay silent — your watchman is pinged.</p>
+            <p className="text-sm text-[#c0b8ac] leading-relaxed">Report a breach and your watchman is pinged immediately. Miss a check-in and you get a nudge first. Stay silent — your watchman is pinged.</p>
           </div>
         </div>
         <div className="text-center mt-10">

@@ -19,7 +19,7 @@ function Dashboard() {
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
   const [copied, setCopied] = useState(false);
 
-  if (isLoading) return <p className="text-[#555]">Loading…</p>;
+  if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const lanes = data?.lanes ?? [];
   const todayCheckins = data?.todayCheckins ?? [];
   const checkedIds = new Set(todayCheckins.map((c) => c.lane_id));
@@ -33,7 +33,7 @@ function Dashboard() {
   return (
     <div>
       <div className="mb-7">
-        <p className="text-xs text-[#555] uppercase tracking-wider mb-1">
+        <p className="text-xs text-[#9e968a] uppercase tracking-wider mb-1">
           {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
         </p>
         <h2 className="text-3xl font-extrabold tracking-tight">{greeting}</h2>
@@ -44,7 +44,7 @@ function Dashboard() {
       {needsGender && (
         <Link to="/settings" className="block mb-5 p-4 rounded-xl border border-[#3a2f12] no-underline" style={{ background: "#1e1808" }}>
           <p className="text-sm text-[#c9a84c] font-semibold">One quick detail — male or female?</p>
-          <p className="text-xs text-[#aa9560] mt-1">Tap to set it in Settings. Used for pastoral fit, never public.</p>
+          <p className="text-xs text-[#c2af80] mt-1">Tap to set it in Settings. Used for pastoral fit, never public.</p>
         </Link>
       )}
 
@@ -53,7 +53,7 @@ function Dashboard() {
           <div className="flex justify-between items-center">
             <div>
               <p className="font-semibold mb-1">{pendingCount} path{pendingCount > 1 ? "s" : ""} need attention</p>
-              <p className="text-[#888] text-sm">Check in before your bedtime window closes.</p>
+              <p className="text-[#b8b0a4] text-sm">Check in before your bedtime window closes.</p>
             </div>
             <Link to="/checkin" className="px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-sm">Check In</Link>
           </div>
@@ -61,11 +61,11 @@ function Dashboard() {
       ) : lanes.length > 0 ? (
         <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-[#4ade80] font-semibold">All clear.</p>
-          <p className="text-[#555] text-xs">Every path checked in. Stay aligned.</p>
+          <p className="text-[#9e968a] text-xs">Every path checked in. Stay aligned.</p>
         </div>
       ) : (
         <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
-          <p className="text-[#888] text-sm mb-4">No active paths yet.</p>
+          <p className="text-[#b8b0a4] text-sm mb-4">No active paths yet.</p>
           <Link to="/paths/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
         </div>
       )}
@@ -77,14 +77,14 @@ function Dashboard() {
               <div className="text-3xl font-extrabold text-[#4ade80]">{standing}</div>
               <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Standing</div>
             </div>
-            <span className="text-[#444] text-xl">·</span>
+            <span className="text-[#948d80] text-xl">·</span>
             <div>
               <div className="text-2xl font-bold text-[#f87171]">{fallen}</div>
               <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Fallen</div>
             </div>
           </div>
-          <p className="text-[0.7rem] text-[#aa9560] mt-3">{standing} standing · {fallen} fallen — still rising.</p>
-          <p className="text-[0.65rem] italic text-[#666] mt-1">
+          <p className="text-[0.7rem] text-[#c2af80] mt-3">{standing} standing · {fallen} fallen — still rising.</p>
+          <p className="text-[0.65rem] italic text-[#a8a094] mt-1">
             For a just man falleth seven times, and riseth up again. — Proverbs 24:16
           </p>
         </div>
@@ -92,12 +92,12 @@ function Dashboard() {
 
       <div className="mt-8">
         <div className="flex justify-between items-center mb-3">
-          <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Active Paths</p>
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Active Paths</p>
           <Link to="/paths/new" className="text-xs text-[#c9a84c] font-semibold">+ New</Link>
         </div>
 
         {lanes.length === 0 ? (
-          <p className="text-[#333] text-sm">None yet.</p>
+          <p className="text-[#8a8478] text-sm">None yet.</p>
         ) : (
           <div className="flex flex-col gap-2">
             {lanes.map((lane) => {
@@ -118,11 +118,11 @@ function Dashboard() {
       {ref && "code" in ref && (
         <div className="mt-8 p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
-          <p className="text-xs text-[#888] mb-4 leading-relaxed">
+          <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
             Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing.
           </p>
           <div className="flex items-center gap-2">
-            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#aaa] outline-none" />
+            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#c8c0b4] outline-none" />
             <button
               type="button"
               onClick={async () => {
@@ -134,7 +134,7 @@ function Dashboard() {
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
-          <p className="text-[0.7rem] text-[#555] mt-3">
+          <p className="text-[0.7rem] text-[#9e968a] mt-3">
             You've invited <span className="text-[#c9a84c] font-semibold">{ref.invited}</span> · <span className="text-[#c9a84c] font-semibold">{ref.walking}</span> are walking.
           </p>
         </div>

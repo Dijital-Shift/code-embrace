@@ -41,17 +41,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex items-center gap-5">
             {items.map((i) => (
-              <Link key={i.href} to={i.href} className="text-[#888] text-sm no-underline hover:text-white">{i.label}</Link>
+              <Link key={i.href} to={i.href} className="text-[#b8b0a4] text-sm no-underline hover:text-white">{i.label}</Link>
             ))}
             <button
               onClick={() => setConfirmOpen(true)}
-              className="bg-transparent border-0 text-[#555] text-sm cursor-pointer p-0"
+              className="bg-transparent border-0 text-[#9e968a] text-sm cursor-pointer p-0"
             >Sign Out</button>
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
               <AlertDialogContent className="bg-[#100d05] border border-[#2a2415] text-white">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-white">Sign out of Kingdom Protocol?</AlertDialogTitle>
-                  <AlertDialogDescription className="text-[#8a8375]">
+                  <AlertDialogDescription className="text-[#a49d8e]">
                     You will need your emailed code or Google to sign back in.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

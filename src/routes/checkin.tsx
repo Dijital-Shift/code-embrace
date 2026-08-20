@@ -16,12 +16,12 @@ function CheckIn() {
   const { data, isLoading } = useQuery({ queryKey: ["checkin"], queryFn: () => fn() });
   const { data: access } = useAccessState();
 
-  if (isLoading) return <p className="text-[#555]">Loading…</p>;
+  if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   if (access && !access.hasAccess) {
     return (
       <div>
         <div className="flex items-center gap-3 mb-6">
-          <Link to="/dashboard" className="text-[#666]">←</Link>
+          <Link to="/dashboard" className="text-[#a8a094]">←</Link>
           <h2 className="text-xl font-bold">Check-In</h2>
         </div>
         <AccessGate action="Checking in">{null}</AccessGate>
@@ -49,7 +49,7 @@ function CheckIn() {
   if (!lanes.length) {
     return (
       <div className="text-center pt-16">
-        <p className="text-[#555] mb-4">No active paths.</p>
+        <p className="text-[#9e968a] mb-4">No active paths.</p>
         <Link to="/paths/new" className="px-5 py-2 bg-white text-black rounded font-semibold">Create a Path</Link>
       </div>
     );
@@ -58,24 +58,24 @@ function CheckIn() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-1">
-        <Link to="/dashboard" className="text-[#666]">←</Link>
+        <Link to="/dashboard" className="text-[#a8a094]">←</Link>
         <h2 className="text-xl font-bold">Check-In</h2>
       </div>
-      <p className="text-[#666] text-xs mb-8">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+      <p className="text-[#a8a094] text-xs mb-8">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
 
       <AccessBanner />
 
       {allDone && (
         <div className="p-5 rounded-xl border border-[#166534] mb-8" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
           <p className="font-semibold text-[#4ade80]">All paths checked in.</p>
-          <p className="text-xs text-[#555]">Walk on.</p>
+          <p className="text-xs text-[#9e968a]">Walk on.</p>
         </div>
       )}
 
 
       {completeLanes.length > 0 && (
         <section className="mb-8">
-          <p className="text-[0.65rem] text-[#666] uppercase tracking-wider mb-2 font-semibold">Complete</p>
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Complete</p>
           <div className="flex flex-col gap-2">
             {completePending.map((l) => <CompleteRow key={l.lane_id} laneId={l.lane_id} title={l.title} done={false} />)}
             {completeDone.map((l) => <CompleteRow key={l.lane_id} laneId={l.lane_id} title={l.title} done />)}
@@ -94,7 +94,7 @@ function CheckIn() {
 
       {avoidLanes.length > 0 && (avoidPending.length > 0 || avoidDone.length > 0) && (
         <section className="mb-8">
-          <p className="text-[0.65rem] text-[#666] uppercase tracking-wider mb-2 font-semibold">Avoid</p>
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Avoid</p>
           <div className="flex flex-col gap-2">
             {avoidPending.map((l) => <AvoidForm key={l.lane_id} lane={l} />)}
             {avoidDone.map((l) => {
@@ -162,7 +162,7 @@ function CompleteRow({ laneId, title, done: doneInit }: { laneId: string; title:
         <span className="flex-1" style={{ color: done ? "#4ade80" : "#fff" }}>{title}</span>
         {done && <span className="text-[#4ade80] text-xs">Held</span>}
       </button>
-      {canRevert && <button onClick={undo} className="text-[#555] text-[0.72rem] underline mr-3">Undo (within 30 min)</button>}
+      {canRevert && <button onClick={undo} className="text-[#9e968a] text-[0.72rem] underline mr-3">Undo (within 30 min)</button>}
       {!done && <button onClick={doSkip} className="text-[#4a3a10] text-[0.72rem] underline">Skip — Sabbath</button>}
     </div>
   );
@@ -204,8 +204,8 @@ function AvoidForm({ lane, isLate = false }: { lane: { lane_id: string; title: s
     <form onSubmit={handleSubmit} className="p-4 rounded-xl border border-[#2a2518] flex flex-col gap-3" style={{ background: "#161210" }}>
       {isLate && <p className="text-[0.7rem] text-[#f59e0b] font-semibold">LATE — Yesterday</p>}
       <p className="font-semibold">{lane.title}</p>
-      {lane.description && <p className="text-xs text-[#555]">{lane.description}</p>}
-      <p className="text-xs text-[#666]">Did you avoid this today?</p>
+      {lane.description && <p className="text-xs text-[#9e968a]">{lane.description}</p>}
+      <p className="text-xs text-[#a8a094]">Did you avoid this today?</p>
       <div className="flex gap-2">
         <button type="button" onClick={() => setResp("aligned")} className="flex-1 py-3 rounded-lg text-sm" style={{ border: `1px solid ${resp === "aligned" ? "#4ade80" : "#222"}`, background: resp === "aligned" ? "#052e16" : "#161210", color: resp === "aligned" ? "#4ade80" : "#666" }}>Yes — held</button>
         <button type="button" onClick={() => setResp("breach")} className="flex-1 py-3 rounded-lg text-sm" style={{ border: `1px solid ${resp === "breach" ? "#f87171" : "#222"}`, background: resp === "breach" ? "#2d0d0d" : "#161210", color: resp === "breach" ? "#f87171" : "#666" }}>No — breach</button>

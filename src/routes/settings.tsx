@@ -44,7 +44,7 @@ function Settings() {
     }
   }, [data]);
 
-  if (isLoading) return <p className="text-[#555]">Loading…</p>;
+  if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const archived = data?.archivedLanes ?? [];
   const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full";
   const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
@@ -52,24 +52,24 @@ function Settings() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-1">
-        <Link to="/dashboard" className="text-[#666]">←</Link>
+        <Link to="/dashboard" className="text-[#a8a094]">←</Link>
         <h2 className="text-xl font-bold">Settings</h2>
       </div>
-      <p className="text-[#555] text-xs mb-8">Your bedtime sets when check-in reminders fire. Your phone goes to watchmen on breach or miss.</p>
+      <p className="text-[#9e968a] text-xs mb-8">Your bedtime sets when check-in reminders fire. Your phone goes to watchmen on breach or miss.</p>
 
       <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="flex flex-col gap-6 max-w-md">
         <div className="flex gap-3">
           <div className="flex flex-col gap-2 flex-1">
-            <label className="text-sm font-semibold text-[#ccc]">First Name</label>
+            <label className="text-sm font-semibold text-[#ded8cc]">First Name</label>
             <input value={first} onChange={(e) => setFirst(e.target.value)} maxLength={50} className={inputCls} />
           </div>
           <div className="flex flex-col gap-2 flex-1">
-            <label className="text-sm font-semibold text-[#ccc]">Last Name</label>
+            <label className="text-sm font-semibold text-[#ded8cc]">Last Name</label>
             <input value={last} onChange={(e) => setLast(e.target.value)} maxLength={50} className={inputCls} />
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Male or Female</label>
+          <label className="text-sm font-semibold text-[#ded8cc]">Male or Female</label>
           <div className="grid grid-cols-2 gap-2">
             {(["male", "female"] as const).map((g) => (
               <button
@@ -87,24 +87,24 @@ function Settings() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-[#555]">Used for pastoral fit — never public.</p>
+          <p className="text-xs text-[#9e968a]">Used for pastoral fit — never public.</p>
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Email</label>
-          <input value={data?.profile?.email ?? ""} disabled className={inputCls + " text-[#444] cursor-not-allowed"} />
+          <label className="text-sm font-semibold text-[#ded8cc]">Email</label>
+          <input value={data?.profile?.email ?? ""} disabled className={inputCls + " text-[#948d80] cursor-not-allowed"} />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Phone Number</label>
+          <label className="text-sm font-semibold text-[#ded8cc]">Phone Number</label>
           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 000 0000" className={inputCls} />
-          <p className="text-xs text-[#555]">Shared with watchmen only when a breach or miss occurs.</p>
+          <p className="text-xs text-[#9e968a]">Shared with watchmen only when a breach or miss occurs.</p>
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Bedtime</label>
+          <label className="text-sm font-semibold text-[#ded8cc]">Bedtime</label>
           <input type="time" required value={bedtime} onChange={(e) => setBedtime(e.target.value)} className={inputCls} />
-          <p className="text-xs text-[#555]">Reminder fires 1 hour before this.</p>
+          <p className="text-xs text-[#9e968a]">Reminder fires 1 hour before this.</p>
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ccc]">Timezone</label>
+          <label className="text-sm font-semibold text-[#ded8cc]">Timezone</label>
           <select value={tz} onChange={(e) => setTz(e.target.value)} className={inputCls}>
             {TIMEZONES.map((t) => <option key={t} value={t}>{t.replace("_", " ")}</option>)}
           </select>
@@ -119,11 +119,11 @@ function Settings() {
       {ref && "code" in ref && (
         <div className="mt-12 max-w-md p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
-          <p className="text-xs text-[#888] mb-4 leading-relaxed">
+          <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
             Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing.
           </p>
           <div className="flex items-center gap-2">
-            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#aaa] outline-none" />
+            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#c8c0b4] outline-none" />
             <button
               type="button"
               onClick={async () => {
@@ -135,7 +135,7 @@ function Settings() {
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
-          <p className="text-[0.7rem] text-[#555] mt-3">
+          <p className="text-[0.7rem] text-[#9e968a] mt-3">
             You've invited <span className="text-[#c9a84c] font-semibold">{ref.invited}</span> · <span className="text-[#c9a84c] font-semibold">{ref.walking}</span> are walking.
           </p>
         </div>
@@ -143,13 +143,13 @@ function Settings() {
 
       {archived.length > 0 && (
         <div className="mt-12">
-          <p className="text-[0.7rem] text-[#555] uppercase tracking-wider font-semibold mb-2">Archived Paths</p>
+          <p className="text-[0.7rem] text-[#9e968a] uppercase tracking-wider font-semibold mb-2">Archived Paths</p>
 
           <div className="flex flex-col gap-1.5">
             {archived.map((l) => (
               <div key={l.lane_id} className="flex justify-between items-center px-3 py-2 rounded border border-[#141414]" style={{ background: "#0a0a0a" }}>
-                <span className="text-sm text-[#555]">{l.title}</span>
-                <span className="text-xs text-[#333]">{new Date(l.created_at).toLocaleDateString()}</span>
+                <span className="text-sm text-[#9e968a]">{l.title}</span>
+                <span className="text-xs text-[#8a8478]">{new Date(l.created_at).toLocaleDateString()}</span>
               </div>
             ))}
           </div>

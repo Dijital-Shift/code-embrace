@@ -15,7 +15,7 @@ function CheckoutReturn() {
         <h1 className="text-2xl font-bold text-white mb-3">
           {sessionId ? "Payment received." : "No session found."}
         </h1>
-        <p className="text-[#a8a39a] mb-6">
+        <p className="text-[#bdb8ae] mb-6">
           {sessionId
             ? "Your access is being activated. You can head back to the app."
             : "Try again from the pricing page."}

@@ -71,7 +71,7 @@ export function AccessBanner() {
     return (
       <div className="mb-5 p-5 rounded-xl border border-[#7f1d1d]" style={{ background: "#1a0b0b" }}>
         <p className="text-sm font-semibold text-[#f87171]">Your free month has ended.</p>
-        <p className="text-xs text-[#c9a3a3] mt-1 leading-relaxed">
+        <p className="text-xs text-[#dcbcbc] mt-1 leading-relaxed">
           Your paths and history stay right where they are. Choose a plan to check in again.
         </p>
         <PlanButtons />
@@ -100,7 +100,7 @@ export function AccessGate({ children, action }: { children: React.ReactNode; ac
   return (
     <div className="p-6 rounded-xl border border-[#7f1d1d]" style={{ background: "#1a0b0b" }}>
       <p className="text-sm font-semibold text-[#f87171]">Your free month has ended.</p>
-      <p className="text-xs text-[#c9a3a3] mt-1 leading-relaxed">{action} requires an active plan. Watchmen are always free.</p>
+      <p className="text-xs text-[#dcbcbc] mt-1 leading-relaxed">{action} requires an active plan. Watchmen are always free.</p>
       <PlanButtons />
     </div>
   );

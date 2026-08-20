@@ -108,7 +108,7 @@ function NewLane() {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Link to="/paths" className="text-[#555] text-sm">←</Link>
+        <Link to="/paths" className="text-[#9e968a] text-sm">←</Link>
         <h2 className="text-xl font-bold">New Path</h2>
       </div>
 
@@ -132,7 +132,7 @@ function NewLane() {
 
       {tab === "library" ? (
         <div className="flex flex-col gap-8">
-          <p className="text-sm text-[#888] max-w-xl">
+          <p className="text-sm text-[#b8b0a4] max-w-xl">
             Scripture-backed paths. Tap one to prefill the form — edit before creating.
           </p>
           {PATH_CATEGORIES.map((cat) => {
@@ -163,14 +163,14 @@ function NewLane() {
               <p className="text-xs text-[#c9a84c]">
                 Starting from library: <strong>{tpl.title}</strong>
               </p>
-              <button type="button" onClick={clearTemplate} className="text-[0.7rem] text-[#888] underline">
+              <button type="button" onClick={clearTemplate} className="text-[0.7rem] text-[#b8b0a4] underline">
                 Clear template
               </button>
             </div>
           )}
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ccc]">Path Type</label>
+            <label className="text-sm font-semibold text-[#ded8cc]">Path Type</label>
             <div className="flex gap-3">
               {(["avoid", "complete"] as const).map((t) => (
                 <button
@@ -181,7 +181,7 @@ function NewLane() {
                   style={{ border: `1px solid ${laneType === t ? "#fff" : "#222"}`, background: laneType === t ? "#1e1a10" : "#161210", color: laneType === t ? "#fff" : "#666" }}
                 >
                   <strong>{t === "avoid" ? "Avoid" : "Complete"}</strong>
-                  <span className="text-[0.72rem] font-normal text-[#555]">
+                  <span className="text-[0.72rem] font-normal text-[#9e968a]">
                     {t === "avoid" ? "Something you don't want to do" : "Something you want to do"}
                   </span>
                 </button>
@@ -190,20 +190,20 @@ function NewLane() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ccc]">What's the path?</label>
+            <label className="text-sm font-semibold text-[#ded8cc]">What's the path?</label>
             <input required maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)}
               placeholder={laneType === "avoid" ? "e.g. No alcohol" : "e.g. Daily workout"} className={inputCls} />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ccc]">Description <span className="text-[#444]">(optional)</span></label>
+            <label className="text-sm font-semibold text-[#ded8cc]">Description <span className="text-[#948d80]">(optional)</span></label>
             <textarea maxLength={300} rows={2} value={description} onChange={(e) => setDescription(e.target.value)}
               placeholder="Add context or rules..." className={inputCls + " resize-none"} />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ccc]">
-              Notes <span className="text-[#444]">(optional — your watchman will see these)</span>
+            <label className="text-sm font-semibold text-[#ded8cc]">
+              Notes <span className="text-[#948d80]">(optional — your watchman will see these)</span>
             </label>
             <textarea
               maxLength={500}
@@ -213,11 +213,11 @@ function NewLane() {
               placeholder="e.g. 'No fried foods', 'Ends Friday 6pm', 'Liquids only'"
               className={inputCls + " resize-none"}
             />
-            <p className="text-[0.7rem] text-[#555]">Honest context helps your watchman walk this with you, not guess at it.</p>
+            <p className="text-[0.7rem] text-[#9e968a]">Honest context helps your watchman walk this with you, not guess at it.</p>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ccc]">Support Scripture <span className="text-[#444]">(optional — up to 3)</span></label>
+            <label className="text-sm font-semibold text-[#ded8cc]">Support Scripture <span className="text-[#948d80]">(optional — up to 3)</span></label>
             {[
               { v: s1, set: setS1, p: "e.g. Prov. 27:17" },
               { v: s2, set: setS2, p: "e.g. Heb. 10:24" },
@@ -228,7 +228,7 @@ function NewLane() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ccc]">Ends on <span className="text-[#444]">(optional)</span></label>
+            <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
             <input
               type="date"
               value={endsAt}
@@ -236,13 +236,13 @@ function NewLane() {
               onChange={(e) => setEndsAt(e.target.value)}
               className={inputCls}
             />
-            <p className="text-[0.7rem] text-[#555]">Leave empty for ongoing. Set a date for a fast or any path with a finish line.</p>
+            <p className="text-[0.7rem] text-[#9e968a]">Leave empty for ongoing. Set a date for a fast or any path with a finish line.</p>
           </div>
 
 
           <div className="p-4 rounded-md border border-[#2a2518]" style={{ background: "#161210" }}>
-            <p className="text-sm text-[#ccc] font-semibold mb-1">Watchmen come next</p>
-            <p className="text-xs text-[#666]">After you create the path, you can invite up to two watchmen — private links, accepted in one tap.</p>
+            <p className="text-sm text-[#ded8cc] font-semibold mb-1">Watchmen come next</p>
+            <p className="text-xs text-[#a8a094]">After you create the path, you can invite up to two watchmen — private links, accepted in one tap.</p>
           </div>
 
           {err && <p className="text-red-400 text-sm">{err}</p>}

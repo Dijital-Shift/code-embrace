@@ -104,7 +104,7 @@ function Welcome() {
         <h1 className="text-2xl font-bold mb-3 text-center leading-tight">
           You're now watching {ownerName ?? "their"} path.
         </h1>
-        <p className="text-sm text-[#888] text-center mb-8 leading-relaxed">
+        <p className="text-sm text-[#b8b0a4] text-center mb-8 leading-relaxed">
           Two quick setup steps so you don't miss a ping.
         </p>
 
@@ -118,7 +118,7 @@ function Welcome() {
             ) : installPrompt ? (
               <button onClick={install} className="px-4 py-2 bg-white text-black rounded-md font-semibold text-xs">Install</button>
             ) : (
-              <div className="text-[0.65rem] text-[#666] text-right max-w-[140px]">Use your browser's "Add to Home Screen"</div>
+              <div className="text-[0.65rem] text-[#a8a094] text-right max-w-[140px]">Use your browser's "Add to Home Screen"</div>
             )
           }
         />
@@ -154,7 +154,7 @@ function Step({ number, title, body, action }: { number: number; title: string; 
       <div className="w-7 h-7 rounded-full bg-[#c9a84c] text-black flex items-center justify-center font-bold text-sm flex-shrink-0">{number}</div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-white mb-1">{title}</p>
-        <p className="text-xs text-[#888] leading-relaxed">{body}</p>
+        <p className="text-xs text-[#b8b0a4] leading-relaxed">{body}</p>
       </div>
       <div className="flex-shrink-0 flex items-center">{action}</div>
     </div>
