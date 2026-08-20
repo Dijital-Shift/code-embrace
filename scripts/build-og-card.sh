@@ -9,6 +9,7 @@ OUT="public/og-card.png"
 OUT_JPG="public/og-card.jpg"
 BG="#0a0800"
 GOLD="#c9a84c"
+GOLD_MARK="#e5af38"   # sampled from the icon artwork itself
 FONT_SERIF="${FONT_SERIF:-/tmp/ogfonts/Cinzel.ttf}"
 FONT_SANS="${FONT_SANS:-/tmp/ogfonts/WorkSans-Regular.ttf}"
 FONT_ITAL="${FONT_ITAL:-/tmp/ogfonts/WorkSans-Italic.ttf}"
@@ -48,9 +49,9 @@ TAG_OFFSET=$((COL_X + (WORDMARK_W - TAG_W) / 2))
 
 # Wordmark + tagline (tagline in Cormorant Garamond Italic)
 magick "$TMP/base.png" \
-  -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD" -kerning 4 \
+  -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD_MARK" -kerning 4 \
   -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
-  -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#f2eee4" -kerning 0 \
+  -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#ffffff" -kerning 0 \
   -annotate +${TAG_OFFSET}+350 "$TAGLINE" \
   "$TMP/withtext.png"
 
@@ -61,7 +62,7 @@ magick "$TMP/withtext.png" \
   "$TMP/withrule.png"
 
 # Verse block (wrapped), dimmed
-magick -background none -fill "#9a917d" -font "$FONT_ITAL" -pointsize 25 \
+magick -background none -fill "#ded7c6" -font "$FONT_ITAL" -pointsize 25 \
   -size ${COL_W}x caption:"\"But if the watchman see the sword come, and blow not the trumpet... his blood will I require at the watchman's hand.\"" \
   "$TMP/verse.png"
 
