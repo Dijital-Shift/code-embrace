@@ -153,8 +153,8 @@ function Login() {
             />
             <p className="text-[0.7rem] text-[#555] text-center">The code expires in 10 minutes.</p>
             {err && <p className="text-red-400 text-xs">{err}</p>}
-            <button disabled={busy} className="py-3 bg-white text-black rounded-md font-semibold">
-              {busy ? "Verifying…" : "Verify"}
+            <button disabled={busy || verified} className="py-3 bg-white text-black rounded-md font-semibold">
+              {verified ? "Verified" : busy ? "Verifying…" : "Verify"}
             </button>
             <button type="button" onClick={() => setStep("email")} className="text-[#555] text-xs">
               Use a different email
