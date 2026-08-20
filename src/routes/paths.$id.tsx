@@ -114,7 +114,12 @@ function LaneDetail() {
           <button onClick={() => { setErr(null); setReason(""); setPending("archived"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
         )}
         {canDelete && (
-          <button onClick={() => { setErr(null); setReason(""); setPending("delete"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#1a0a0a" }}>Delete</button>
+          <button
+            disabled={del.isPending}
+            onClick={() => { setErr(null); del.mutate(); }}
+            className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]"
+            style={{ background: "#1a0a0a" }}
+          >{del.isPending ? "Deleting…" : "Delete"}</button>
         )}
         <Link to="/paths/edit/$id" params={{ id }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#2a2518] text-[#ded8cc] no-underline" style={{ background: "#161210" }}>Edit</Link>
       </div>
@@ -122,7 +127,7 @@ function LaneDetail() {
       {pending && (
         <div className="mt-4 p-5 rounded-xl border border-[#3a2f12]" style={{ background: "#1a1408" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">
-            {pending === "paused" ? "Pause this path?" : pending === "archived" ? "Archive this path?" : "Delete this path?"}
+            {pending === "paused" ? "Pause this path?" : "Archive this path?"}
           </p>
           <p className="text-xs text-[#c2af80] leading-relaxed mb-3">
             Your watchman will be told you did this. You cannot do it quietly. Write a short reason — they will see it word for word.
@@ -137,15 +142,14 @@ function LaneDetail() {
           />
           <div className="flex gap-2 mt-3">
             <button
-              disabled={!reason.trim() || setStatus.isPending || del.isPending}
+              disabled={!reason.trim() || setStatus.isPending}
               onClick={() => {
-                if (pending === "delete") del.mutate({ reason: reason.trim() });
-                else setStatus.mutate({ status: pending, reason: reason.trim() });
+                if (pending !== "delete") setStatus.mutate({ status: pending, reason: reason.trim() });
               }}
               className="px-4 py-2 rounded-md text-xs font-bold"
               style={{ background: reason.trim() ? "#c9a84c" : "#2a2518", color: reason.trim() ? "#0a0800" : "#7d7668" }}
             >
-              {pending === "paused" ? "Pause and notify" : pending === "archived" ? "Archive and notify" : "Delete and notify"}
+              {pending === "paused" ? "Pause and notify" : "Archive and notify"}
             </button>
             <button onClick={() => { setPending(null); setReason(""); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#2a2518] text-[#b8b0a4] bg-transparent">Cancel</button>
           </div>
