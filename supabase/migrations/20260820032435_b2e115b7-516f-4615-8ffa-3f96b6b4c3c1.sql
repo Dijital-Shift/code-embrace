@@ -1,0 +1,1 @@
+UPDATE auth.users SET encrypted_password = NULL WHERE encrypted_password IS NOT NULL;
