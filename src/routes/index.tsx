@@ -513,7 +513,13 @@ function FAQ() {
     },
     {
       q: "I don't want to use this anymore. What does that mean?",
-      a: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
+      intro: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
+      verses: [
+        {
+          text: "Two are better than one; because they have a good reward for their labour. For if they fall, the one will lift up his fellow: but woe to him that is alone when he falleth; for he hath not another to help him up.",
+          ref: "Ecclesiastes 4:9\u201310 \u00b7 KJV",
+        },
+      ],
     },
   ];
 
