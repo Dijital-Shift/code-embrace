@@ -145,13 +145,13 @@ function Login() {
             </h1>
             <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
               {mode === "signin"
-                ? "Enter your email and we'll send a 6-digit code."
-                : "No card. Enter your email and we'll send a 6-digit code to create your account."}
+                ? "Enter your email and we'll send a one-time code."
+                : "No card. Enter your email and we'll send a one-time code to create your account."}
             </p>
           </>
         ) : (
           <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
-            {`Enter the 6-digit code we sent to ${email}`}
+            {`Enter the code we sent to ${email}`}
           </p>
         )}
 
@@ -202,17 +202,35 @@ function Login() {
               type="text"
               required
               autoFocus
-              maxLength={6}
+              minLength={6}
+              maxLength={8}
               inputMode="numeric"
-              placeholder="000000"
+              autoComplete="one-time-code"
+              pattern="\d{6,8}"
+              placeholder="Enter code"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, ""))}
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 8))}
               className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
             />
-            <p className="text-[0.7rem] text-[#9e968a] text-center">The code expires in 10 minutes.</p>
+            <p className="text-[0.7rem] text-[#9e968a] text-center">
+              The code expires in 1 hour and can only be used once.
+            </p>
+            {note && <p className="text-[#c9a84c] text-xs text-center">{note}</p>}
             {err && <p className="text-red-400 text-xs">{err}</p>}
-            <button disabled={busy || verified} className="py-3 bg-white text-black rounded-md font-semibold">
+            <button
+              disabled={busy || verified || token.length < 6}
+              className="py-3 bg-white text-black rounded-md font-semibold disabled:opacity-60"
+            >
               {verified ? "Verified" : busy ? "Verifying…" : "Verify"}
+            </button>
+            <button
+              type="button"
+              disabled={busy || cooldown > 0}
+              onClick={() => requestCode(true)}
+              className="text-[#c9a84c] text-xs disabled:text-[#7d7costume]"
+              style={cooldown > 0 ? { color: "#7d766a" } : undefined}
+            >
+              {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
             </button>
             <button type="button" onClick={() => setStep("email")} className="text-[#9e968a] text-xs">
               Use a different email
