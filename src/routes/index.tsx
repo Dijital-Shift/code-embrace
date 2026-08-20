@@ -627,7 +627,7 @@ function Footer() {
 
         <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col items-center sm:items-start gap-3">
-            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold tracking-wide hover:opacity-80">Sign in</Link>
+            <AuthLink className="text-sm text-[#c9a84c] font-semibold tracking-wide hover:opacity-80" />
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs text-[#777]">
               <Link to="/terms" className="hover:text-[#c9a84c]">Terms</Link>
               <span className="text-[#3a342a]">·</span>
