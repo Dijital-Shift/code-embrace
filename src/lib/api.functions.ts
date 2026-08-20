@@ -123,6 +123,13 @@ export const getLane = createServerFn({ method: 'GET' })
     return { lane, checkins: checkins ?? [], partnerEmail };
   });
 
+function friendlyLaneError(error: { code?: string; message?: string }, title: string): string {
+  if (error?.code === '23505' || (error?.message ?? '').includes('lanes_user_id_title_key')) {
+    return `You already have a path called "${title}". Give this one a different name — for example "${title} — week one" — or reopen the existing one.`;
+  }
+  return error?.message ?? 'Something went wrong.';
+}
+
 export const createLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -156,7 +163,7 @@ export const createLane = createServerFn({ method: 'POST' })
       lane_type: data.lane_type,
       ends_at: data.ends_at || null,
     }).select('lane_id').single();
-    if (error) return { error: error.message };
+    if (error) return { error: friendlyLaneError(error, data.title.trim()) };
     return { id: lane!.lane_id };
   });
 
@@ -183,7 +190,7 @@ export const updateLane = createServerFn({ method: 'POST' })
       support_scripture: scriptures.length ? scriptures : null,
       ends_at: data.ends_at || null,
     }).eq('lane_id', data.id).eq('user_id', userId);
-    if (error) return { error: error.message };
+    if (error) return { error: friendlyLaneError(error, data.title.trim()) };
     return { success: true };
   });
 
