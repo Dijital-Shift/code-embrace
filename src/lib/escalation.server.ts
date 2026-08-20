@@ -1,6 +1,7 @@
 import { sendPushToUser } from './push.server';
 import { sendSms, SMS_BREACH, SMS_SILENCE } from './sms.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 
 // Watchman is pinged immediately on a self-reported breach.
 export async function triggerBreachAlert(args: {
@@ -48,30 +49,6 @@ export async function notifyUserMissed(args: { laneTitle: string; userId: string
   });
 }
 
-// Compute the user's local date (YYYY-MM-DD) and hour (0-23) from a UTC instant + IANA tz.
-function localParts(nowUtc: Date, tz: string): { date: string; hour: number } {
-  try {
-    const parts = new Intl.DateTimeFormat('en-CA', {
-      timeZone: tz,
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', hour12: false,
-    }).formatToParts(nowUtc);
-    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
-    const hourStr = get('hour');
-    const hour = hourStr === '24' ? 0 : parseInt(hourStr, 10);
-    return { date: `${get('year')}-${get('month')}-${get('day')}`, hour };
-  } catch {
-    const date = nowUtc.toISOString().split('T')[0];
-    return { date, hour: nowUtc.getUTCHours() };
-  }
-}
-
-function prevDay(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() - 1);
-  return d.toISOString().split('T')[0];
-}
-
 // Silence Rule threshold 2 — runs frequently.
 // For each active lane, once the user's *local* clock is past 10:00 AM and
 // they have no check-in for their local "yesterday", mark it missed and ping
@@ -86,7 +63,7 @@ export async function markMissedCheckins() {
     .eq('status', 'active').not('ends_at', 'is', null).lt('ends_at', utcToday);
 
   const { data: activeLanes } = await supabaseAdmin.from('lanes')
-    .select('lane_id, partner_id, title, user_id').eq('status', 'active');
+    .select('lane_id, partner_id, title, user_id, created_at').eq('status', 'active');
   if (!activeLanes?.length) return { processed: 0, watchmenPinged: 0 };
 
   // Pull user timezones.
@@ -107,6 +84,10 @@ export async function markMissedCheckins() {
     if (localHour < 10) continue;
 
     const yesterdayLocal = prevDay(localToday);
+
+    // Never manufacture history: a path cannot be silent on a day it did not exist.
+    const createdLocal = localParts(new Date(lane.created_at), tz).date;
+    if (yesterdayLocal < createdLocal) continue;
 
     // Skip if yesterday already has any check-in (held, breached, missed, skipped).
     const { data: existing } = await supabaseAdmin.from('checkins')
@@ -172,11 +153,11 @@ export async function markMissedCheckins() {
 export async function sendBedtimeReminders() {
   const utcHour = new Date().getUTCHours();
   const { data: profiles } = await supabaseAdmin.from('profiles')
-    .select('user_id').eq('status', 'active').eq('reminder_utc_hour', utcHour);
+    .select('user_id, timezone').eq('status', 'active').eq('reminder_utc_hour', utcHour);
   if (!profiles?.length) return { sent: 0 };
-  const today = new Date().toISOString().split('T')[0];
   let sent = 0;
   for (const p of profiles) {
+    const today = localDate((p as any).timezone || DEFAULT_TZ);
     const { data: lanes } = await supabaseAdmin.from('lanes')
       .select('lane_id').eq('user_id', p.user_id).eq('status', 'active');
     if (!lanes?.length) continue;
