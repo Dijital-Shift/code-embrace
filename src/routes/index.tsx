@@ -47,11 +47,21 @@ const GOLD = "#c9a84c";
 
 
 
+function AuthLink({ className, style, signedOutLabel = "Sign in" }: { className?: string; style?: React.CSSProperties; signedOutLabel?: string }) {
+  const { user, loading } = useAuth();
+  const signedIn = !loading && !!user;
+  return (
+    <Link to={signedIn ? "/dashboard" : "/login"} className={className} style={style}>
+      {signedIn ? "Dashboard" : signedOutLabel}
+    </Link>
+  );
+}
+
 function Header() {
   return (
     <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#2a2418]">
       <Wordmark />
-      <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
+      <AuthLink className="text-sm text-[#c9a84c] font-semibold hover:opacity-80" />
     </header>
   );
 }
