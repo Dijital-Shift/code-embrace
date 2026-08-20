@@ -34,6 +34,7 @@ import { Route as LanesIdRouteImport } from './routes/lanes.$id'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as PathsEditIdRouteImport } from './routes/paths.edit.$id'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
@@ -172,6 +173,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathsEditIdRoute = PathsEditIdRouteImport.update({
+  id: '/paths/edit/$id',
+  path: '/paths/edit/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -269,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
@@ -308,6 +315,7 @@ export interface FileRoutesByTo {
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
@@ -348,6 +356,7 @@ export interface FileRoutesById {
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/escalate-missed': typeof ApiPublicHooksEscalateMissedRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/lovable/email/suppression'
+    | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
@@ -428,6 +438,7 @@ export interface FileRouteTypes {
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/lovable/email/suppression'
+    | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
@@ -467,6 +478,7 @@ export interface FileRouteTypes {
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/lovable/email/suppression'
+    | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/escalate-missed'
     | '/api/public/hooks/missed-checkins'
@@ -506,6 +518,7 @@ export interface RootRouteChildren {
   PathsIndexRoute: typeof PathsIndexRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  PathsEditIdRoute: typeof PathsEditIdRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
   ApiPublicHooksEscalateMissedRoute: typeof ApiPublicHooksEscalateMissedRoute
   ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
@@ -694,6 +707,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paths/edit/$id': {
+      id: '/paths/edit/$id'
+      path: '/paths/edit/$id'
+      fullPath: '/paths/edit/$id'
+      preLoaderRoute: typeof PathsEditIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -821,6 +841,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathsIndexRoute: PathsIndexRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  PathsEditIdRoute: PathsEditIdRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
   ApiPublicHooksEscalateMissedRoute: ApiPublicHooksEscalateMissedRoute,
   ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,

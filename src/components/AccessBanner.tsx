@@ -83,7 +83,7 @@ export function AccessBanner() {
     return (
       <div className="mb-5 px-4 py-3 rounded-xl border border-[#3a2f12] flex items-center justify-between gap-3" style={{ background: "#141004" }}>
         <p className="text-xs" style={{ color: GOLD }}>
-          <span className="font-semibold">{data.daysLeft} day{data.daysLeft === 1 ? "" : "s"}</span> left in your first month — free, no card.
+          <span className="font-semibold">{data.daysLeft} day{data.daysLeft === 1 ? "" : "s"}</span> left in your first month.
         </p>
       </div>
     );
