@@ -38,15 +38,22 @@ export default defineConfig({
         strategies: "injectManifest",
         srcDir: "src",
         filename: "sw.ts",
+        // Client assets land in dist/client; the worker must be served from
+        // the site root alongside them.
+        outDir: "dist/client",
         // public/manifest.json is the source of truth — iOS caches manifest
         // identity fields at install time, so nothing here may regenerate it.
         manifest: false,
         injectManifest: {
+          globDirectory: "dist/client",
           globPatterns: ["**/*.{js,css,ico,svg,woff2,png}"],
-          globIgnores: ["**/og-card*", "**/screenshots/**"],
+          globIgnores: ["**/og-card*", "**/screenshots/**", "sw.js"],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+          // Classic worker format keeps older iOS Safari installs working.
+          rollupFormat: "iife",
         },
         devOptions: { enabled: false },
+
       }),
     ],
   },
