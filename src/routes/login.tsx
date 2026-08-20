@@ -227,7 +227,7 @@ function Login() {
               type="button"
               disabled={busy || cooldown > 0}
               onClick={() => requestCode(true)}
-              className="text-[#c9a84c] text-xs disabled:text-[#7d7costume]"
+              className="text-[#c9a84c] text-xs"
               style={cooldown > 0 ? { color: "#7d766a" } : undefined}
             >
               {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
