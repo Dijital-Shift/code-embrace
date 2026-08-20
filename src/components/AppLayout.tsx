@@ -15,10 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 
-// icon: null → label-only tab (the Home/Paths glyphs were illegible at mobile size).
 const items = [
-  { href: "/dashboard", icon: null, label: "Home" },
-  { href: "/paths", icon: null, label: "Paths" },
   { href: "/checkin", icon: CheckCircle, label: "Check In" },
   { href: "/partner", icon: Users, label: "Watchman" },
   { href: "/settings", icon: SettingsIcon, label: "Settings" },

@@ -121,7 +121,7 @@ function LaneDetail() {
             style={{ background: "#1a0a0a" }}
           >{del.isPending ? "Deleting…" : "Delete"}</button>
         )}
-        <Link to="/paths/edit/$id" params={{ id }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#2a2518] text-[#ded8cc] no-underline" style={{ background: "#161210" }}>Edit</Link>
+        <Link to="/paths/edit/$id" params={{ id }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#ded8cc] no-underline" style={{ background: "#2a2518" }}>Edit</Link>
       </div>
 
       {pending && (
