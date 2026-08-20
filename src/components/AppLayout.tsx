@@ -28,6 +28,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const router = useRouter();
   const { signOut } = useAuth();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
 
   return (
     <AuthGate>
