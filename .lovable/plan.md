@@ -37,3 +37,30 @@ Check whether the server is resolving "today" in your timezone (Phoenix) or fall
 - Delete `src/routes/standing.tsx` and `getStandingDetail`; add a redirect from `/standing` to `/paths` so any saved link still lands somewhere.
 - `src/routes/paths.$id.tsx`: new stats row rendered from `getLane` data, styled like the existing cards.
 - Day-boundary check: confirm `Intl.DateTimeFormat` with `timeZone` resolves in the server runtime rather than hitting the UTC fallback in `src/lib/localday.ts`.
+
+---
+
+# Check-in page rework
+
+## 6. "Complete" paths need a "No, I didn't" option
+
+Right now a Complete path is a one-way toggle — you can only say you did it. Silence is the only way to say you didn't, and that's wrong.
+
+Fix: Complete paths get the same two-button answer as Avoid paths — **Yes — held** / **No — missed**. Choosing "No" opens the mandatory "What happened? Be honest." field, exactly like a breach. Same treatment for both path types, one shared row component.
+
+## 7. Shrink the check-in rows
+
+The Avoid box wastes a lot of vertical space, and with ten paths the page becomes a scroll marathon. Tightened layout:
+
+- Path title and the two answer buttons on **one line** — buttons sized to their text, not full width.
+- Drop the "Did you avoid this today?" prompt line; the buttons say it.
+- Description shown only as a small second line when present.
+- No separate Submit button on the "held" answer — tapping **Yes — held** submits immediately.
+- Choosing **No** expands the honesty field inline, with a compact Submit under it. Field stays required.
+- "Skip — Sabbath" becomes a small inline link, not its own row.
+
+Target: each path is roughly one compact row until you answer "No", so ten paths fit on a screen or two.
+
+## 8. Trial banner copy
+
+Strip the "free / no card" wording from the "X days left in your first month" countdown wherever it appears (check-in, dashboard, anywhere the banner renders). The countdown line reads only: "X days left in your first month." Homepage marketing copy keeps its "no card" line — that one stays.
