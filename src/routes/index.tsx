@@ -82,9 +82,11 @@ function Hero() {
             For the believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
-            <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Start free
-            </Link>
+            <AuthLink
+              signedOutLabel="Start free"
+              className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]"
+              style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
+            />
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
               How it works
             </Link>
