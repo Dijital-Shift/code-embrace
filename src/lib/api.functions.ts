@@ -144,7 +144,7 @@ export const createLane = createServerFn({ method: 'POST' })
     const { count: ownLaneCount } = await supabase.from('lanes')
       .select('lane_id', { count: 'exact', head: true })
       .eq('user_id', userId).eq('status', 'active');
-    if ((ownLaneCount ?? 0) >= 10) return { error: 'You have reached the maximum of 10 active paths.' };
+    if ((ownLaneCount ?? 0) >= 10) return { error: 'You have 10 active paths — that is the cap. A watchman can only truly track so much. Archive or complete one before adding another.' };
 
     const scriptures = (data.support_scripture ?? []).map((s) => s.trim()).filter(Boolean);
     const { data: lane, error } = await supabase.from('lanes').insert({
@@ -190,17 +190,31 @@ export const updateLane = createServerFn({ method: 'POST' })
 
 export const updateLaneStatus = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ id: z.string().uuid(), status: z.enum(['active', 'paused', 'archived']) }))
+  .inputValidator(z.object({
+    id: z.string().uuid(),
+    status: z.enum(['active', 'paused', 'archived']),
+    reason: z.string().max(500).optional().nullable(),
+  }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: lane } = await supabase.from('lanes').select('title, partner_id').eq('lane_id', data.id).eq('user_id', userId).single();
+    const reason = data.reason?.trim() || '';
+    if ((data.status === 'paused' || data.status === 'archived') && !reason) {
+      return { error: 'A short reason is required — your watchman will see it.' };
+    }
     const { error } = await supabase.from('lanes').update({ status: data.status }).eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
-    if (data.status === 'archived' && lane?.partner_id) {
+    if ((data.status === 'paused' || data.status === 'archived') && lane?.partner_id) {
+      const verb = data.status === 'paused' ? 'paused' : 'archived';
+      const body = `This path was ${verb}. Reason given: "${reason}"`;
+      await supabaseAdmin.from('notifications').insert({
+        lane_id: data.id, partner_id: lane.partner_id, type: 'path_status',
+        status: 'sent', message_content: body, sent_at: new Date().toISOString(),
+      });
       try {
         await sendPushToUser(lane.partner_id, {
-          title: `Path archived — ${lane.title}`,
-          body: 'Your watchman has archived this path.',
+          title: `Path ${verb} — ${lane.title}`,
+          body,
           url: '/partner',
         });
       } catch {}
@@ -210,15 +224,26 @@ export const updateLaneStatus = createServerFn({ method: 'POST' })
 
 export const deleteLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ id: z.string().uuid() }))
+  .inputValidator(z.object({ id: z.string().uuid(), reason: z.string().max(500).optional().nullable() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: lane } = await supabase.from('lanes').select('created_at').eq('lane_id', data.id).eq('user_id', userId).single();
+    const { data: lane } = await supabase.from('lanes').select('created_at, title, partner_id').eq('lane_id', data.id).eq('user_id', userId).single();
     if (!lane) return { error: 'Path not found.' };
+    const reason = data.reason?.trim() || '';
+    if (!reason) return { error: 'A short reason is required — your watchman will see it.' };
     const ageMin = (Date.now() - new Date(lane.created_at).getTime()) / 60000;
     if (ageMin > 10) return { error: 'Paths older than 10 minutes cannot be deleted. Use Archive instead.' };
     const { count } = await supabase.from('checkins').select('checkin_id', { count: 'exact', head: true }).eq('lane_id', data.id);
     if ((count ?? 0) > 0) return { error: 'This path already has check-ins. Use Archive instead.' };
+    if (lane.partner_id) {
+      try {
+        await sendPushToUser(lane.partner_id, {
+          title: `Path deleted — ${lane.title}`,
+          body: `This path was deleted. Reason given: "${reason}"`,
+          url: '/partner',
+        });
+      } catch {}
+    }
     const { error } = await supabase.from('lanes').delete().eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
     return { success: true };
