@@ -40,22 +40,41 @@ function Login() {
   }
 
 
-  async function sendOtp(e: React.FormEvent) {
-    e.preventDefault();
+  async function requestCode(resend = false) {
     setErr(null);
+    setNote(null);
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim().toLowerCase(),
       options: { shouldCreateUser: true },
     });
     setBusy(false);
-    if (error) setErr(error.message);
-    else setStep("code");
+    if (error) {
+      const m = error.message || "";
+      if (/rate|too many|seconds/i.test(m)) {
+        setErr("Too many requests. Wait a minute before asking for another code.");
+      } else if (/network|fetch/i.test(m)) {
+        setErr("Network problem — we couldn't reach the server. Check your connection and try again.");
+      } else {
+        setErr(m || "We couldn't send the code. Try again.");
+      }
+      return;
+    }
+    setStep("code");
+    setToken("");
+    setCooldown(45);
+    if (resend) setNote("New code sent. Use the newest email — older codes stop working.");
+  }
+
+  async function sendOtp(e: React.FormEvent) {
+    e.preventDefault();
+    await requestCode(false);
   }
 
   async function verify(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
+    setNote(null);
     setBusy(true);
     const { data, error } = await supabase.auth.verifyOtp({
       email: email.trim().toLowerCase(),
@@ -64,7 +83,18 @@ function Login() {
     });
     if (error || !data.user || !data.session) {
       setBusy(false);
-      setErr("Invalid or expired code. Try again.");
+      const m = error?.message || "";
+      if (/expired/i.test(m)) {
+        setErr("That code has expired. Send a new one below.");
+      } else if (/rate|too many/i.test(m)) {
+        setErr("Too many attempts. Wait a minute, then try again.");
+      } else if (/network|fetch|failed to fetch/i.test(m)) {
+        setErr("Network problem — the code wasn't checked. Check your connection and try again.");
+      } else if (/invalid|token/i.test(m)) {
+        setErr("That code didn't match. Codes are single-use — if you requested more than one, use the newest, or send a fresh code below.");
+      } else {
+        setErr(m || "Sign-in failed. Send a new code below.");
+      }
       return;
     }
     // Make sure the session is actually persisted/readable before we navigate,
