@@ -54,17 +54,30 @@ function Login() {
       token: token.trim(),
       type: "email",
     });
-    setBusy(false);
-    if (error || !data.user) {
+    if (error || !data.user || !data.session) {
+      setBusy(false);
       setErr("Invalid or expired code. Try again.");
       return;
     }
+    // Make sure the session is actually persisted/readable before we navigate,
+    // so the dashboard's auth gate never sees a stale null user.
+    await supabase.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+    for (let i = 0; i < 20; i++) {
+      const { data: s } = await supabase.auth.getSession();
+      if (s.session) break;
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    setBusy(false);
     setVerified(true);
     tryClaim();
     setTimeout(() => {
-      navigate({ to: "/dashboard" });
-    }, 450);
+      navigate({ to: "/dashboard", replace: true });
+    }, 350);
   }
+
 
   return (
     <main className="min-h-[100dvh] flex items-center justify-center px-6" style={{ background: "#0a0800" }}>
