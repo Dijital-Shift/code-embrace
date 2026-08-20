@@ -1,8 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth";
 import { lovable } from "@/integrations/lovable/index";
 import { claimReferral } from "@/lib/referrals.functions";
 
@@ -13,7 +12,6 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
   const claim = useServerFn(claimReferral);
   const [step, setStep] = useState<"email" | "code">("email");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -21,6 +19,7 @@ function Login() {
   const [token, setToken] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   async function tryClaim() {
     try {
@@ -32,12 +31,6 @@ function Login() {
     } catch {}
   }
 
-  useEffect(() => {
-    if (!loading && user) {
-      tryClaim().finally(() => navigate({ to: "/dashboard" }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, user]);
 
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
@@ -66,8 +59,11 @@ function Login() {
       setErr("Invalid or expired code. Try again.");
       return;
     }
-    await tryClaim();
-    navigate({ to: "/dashboard" });
+    setVerified(true);
+    tryClaim();
+    setTimeout(() => {
+      navigate({ to: "/dashboard" });
+    }, 450);
   }
 
   return (
@@ -155,8 +151,8 @@ function Login() {
             />
             <p className="text-[0.7rem] text-[#555] text-center">The code expires in 10 minutes.</p>
             {err && <p className="text-red-400 text-xs">{err}</p>}
-            <button disabled={busy} className="py-3 bg-white text-black rounded-md font-semibold">
-              {busy ? "Verifying…" : "Verify"}
+            <button disabled={busy || verified} className="py-3 bg-white text-black rounded-md font-semibold">
+              {verified ? "Verified" : busy ? "Verifying…" : "Verify"}
             </button>
             <button type="button" onClick={() => setStep("email")} className="text-[#555] text-xs">
               Use a different email
