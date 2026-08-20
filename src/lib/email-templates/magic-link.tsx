@@ -14,7 +14,7 @@ export const MagicLinkEmail = ({ token }: MagicLinkEmailProps) => (
     <Text style={text}>Enter this code to step back in:</Text>
     <CodeBlock token={token} />
     <Text style={text}>
-      The code expires in 10 minutes. If you didn&rsquo;t ask to sign in, do nothing
+      The code expires in 1 hour. If you didn&rsquo;t ask to sign in, do nothing
       &mdash; no one gets in without this code.
     </Text>
   </Shell>
