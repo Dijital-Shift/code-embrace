@@ -1,25 +1,33 @@
-# Share card update — use the PWA icon mark
+# Four fixes: duplicate-title error, bottom nav, Send Scripture path, Edit button
 
-The social share card (`og-card.jpg`) currently shows the circular seal with text. The user wants the share-card image to be the same mark as the PWA/app icon: the gold watchtower-and-shofar logo on a black background.
+## 1. The "duplicate key value violates unique constraint" error
 
-## What will change
+Cause: paths are uniquely keyed on your account + the path title, so creating a second path named "Fast" (even if the first one is paused or archived) is rejected by the database, and the raw database message is shown to you.
 
-1. Replace `public/og-card.jpg` and `public/og-card.png` with a 1200×630 share card built from the existing PWA icon source (`public/kingdom-protocol-logo.png` or `public/icon-512.png`), centered on the site black background `#0a0800`.
-2. Bump the cache-busting query string from `?v=2` to `?v=3` everywhere the share card is referenced.
-3. Update `og:image:alt` and `twitter:image:alt` to match the new image.
+Fix (presentation + guard, no schema change):
+- In the create and edit handlers, catch that specific conflict and return plain English: "You already have a path called '<title>'. Give this one a different name — for example 'Fast — Ramadan week' — or reopen the existing one."
+- Same treatment on the edit-path save.
 
-## Files to edit
+## 2. Bottom nav
 
-- `public/og-card.jpg` — regenerate from the PWA icon mark.
-- `public/og-card.png` — regenerate alongside.
-- `src/routes/__root.tsx` — update `og:image`, `og:image:secure_url`, `twitter:image` to `?v=3`; update alt text.
-- `src/routes/index.tsx` — update the same three image URLs and alt text.
+Remove the "Home" and "Paths" entries from the mobile bottom bar. Remaining tabs: Check In, Watchman, Settings. Home and Paths stay reachable from the hamburger menu and the wordmark. Desktop top nav is unchanged.
 
-## Untouched
+## 3. New path: Send Scripture
 
-- The PWA/app icons themselves (`icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.png`, `manifest.json`).
-- The homepage title/description change from the previous task.
+Add a template under Devotion:
+- Title: Send Scripture
+- Type: complete
+- Description: Send a verse to someone every day — a word in season, not a sermon.
+- Scripture: Proverbs 25:11 (KJV) and Colossians 3:16 (KJV)
+- A clean one-line helper on the template card and on the created path page: "Quick way to do this: SendScripture.xyz" — plain gold text link, no banner, no logo.
 
-## Verification
+## 4. Edit button
 
-Inspect the new `og-card.jpg` and confirm the homepage meta tags point to `?v=3`. Note: social platforms cache share-card previews, so the updated image may not appear immediately in iMessage/WhatsApp until they re-scrape.
+Restyle Edit on the path page to match Pause/Archive/Delete exactly (same padding, radius, border, and `#2a2518` background), so all four read as one row of equal buttons.
+
+## Technical notes
+
+- `src/lib/api.functions.ts` — map Postgres error code 23505 to friendly copy in `createLane` and `updateLane`.
+- `src/components/AppLayout.tsx` — drop the two label-only items from `items` (bottom nav) while keeping the desktop nav list intact.
+- `src/lib/path-templates.ts` — new `send-scripture` template; `src/components/PathTemplateCard.tsx` and `src/routes/paths.$id.tsx` render the SendScripture.xyz line when that template/title is in play.
+- `src/routes/paths.$id.tsx` — align Edit link classes with the sibling buttons.
