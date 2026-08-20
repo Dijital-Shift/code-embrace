@@ -17,7 +17,7 @@ export const SignupEmail = ({ token }: SignupEmailProps) => (
     <Text style={text}>Enter this code to finish setting up your account:</Text>
     <CodeBlock token={token} />
     <Text style={text}>
-      The code expires in 10 minutes. If you didn&rsquo;t create an account, you can
+      The code expires in 1 hour. If you didn&rsquo;t create an account, you can
       ignore this email.
     </Text>
   </Shell>

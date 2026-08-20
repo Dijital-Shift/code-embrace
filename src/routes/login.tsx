@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -18,8 +18,16 @@ function Login() {
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [err, setErr] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
 
   async function tryClaim() {
     try {
@@ -32,22 +40,41 @@ function Login() {
   }
 
 
-  async function sendOtp(e: React.FormEvent) {
-    e.preventDefault();
+  async function requestCode(resend = false) {
     setErr(null);
+    setNote(null);
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim().toLowerCase(),
       options: { shouldCreateUser: true },
     });
     setBusy(false);
-    if (error) setErr(error.message);
-    else setStep("code");
+    if (error) {
+      const m = error.message || "";
+      if (/rate|too many|seconds/i.test(m)) {
+        setErr("Too many requests. Wait a minute before asking for another code.");
+      } else if (/network|fetch/i.test(m)) {
+        setErr("Network problem — we couldn't reach the server. Check your connection and try again.");
+      } else {
+        setErr(m || "We couldn't send the code. Try again.");
+      }
+      return;
+    }
+    setStep("code");
+    setToken("");
+    setCooldown(45);
+    if (resend) setNote("New code sent. Use the newest email — older codes stop working.");
+  }
+
+  async function sendOtp(e: React.FormEvent) {
+    e.preventDefault();
+    await requestCode(false);
   }
 
   async function verify(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
+    setNote(null);
     setBusy(true);
     const { data, error } = await supabase.auth.verifyOtp({
       email: email.trim().toLowerCase(),
@@ -56,7 +83,18 @@ function Login() {
     });
     if (error || !data.user || !data.session) {
       setBusy(false);
-      setErr("Invalid or expired code. Try again.");
+      const m = error?.message || "";
+      if (/expired/i.test(m)) {
+        setErr("That code has expired. Send a new one below.");
+      } else if (/rate|too many/i.test(m)) {
+        setErr("Too many attempts. Wait a minute, then try again.");
+      } else if (/network|fetch|failed to fetch/i.test(m)) {
+        setErr("Network problem — the code wasn't checked. Check your connection and try again.");
+      } else if (/invalid|token/i.test(m)) {
+        setErr("That code didn't match. Codes are single-use — if you requested more than one, use the newest, or send a fresh code below.");
+      } else {
+        setErr(m || "Sign-in failed. Send a new code below.");
+      }
       return;
     }
     // Make sure the session is actually persisted/readable before we navigate,
@@ -107,13 +145,13 @@ function Login() {
             </h1>
             <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
               {mode === "signin"
-                ? "Enter your email and we'll send a 6-digit code."
-                : "No card. Enter your email and we'll send a 6-digit code to create your account."}
+                ? "Enter your email and we'll send a one-time code."
+                : "No card. Enter your email and we'll send a one-time code to create your account."}
             </p>
           </>
         ) : (
           <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
-            {`Enter the 6-digit code we sent to ${email}`}
+            {`Enter the code we sent to ${email}`}
           </p>
         )}
 
@@ -164,17 +202,35 @@ function Login() {
               type="text"
               required
               autoFocus
-              maxLength={6}
+              minLength={6}
+              maxLength={8}
               inputMode="numeric"
-              placeholder="000000"
+              autoComplete="one-time-code"
+              pattern="\d{6,8}"
+              placeholder="Enter code"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, ""))}
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 8))}
               className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
             />
-            <p className="text-[0.7rem] text-[#9e968a] text-center">The code expires in 10 minutes.</p>
+            <p className="text-[0.7rem] text-[#9e968a] text-center">
+              The code expires in 1 hour and can only be used once.
+            </p>
+            {note && <p className="text-[#c9a84c] text-xs text-center">{note}</p>}
             {err && <p className="text-red-400 text-xs">{err}</p>}
-            <button disabled={busy || verified} className="py-3 bg-white text-black rounded-md font-semibold">
+            <button
+              disabled={busy || verified || token.length < 6}
+              className="py-3 bg-white text-black rounded-md font-semibold disabled:opacity-60"
+            >
               {verified ? "Verified" : busy ? "Verifying…" : "Verify"}
+            </button>
+            <button
+              type="button"
+              disabled={busy || cooldown > 0}
+              onClick={() => requestCode(true)}
+              className="text-[#c9a84c] text-xs"
+              style={cooldown > 0 ? { color: "#7d766a" } : undefined}
+            >
+              {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
             </button>
             <button type="button" onClick={() => setStep("email")} className="text-[#9e968a] text-xs">
               Use a different email
