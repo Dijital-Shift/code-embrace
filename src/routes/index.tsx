@@ -266,54 +266,54 @@ function Pricing() {
 
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           {/* Free trial */}
-          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col">
+          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">30 days</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">Free trial</h3>
             <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting"].map((f) => (
-                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
+            <Link to="/login" className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
               Start free
             </Link>
           </div>
 
           {/* Monthly */}
-          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col">
+          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">After trial</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]">/mo</span></h3>
             <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["All trial features", "Cancel anytime", "Price-locked"].map((f) => (
-                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
             <CheckoutCTA
               priceId="kp_premium_monthly"
               loggedOutLabel="Start free"
               loggedInLabel="Subscribe"
-              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm"
+              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm"
             />
           </div>
 
           {/* Lifetime */}
-          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col items-center text-center relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
             <span className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]"> once</span></h3>
             <p className="text-[#aa9560] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["Everything, always", "No renewals", "Long obedience"].map((f) => (
-                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
               ))}
             </ul>
             <CheckoutCTA
               priceId="kp_lifetime_once"
               loggedOutLabel="Lifetime"
               loggedInLabel="Buy lifetime"
-              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
+              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
               style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
             />
           </div>
