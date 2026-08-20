@@ -416,20 +416,12 @@ function VerseBlock({ verses }: { verses: Verse[] }) {
 function FAQ() {
   const items: FaqItem[] = [
     {
-      q: "Is this confession?",
-      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a watchman who sees the silence early enough to call you back before the breach.",
+      q: "What does \"Protocol\" mean?",
+      a: "An established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here \u2014 the Silence Rule is that procedure: three thresholds, the same every night, whether you're strong or not. Kingdom Protocol takes its name from this.",
     },
     {
-      q: "What stops me from lying?",
-      intro:
-        "Nothing in the software — and that's the point. This is an agreement, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins.",
-      verses: [
-        {
-          text: "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.",
-          ref: "Luke 12:2",
-        },
-      ],
-      closing: "If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+      q: "Is this confession?",
+      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman \u2014 a watchman who sees the silence early enough to call you back before the breach.",
     },
     {
       q: "Who sees my misses?",
@@ -443,24 +435,32 @@ function FAQ() {
       ],
     },
     {
+      q: "What stops me from lying?",
+      intro:
+        "Nothing in the software \u2014 and that's the point. This is an agreement, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface \u2014 in tone, in patterns, in the silence between check-ins.",
+      verses: [
+        {
+          text: "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.",
+          ref: "Luke 12:2",
+        },
+      ],
+      closing: "If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+    },
+    {
       q: "Is this for women?",
       a: "Yes. The protocol is the same. Choose a watchman of the same conviction; the system does not assume a gender.",
     },
     {
-      q: "What inspired you to build this?",
-      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you — it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you — one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
-    },
-    {
       q: "Is it really free?",
-      a: "Free for 30 days when you sign up — no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
+      a: "Free for 30 days when you sign up \u2014 no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
     },
     {
       q: "Why pay at all?",
       intro:
-        "Because the labourer is worthy of his hire, and this work stays unfunded by advertisers so the watchtower stays clean.",
+        "Not to buy accountability \u2014 that was never for sale, and this doesn't pretend to sell it. The subscription pays for what keeps the system honest: no ads bidding for your attention, no data sold to fund it, a watchtower that answers to you instead of an advertiser. What happens between you and your watchman isn't the product.",
       verses: [
         {
-          text: "For the scripture saith… The labourer is worthy of his reward.",
+          text: "For the scripture saith\u2026 The labourer is worthy of his reward.",
           ref: "1 Timothy 5:18",
         },
       ],
@@ -474,6 +474,10 @@ function FAQ() {
           ref: "Matthew 10:8",
         },
       ],
+    },
+    {
+      q: "What inspired you to build this?",
+      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you \u2014 it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you \u2014 one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
     },
     {
       q: "What does the Word say about lying and being watched?",
@@ -503,10 +507,13 @@ function FAQ() {
           text: "Can any hide himself in secret places that I shall not see him? saith the LORD. Do not I fill heaven and earth? saith the LORD.",
           ref: "Jeremiah 23:24",
         },
-
       ],
       closing:
         "What's done in the dark comes to the light. Better to be seen by a watchman now than exposed at the throne later.",
+    },
+    {
+      q: "I don't want to use this anymore. What does that mean?",
+      a: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
     },
   ];
 
