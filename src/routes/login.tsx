@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth";
 import { lovable } from "@/integrations/lovable/index";
 import { claimReferral } from "@/lib/referrals.functions";
 
@@ -13,7 +12,6 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
   const claim = useServerFn(claimReferral);
   const [step, setStep] = useState<"email" | "code">("email");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
