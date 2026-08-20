@@ -229,20 +229,9 @@ export const deleteLane = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const { data: lane } = await supabase.from('lanes').select('created_at, title, partner_id').eq('lane_id', data.id).eq('user_id', userId).single();
     if (!lane) return { error: 'Path not found.' };
-    const reason = data.reason?.trim() || '';
-    if (!reason) return { error: 'A short reason is required — your watchman will see it.' };
-    const ageMin = (Date.now() - new Date(lane.created_at).getTime()) / 60000;
-    if (ageMin > 10) return { error: 'Paths older than 10 minutes cannot be deleted. Use Archive instead.' };
-    const { count } = await supabase.from('checkins').select('checkin_id', { count: 'exact', head: true }).eq('lane_id', data.id);
-    if ((count ?? 0) > 0) return { error: 'This path already has check-ins. Use Archive instead.' };
+    // Delete is only available while no watchman is locked in — nobody to notify.
     if (lane.partner_id) {
-      try {
-        await sendPushToUser(lane.partner_id, {
-          title: `Path deleted — ${lane.title}`,
-          body: `This path was deleted. Reason given: "${reason}"`,
-          url: '/partner',
-        });
-      } catch {}
+      return { error: 'This path has a watchman. Use Pause or Archive instead.' };
     }
     const { error } = await supabase.from('lanes').delete().eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
