@@ -16,6 +16,7 @@ function Login() {
   const { user, loading } = useAuth();
   const claim = useServerFn(claimReferral);
   const [step, setStep] = useState<"email" | "code">("email");
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -73,11 +74,39 @@ function Login() {
     <main className="min-h-[100dvh] flex items-center justify-center px-6" style={{ background: "#0a0800" }}>
       <div className="w-full max-w-sm flex flex-col items-center">
         <img src="/kingdom-protocol-logo.png" alt="Kingdom Protocol" className="w-40 block" style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.3))" }} />
-        <p className="text-sm text-[#666] mt-1 mb-6 text-center">
-          {step === "email"
-            ? "Enter your email to continue"
-            : `Enter the 6-digit code we sent to ${email}`}
-        </p>
+        {step === "email" && (
+          <div className="w-full grid grid-cols-2 gap-1 p-1 mt-3 mb-4 rounded-lg border border-[#222] bg-[#0f0c05]">
+            {([["signin", "Sign In"], ["signup", "Create Account"]] as const).map(([m, label]) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={`py-2 rounded-md text-sm font-semibold transition-colors ${
+                  mode === m ? "bg-[#c9a84c] text-black" : "text-[#8a8478]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {step === "email" ? (
+          <>
+            <h1 className="text-xl font-semibold text-white text-center">
+              {mode === "signin" ? "Welcome back" : "Start your 30 days"}
+            </h1>
+            <p className="text-sm text-[#666] mt-1 mb-6 text-center">
+              {mode === "signin"
+                ? "Enter your email and we'll send a 6-digit code."
+                : "No card. Enter your email and we'll send a 6-digit code to create your account."}
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-[#666] mt-1 mb-6 text-center">
+            {`Enter the 6-digit code we sent to ${email}`}
+          </p>
+        )}
 
         {step === "email" ? (
           <>

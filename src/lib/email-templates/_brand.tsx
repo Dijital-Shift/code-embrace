@@ -204,7 +204,7 @@ export function Shell({
             <Heading as="h2" style={wordmark}>
               Kingdom Protocol
             </Heading>
-            <Text style={kicker}>Accountability. No noise.</Text>
+            <Text style={kicker}>Accountability with a watchman.</Text>
           </Section>
           <Section style={goldRule}>
             <Text style={{ margin: 0, fontSize: '0', lineHeight: '3px' }}>&nbsp;</Text>

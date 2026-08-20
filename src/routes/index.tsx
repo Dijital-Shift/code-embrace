@@ -157,13 +157,16 @@ function SilenceRule() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
+          <p className="text-[#a8a39a] text-[0.95rem] sm:text-base leading-relaxed max-w-2xl mx-auto mb-5">
+            <span className="italic" style={{ color: GOLD }}>Protocol:</span> an established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here. The Silence Rule below is the procedure — three thresholds, the same every night.
+          </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
           <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
-          <Threshold n="02" title="Silence or breach" body="Your watchman is pinged. A real human, chosen by you, knows you've gone quiet — or that you fell." tone="warn" />
-          <Threshold n="03" title="Watchman responds" body="They reach out — a call, a verse, a meet-up. The loop closes with a watchman, not a banner." tone="alert" />
+          <Threshold n="02" title="Silence or breach" body="After two full days of silence — or a reported breach — your watchman is pinged. A real human, chosen by you, knows you've gone quiet, or that you fell." tone="warn" />
+          <Threshold n="03" title="Watchman responds" body="They reach out — a call, a text, a verse, a meet-up. The loop closes with a watchman, not a banner." tone="alert" />
         </div>
 
         <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
@@ -263,54 +266,54 @@ function Pricing() {
 
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           {/* Free trial */}
-          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col">
+          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">30 days</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">Free trial</h3>
             <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting"].map((f) => (
-                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
+            <Link to="/login" className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
               Start free
             </Link>
           </div>
 
           {/* Monthly */}
-          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col">
+          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">After trial</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]">/mo</span></h3>
             <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["All trial features", "Cancel anytime", "Price-locked"].map((f) => (
-                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
               ))}
             </ul>
             <CheckoutCTA
               priceId="kp_premium_monthly"
               loggedOutLabel="Start free"
               loggedInLabel="Subscribe"
-              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm"
+              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm"
             />
           </div>
 
           {/* Lifetime */}
-          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col items-center text-center relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
             <span className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]"> once</span></h3>
             <p className="text-[#aa9560] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1">
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["Everything, always", "No renewals", "Long obedience"].map((f) => (
-                <li key={f} className="flex items-start gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
               ))}
             </ul>
             <CheckoutCTA
               priceId="kp_lifetime_once"
               loggedOutLabel="Lifetime"
               loggedInLabel="Buy lifetime"
-              className="mt-4 sm:mt-6 inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
+              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
               style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
             />
           </div>
@@ -413,20 +416,12 @@ function VerseBlock({ verses }: { verses: Verse[] }) {
 function FAQ() {
   const items: FaqItem[] = [
     {
-      q: "Is this confession?",
-      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman — a watchman who sees the silence early enough to call you back before the breach.",
+      q: "What does \"Protocol\" mean?",
+      a: "An established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here \u2014 the Silence Rule is that procedure: three thresholds, the same every night, whether you're strong or not. Kingdom Protocol takes its name from this.",
     },
     {
-      q: "What stops me from lying?",
-      intro:
-        "Nothing in the software — and that's the point. This is an agreement, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface — in tone, in patterns, in the silence between check-ins.",
-      verses: [
-        {
-          text: "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.",
-          ref: "Luke 12:2",
-        },
-      ],
-      closing: "If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+      q: "Is this confession?",
+      a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman \u2014 a watchman who sees the silence early enough to call you back before the breach.",
     },
     {
       q: "Who sees my misses?",
@@ -440,24 +435,32 @@ function FAQ() {
       ],
     },
     {
+      q: "What stops me from lying?",
+      intro:
+        "Nothing in the software \u2014 and that's the point. This is an agreement, not a behavior tracker. If you lie to your watchman, you've only widened the gap between you and the Lord. The system pings a real person who knows you. Lies surface \u2014 in tone, in patterns, in the silence between check-ins.",
+      verses: [
+        {
+          text: "For there is nothing covered, that shall not be revealed; neither hid, that shall not be known.",
+          ref: "Luke 12:2",
+        },
+      ],
+      closing: "If you came here to game it, this isn't your tool yet. Come ready to be seen.",
+    },
+    {
       q: "Is this for women?",
       a: "Yes. The protocol is the same. Choose a watchman of the same conviction; the system does not assume a gender.",
     },
     {
-      q: "What inspired you to build this?",
-      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you — it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you — one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
-    },
-    {
       q: "Is it really free?",
-      a: "Free for 30 days when you sign up — no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
+      a: "Free for 30 days when you sign up \u2014 no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
     },
     {
       q: "Why pay at all?",
       intro:
-        "Because the labourer is worthy of his hire, and this work stays unfunded by advertisers so the watchtower stays clean.",
+        "Not to buy accountability \u2014 that was never for sale, and this doesn't pretend to sell it. The subscription pays for what keeps the system honest: no ads bidding for your attention, no data sold to fund it, a watchtower that answers to you instead of an advertiser. What happens between you and your watchman isn't the product.",
       verses: [
         {
-          text: "For the scripture saith… The labourer is worthy of his reward.",
+          text: "For the scripture saith\u2026 The labourer is worthy of his reward.",
           ref: "1 Timothy 5:18",
         },
       ],
@@ -471,6 +474,10 @@ function FAQ() {
           ref: "Matthew 10:8",
         },
       ],
+    },
+    {
+      q: "What inspired you to build this?",
+      a: "Every accountability and habit app I tried worked for a week, then the alerts became wallpaper. A phone can't convict you \u2014 it can only buzz. After enough cycles of installing, ignoring, and uninstalling, I stopped pretending software was the answer. Real accountability is another believer walking with you \u2014 one who notices the silence and shows up. So I built the thing the apps couldn't be: a watchman, not a notification. Nowhere left to hide, and that's the mercy of it.",
     },
     {
       q: "What does the Word say about lying and being watched?",
@@ -500,10 +507,13 @@ function FAQ() {
           text: "Can any hide himself in secret places that I shall not see him? saith the LORD. Do not I fill heaven and earth? saith the LORD.",
           ref: "Jeremiah 23:24",
         },
-
       ],
       closing:
         "What's done in the dark comes to the light. Better to be seen by a watchman now than exposed at the throne later.",
+    },
+    {
+      q: "I don't want to use this anymore. What does that mean?",
+      a: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
     },
   ];
 
