@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -18,8 +18,16 @@ function Login() {
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [err, setErr] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
 
   async function tryClaim() {
     try {
