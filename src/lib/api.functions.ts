@@ -112,17 +112,25 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id)
       .eq('user_id', userId)
       .single();
-    if (!lane) return { lane: null, checkins: [], partnerEmail: null };
+    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0 };
     let partnerEmail: string | null = null;
     if (lane.partner_id) {
       const { data: p } = await supabaseAdmin.from('profiles').select('email').eq('user_id', lane.partner_id).single();
       partnerEmail = p?.email ?? null;
     }
-    const { data: checkins } = await supabase
+    // Full history for this path only — never before the day the path was created.
+    const { tz } = await userDay(supabase, userId);
+    const createdLocal = localDate(tz, new Date(lane.created_at));
+    const { data: allChks } = await supabase
       .from('checkins').select('checkin_date, status').eq('lane_id', data.id)
-      .order('checkin_date', { ascending: false }).limit(14);
-    return { lane, checkins: checkins ?? [], partnerEmail };
+      .gte('checkin_date', createdLocal)
+      .order('checkin_date', { ascending: false });
+    const history = allChks ?? [];
+    const standing = history.filter((c) => c.status === 'completed').length;
+    const fallen = history.filter((c) => c.status === 'breached' || c.status === 'missed').length;
+    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen };
   });
+
 
 export const createLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
