@@ -151,7 +151,7 @@ function Login() {
           </>
         ) : (
           <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
-            {`Enter the 8-digit code we sent to `}
+            {`Enter the 8-digit code we sent to ${email}`}
           </p>
         )}
 
