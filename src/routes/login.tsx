@@ -204,13 +204,14 @@ function Login() {
               required
               autoFocus
               minLength={6}
-              maxLength={8}
+              maxLength={6}
               inputMode="numeric"
               autoComplete="one-time-code"
-              pattern="\d{6,8}"
+              pattern="\d{6}"
               placeholder="Enter code"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 8))}
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
+
               className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
             />
             <p className="text-[0.7rem] text-[#9e968a] text-center">
