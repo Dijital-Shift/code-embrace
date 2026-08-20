@@ -61,8 +61,11 @@ function Login() {
       setErr("Invalid or expired code. Try again.");
       return;
     }
-    await tryClaim();
-    navigate({ to: "/dashboard" });
+    setVerified(true);
+    tryClaim();
+    setTimeout(() => {
+      navigate({ to: "/dashboard" });
+    }, 450);
   }
 
   return (
