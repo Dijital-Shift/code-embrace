@@ -112,17 +112,25 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id)
       .eq('user_id', userId)
       .single();
-    if (!lane) return { lane: null, checkins: [], partnerEmail: null };
+    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0 };
     let partnerEmail: string | null = null;
     if (lane.partner_id) {
       const { data: p } = await supabaseAdmin.from('profiles').select('email').eq('user_id', lane.partner_id).single();
       partnerEmail = p?.email ?? null;
     }
-    const { data: checkins } = await supabase
+    // Full history for this path only — never before the day the path was created.
+    const { tz } = await userDay(supabase, userId);
+    const createdLocal = localDate(tz, new Date(lane.created_at));
+    const { data: allChks } = await supabase
       .from('checkins').select('checkin_date, status').eq('lane_id', data.id)
-      .order('checkin_date', { ascending: false }).limit(14);
-    return { lane, checkins: checkins ?? [], partnerEmail };
+      .gte('checkin_date', createdLocal)
+      .order('checkin_date', { ascending: false });
+    const history = allChks ?? [];
+    const standing = history.filter((c) => c.status === 'completed').length;
+    const fallen = history.filter((c) => c.status === 'breached' || c.status === 'missed').length;
+    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen };
   });
+
 
 export const createLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -246,22 +254,13 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { today } = await userDay(supabase, userId);
-    const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: allChks }] = await Promise.all([
+    const [{ data: profile }, { data: lanes }, { data: todayChks }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
-      supabase.from('checkins').select('checkin_date, status').eq('user_id', userId).in('status', ['completed', 'breached', 'missed']),
     ]);
-    // A day counts as "standing" only if nothing fell on it; any breach or silence
-    // marks the whole day fallen. Breaches never reset the standing count.
-    const dayFell = new Map<string, boolean>();
-    for (const c of allChks ?? []) {
-      const fell = c.status === 'breached' || c.status === 'missed';
-      dayFell.set(c.checkin_date, (dayFell.get(c.checkin_date) ?? false) || fell);
-    }
-    let standing = 0, fallen = 0;
-    for (const fell of dayFell.values()) fell ? fallen++ : standing++;
-    return { profile: profile ?? null, lanes: lanes ?? [], todayCheckins: todayChks ?? [], standing, fallen };
+    return { profile: profile ?? null, lanes: lanes ?? [], todayCheckins: todayChks ?? [] };
+
   });
 
 export const getCheckinPage = createServerFn({ method: 'GET' })
@@ -510,20 +509,4 @@ export const isAdmin = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { data } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', context.userId).eq('role', 'admin').maybeSingle();
     return { admin: !!data };
-  });
-
-// ===== Standing & Fallen detail (per-path day-by-day) =====
-export const getStandingDetail = createServerFn({ method: 'GET' })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, status').eq('user_id', userId)
-      .in('status', ['active', 'paused']).order('created_at', { ascending: false });
-    const ids = (lanes ?? []).map((l) => l.lane_id);
-    const { data: chks } = ids.length
-      ? await supabase.from('checkins').select('lane_id, checkin_date, status')
-        .in('lane_id', ids).order('checkin_date', { ascending: false })
-      : { data: [] };
-    return { lanes: lanes ?? [], checkins: chks ?? [] };
   });

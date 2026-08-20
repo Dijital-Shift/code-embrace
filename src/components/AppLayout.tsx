@@ -25,7 +25,7 @@ const menuItems = [
   { href: "/dashboard", label: "Home" },
   { href: "/paths", label: "Paths" },
   { href: "/checkin", label: "Check In" },
-  { href: "/standing", label: "Standing & Fallen" },
+  
   { href: "/partner", label: "Watchman" },
   { href: "/settings", label: "Settings" },
 ] as const;

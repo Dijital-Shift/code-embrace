@@ -165,6 +165,18 @@ function LaneDetail() {
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
       <div className="mt-8">
+        <div className="flex items-center justify-center gap-6 p-4 rounded-xl border border-[#2a2518] mb-4" style={{ background: "#161210" }}>
+          <div className="text-center">
+            <div className="text-3xl font-extrabold text-[#4ade80]">{data?.standing ?? 0}</div>
+            <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Days Standing</div>
+          </div>
+          <span className="text-[#948d80] text-xl">·</span>
+          <div className="text-center">
+            <div className="text-3xl font-extrabold text-[#f87171]">{data?.fallen ?? 0}</div>
+            <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Days Fallen</div>
+          </div>
+        </div>
+
         <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Last 14 Days</p>
         {checkins.length === 0 ? (
           <p className="text-[#948d80] text-sm">No check-ins yet.</p>
@@ -178,7 +190,12 @@ function LaneDetail() {
             ))}
           </div>
         )}
+
+        <p className="text-[0.7rem] italic text-[#a8a094] mt-6">
+          For a just man falleth seven times, and riseth up again. — Proverbs 24:16 (KJV)
+        </p>
       </div>
+
     </div>
   );
 }
