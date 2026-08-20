@@ -5,6 +5,8 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 import { sendPushToUser } from './push.server';
 import { requireAccess } from './access.server';
+import { userDay } from './day.server';
+import { localDate, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import {
   triggerBreachAlert,
   notifyPartnerSkip,
@@ -47,16 +49,7 @@ export const updateProfile = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const [hh] = data.bedtime.split(':').map(Number);
-    const reminderHour = hh === 0 ? 23 : hh - 1;
-    let utcOffset = 0;
-    try {
-      const d = new Date();
-      const utcStr = d.toLocaleString('en-US', { timeZone: 'UTC', hour12: false, hour: 'numeric' });
-      const tzStr = d.toLocaleString('en-US', { timeZone: data.timezone, hour12: false, hour: 'numeric' });
-      utcOffset = (parseInt(tzStr) - parseInt(utcStr) + 24) % 24;
-    } catch {}
-    const reminder_utc_hour = ((reminderHour - utcOffset) + 24) % 24;
+    const reminder_utc_hour = reminderUtcHour(data.bedtime, data.timezone);
     const baseUpdate = {
       first_name: data.first_name || null, last_name: data.last_name || null,
       phone: data.phone || null, bedtime: data.bedtime, timezone: data.timezone, reminder_utc_hour,
@@ -232,16 +225,12 @@ export const deleteLane = createServerFn({ method: 'POST' })
   });
 
 // ===== Check-in =====
-function todayStr() { return new Date().toISOString().split('T')[0]; }
-function yesterdayStr() {
-  const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split('T')[0];
-}
 
 export const getDashboard = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const today = todayStr();
+    const { today } = await userDay(supabase, userId);
     const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: allChks }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
@@ -264,8 +253,7 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const today = todayStr();
-    const yest = yesterdayStr();
+    const { today, yesterday: yest } = await userDay(supabase, userId);
     const { data: lanes } = await supabase.from('lanes')
       .select('lane_id, title, description, lane_type').eq('user_id', userId).eq('status', 'active');
     const ids = (lanes ?? []).map((l) => l.lane_id);
@@ -283,8 +271,9 @@ export const logComplete = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
+    const { today } = await userDay(supabase, userId);
     await supabase.from('checkins').upsert(
-      { lane_id: data.laneId, user_id: userId, checkin_date: todayStr(), status: 'completed', completion_time: new Date().toISOString() },
+      { lane_id: data.laneId, user_id: userId, checkin_date: today, status: 'completed', completion_time: new Date().toISOString() },
       { onConflict: 'lane_id,checkin_date' },
     );
     return { success: true };
@@ -295,9 +284,10 @@ export const revertComplete = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ laneId: z.string().uuid() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { today } = await userDay(supabase, userId);
     const { data: c } = await supabase.from('checkins')
       .select('checkin_id, completion_time').eq('lane_id', data.laneId).eq('user_id', userId)
-      .eq('checkin_date', todayStr()).eq('status', 'completed').single();
+      .eq('checkin_date', today).eq('status', 'completed').single();
     if (!c) return { error: 'No completed check-in for today.' };
     const ageMin = (Date.now() - new Date(c.completion_time!).getTime()) / 60000;
     if (ageMin > 30) return { error: 'Check-ins can only be undone within 30 minutes.' };
@@ -320,9 +310,10 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found or inactive.' };
+    const { today, yesterday } = await userDay(supabase, userId);
     const { data: missedY } = await supabase.from('checkins').select('checkin_id')
-      .eq('lane_id', data.laneId).eq('checkin_date', yesterdayStr()).eq('status', 'missed').maybeSingle();
-    const target = missedY ? yesterdayStr() : todayStr();
+      .eq('lane_id', data.laneId).eq('checkin_date', yesterday).eq('status', 'missed').maybeSingle();
+    const target = missedY ? yesterday : today;
     const { data: chk, error } = await supabase.from('checkins').upsert({
       lane_id: data.laneId, user_id: userId, checkin_date: target,
       status: data.response === 'aligned' ? 'completed' : 'breached',
@@ -349,8 +340,9 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found.' };
+    const { today } = await userDay(supabase, userId);
     const { error } = await supabase.from('checkins').upsert({
-      lane_id: data.laneId, user_id: userId, checkin_date: todayStr(),
+      lane_id: data.laneId, user_id: userId, checkin_date: today,
       status: 'skipped', completion_time: new Date().toISOString(),
     }, { onConflict: 'lane_id,checkin_date' });
     if (error) return { error: error.message };
@@ -365,7 +357,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const today = todayStr();
+    const { today } = await userDay(supabase, userId);
     const { data: lanes } = await supabase.from('lanes')
       .select('lane_id, title, description, notes, status, created_at, user_id, partner_relationship')
       .eq('partner_id', userId).order('status').order('created_at', { ascending: false });
@@ -460,9 +452,9 @@ export const getAdminOverview = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
-    const today = new Date().toISOString().split('T')[0];
-    const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekAgoStr = weekAgo.toISOString().split('T')[0];
+    const today = localDate(DEFAULT_TZ);
+    let weekAgoStr = today;
+    for (let i = 0; i < 7; i++) weekAgoStr = prevDay(weekAgoStr);
     const [users, lanes, doneT, missT, brT, failed, newWeek] = await Promise.all([
       supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'active'),
       supabaseAdmin.from('lanes').select('*', { count: 'exact', head: true }).eq('status', 'active'),
