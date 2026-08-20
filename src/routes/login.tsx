@@ -145,13 +145,14 @@ function Login() {
             </h1>
             <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
               {mode === "signin"
-                ? "Enter your email and we'll send an 8-digit code."
-                : "No card. Enter your email and we'll send an 8-digit code to create your account."}
+                ? "Enter your email and we'll send a 6-digit code."
+                : "No card. Enter your email and we'll send a 6-digit code to create your account."}
             </p>
           </>
         ) : (
           <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
-            {`Enter the 8-digit code we sent to ${email}`}
+            {`Enter the 6-digit code we sent to ${email}`}
+
           </p>
         )}
 
@@ -203,13 +204,14 @@ function Login() {
               required
               autoFocus
               minLength={6}
-              maxLength={8}
+              maxLength={6}
               inputMode="numeric"
               autoComplete="one-time-code"
-              pattern="\d{6,8}"
+              pattern="\d{6}"
               placeholder="Enter code"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 8))}
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
+
               className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
             />
             <p className="text-[0.7rem] text-[#9e968a] text-center">
