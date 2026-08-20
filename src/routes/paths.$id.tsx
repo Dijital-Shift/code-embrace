@@ -43,7 +43,7 @@ function LaneDetail() {
     },
   });
   const del = useMutation({
-    mutationFn: (v: { reason: string }) => deleteFn({ data: { id, reason: v.reason } }),
+    mutationFn: () => deleteFn({ data: { id, reason: null } }),
     onSuccess: (r: any) => {
       if (r?.error) setErr(r.error);
       else window.location.href = "/paths";
@@ -55,8 +55,8 @@ function LaneDetail() {
   if (!lane) return <p>Not found.</p>;
 
   const checkins = data?.checkins ?? [];
-  const ageMin = (Date.now() - new Date(lane.created_at).getTime()) / 60000;
-  const canDelete = ageMin <= 10 && checkins.length === 0;
+  // Delete is only offered while no watchman is locked in — nobody to notify.
+  const canDelete = !lane.partner_id;
   
 
   return (
