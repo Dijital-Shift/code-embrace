@@ -9,11 +9,12 @@ OUT="public/og-card.png"
 OUT_JPG="public/og-card.jpg"
 BG="#0a0800"
 GOLD="#c9a84c"
-GOLD_MARK="#e5af38"   # sampled from the icon artwork itself
+GOLD_MARK="#e5af38"
+GLOW="#5a3f0e"   # sampled from the icon artwork itself
 FONT_SERIF="${FONT_SERIF:-/tmp/ogfonts/Cinzel.ttf}"
 FONT_SANS="${FONT_SANS:-/tmp/ogfonts/WorkSans-Regular.ttf}"
 FONT_ITAL="${FONT_ITAL:-/tmp/ogfonts/WorkSans-Italic.ttf}"
-FONT_TAG="${FONT_TAG:-/tmp/ogfonts/CormorantGaramond-Italic.ttf}"
+FONT_TAG="${FONT_TAG:-/tmp/ogfonts/CormorantGaramond-SemiBoldItalic.ttf}"
 
 COL_X=560         # left edge of the right column
 COL_W=570         # width of the right column
@@ -47,22 +48,32 @@ WORDMARK_W=$(magick -font "$FONT_SERIF" -pointsize 46 -kerning 4 label:"KINGDOM 
 TAG_W=$(magick -font "$FONT_TAG" -pointsize $TAG_SIZE label:"$TAGLINE" -format "%w" info:)
 TAG_OFFSET=$((COL_X + (WORDMARK_W - TAG_W) / 2))
 
-# Wordmark + tagline (tagline in Cormorant Garamond Italic)
-magick "$TMP/base.png" \
+# Wordmark glow: soft warm halo rendered behind the crisp wordmark so the type
+# reads as lit-from-within, matching the icon artwork next to it.
+magick -size 1200x630 xc:none \
+  -font "$FONT_SERIF" -pointsize 46 -fill "$GLOW" -kerning 4 \
+  -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
+  -blur 0x9 "$TMP/glow.png"
+
+magick "$TMP/base.png" "$TMP/glow.png" -compose screen -composite \
+  "$TMP/glow.png" -compose screen -composite "$TMP/baseglow.png"
+
+# Wordmark + tagline (tagline in Cormorant Garamond SemiBold Italic)
+magick "$TMP/baseglow.png" \
   -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD_MARK" -kerning 4 \
   -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
   -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#ffffff" -kerning 0 \
-  -annotate +${TAG_OFFSET}+350 "$TAGLINE" \
+  -annotate +${TAG_OFFSET}+334 "$TAGLINE" \
   "$TMP/withtext.png"
 
 # Thin gold rule between the wordmark and the tagline, spanning the wordmark width.
 magick "$TMP/withtext.png" \
   \( -size ${WORDMARK_W}x1 "xc:$GOLD" -alpha set -channel A -evaluate set 30% +channel \) \
-  -gravity northwest -geometry +${COL_X}+285 -composite \
+  -gravity northwest -geometry +${COL_X}+280 -composite \
   "$TMP/withrule.png"
 
 # Verse block (wrapped), dimmed
-magick -background none -fill "#ded7c6" -font "$FONT_ITAL" -pointsize 25 \
+magick -background none -fill "#ded7c6" -font "$FONT_ITAL" -pointsize 28 \
   -size ${COL_W}x caption:"\"But if the watchman see the sword come, and blow not the trumpet... his blood will I require at the watchman's hand.\"" \
   "$TMP/verse.png"
 
@@ -72,8 +83,8 @@ magick -background none -fill "$GOLD" -font "$FONT_SANS" -pointsize 22 -kerning 
   "$TMP/ref.png"
 
 magick "$TMP/withrule.png" \
-  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+420 -composite \
-  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+580 -composite \
+  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+400 -composite \
+  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+578 -composite \
   "$OUT"
 
 # JPEG export — iMessage/WhatsApp/LinkedIn prefer a compact JPEG over a large PNG.
