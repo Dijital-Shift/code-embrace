@@ -170,7 +170,7 @@ function SilenceRule() {
         <div className="text-center mb-10">
           <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">The Mechanic</p>
           <p className="text-[#bdb8ae] text-[0.95rem] sm:text-base leading-relaxed max-w-2xl mx-auto mb-5">
-            <span className="italic" style={{ color: GOLD }}>Protocol:</span> an established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here. The Silence Rule below is the procedure — three thresholds, the same every night.
+            <span className="italic" style={{ color: GOLD }}>Protocol:</span> an established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here. The Silence Rule below is the procedure — three thresholds, the same every night. Kingdom Protocol takes its name from this. Kingdom, because it's never behavior for its own sake — it's staying fit for the kingdom you already say you belong to.
           </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
           <p className="text-[#bdb8ae] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
