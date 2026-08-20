@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as StandingRouteImport } from './routes/standing'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -54,6 +55,11 @@ const UnsubscribeRoute = UnsubscribeRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandingRoute = StandingRouteImport.update({
+  id: '/standing',
+  path: '/standing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
+  '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
+  '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -324,6 +332,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
+  '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/refund'
     | '/settings'
+    | '/standing'
     | '/terms'
     | '/unsubscribe'
     | '/checkout/return'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/refund'
     | '/settings'
+    | '/standing'
     | '/terms'
     | '/unsubscribe'
     | '/checkout/return'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/refund'
     | '/settings'
+    | '/standing'
     | '/terms'
     | '/unsubscribe'
     | '/checkout/return'
@@ -479,6 +491,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
   SettingsRoute: typeof SettingsRoute
+  StandingRoute: typeof StandingRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
@@ -518,6 +531,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standing': {
+      id: '/standing'
+      path: '/standing'
+      fullPath: '/standing'
+      preLoaderRoute: typeof StandingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -786,6 +806,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
   SettingsRoute: SettingsRoute,
+  StandingRoute: StandingRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
