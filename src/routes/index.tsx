@@ -432,6 +432,10 @@ function FAQ() {
       a: "An established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here \u2014 the Silence Rule is that procedure: three thresholds, the same every night, whether you're strong or not. Kingdom Protocol takes its name from this.",
     },
     {
+      q: "Are you saying I don't belong to the kingdom if I don't use this?",
+      a: "No. That was never this app's to decide, and it isn't Kingdom Protocol's job to draw that line. Most of what's in the habit library comes straight from scripture, verse attached \u2014 they're not things we invented, they're things already named as what someone who belongs to the kingdom does. This is just a tool for actually living that way, alongside people who hold the same belief. It doesn't grant belonging. It just helps you behave like someone who already has it.",
+    },
+    {
       q: "Is this confession?",
       a: "No. Confession belongs to the Lord and, when fitting, to the church. This is a watchman \u2014 a watchman who sees the silence early enough to call you back before the breach.",
     },
