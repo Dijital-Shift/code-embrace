@@ -47,11 +47,21 @@ const GOLD = "#c9a84c";
 
 
 
+function AuthLink({ className, style, signedOutLabel = "Sign in" }: { className?: string; style?: React.CSSProperties; signedOutLabel?: string }) {
+  const { user, loading } = useAuth();
+  const signedIn = !loading && !!user;
+  return (
+    <Link to={signedIn ? "/dashboard" : "/login"} className={className} style={style}>
+      {signedIn ? "Dashboard" : signedOutLabel}
+    </Link>
+  );
+}
+
 function Header() {
   return (
     <header className="relative z-20 flex items-center justify-between px-5 sm:px-8 py-4 border-b border-[#2a2418]">
       <Wordmark />
-      <Link to="/login" className="text-sm text-[#c9a84c] font-semibold hover:opacity-80">Sign in</Link>
+      <AuthLink className="text-sm text-[#c9a84c] font-semibold hover:opacity-80" />
     </header>
   );
 }
@@ -72,9 +82,11 @@ function Hero() {
             For the believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
-            <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-              Start free
-            </Link>
+            <AuthLink
+              signedOutLabel="Start free"
+              className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]"
+              style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
+            />
             <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
               How it works
             </Link>
@@ -615,7 +627,7 @@ function Footer() {
 
         <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col items-center sm:items-start gap-3">
-            <Link to="/login" className="text-sm text-[#c9a84c] font-semibold tracking-wide hover:opacity-80">Sign in</Link>
+            <AuthLink className="text-sm text-[#c9a84c] font-semibold tracking-wide hover:opacity-80" />
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs text-[#777]">
               <Link to="/terms" className="hover:text-[#c9a84c]">Terms</Link>
               <span className="text-[#3a342a]">·</span>
