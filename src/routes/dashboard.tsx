@@ -6,6 +6,8 @@ import { getDashboard } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AccessBanner } from "@/components/AccessBanner";
+import { statusColor, statusLabel } from "@/lib/status";
+
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Kingdom Protocol" }] }),
