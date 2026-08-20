@@ -42,9 +42,8 @@ function Dashboard() {
       <AccessBanner />
 
       {needsGender && (
-        <Link to="/settings" className="block mb-5 p-4 rounded-xl border border-[#3a2f12] no-underline" style={{ background: "#1e1808" }}>
-          <p className="text-sm text-[#c9a84c] font-semibold">One quick detail — male or female?</p>
-          <p className="text-xs text-[#c2af80] mt-1">Tap to set it in Settings. Used for pastoral fit, never public.</p>
+        <Link to="/settings" className="block mb-5 px-4 py-3 rounded-xl border border-[#2a2518] no-underline" style={{ background: "#161210" }}>
+          <p className="text-xs text-[#c2af80]">One detail still open in Settings — male or female. Tap to set it whenever you like.</p>
         </Link>
       )}
 
@@ -70,8 +69,8 @@ function Dashboard() {
         </div>
       )}
 
-      {(standing + fallen) > 0 && (
-        <div className="mt-8 p-5 rounded-xl border border-[#2a2518] text-center" style={{ background: "#161210" }}>
+      {lanes.length > 0 && (standing + fallen) > 0 && (
+        <Link to="/standing" className="block mt-8 p-5 rounded-xl border border-[#2a2518] text-center no-underline" style={{ background: "#161210" }}>
           <div className="flex items-baseline justify-center gap-4">
             <div>
               <div className="text-3xl font-extrabold text-[#4ade80]">{standing}</div>
@@ -83,11 +82,8 @@ function Dashboard() {
               <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Fallen</div>
             </div>
           </div>
-          <p className="text-[0.7rem] text-[#c2af80] mt-3">{standing} standing · {fallen} fallen — still rising.</p>
-          <p className="text-[0.65rem] italic text-[#a8a094] mt-1">
-            For a just man falleth seven times, and riseth up again. — Proverbs 24:16
-          </p>
-        </div>
+          <p className="text-[0.7rem] text-[#c2af80] mt-3">Tap to see every path, day by day.</p>
+        </Link>
       )}
 
       <div className="mt-8">
@@ -119,7 +115,7 @@ function Dashboard() {
         <div className="mt-8 p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
           <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
-            Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing.
+            This is your invite link. Send it to anyone you want using Kingdom Protocol. They open it, sign up, and start their own paths — it does not make them your watchman.
           </p>
           <div className="flex items-center gap-2">
             <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#c8c0b4] outline-none" />
