@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { getSettings, updateProfile } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
-
-const TIMEZONES = ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Phoenix", "America/Anchorage", "Pacific/Honolulu"];
+import { TIMEZONE_OPTIONS } from "@/lib/localday";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — Kingdom Protocol" }] }),
@@ -25,6 +24,7 @@ function Settings() {
   const [bedtime, setBedtime] = useState("22:00");
   const [tz, setTz] = useState("America/Chicago");
   const [gender, setGender] = useState<"male" | "female" | "">("");
+  const [showGender, setShowGender] = useState(false);
   const [saved, setSaved] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -46,8 +46,29 @@ function Settings() {
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const archived = data?.archivedLanes ?? [];
+  const savedGender = ((data?.profile as any)?.gender ?? "") as "male" | "female" | "";
   const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full";
   const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
+
+  const genderToggle = (
+    <div className="grid grid-cols-2 gap-2">
+      {(["male", "female"] as const).map((g) => (
+        <button
+          key={g}
+          type="button"
+          onClick={() => setGender(g)}
+          className="py-3 rounded-md border text-sm font-semibold capitalize"
+          style={{
+            background: gender === g ? "#c9a84c" : "#111",
+            color: gender === g ? "#000" : "#fff",
+            borderColor: gender === g ? "#c9a84c" : "#222",
+          }}
+        >
+          {g}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <div>
@@ -55,7 +76,7 @@ function Settings() {
         <Link to="/dashboard" className="text-[#a8a094]">←</Link>
         <h2 className="text-xl font-bold">Settings</h2>
       </div>
-      <p className="text-[#9e968a] text-xs mb-8">Your bedtime sets when check-in reminders fire. Your phone goes to watchmen on breach or miss.</p>
+      <p className="text-[#b8b0a4] text-sm mb-8">Your name, contact info, bedtime and timezone. This is also where you get your invite link.</p>
 
       <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="flex flex-col gap-6 max-w-md">
         <div className="flex gap-3">
@@ -68,27 +89,15 @@ function Settings() {
             <input value={last} onChange={(e) => setLast(e.target.value)} maxLength={50} className={inputCls} />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ded8cc]">Male or Female</label>
-          <div className="grid grid-cols-2 gap-2">
-            {(["male", "female"] as const).map((g) => (
-              <button
-                key={g}
-                type="button"
-                onClick={() => setGender(g)}
-                className="py-3 rounded-md border text-sm font-semibold capitalize"
-                style={{
-                  background: gender === g ? "#c9a84c" : "#111",
-                  color: gender === g ? "#000" : "#fff",
-                  borderColor: gender === g ? "#c9a84c" : "#222",
-                }}
-              >
-                {g}
-              </button>
-            ))}
+
+        {!savedGender && (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#ded8cc]">Are you male or female?</label>
+            {genderToggle}
+            <p className="text-xs text-[#b8b0a4]">Used so watchmen are matched man-to-man and woman-to-woman. Never shown publicly.</p>
           </div>
-          <p className="text-xs text-[#9e968a]">Used for pastoral fit — never public.</p>
-        </div>
+        )}
+
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Email</label>
           <input value={data?.profile?.email ?? ""} disabled className={inputCls + " text-[#948d80] cursor-not-allowed"} />
@@ -96,18 +105,19 @@ function Settings() {
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Phone Number</label>
           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 000 0000" className={inputCls} />
-          <p className="text-xs text-[#9e968a]">Shared with watchmen only when a breach or miss occurs.</p>
+          <p className="text-xs text-[#b8b0a4]">Shared with watchmen only when you breach or go silent.</p>
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Bedtime</label>
+          <p className="text-xs text-[#b8b0a4]">We nudge you one hour before this time, so you can close the day out before you sleep.</p>
           <input type="time" required value={bedtime} onChange={(e) => setBedtime(e.target.value)} className={inputCls} />
-          <p className="text-xs text-[#9e968a]">Reminder fires 1 hour before this.</p>
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Timezone</label>
           <select value={tz} onChange={(e) => setTz(e.target.value)} className={inputCls}>
-            {TIMEZONES.map((t) => <option key={t} value={t}>{t.replace("_", " ")}</option>)}
+            {TIMEZONE_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
+          <p className="text-xs text-[#b8b0a4]">Your day starts and ends on this clock — check-ins are counted against it.</p>
         </div>
         {err && <p className="text-red-400 text-sm">{err}</p>}
         {saved && <p className="text-[#4ade80] text-sm">Settings saved.</p>}
@@ -120,7 +130,7 @@ function Settings() {
         <div className="mt-12 max-w-md p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
           <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
-            Not as your watchman — as someone walking their own path. If they become your watchman later, that's the Lord's doing.
+            This is your invite link. Send it to anyone you want using Kingdom Protocol. They open it, sign up, and start their own paths — it does not make them your watchman.
           </p>
           <div className="flex items-center gap-2">
             <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#c8c0b4] outline-none" />
@@ -148,11 +158,31 @@ function Settings() {
           <div className="flex flex-col gap-1.5">
             {archived.map((l) => (
               <div key={l.lane_id} className="flex justify-between items-center px-3 py-2 rounded border border-[#141414]" style={{ background: "#0a0a0a" }}>
-                <span className="text-sm text-[#9e968a]">{l.title}</span>
-                <span className="text-xs text-[#8a8478]">{new Date(l.created_at).toLocaleDateString()}</span>
+                <span className="text-sm text-[#b8b0a4]">{l.title}</span>
+                <span className="text-xs text-[#948d80]">{new Date(l.created_at).toLocaleDateString()}</span>
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {savedGender && (
+        <div className="mt-12 max-w-md">
+          {!showGender ? (
+            <p className="text-xs text-[#a8a094]">
+              Recorded as <span className="capitalize text-[#ded8cc]">{savedGender}</span>.{" "}
+              <button type="button" onClick={() => setShowGender(true)} className="text-[#c9a84c] underline bg-transparent border-0 p-0 cursor-pointer text-xs">Change</button>
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {genderToggle}
+              <button
+                type="button"
+                onClick={() => { setErr(null); setSaved(false); m.mutate(); setShowGender(false); }}
+                className="py-2 bg-white text-black rounded-md font-semibold text-sm"
+              >Save change</button>
+            </div>
+          )}
         </div>
       )}
     </div>
