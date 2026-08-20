@@ -21,13 +21,21 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       setHasStoredSession(true);
       return;
     }
-    supabase.auth.getSession().then(({ data }) => {
-      if (alive) setHasStoredSession(!!data.session);
+    supabase.auth.getSession().then(async ({ data }) => {
+      const token = data.session?.access_token;
+      // A malformed/corrupt token would be sent as a bearer and crash the
+      // server middleware's JWT decode. Treat it as signed out and purge it.
+      const valid = !!token && token.split(".").length === 3;
+      if (token && !valid) {
+        await supabase.auth.signOut().catch(() => {});
+      }
+      if (alive) setHasStoredSession(valid);
     });
     return () => {
       alive = false;
     };
   }, [user?.id, loading]);
+
 
   useEffect(() => {
     if (redirected.current) return;
