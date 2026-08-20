@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { sendPushToUser } from './push.server';
 import { requireAccess } from './access.server';
 import { userDay } from './day.server';
+import { friendlyLaneError } from './lane-errors.server';
 import { localDate, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import {
   triggerBreachAlert,
@@ -122,13 +123,6 @@ export const getLane = createServerFn({ method: 'GET' })
       .order('checkin_date', { ascending: false }).limit(14);
     return { lane, checkins: checkins ?? [], partnerEmail };
   });
-
-function friendlyLaneError(error: { code?: string; message?: string }, title: string): string {
-  if (error?.code === '23505' || (error?.message ?? '').includes('lanes_user_id_title_key')) {
-    return `You already have a path called "${title}". Give this one a different name — for example "${title} — week one" — or reopen the existing one.`;
-  }
-  return error?.message ?? 'Something went wrong.';
-}
 
 export const createLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
