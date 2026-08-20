@@ -1,7 +1,19 @@
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { Home, Layers, CheckCircle, Users, Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 const items = [
   { href: "/dashboard", icon: Home, label: "Home" },
