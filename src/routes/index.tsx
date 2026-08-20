@@ -299,7 +299,7 @@ function Pricing() {
           </div>
 
           {/* Lifetime */}
-          <div className="rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 bg-[#100d05] p-3 sm:p-7 flex flex-col items-center text-center relative" style={{ boxShadow: "0 0 40px rgba(201,168,76,0.12)" }}>
+          <div className="lifetime-card rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 p-3 sm:p-7 flex flex-col items-center text-center relative overflow-hidden">
             <span className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]"> once</span></h3>
