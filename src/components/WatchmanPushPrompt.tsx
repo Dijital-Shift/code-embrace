@@ -130,16 +130,16 @@ export function WatchmanPushPrompt() {
     <div className="mb-6 rounded-xl border border-[#c9a84c]/60 p-5" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
       <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Set the watch</p>
       <p className="font-semibold text-sm mb-1">You're standing watch for someone.</p>
-      <p className="text-xs text-[#aa9560] leading-relaxed mb-3">
+      <p className="text-xs text-[#c2af80] leading-relaxed mb-3">
         Alerts only fire when they breach or go silent two days running. If this app isn't installed with
         notifications on, you won't hear it — and neither will they.
       </p>
 
       {!installed && (
         <div className="mb-3 rounded-lg border border-[#2a2000] p-3">
-          <p className="text-[0.65rem] uppercase tracking-wider text-[#666] font-semibold mb-1.5">Step 1 · Install</p>
+          <p className="text-[0.65rem] uppercase tracking-wider text-[#a8a094] font-semibold mb-1.5">Step 1 · Install</p>
           {platform === "ios" && (
-            <p className="text-xs text-[#ccc] leading-relaxed">
+            <p className="text-xs text-[#ded8cc] leading-relaxed">
               In Safari, tap <span className="text-[#c9a84c] font-semibold">Share</span> →{" "}
               <span className="text-[#c9a84c] font-semibold">Add to Home Screen</span>, then open Kingdom Protocol
               from your home screen.
@@ -147,7 +147,7 @@ export function WatchmanPushPrompt() {
           )}
           {platform === "android" && (
             <>
-              <p className="text-xs text-[#ccc] leading-relaxed mb-2">
+              <p className="text-xs text-[#ded8cc] leading-relaxed mb-2">
                 In Chrome, tap the <span className="text-[#c9a84c] font-semibold">⋮</span> menu →{" "}
                 <span className="text-[#c9a84c] font-semibold">Add to Home screen</span>.
               </p>
@@ -160,7 +160,7 @@ export function WatchmanPushPrompt() {
           )}
           {platform === "desktop" && (
             <>
-              <p className="text-xs text-[#ccc] leading-relaxed mb-2">
+              <p className="text-xs text-[#ded8cc] leading-relaxed mb-2">
                 Use the install icon in your browser's address bar to install Kingdom Protocol.
               </p>
               {deferred && (
@@ -175,7 +175,7 @@ export function WatchmanPushPrompt() {
 
       {!pushOn && (
         <div className="rounded-lg border border-[#2a2000] p-3">
-          <p className="text-[0.65rem] uppercase tracking-wider text-[#666] font-semibold mb-1.5">
+          <p className="text-[0.65rem] uppercase tracking-wider text-[#a8a094] font-semibold mb-1.5">
             {installed ? "Turn on alerts" : "Step 2 · Turn on alerts"}
           </p>
           <button

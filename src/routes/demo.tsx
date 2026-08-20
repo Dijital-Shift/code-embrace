@@ -51,7 +51,7 @@ function cn(...c: (string | false | null | undefined)[]) {
 type Tone = "muted" | "primary" | "accent" | "danger";
 function Pill({ label, tone = "muted" }: { label: string; tone?: Tone }) {
   const tones: Record<Tone, string> = {
-    muted: "bg-[#1a1408] text-[#888]",
+    muted: "bg-[#1a1408] text-[#b8b0a4]",
     primary: "bg-[#c9a84c]/15 text-[#c9a84c]",
     accent: "bg-[#8a6f2e]/30 text-[#e6c97a]",
     danger: "bg-red-900/30 text-red-300",
@@ -78,7 +78,7 @@ function MockPathLibrary() {
     <div className="space-y-3">
       <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a84c]">Devotion · Purity · Speech</div>
       <div className="text-sm font-semibold text-white">Path Library</div>
-      <div className="text-[11px] text-[#888]">Scripture-backed paths. Tap one to start.</div>
+      <div className="text-[11px] text-[#b8b0a4]">Scripture-backed paths. Tap one to start.</div>
       <div className="grid grid-cols-1 gap-2">
         {items.map((p) => {
           const isAvoid = p.type === "avoid";
@@ -111,11 +111,11 @@ function MockOnboard() {
           <div className="text-[10px] font-bold uppercase tracking-wider text-white">Complete</div>
         </div>
         <div className="rounded-md border border-[#222] bg-[#161210] px-2.5 py-2 text-center">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-[#555]">Avoid</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-[#9e968a]">Avoid</div>
         </div>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-        <div className="text-[10px] uppercase tracking-wider text-[#666]">Path</div>
+        <div className="text-[10px] uppercase tracking-wider text-[#a8a094]">Path</div>
         <div className="text-sm text-white">Fast</div>
       </div>
       <div className="rounded-md border border-[#c9a84c]/40 bg-[#1a1408] px-3 py-2">
@@ -123,11 +123,11 @@ function MockOnboard() {
         <div className="text-[11px] text-white mt-0.5">No fried foods. Liquids only after 6pm.</div>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-        <div className="text-[10px] uppercase tracking-wider text-[#666]">Support scripture</div>
+        <div className="text-[10px] uppercase tracking-wider text-[#a8a094]">Support scripture</div>
         <div className="text-[11px] italic text-[#c9a84c] mt-0.5">"When thou fastest, anoint thine head…" — Matt. 6:17</div>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
-        <div className="text-[10px] uppercase tracking-wider text-[#666]">Ends on</div>
+        <div className="text-[10px] uppercase tracking-wider text-[#a8a094]">Ends on</div>
         <div className="text-sm text-white">Dec 20, 2026</div>
       </div>
       <button className="w-full rounded-md bg-white py-2 text-sm font-bold text-black">Create Path</button>
@@ -141,7 +141,7 @@ function MockInviteWatchman() {
       <div className="flex items-center gap-2">
         <Users className="h-4 w-4 text-[#c9a84c]" />
         <div className="text-sm font-semibold text-white">Watchmen</div>
-        <span className="ml-auto text-[10px] text-[#666]">1/2</span>
+        <span className="ml-auto text-[10px] text-[#a8a094]">1/2</span>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
         <div className="text-[11px] text-white">marcus@example.com</div>
@@ -150,11 +150,11 @@ function MockInviteWatchman() {
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3">
         <div className="text-[11px] text-[#c9a84c] mb-2">Second invite pending · expires in 47h</div>
         <div className="flex items-center gap-2">
-          <input readOnly value="kingdom-protocol.app/invite/x9k…" className="flex-1 truncate rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[10px] text-[#888] outline-none" />
+          <input readOnly value="kingdom-protocol.app/invite/x9k…" className="flex-1 truncate rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[10px] text-[#b8b0a4] outline-none" />
           <button className="rounded bg-[#c9a84c] px-2 py-1.5 text-[10px] font-bold text-black">Copy</button>
         </div>
       </div>
-      <div className="text-[10px] leading-relaxed text-[#555]">Up to two watchmen per path. In the mouth of two witnesses (Matt. 18:16). Links expire in 48 hours.</div>
+      <div className="text-[10px] leading-relaxed text-[#9e968a]">Up to two watchmen per path. In the mouth of two witnesses (Matt. 18:16). Links expire in 48 hours.</div>
     </div>
   );
 }
@@ -167,15 +167,15 @@ function MockPartnerInvite() {
         <div className="text-sm font-semibold text-white">You've been invited</div>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
-        <div className="text-[11px] text-[#888]">From</div>
+        <div className="text-[11px] text-[#b8b0a4]">From</div>
         <div className="text-sm text-white">David Jones</div>
-        <div className="mt-2 text-[11px] text-[#888]">Path</div>
+        <div className="mt-2 text-[11px] text-[#b8b0a4]">Path</div>
         <div className="text-sm text-white">Fast · ends Dec 20</div>
-        <div className="mt-2 text-[11px] text-[#888]">Your role</div>
+        <div className="mt-2 text-[11px] text-[#b8b0a4]">Your role</div>
         <div className="text-sm text-[#c9a84c]">Watchman — pinged when they miss or break the fast.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#888]">Decline</button>
+        <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#b8b0a4]">Decline</button>
         <button className="rounded-md bg-[#c9a84c] py-2 text-xs font-bold text-black">Accept</button>
       </div>
     </div>
@@ -191,7 +191,7 @@ function MockCheckin() {
         <span className="ml-auto"><Pill label="Tonight" tone="primary" /></span>
       </div>
 
-      <div className="text-[10px] font-bold uppercase tracking-wider text-[#666]">Complete</div>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Complete</div>
       <div className="flex items-center gap-3 rounded-xl border border-[#166534] px-3 py-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4ade80] text-[10px] font-bold text-black">✓</span>
         <span className="flex-1 text-sm text-[#4ade80]">Pray three times</span>
@@ -202,13 +202,13 @@ function MockCheckin() {
         <span className="flex-1 text-sm text-white">Fast</span>
       </div>
 
-      <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#666]">Avoid</div>
+      <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Avoid</div>
       <div className="rounded-xl border border-[#2a2518] bg-[#161210] p-3">
         <div className="mb-2 text-sm font-semibold text-white">No lustful looking</div>
-        <div className="mb-2 text-[11px] text-[#666]">Did you avoid this today?</div>
+        <div className="mb-2 text-[11px] text-[#a8a094]">Did you avoid this today?</div>
         <div className="grid grid-cols-2 gap-2">
           <button className="rounded-lg border border-[#4ade80] py-2 text-xs font-semibold text-[#4ade80]" style={{ background: "#052e16" }}>Yes — held</button>
-          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">No — breach</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#a8a094]">No — breach</button>
         </div>
       </div>
     </div>
@@ -225,7 +225,7 @@ function MockBreachConfess() {
       <div className="rounded-xl border border-[#2a2518] bg-[#161210] p-3">
         <div className="text-sm font-semibold text-white">No lustful looking</div>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Yes — held</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#a8a094]">Yes — held</button>
           <button className="rounded-lg border border-[#f87171] py-2 text-xs font-semibold text-[#f87171]" style={{ background: "#2d0d0d" }}>No — breach</button>
         </div>
         <textarea
@@ -236,7 +236,7 @@ function MockBreachConfess() {
         />
         <button className="mt-2 w-full rounded-lg py-2 text-sm font-semibold text-white" style={{ background: "#7f1d1d" }}>Submit — Breach</button>
       </div>
-      <div className="text-[10px] italic text-[#666]">Confess your faults one to another. — James 5:16</div>
+      <div className="text-[10px] italic text-[#a8a094]">Confess your faults one to another. — James 5:16</div>
     </div>
   );
 }
@@ -255,8 +255,8 @@ function MockMissedNudge() {
         <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Silent yesterday · submit before 10AM</div>
         <div className="mt-2 text-sm font-semibold text-white">Fast</div>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Held</button>
-          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#666]">Breach</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#a8a094]">Held</button>
+          <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#a8a094]">Breach</button>
         </div>
       </div>
     </div>
@@ -279,7 +279,7 @@ function MockWatchmanPing() {
         <a className="rounded-md bg-white py-2 text-center text-xs font-bold text-black">Call</a>
         <a className="rounded-md py-2 text-center text-xs font-bold text-white" style={{ background: "#1a1a1a", border: "1px solid #222" }}>Text</a>
       </div>
-      <div className="text-[10px] italic text-[#666]">A brother is born for adversity. — Prov. 17:17</div>
+      <div className="text-[10px] italic text-[#a8a094]">A brother is born for adversity. — Prov. 17:17</div>
     </div>
   );
 }
@@ -311,12 +311,12 @@ function MockPartnerView() {
                 x.state === "missed" && "border-red-900/60 bg-red-950/40",
               )}
             />
-            <div className="mt-1 text-[9px] uppercase tracking-wider text-[#666]">{x.d}</div>
+            <div className="mt-1 text-[9px] uppercase tracking-wider text-[#a8a094]">{x.d}</div>
           </div>
         ))}
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
-        <div className="text-[10px] uppercase tracking-wider text-[#666]">Breach note · Wed</div>
+        <div className="text-[10px] uppercase tracking-wider text-[#a8a094]">Breach note · Wed</div>
         <div className="mt-1 text-xs text-white">"Broke the fast at lunch — was at a work thing. Owning it."</div>
       </div>
     </div>
@@ -354,14 +354,14 @@ function MockStreak() {
           <div className="text-3xl font-extrabold text-white">26</div>
           <div className="text-[9px] uppercase tracking-wider text-[#4ade80]">Standing</div>
         </div>
-        <div className="text-[#444] text-xl">·</div>
+        <div className="text-[#948d80] text-xl">·</div>
         <div>
           <div className="text-2xl font-bold text-[#f87171]">2</div>
           <div className="text-[9px] uppercase tracking-wider text-[#f87171]">Fallen</div>
         </div>
       </div>
-      <div className="text-[11px] uppercase tracking-wider text-[#888]">Fast · no fried foods</div>
-      <div className="text-[10px] text-[#aa9560]">26 standing · 2 fallen — still rising.</div>
+      <div className="text-[11px] uppercase tracking-wider text-[#b8b0a4]">Fast · no fried foods</div>
+      <div className="text-[10px] text-[#c2af80]">26 standing · 2 fallen — still rising.</div>
       <div className="mx-auto grid max-w-[260px] grid-cols-7 gap-1">
         {Array.from({ length: 28 }).map((_, i) => {
           const fell = i === 6 || i === 18;
@@ -378,7 +378,7 @@ function MockStreak() {
         <p className="text-[11px] italic text-[#c9a84c] leading-snug">
           "For a just man falleth seven times, and riseth up again."
         </p>
-        <p className="text-[9px] uppercase tracking-wider text-[#aa9560] mt-1">Proverbs 24:16 · KJV</p>
+        <p className="text-[9px] uppercase tracking-wider text-[#c2af80] mt-1">Proverbs 24:16 · KJV</p>
       </div>
     </div>
   );
@@ -389,11 +389,11 @@ function MockPathComplete() {
     <div className="space-y-3 text-center">
       <Trophy className="mx-auto h-9 w-9 text-[#c9a84c]" />
       <div className="text-lg font-bold text-white">Fast complete</div>
-      <div className="text-xs text-[#888]">21 days · Nov 29 → Dec 20</div>
+      <div className="text-xs text-[#b8b0a4]">21 days · Nov 29 → Dec 20</div>
       <div className="rounded-md border border-[#166534] p-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
         <div className="text-[11px] text-[#4ade80]">Auto-archived. Watchman notified — path completed honorably.</div>
       </div>
-      <div className="text-[11px] italic text-[#888]">"Is not this the fast that I have chosen?" — Isa 58:6</div>
+      <div className="text-[11px] italic text-[#b8b0a4]">"Is not this the fast that I have chosen?" — Isa 58:6</div>
     </div>
   );
 }
@@ -546,7 +546,7 @@ function Demo() {
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
             One path. <span className="text-[#c9a84c]">Two people.</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-[#aaa] md:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-[#c8c0b4] md:text-lg">
             Twelve scenes following one believer's path and the watchman who walks it with them. Every screen below is what you'll actually see in the app.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-2 text-xs">
@@ -574,12 +574,12 @@ function Demo() {
                     <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", meta.chipBg)}>
                       <meta.icon className="h-3 w-3" /> {meta.label}
                     </span>
-                    <span className="font-mono text-[11px] text-[#666]">
+                    <span className="font-mono text-[11px] text-[#a8a094]">
                       Step {scene.step} / {SCENES.length}
                     </span>
                   </div>
                   <h2 className="text-2xl font-bold tracking-tight">{scene.title}</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-[#aaa] md:text-base">{scene.body}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-[#c8c0b4] md:text-base">{scene.body}</p>
                   <p className="mt-3 text-xs italic leading-relaxed text-[#c9a84c]/90 md:text-sm">{scene.why}</p>
                 </div>
                 <div>
@@ -588,7 +588,7 @@ function Demo() {
                       <span className="h-2 w-2 rounded-full bg-red-500/40" />
                       <span className="h-2 w-2 rounded-full bg-[#c9a84c]/60" />
                       <span className="h-2 w-2 rounded-full bg-[#666]/40" />
-                      <span className="ml-1 font-mono text-[10px] text-[#666]">kingdom-protocol.app</span>
+                      <span className="ml-1 font-mono text-[10px] text-[#a8a094]">kingdom-protocol.app</span>
                     </div>
                     <div className="p-5">
                       <Mock />
@@ -597,7 +597,7 @@ function Demo() {
                 </div>
               </article>
               {scene.divider && (
-                <div className="flex items-center gap-3 pt-4 text-xs uppercase tracking-wider text-[#666]">
+                <div className="flex items-center gap-3 pt-4 text-xs uppercase tracking-wider text-[#a8a094]">
                   <div className="h-px flex-1 bg-[#2a2518]" />
                   <span>{scene.divider}</span>
                   <div className="h-px flex-1 bg-[#2a2518]" />
@@ -610,7 +610,7 @@ function Demo() {
         <div className="border-t border-[#2a2518] pt-10 text-center">
           <Footprints className="mx-auto h-10 w-10 text-[#c9a84c]" />
           <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">Ready to walk it out?</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-[#aaa]">
+          <p className="mx-auto mt-3 max-w-xl text-sm text-[#c8c0b4]">
             Pick your path. Pick your watchman. Show up tonight.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">

@@ -73,12 +73,12 @@ function Hero() {
         style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-start">
         <div className="min-w-0">
-          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">For the kingdom-minded · Accountability with a watchman</p>
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">For the kingdom-minded · Accountability with a watchman</p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight text-white">
             Iron sharpens iron.<br />
             <span style={{ color: GOLD }}>Silence dulls both.</span>
           </h1>
-          <p className="mt-5 text-[#a8a39a] text-base sm:text-lg leading-relaxed max-w-md">
+          <p className="mt-5 text-[#bdb8ae] text-base sm:text-lg leading-relaxed max-w-md">
             For the believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement with you — before the silence becomes a fall.
           </p>
           <div className="mt-8 flex gap-2">
@@ -107,7 +107,7 @@ function HeroMock() {
       <div className="absolute inset-0 -m-4 rounded-3xl" style={{ background: "radial-gradient(ellipse at center, rgba(201,168,76,0.18), transparent 70%)" }} />
       <div className="relative rounded-2xl border border-[#2a2518] bg-[#100d05] p-5 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#666]">Today · 9:00 PM</span>
+          <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#a8a094]">Today · 9:00 PM</span>
           <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#c9a84c]">Window open</span>
         </div>
         <div className="space-y-3">
@@ -116,7 +116,7 @@ function HeroMock() {
           <MockRow title="Fast — no fried foods" status="silent" />
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
-          <span className="text-xs text-[#888]">1 silent path</span>
+          <span className="text-xs text-[#b8b0a4]">1 silent path</span>
           <span className="text-xs font-semibold" style={{ color: GOLD }}>Watchmen pinged in 2h</span>
         </div>
       </div>
@@ -142,11 +142,11 @@ function ProblemTension() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto text-center">
-        <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-6">The Problem</p>
+        <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-6">The Problem</p>
         <h2 className="text-3xl sm:text-4xl font-bold leading-tight text-white mb-6">
           The <em className="not-italic" style={{ color: GOLD }}>quiet</em> break.
         </h2>
-        <p className="text-[#a8a39a] text-lg leading-relaxed mb-6 text-left sm:text-center">
+        <p className="text-[#bdb8ae] text-lg leading-relaxed mb-6 text-left sm:text-center">
           Monday you were certain. Tuesday you were tired. By Thursday you're lying to a notification, and the streak you built is a number you stopped looking at. The app meant to help you wanted eleven taps and a mood emoji. You gave it neither. The thing you swore off on Sunday is already in your hand. You fell in the dark. Nobody knows. That's the worst part.
         </p>
         <p className="text-white text-lg sm:text-xl font-medium leading-relaxed mb-10">
@@ -168,12 +168,12 @@ function SilenceRule() {
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The Mechanic</p>
-          <p className="text-[#a8a39a] text-[0.95rem] sm:text-base leading-relaxed max-w-2xl mx-auto mb-5">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">The Mechanic</p>
+          <p className="text-[#bdb8ae] text-[0.95rem] sm:text-base leading-relaxed max-w-2xl mx-auto mb-5">
             <span className="italic" style={{ color: GOLD }}>Protocol:</span> an established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here. The Silence Rule below is the procedure — three thresholds, the same every night.
           </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
-          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
+          <p className="text-[#bdb8ae] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
@@ -200,7 +200,7 @@ function Threshold({ n, title, body, tone }: { n: string; title: string; body: s
       <span className="absolute top-2 right-3 text-2xl sm:text-5xl font-extrabold opacity-25" style={{ color }}>{n}</span>
       
       <h3 className="text-sm sm:text-xl font-bold text-white mb-1.5 sm:mb-2 leading-tight">{title}</h3>
-      <p className="text-xs sm:text-sm text-[#a8a39a] leading-relaxed">{body}</p>
+      <p className="text-xs sm:text-sm text-[#bdb8ae] leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -269,9 +269,9 @@ function Pricing() {
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Pricing</p>
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">Pricing</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Count the cost.</h2>
-          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">
+          <p className="text-[#bdb8ae] text-lg max-w-2xl mx-auto">
             <span className="italic text-[#c9c4ba]">"For which of you, intending to build a tower, sitteth not down first, and counteth the cost?"</span> — Luke 14:28
           </p>
         </div>
@@ -279,9 +279,9 @@ function Pricing() {
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           {/* Free trial */}
           <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">30 days</p>
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#b8b0a4]">30 days</p>
             <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">Free trial</h3>
-            <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
+            <p className="text-[#a8a094] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
             <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting"].map((f) => (
                 <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
@@ -294,9 +294,9 @@ function Pricing() {
 
           {/* Monthly */}
           <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#888]">After trial</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]">/mo</span></h3>
-            <p className="text-[#666] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#b8b0a4]">After trial</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#b8b0a4]">/mo</span></h3>
+            <p className="text-[#a8a094] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
             <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["All trial features", "Cancel anytime", "Price-locked"].map((f) => (
                 <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
@@ -314,8 +314,8 @@ function Pricing() {
           <div className="lifetime-card rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 p-3 sm:p-7 flex flex-col items-center text-center relative overflow-hidden">
             <span className="relative z-10 -mt-4 sm:-mt-5 mb-1 sm:mb-2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
             <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#888]"> once</span></h3>
-            <p className="text-[#aa9560] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#b8b0a4]"> once</span></h3>
+            <p className="text-[#c2af80] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
             <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
               {["Everything, always", "No renewals", "Long obedience"].map((f) => (
                 <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
@@ -331,7 +331,7 @@ function Pricing() {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-xs text-[#666] tracking-wider">Watchmen are always free. They walk with you, not with a bill.</p>
+        <p className="mt-8 text-center text-xs text-[#a8a094] tracking-wider">Watchmen are always free. They walk with you, not with a bill.</p>
       </div>
     </section>
   );
@@ -356,9 +356,9 @@ function WhoThisIsFor() {
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">Discernment</p>
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">Discernment</p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">Whom this is for.</h2>
-          <p className="text-[#a8a39a] text-lg max-w-2xl mx-auto">"Be ye not unequally yoked." Choose honestly before you build.</p>
+          <p className="text-[#bdb8ae] text-lg max-w-2xl mx-auto">"Be ye not unequally yoked." Choose honestly before you build.</p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:gap-5">
           <div className="rounded-xl sm:rounded-2xl border border-[#c9a84c]/40 bg-[#100d05] p-3 sm:p-7">
@@ -539,7 +539,7 @@ function FAQ() {
     <section className="px-5 sm:px-8 py-12 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#666] mb-3">Plain answers</p>
+          <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#a8a094] mb-3">Plain answers</p>
           <h2 className="text-xl sm:text-3xl font-semibold tracking-tight text-white mb-2">Questions, answered plainly.</h2>
         </div>
         <Accordion type="single" collapsible className="space-y-2">
@@ -552,7 +552,7 @@ function FAQ() {
               <AccordionTrigger className="text-left text-sm sm:text-[0.95rem] font-medium text-white hover:no-underline hover:text-[#c9a84c] data-[state=open]:text-[#c9a84c] [&>svg]:text-[#c9a84c]">
                 {it.q}
               </AccordionTrigger>
-              <AccordionContent className="text-[#a8a39a] text-sm sm:text-base leading-relaxed pb-4">
+              <AccordionContent className="text-[#bdb8ae] text-sm sm:text-base leading-relaxed pb-4">
                 {it.a ? (
                   <p>{it.a}</p>
                 ) : (
@@ -575,7 +575,7 @@ function ClosingCall() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-3xl mx-auto text-center">
-        <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#666] mb-4">The call</p>
+        <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">The call</p>
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-8">Bear ye one another's burdens.</h2>
         <div className="rounded-2xl border border-[#c9a84c]/25 bg-[#0f0c05] p-8 sm:p-10 text-center">
           <p className="text-[#c9a84c] italic text-lg sm:text-xl leading-relaxed">
@@ -583,7 +583,7 @@ function ClosingCall() {
           </p>
           <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Galatians 6:1–2 · KJV</p>
         </div>
-        <div className="mt-8 text-[#a8a39a] text-base sm:text-lg leading-relaxed space-y-3 max-w-2xl mx-auto text-left sm:text-center">
+        <div className="mt-8 text-[#bdb8ae] text-base sm:text-lg leading-relaxed space-y-3 max-w-2xl mx-auto text-left sm:text-center">
           <p>Silence is where the enemy works. Light is where the brethren stand.</p>
           <p>If the silence has been louder than your prayer, step into the light — take a watchman, be one.</p>
           <p className="italic text-[#c9a84c] text-base">
@@ -628,7 +628,7 @@ function Footer() {
         <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col items-center sm:items-start gap-3">
             <AuthLink className="text-sm text-[#c9a84c] font-semibold tracking-wide hover:opacity-80" />
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs text-[#777]">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs text-[#b0a89c]">
               <Link to="/terms" className="hover:text-[#c9a84c]">Terms</Link>
               <span className="text-[#3a342a]">·</span>
               <Link to="/privacy" className="hover:text-[#c9a84c]">Privacy</Link>
@@ -645,7 +645,7 @@ function Footer() {
           </div>
         </div>
 
-        <p className="mt-10 text-xs text-[#555] tracking-wider text-center">Dijital System · 02</p>
+        <p className="mt-10 text-xs text-[#9e968a] tracking-wider text-center">Dijital System · 02</p>
       </div>
     </footer>
   );

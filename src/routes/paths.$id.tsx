@@ -30,19 +30,27 @@ function LaneDetail() {
 
   const { data, isLoading } = useQuery({ queryKey: ["lane", id], queryFn: () => getFn({ data: { id } }) });
 
+  const [pending, setPending] = useState<null | "paused" | "archived" | "delete">(null);
+  const [reason, setReason] = useState("");
+
   const setStatus = useMutation({
-    mutationFn: (status: "active" | "paused" | "archived") => statusFn({ data: { id, status } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["lane", id] }),
+    mutationFn: (v: { status: "active" | "paused" | "archived"; reason?: string }) =>
+      statusFn({ data: { id, status: v.status, reason: v.reason ?? null } }),
+    onSuccess: (r: any) => {
+      if (r?.error) { setErr(r.error); return; }
+      setPending(null); setReason(""); setErr(null);
+      qc.invalidateQueries({ queryKey: ["lane", id] });
+    },
   });
   const del = useMutation({
-    mutationFn: () => deleteFn({ data: { id } }),
+    mutationFn: (v: { reason: string }) => deleteFn({ data: { id, reason: v.reason } }),
     onSuccess: (r: any) => {
       if (r?.error) setErr(r.error);
       else window.location.href = "/paths";
     },
   });
 
-  if (isLoading) return <p className="text-[#555]">Loading…</p>;
+  if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const lane = data?.lane;
   if (!lane) return <p>Not found.</p>;
 
@@ -55,7 +63,7 @@ function LaneDetail() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <Link to="/paths" className="text-[#555] text-sm">← Paths</Link>
+          <Link to="/paths" className="text-[#9e968a] text-sm">← Paths</Link>
           <h2 className="text-xl font-bold">{lane.title}</h2>
         </div>
       </div>
@@ -63,12 +71,18 @@ function LaneDetail() {
       {newlyCreated && (
         <div className="mb-5 p-4 rounded-md border border-[#3a2f12]" style={{ background: "#1e1808" }}>
           <p className="text-sm text-[#c9a84c] font-semibold mb-1">Path created.</p>
-          <p className="text-xs text-[#aa9560]">Now invite your Watchman below. They get pinged when you miss a check-in.</p>
+          <p className="text-xs text-[#c2af80]">Now invite your Watchman below. They get pinged when you breach or go silent two days running.</p>
+          <Link
+            to="/paths/edit/$id"
+            params={{ id }}
+            className="inline-block mt-3 px-3 py-1.5 rounded text-xs font-semibold text-[#0a0800] no-underline"
+            style={{ background: "#c9a84c" }}
+          >Edit this path</Link>
         </div>
       )}
 
       <div className="p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-        {lane.description && <p className="text-[#888] text-sm mb-3">{lane.description}</p>}
+        {lane.description && <p className="text-[#b8b0a4] text-sm mb-3">{lane.description}</p>}
         {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
           <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
         ))}
@@ -78,7 +92,7 @@ function LaneDetail() {
             <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
           </div>
         )}
-        <p className="text-xs text-[#666] mt-2">
+        <p className="text-xs text-[#a8a094] mt-2">
           Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span>
           {lane.ends_at && (
             <span className="ml-3">Ends <span className="text-[#c9a84c]">{lane.ends_at}</span></span>
@@ -91,24 +105,59 @@ function LaneDetail() {
 
       <div className="mt-8 flex gap-2 flex-wrap">
         {lane.status !== "active" && (
-          <button onClick={() => setStatus.mutate("active")} className="px-4 py-2 bg-white text-black rounded-md text-xs font-semibold">Set Active</button>
+          <button onClick={() => setStatus.mutate({ status: "active" })} className="px-4 py-2 bg-white text-black rounded-md text-xs font-semibold">Set Active</button>
         )}
         {lane.status === "active" && (
-          <button onClick={() => setStatus.mutate("paused")} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#888]" style={{ background: "#2a2518" }}>Pause</button>
+          <button onClick={() => { setErr(null); setReason(""); setPending("paused"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#b8b0a4]" style={{ background: "#2a2518" }}>Pause</button>
         )}
         {lane.status !== "archived" && (
-          <button onClick={() => setStatus.mutate("archived")} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
+          <button onClick={() => { setErr(null); setReason(""); setPending("archived"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
         )}
         {canDelete && (
-          <button onClick={() => confirm("Delete this path?") && del.mutate()} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#1a0a0a" }}>Delete</button>
+          <button onClick={() => { setErr(null); setReason(""); setPending("delete"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#1a0a0a" }}>Delete</button>
         )}
+        <Link to="/paths/edit/$id" params={{ id }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#2a2518] text-[#ded8cc] no-underline" style={{ background: "#161210" }}>Edit</Link>
       </div>
+
+      {pending && (
+        <div className="mt-4 p-5 rounded-xl border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+          <p className="text-sm font-semibold text-[#c9a84c] mb-1">
+            {pending === "paused" ? "Pause this path?" : pending === "archived" ? "Archive this path?" : "Delete this path?"}
+          </p>
+          <p className="text-xs text-[#c2af80] leading-relaxed mb-3">
+            Your watchman will be told you did this. You cannot do it quietly. Write a short reason — they will see it word for word.
+          </p>
+          <textarea
+            rows={3}
+            maxLength={500}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Why are you stepping off this path?"
+            className="w-full px-3 py-2 text-sm bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
+          />
+          <div className="flex gap-2 mt-3">
+            <button
+              disabled={!reason.trim() || setStatus.isPending || del.isPending}
+              onClick={() => {
+                if (pending === "delete") del.mutate({ reason: reason.trim() });
+                else setStatus.mutate({ status: pending, reason: reason.trim() });
+              }}
+              className="px-4 py-2 rounded-md text-xs font-bold"
+              style={{ background: reason.trim() ? "#c9a84c" : "#2a2518", color: reason.trim() ? "#0a0800" : "#7d7668" }}
+            >
+              {pending === "paused" ? "Pause and notify" : pending === "archived" ? "Archive and notify" : "Delete and notify"}
+            </button>
+            <button onClick={() => { setPending(null); setReason(""); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#2a2518] text-[#b8b0a4] bg-transparent">Cancel</button>
+          </div>
+        </div>
+      )}
+
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
       <div className="mt-8">
-        <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold mb-3">Last 14 Days</p>
+        <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Last 14 Days</p>
         {checkins.length === 0 ? (
-          <p className="text-[#444] text-sm">No check-ins yet.</p>
+          <p className="text-[#948d80] text-sm">No check-ins yet.</p>
         ) : (
           <div className="flex flex-col gap-1.5">
             {checkins.map((c) => (
@@ -204,8 +253,8 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
   return (
     <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[0.65rem] text-[#666] uppercase tracking-wider font-semibold">Watchmen</p>
-        <span className="text-xs text-[#666]">{slotCount}/2</span>
+        <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Watchmen</p>
+        <span className="text-xs text-[#a8a094]">{slotCount}/2</span>
       </div>
 
       {hasWatchman && (
@@ -226,10 +275,10 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs text-[#c9a84c]">Invite pending · expires in {hoursLeft(inv.expires_at)}</p>
-              <button onClick={() => revoke(inv.invite_id)} className="text-[0.65rem] text-[#888] hover:text-[#f87171]">Cancel</button>
+              <button onClick={() => revoke(inv.invite_id)} className="text-[0.65rem] text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
             <div className="flex items-center gap-2">
-              <input readOnly value={url} className="flex-1 px-2 py-1.5 text-xs bg-[#0a0800] border border-[#222] rounded text-[#888] outline-none" />
+              <input readOnly value={url} className="flex-1 px-2 py-1.5 text-xs bg-[#0a0800] border border-[#222] rounded text-[#b8b0a4] outline-none" />
               <button onClick={() => copy(inv.token)} className="text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold">Copy</button>
             </div>
           </div>
@@ -256,8 +305,8 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
       )}
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
-      <p className="text-[0.7rem] text-[#555] mt-3 leading-relaxed">
-        Up to two watchmen per path. They see your check-ins and get pinged when you breach or miss. Links expire in 48 hours.
+      <p className="text-[0.7rem] text-[#9e968a] mt-3 leading-relaxed">
+        Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. Links expire in 48 hours.
       </p>
     </div>
   );

@@ -71,7 +71,7 @@ export function AccessBanner() {
     return (
       <div className="mb-5 p-5 rounded-xl border border-[#7f1d1d]" style={{ background: "#1a0b0b" }}>
         <p className="text-sm font-semibold text-[#f87171]">Your free month has ended.</p>
-        <p className="text-xs text-[#c9a3a3] mt-1 leading-relaxed">
+        <p className="text-xs text-[#dcbcbc] mt-1 leading-relaxed">
           Your paths and history stay right where they are. Choose a plan to check in again.
         </p>
         <PlanButtons />
@@ -83,7 +83,7 @@ export function AccessBanner() {
     return (
       <div className="mb-5 px-4 py-3 rounded-xl border border-[#3a2f12] flex items-center justify-between gap-3" style={{ background: "#141004" }}>
         <p className="text-xs" style={{ color: GOLD }}>
-          <span className="font-semibold">{data.daysLeft} day{data.daysLeft === 1 ? "" : "s"}</span> left in your first month — free, no card.
+          <span className="font-semibold">{data.daysLeft} day{data.daysLeft === 1 ? "" : "s"}</span> left in your first month.
         </p>
       </div>
     );
@@ -100,7 +100,7 @@ export function AccessGate({ children, action }: { children: React.ReactNode; ac
   return (
     <div className="p-6 rounded-xl border border-[#7f1d1d]" style={{ background: "#1a0b0b" }}>
       <p className="text-sm font-semibold text-[#f87171]">Your free month has ended.</p>
-      <p className="text-xs text-[#c9a3a3] mt-1 leading-relaxed">{action} requires an active plan. Watchmen are always free.</p>
+      <p className="text-xs text-[#dcbcbc] mt-1 leading-relaxed">{action} requires an active plan. Watchmen are always free.</p>
       <PlanButtons />
     </div>
   );

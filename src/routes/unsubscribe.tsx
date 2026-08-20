@@ -55,16 +55,16 @@ function Unsubscribe() {
         </h1>
         <p className="text-[0.65rem] uppercase tracking-[0.2em] text-[#c9a84c] mt-1 mb-8">Accountability. No noise.</p>
 
-        {state === "loading" && <p className="text-[#888] text-sm">One moment…</p>}
+        {state === "loading" && <p className="text-[#b8b0a4] text-sm">One moment…</p>}
         {state === "ready" && (
           <>
-            <p className="text-[#bbb] text-sm mb-6">Stop receiving emails from Kingdom Protocol?</p>
+            <p className="text-[#d0c8bc] text-sm mb-6">Stop receiving emails from Kingdom Protocol?</p>
             <button onClick={confirm} className="w-full py-3 bg-white text-black rounded-md font-semibold">
               Confirm unsubscribe
             </button>
           </>
         )}
-        {state === "done" && <p className="text-[#bbb] text-sm">You&rsquo;re unsubscribed. No further emails will be sent.</p>}
+        {state === "done" && <p className="text-[#d0c8bc] text-sm">You&rsquo;re unsubscribed. No further emails will be sent.</p>}
         {state === "error" && <p className="text-red-400 text-sm">This unsubscribe link is invalid or has expired.</p>}
       </div>
     </main>

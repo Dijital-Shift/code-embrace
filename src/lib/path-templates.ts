@@ -114,12 +114,13 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-fornication",
     category: "Purity",
-    title: "No fornication",
-    description: "Flee fornication. The body is for the Lord.",
+    title: "No fornication — flee youthful lusts",
+    description: "Flee fornication. Possess your vessel in sanctification.",
     lane_type: "avoid",
     support_scripture: [
       "Flee fornication. Every sin that a man doeth is without the body; but he that committeth fornication sinneth against his own body. — 1 Corinthians 6:18 (KJV)",
-      "Be not deceived: neither fornicators… shall inherit the kingdom of God. — 1 Corinthians 6:9-10 (KJV)",
+      "Flee also youthful lusts: but follow righteousness, faith, charity, peace. — 2 Timothy 2:22 (KJV)",
+      "This is the will of God, even your sanctification, that ye should abstain from fornication. — 1 Thessalonians 4:3-5 (KJV)",
     ],
   },
   {
@@ -131,17 +132,6 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     support_scripture: [
       "Whosoever looketh on a woman to lust after her hath committed adultery with her already in his heart. — Matthew 5:28 (KJV)",
       "I made a covenant with mine eyes; why then should I think upon a maid? — Job 31:1 (KJV)",
-    ],
-  },
-  {
-    id: "flee-youthful-lusts",
-    category: "Purity",
-    title: "Flee youthful lusts",
-    description: "Abstain from fornication. Possess your vessel in sanctification.",
-    lane_type: "avoid",
-    support_scripture: [
-      "Flee also youthful lusts: but follow righteousness, faith, charity, peace. — 2 Timothy 2:22 (KJV)",
-      "This is the will of God, even your sanctification, that ye should abstain from fornication. — 1 Thessalonians 4:3-5 (KJV)",
     ],
   },
 

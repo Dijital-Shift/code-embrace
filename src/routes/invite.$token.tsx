@@ -83,14 +83,14 @@ function InvitePage() {
   }
 
   if (isLoading || loading) {
-    return <Shell><p className="text-[#555] text-sm">Loading invite…</p></Shell>;
+    return <Shell><p className="text-[#9e968a] text-sm">Loading invite…</p></Shell>;
   }
 
   if (!preview || !preview.found) {
     return (
       <Shell>
         <h1 className="text-xl font-bold mb-2">Invite not found</h1>
-        <p className="text-sm text-[#888] mb-6">This link is invalid. Ask whoever sent it to send a fresh one.</p>
+        <p className="text-sm text-[#b8b0a4] mb-6">This link is invalid. Ask whoever sent it to send a fresh one.</p>
         <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
       </Shell>
     );
@@ -100,7 +100,7 @@ function InvitePage() {
     return (
       <Shell>
         <h1 className="text-xl font-bold mb-2">Already used</h1>
-        <p className="text-sm text-[#888] mb-6">This invite has already been accepted.</p>
+        <p className="text-sm text-[#b8b0a4] mb-6">This invite has already been accepted.</p>
         <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
       </Shell>
     );
@@ -110,7 +110,7 @@ function InvitePage() {
     return (
       <Shell>
         <h1 className="text-xl font-bold mb-2">Invite cancelled</h1>
-        <p className="text-sm text-[#888] mb-6">The person who sent this cancelled the invite.</p>
+        <p className="text-sm text-[#b8b0a4] mb-6">The person who sent this cancelled the invite.</p>
         <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
       </Shell>
     );
@@ -120,7 +120,7 @@ function InvitePage() {
     return (
       <Shell>
         <h1 className="text-xl font-bold mb-2">Invite expired</h1>
-        <p className="text-sm text-[#888] mb-6">Ask {preview.ownerFirstName ?? "the sender"} to send a fresh link.</p>
+        <p className="text-sm text-[#b8b0a4] mb-6">Ask {preview.ownerFirstName ?? "the sender"} to send a fresh link.</p>
         <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
       </Shell>
     );
@@ -135,10 +135,10 @@ function InvitePage() {
         {ownerName} is asking you to be their Watchman.
       </h1>
       <div className="p-4 rounded-md border border-[#2a2518] mb-6" style={{ background: "#161210" }}>
-        <p className="text-[0.65rem] text-[#666] uppercase tracking-wider mb-1">The path</p>
+        <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-1">The path</p>
         <p className="text-base text-white font-semibold">"{preview.laneTitle}"</p>
       </div>
-      <p className="text-sm text-[#888] mb-6 leading-relaxed">
+      <p className="text-sm text-[#b8b0a4] mb-6 leading-relaxed">
         Watchmen get a ping the moment {ownerName.split(" ")[0]} misses or breaches a check-in.
         You'll see this path in your app and can reach out when it matters.
       </p>
@@ -158,7 +158,7 @@ function InvitePage() {
         <div className="flex flex-col gap-3">
           {authStep === "choose" && (
             <>
-              <p className="text-xs text-[#666] mb-1">Sign in to accept — takes 10 seconds.</p>
+              <p className="text-xs text-[#a8a094] mb-1">Sign in to accept — takes 10 seconds.</p>
               <button
                 onClick={signInWithGoogle}
                 className="w-full py-3.5 bg-white text-black rounded-md font-semibold flex items-center justify-center gap-2"
@@ -167,7 +167,7 @@ function InvitePage() {
               </button>
               <button
                 onClick={() => setAuthStep("email")}
-                className="w-full py-3 rounded-md border border-[#222] text-[#aaa] text-sm"
+                className="w-full py-3 rounded-md border border-[#222] text-[#c8c0b4] text-sm"
                 style={{ background: "#161210" }}
               >
                 Use email instead
@@ -189,7 +189,7 @@ function InvitePage() {
               <button disabled={busy} className="py-3 bg-white text-black rounded-md font-semibold">
                 {busy ? "Sending…" : "Send code"}
               </button>
-              <button type="button" onClick={() => setAuthStep("choose")} className="text-xs text-[#555]">
+              <button type="button" onClick={() => setAuthStep("choose")} className="text-xs text-[#9e968a]">
                 ← Back
               </button>
               {err && <p className="text-red-400 text-xs">{err}</p>}
@@ -197,7 +197,7 @@ function InvitePage() {
           )}
           {authStep === "code" && (
             <form onSubmit={verifyOtp} className="flex flex-col gap-3">
-              <p className="text-xs text-[#888]">Code sent to {email}</p>
+              <p className="text-xs text-[#b8b0a4]">Code sent to {email}</p>
               <input
                 type="text"
                 required

@@ -25,7 +25,7 @@ export function PathTemplateCard({
           {isAvoid ? "Avoid" : "Complete"}
         </span>
       </div>
-      <p className="text-xs text-[#888] mb-3">{template.description}</p>
+      <p className="text-xs text-[#b8b0a4] mb-3">{template.description}</p>
       {variant === "full" && template.support_scripture[0] && (
         <p className="text-[0.72rem] text-[#9a8b5c] italic leading-relaxed mb-3 border-l-2 border-[#2a2518] pl-3">
           {template.support_scripture[0]}

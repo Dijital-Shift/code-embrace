@@ -30,7 +30,7 @@ function AdminPage() {
     onSuccess: () => refetch(),
   });
 
-  if (checking || !adminCheck?.admin) return <p className="text-[#555]">Loading…</p>;
+  if (checking || !adminCheck?.admin) return <p className="text-[#9e968a]">Loading…</p>;
 
   const stats = [
     { label: "Active Users", v: ov?.totalUsers ?? 0 },
@@ -45,22 +45,22 @@ function AdminPage() {
   return (
     <div>
       <h2 className="text-xl font-bold mb-1">Admin</h2>
-      <p className="text-xs text-[#555] mb-6">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+      <p className="text-xs text-[#9e968a] mb-6">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
       <div className="grid gap-2 mb-8" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px,1fr))" }}>
         {stats.map((s) => (
           <div key={s.label} className="p-3 rounded-lg" style={{ background: "#0d0d0d", border: "1px solid #1a1a1a" }}>
-            <p className="text-[0.65rem] text-[#555] uppercase tracking-wide mb-1">{s.label}</p>
+            <p className="text-[0.65rem] text-[#9e968a] uppercase tracking-wide mb-1">{s.label}</p>
             <p className="text-2xl font-bold" style={{ color: (s as any).c ?? "#fff" }}>{s.v}</p>
           </div>
         ))}
       </div>
-      <p className="text-xs text-[#555] uppercase tracking-wide mb-2 font-semibold">Users ({us?.users.length ?? 0})</p>
+      <p className="text-xs text-[#9e968a] uppercase tracking-wide mb-2 font-semibold">Users ({us?.users.length ?? 0})</p>
       <div className="flex flex-col gap-2">
         {(us?.users ?? []).map((u: any) => (
           <div key={u.user_id} className="flex items-center gap-3 p-3 rounded-md" style={{ background: "#0d0d0d", border: "1px solid #1a1a1a" }}>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm truncate">{u.email}</p>
-              <p className="text-[0.7rem] text-[#555]">{u.phone || "no phone"} · {u.timezone}</p>
+              <p className="text-[0.7rem] text-[#9e968a]">{u.phone || "no phone"} · {u.timezone}</p>
             </div>
             <span className="w-2 h-2 rounded-full" style={{ background: u.status === "active" ? "#4ade80" : "#f87171" }} />
             <button
@@ -73,7 +73,7 @@ function AdminPage() {
           </div>
         ))}
       </div>
-      <Link to="/dashboard" className="inline-block mt-6 text-sm text-[#888]">← Back to app</Link>
+      <Link to="/dashboard" className="inline-block mt-6 text-sm text-[#b8b0a4]">← Back to app</Link>
     </div>
   );
 }
