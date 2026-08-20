@@ -64,3 +64,9 @@ Target: each path is roughly one compact row until you answer "No", so ten paths
 ## 8. Trial banner copy
 
 Strip the "free / no card" wording from the "X days left in your first month" countdown wherever it appears (check-in, dashboard, anywhere the banner renders). The countdown line reads only: "X days left in your first month." Homepage marketing copy keeps its "no card" line — that one stays.
+
+## 9. Dashboard shows "Held" even after a breach — confirmed bug
+
+The Active Paths list on the dashboard only asks "is there a check-in for today?" and, if yes, labels the path **Held** — it never looks at the check-in's actual status. So reporting a breach on "No drunkenness" still renders green "Held".
+
+Fix: read the stored status per path and render the real label — **Held** (green), **Breach** (red), **Sabbath** (gold) or **Open** (gold) when nothing is logged yet, using the shared status colors already used on the path page.
