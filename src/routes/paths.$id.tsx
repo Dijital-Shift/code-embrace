@@ -86,6 +86,12 @@ function LaneDetail() {
         {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
           <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
         ))}
+        {/^send scripture/i.test(lane.title ?? "") && (
+          <p className="text-xs text-[#a8a094] mt-2">
+            Easy way to do this:{" "}
+            <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
+          </p>
+        )}
         {lane.notes && (
           <div className="mt-3 pl-3 border-l-2 border-[#c9a84c]/60">
             <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
