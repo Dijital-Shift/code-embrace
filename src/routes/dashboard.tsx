@@ -69,23 +69,6 @@ function Dashboard() {
         </div>
       )}
 
-      {lanes.length > 0 && (standing + fallen) > 0 && (
-        <Link to="/standing" className="block mt-8 p-5 rounded-xl border border-[#2a2518] text-center no-underline" style={{ background: "#161210" }}>
-          <div className="flex items-baseline justify-center gap-4">
-            <div>
-              <div className="text-3xl font-extrabold text-[#4ade80]">{standing}</div>
-              <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Standing</div>
-            </div>
-            <span className="text-[#948d80] text-xl">·</span>
-            <div>
-              <div className="text-2xl font-bold text-[#f87171]">{fallen}</div>
-              <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Fallen</div>
-            </div>
-          </div>
-          <p className="text-[0.7rem] text-[#c2af80] mt-3">Tap to see every path, day by day.</p>
-        </Link>
-      )}
-
       <div className="mt-8">
         <div className="flex justify-between items-center mb-3">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Active Paths</p>
@@ -97,12 +80,14 @@ function Dashboard() {
         ) : (
           <div className="flex flex-col gap-2">
             {lanes.map((lane) => {
-              const checked = checkedIds.has(lane.lane_id);
+              const st = statusByLane.get(lane.lane_id) ?? "pending";
+              const color = statusColor(st);
               return (
                 <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
                   <span className="text-sm font-medium">{lane.title}</span>
-                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color: checked ? "#4ade80" : "#c9a84c", background: checked ? "#052e16" : "#1a1400" }}>
-                    {checked ? "Held" : "Open"}
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color, background: `${color}1a` }}>
+                    {st === "pending" ? "Open" : statusLabel(st)}
+
                   </span>
                 </Link>
               );
