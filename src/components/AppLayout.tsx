@@ -35,7 +35,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <AuthGate>
       <div className="min-h-[100dvh] flex flex-col text-white" style={{ background: "radial-gradient(ellipse 120% 55% at 50% 0%, #1e1800 0%, #100d00 40%, #0a0800 100%)" }}>
         <nav className="nav-desktop-bar">
-          <Link to="/dashboard" className="font-bold text-white no-underline flex items-center">
+          <Link to="/" className="font-bold text-white no-underline flex items-center">
             <span className="text-[#c9a84c]">◆</span>
             <span className="ml-2">Kingdom Protocol</span>
           </Link>
