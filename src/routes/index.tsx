@@ -8,9 +8,9 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kingdom Protocol — Kingdom-minded accountability." },
+      { title: "Kingdom Protocol - Accountability with a watchman" },
       { name: "description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
-      { property: "og:title", content: "Kingdom Protocol — Kingdom-minded accountability." },
+      { property: "og:title", content: "Kingdom Protocol - Accountability with a watchman" },
       { property: "og:description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Kingdom Protocol" },
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
       { property: "og:url", content: "https://kingdomprotocol.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Kingdom Protocol — Kingdom-minded accountability." },
+      { name: "twitter:title", content: "Kingdom Protocol - Accountability with a watchman" },
       { name: "twitter:description", content: "Kingdom-minded accountability. Daily check-ins, paired with a real watchman — before the silence becomes a fall." },
       { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg?v=2" },
       { name: "twitter:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
