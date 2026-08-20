@@ -510,19 +510,3 @@ export const isAdmin = createServerFn({ method: 'GET' })
     const { data } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', context.userId).eq('role', 'admin').maybeSingle();
     return { admin: !!data };
   });
-
-// ===== Standing & Fallen detail (per-path day-by-day) =====
-export const getStandingDetail = createServerFn({ method: 'GET' })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, status').eq('user_id', userId)
-      .in('status', ['active', 'paused']).order('created_at', { ascending: false });
-    const ids = (lanes ?? []).map((l) => l.lane_id);
-    const { data: chks } = ids.length
-      ? await supabase.from('checkins').select('lane_id, checkin_date, status')
-        .in('lane_id', ids).order('checkin_date', { ascending: false })
-      : { data: [] };
-    return { lanes: lanes ?? [], checkins: chks ?? [] };
-  });
