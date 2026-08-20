@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { getSettings, updateProfile } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { TIMEZONE_OPTIONS } from "@/lib/localday";
+
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — Kingdom Protocol" }] }),
@@ -185,6 +187,9 @@ function Settings() {
           )}
         </div>
       )}
+
+      <AppUpdateSection />
     </div>
+
   );
 }

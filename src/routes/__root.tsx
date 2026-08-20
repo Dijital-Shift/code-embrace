@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/lib/auth";
 import {
@@ -8,8 +9,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import UpdateAvailablePill from "@/components/UpdateAvailablePill";
 
 import appCss from "../styles.css?url";
+
 
 function NotFoundComponent() {
   return (
@@ -134,11 +137,27 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    // Deferred to idle so service-worker work never competes with first paint.
+    const idle = (cb: () => void) => {
+      const w = window as unknown as { requestIdleCallback?: (cb: () => void) => void };
+      if (typeof w.requestIdleCallback === "function") w.requestIdleCallback(cb);
+      else window.setTimeout(cb, 0);
+    };
+    idle(() => {
+      void import("@/lib/registerServiceWorker").then((m) =>
+        m.registerAppServiceWorker().catch(() => undefined),
+      );
+    });
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
+        <UpdateAvailablePill />
       </AuthProvider>
     </QueryClientProvider>
   );
 }
+

@@ -38,6 +38,7 @@ import { Route as PathsEditIdRouteImport } from './routes/paths.edit.$id'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
+import { Route as ApiPublicBuildIdRouteImport } from './routes/api/public/build-id'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -193,6 +194,11 @@ const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
   path: '/api/push/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBuildIdRoute = ApiPublicBuildIdRouteImport.update({
+  id: '/api/public/build-id',
+  path: '/api/public/build-id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/paths/new': typeof PathsNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/paths/': typeof PathsIndexRoute
+  '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/paths/new': typeof PathsNewRoute
   '/lanes': typeof LanesIndexRoute
   '/paths': typeof PathsIndexRoute
+  '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -353,6 +361,7 @@ export interface FileRoutesById {
   '/paths/new': typeof PathsNewRoute
   '/lanes/': typeof LanesIndexRoute
   '/paths/': typeof PathsIndexRoute
+  '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -395,6 +404,7 @@ export interface FileRouteTypes {
     | '/paths/new'
     | '/lanes/'
     | '/paths/'
+    | '/api/public/build-id'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/lovable/email/suppression'
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/paths/new'
     | '/lanes'
     | '/paths'
+    | '/api/public/build-id'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/lovable/email/suppression'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/paths/new'
     | '/lanes/'
     | '/paths/'
+    | '/api/public/build-id'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
     | '/lovable/email/suppression'
@@ -516,6 +528,7 @@ export interface RootRouteChildren {
   PathsNewRoute: typeof PathsNewRoute
   LanesIndexRoute: typeof LanesIndexRoute
   PathsIndexRoute: typeof PathsIndexRoute
+  ApiPublicBuildIdRoute: typeof ApiPublicBuildIdRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   PathsEditIdRoute: typeof PathsEditIdRoute
@@ -735,6 +748,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPushSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/build-id': {
+      id: '/api/public/build-id'
+      path: '/api/public/build-id'
+      fullPath: '/api/public/build-id'
+      preLoaderRoute: typeof ApiPublicBuildIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -839,6 +859,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathsNewRoute: PathsNewRoute,
   LanesIndexRoute: LanesIndexRoute,
   PathsIndexRoute: PathsIndexRoute,
+  ApiPublicBuildIdRoute: ApiPublicBuildIdRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   PathsEditIdRoute: PathsEditIdRoute,
