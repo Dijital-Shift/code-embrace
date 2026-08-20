@@ -123,8 +123,17 @@ function Login() {
               type="button"
               onClick={async () => {
                 setErr(null);
-                const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-                if (r.error) setErr("Google sign-in failed. Try email instead.");
+                const r = await lovable.auth.signInWithOAuth("google", {
+                  redirect_uri: `${window.location.origin}/dashboard`,
+                });
+                if (r.error) {
+                  setErr("Google sign-in failed. Try email instead.");
+                  return;
+                }
+                if (r.redirected) return;
+                // Popup/preview variant: tokens are already set on the client.
+                tryClaim();
+                navigate({ to: "/dashboard", replace: true });
               }}
               className="w-full py-3 bg-white text-black rounded-md font-semibold flex items-center justify-center gap-2 mb-3"
             >
