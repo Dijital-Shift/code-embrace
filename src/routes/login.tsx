@@ -145,13 +145,13 @@ function Login() {
             </h1>
             <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
               {mode === "signin"
-                ? "Enter your email and we'll send a one-time code."
-                : "No card. Enter your email and we'll send a one-time code to create your account."}
+                ? "Enter your email and we'll send an 8-digit code."
+                : "No card. Enter your email and we'll send an 8-digit code to create your account."}
             </p>
           </>
         ) : (
           <p className="text-sm text-[#a8a094] mt-1 mb-6 text-center">
-            {`Enter the code we sent to ${email}`}
+            {`Enter the 8-digit code we sent to ${email}`}
           </p>
         )}
 
