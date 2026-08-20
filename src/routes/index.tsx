@@ -146,7 +146,7 @@ function ProblemTension() {
         <h2 className="text-3xl sm:text-4xl font-bold leading-tight text-white mb-6">
           The <em className="not-italic" style={{ color: GOLD }}>quiet</em> break.
         </h2>
-        <p className="text-[#bdb8ae] text-lg leading-relaxed mb-6 text-left sm:text-center">
+        <p className="text-[#bdb8ae] text-lg leading-relaxed mb-6 text-center">
           Monday you were certain. Tuesday you were tired. By Thursday you're lying to a notification, and the streak you built is a number you stopped looking at. The app meant to help you wanted eleven taps and a mood emoji. You gave it neither. The thing you swore off on Sunday is already in your hand. You fell in the dark. Nobody knows. That's the worst part.
         </p>
         <p className="text-white text-lg sm:text-xl font-medium leading-relaxed mb-10">
