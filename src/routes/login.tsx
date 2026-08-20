@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -21,6 +21,7 @@ function Login() {
   const [token, setToken] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   async function tryClaim() {
     try {
@@ -32,12 +33,6 @@ function Login() {
     } catch {}
   }
 
-  useEffect(() => {
-    if (!loading && user) {
-      tryClaim().finally(() => navigate({ to: "/dashboard" }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, user]);
 
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
