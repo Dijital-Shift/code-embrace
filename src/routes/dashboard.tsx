@@ -51,12 +51,12 @@ function Dashboard() {
 
       {pendingCount > 0 ? (
         <div className="p-5 rounded-xl border border-[#c9a84c33]" style={{ background: "linear-gradient(135deg, #0f0d00 0%, #0a0800 100%)" }}>
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="flex justify-between items-center gap-3">
+            <div className="min-w-0">
               <p className="font-semibold mb-1">{pendingCount} path{pendingCount > 1 ? "s" : ""} need attention</p>
               <p className="text-[#b8b0a4] text-sm">Check in before your bedtime window closes.</p>
             </div>
-            <Link to="/checkin" className="px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-sm">Check In</Link>
+            <Link to="/checkin" className="shrink-0 whitespace-nowrap px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-sm">Check In</Link>
           </div>
         </div>
       ) : lanes.length > 0 ? (
