@@ -214,7 +214,7 @@ function EncourageBox({ laneId, send, onSent }: { laneId: string; send: any; onS
         onChange={(e) => setBody(e.target.value.slice(0, 280))}
         rows={2}
         placeholder="A verse, a line, a prayer. They'll see it."
-        className="w-full px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-white outline-none resize-none"
+        className="w-full px-3 py-2 text-base bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
       />
       <div className="flex justify-between items-center mt-2">
         <span className="text-[0.65rem] text-[#948d80]">{body.length}/280</span>

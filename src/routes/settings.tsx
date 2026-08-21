@@ -135,7 +135,7 @@ function Settings() {
             This is your invite link. Send it to anyone you want using Kingdom Protocol. They open it, sign up, and start their own paths — it does not make them your watchman.
           </p>
           <div className="flex items-center gap-2">
-            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#c8c0b4] outline-none" />
+            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
             <button
               type="button"
               onClick={async () => {
