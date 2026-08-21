@@ -448,7 +448,7 @@ export const sendEncouragement = createServerFn({ method: 'POST' })
       await sendPushToUser(lane.user_id, {
         title: `Encouragement — ${lane.title}`,
         body,
-        url: '/dashboard',
+        url: `/paths/${data.laneId}`,
       });
     } catch {}
     return { success: true };
