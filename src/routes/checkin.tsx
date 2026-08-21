@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { getCheckinPage, submitCheckin, skipCheckin } from "@/lib/api.functions";
+import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/lib/api.functions";
+import { Check, X } from "lucide-react";
+
 import { AppLayout } from "@/components/AppLayout";
 import { AccessGate, AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
