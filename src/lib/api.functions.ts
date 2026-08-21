@@ -113,7 +113,7 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id)
       .eq('user_id', userId)
       .single();
-    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0 };
+    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0, encouragements: [] };
     let partnerEmail: string | null = null;
     if (lane.partner_id) {
       const { data: p } = await supabaseAdmin.from('profiles').select('email').eq('user_id', lane.partner_id).single();
