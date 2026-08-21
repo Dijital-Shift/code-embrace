@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useRef, useState, useLayoutEffect } from "react";
+import { ChevronDown } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PATH_CATEGORIES, PATH_TEMPLATES } from "@/lib/path-templates";
+
 
 export const Route = createFileRoute("/paths/library")({
   head: () => ({
