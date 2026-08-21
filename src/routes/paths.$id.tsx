@@ -33,6 +33,16 @@ function LaneDetail() {
 
   const { data, isLoading } = useQuery({ queryKey: ["lane", id], queryFn: () => getFn({ data: { id } }) });
 
+  // Mark received encouragements as read once they've been rendered on this page.
+  useEffect(() => {
+    if (markedRef.current) return;
+    const unread = ((data as any)?.encouragements ?? []).filter((e: any) => !e.read_at).map((e: any) => e.id);
+    if (!unread.length) return;
+    markedRef.current = true;
+    markReadFn({ data: { ids: unread } }).catch(() => {});
+  }, [data, markReadFn]);
+
+
   const [pending, setPending] = useState<null | "paused" | "archived" | "delete">(null);
   const [reason, setReason] = useState("");
 
