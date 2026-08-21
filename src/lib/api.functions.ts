@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 import { sendPushToUser } from './push.server';
 import { requireAccess } from './access.server';
-import { userDay } from './day.server';
+import { userDay, invalidateUserTimezone } from './day.server';
 import { friendlyLaneError } from './lane-errors.server';
 import { localDate, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import {
