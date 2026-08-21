@@ -58,6 +58,7 @@ export const updateProfile = createServerFn({ method: 'POST' })
     const update = data.gender ? { ...baseUpdate, gender: data.gender } : baseUpdate;
     const { error } = await supabase.from('profiles').update(update).eq('user_id', userId);
     if (error) return { error: error.message };
+    invalidateUserTimezone(userId);
     return { success: true };
   });
 
