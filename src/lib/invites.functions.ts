@@ -93,12 +93,6 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       .maybeSingle();
 
     if (!invite) return { error: 'Invite not found.' };
-    if (invite.status === 'accepted') return { error: 'This invite has already been used.' };
-    if (invite.status === 'revoked') return { error: 'This invite was cancelled.' };
-    if (new Date(invite.expires_at) < new Date()) {
-      return { error: 'This invite has expired.' };
-    }
-    if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
 
     const { data: lane } = await supabaseAdmin
       .from('lanes')
@@ -107,10 +101,20 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       .single();
 
     if (!lane) return { error: 'Path no longer exists.' };
-    if (lane.status === 'archived') return { error: 'This path has been archived.' };
+
+    // Retap / reload: if they're already the watchman, send them to their view
+    // instead of the "already used" dead end. This check comes FIRST on purpose.
     if (lane.partner_id === userId) {
-      return { error: 'You are already a Watchman on this path.', alreadyWatchman: true };
+      return { success: true, alreadyWatchman: true, laneId: lane.lane_id, laneTitle: lane.title };
     }
+
+    if (invite.status === 'accepted') return { error: 'This invite has already been used.' };
+    if (invite.status === 'revoked') return { error: 'This invite was cancelled.' };
+    if (new Date(invite.expires_at) < new Date()) {
+      return { error: 'This invite has expired.' };
+    }
+    if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
+    if (lane.status === 'archived') return { error: 'This path has been archived.' };
     if (lane.partner_id) return { error: 'This path already has a Watchman.' };
 
     const { count: myWatchmanCount } = await supabaseAdmin
@@ -123,16 +127,23 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       return { error: "You're already watching 2 paths. That's the limit." };
     }
 
-    const { error: updErr } = await supabaseAdmin
+    // Conditional write closes the read-then-write race: only one concurrent
+    // accept can flip a NULL partner_id, the loser gets zero rows back.
+    const { data: claimed, error: updErr } = await supabaseAdmin
       .from('lanes')
       .update({
         partner_id: userId,
         partner_email: accepterEmail,
         partner_relationship: invite.relationship ?? null,
       })
-      .eq('lane_id', invite.lane_id);
+      .eq('lane_id', invite.lane_id)
+      .is('partner_id', null)
+      .select('lane_id');
 
     if (updErr) return { error: updErr.message };
+    if (!claimed || claimed.length === 0) {
+      return { error: 'This path already has a Watchman.' };
+    }
 
     await supabaseAdmin
       .from('lane_invites')
@@ -177,14 +188,57 @@ export const listLaneInvites = createServerFn({ method: 'POST' })
 // Owner removes the current Watchman
 export const removeWatchman = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ laneId: z.string().uuid() }))
+  .inputValidator(z.object({
+    laneId: z.string().uuid(),
+    reason: z.string().min(3).max(500),
+  }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const reason = data.reason.trim();
+    if (reason.length < 3) return { error: 'A reason is required to remove a Watchman.' };
+
+    const { data: lane } = await supabase
+      .from('lanes')
+      .select('lane_id, title, partner_id')
+      .eq('lane_id', data.laneId)
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (!lane) return { error: 'Path not found.' };
+    if (!lane.partner_id) return { error: 'This path has no Watchman.' };
+    const removedId = lane.partner_id;
+
     const { error } = await supabase
       .from('lanes')
       .update({ partner_id: null, partner_email: null })
       .eq('lane_id', data.laneId)
       .eq('user_id', userId);
     if (error) return { error: error.message };
+
+    // Tell the watchman — silently dropping someone is the thing we don't do.
+    const { data: owner } = await supabaseAdmin
+      .from('profiles').select('first_name, email').eq('user_id', userId).maybeSingle();
+    const who = (owner?.first_name || owner?.email || 'Someone') as string;
+    const when = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const message = `${who} removed you from ${lane.title} on ${when}.`;
+
+    await supabaseAdmin.from('notifications').insert({
+      lane_id: lane.lane_id,
+      partner_id: removedId,
+      type: 'watchman_removed',
+      status: 'sent',
+      channel: 'in_app',
+      message_content: `${message} Reason: ${reason}`,
+      sent_at: new Date().toISOString(),
+    });
+
+    try {
+      const { sendPushToUser } = await import('@/lib/push.server');
+      await sendPushToUser(removedId, {
+        title: 'Watch ended',
+        body: message,
+        url: '/partner',
+      });
+    } catch {}
+
     return { success: true };
   });
