@@ -80,12 +80,14 @@ export const linkPendingLanes = createServerFn({ method: 'POST' })
     await supabaseAdmin.from('profiles').upsert({ user_id: userId, email }, { onConflict: 'user_id' });
     await supabaseAdmin.from('lanes').update({ partner_id: userId })
       .eq('partner_email', email).is('partner_id', null);
+    const { data: prof } = await supabaseAdmin.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
+    const needsName = !(prof?.first_name ?? '').trim();
     // Seed admin role if email in ADMIN_EMAILS
     const admins = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
     if (admins.includes(email)) {
       await supabaseAdmin.from('user_roles').upsert({ user_id: userId, role: 'admin' as any }, { onConflict: 'user_id,role' });
     }
-    return { ok: true };
+    return { ok: true, needsName };
   });
 
 // ===== Lanes =====
@@ -98,7 +100,17 @@ export const listMyLanes = createServerFn({ method: 'GET' })
       .select('lane_id, title, description, notes, status, created_at, partner_email, partner_id, lane_type, support_scripture, ends_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    return data ?? [];
+    const lanes = data ?? [];
+    const partnerIds = [...new Set(lanes.map((l) => l.partner_id).filter(Boolean))] as string[];
+    const names = new Map<string, string | null>();
+    if (partnerIds.length) {
+      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, first_name').in('user_id', partnerIds);
+      for (const p of ps ?? []) names.set(p.user_id, p.first_name);
+    }
+    return lanes.map((l) => ({
+      ...l,
+      partner_name: l.partner_id ? (names.get(l.partner_id) || null) : null,
+    }));
 
   });
 
@@ -113,11 +125,13 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id)
       .eq('user_id', userId)
       .single();
-    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0, encouragements: [], ownerFirstName: null };
+    if (!lane) return { lane: null, checkins: [], partnerEmail: null, partnerName: null, standing: 0, fallen: 0, encouragements: [], ownerFirstName: null };
     let partnerEmail: string | null = null;
+    let partnerName: string | null = null;
     if (lane.partner_id) {
-      const { data: p } = await supabaseAdmin.from('profiles').select('email').eq('user_id', lane.partner_id).single();
+      const { data: p } = await supabaseAdmin.from('profiles').select('email, first_name').eq('user_id', lane.partner_id).single();
       partnerEmail = p?.email ?? null;
+      partnerName = (p?.first_name ?? null) || null;
     }
     // Full history for this path only — never before the day the path was created.
     const { tz } = await userDay(supabase, userId);
@@ -134,7 +148,7 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id).eq('owner_id', userId)
       .order('created_at', { ascending: false }).limit(5);
     const { data: me } = await supabase.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
-    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen, encouragements: encouragements ?? [], ownerFirstName: me?.first_name ?? null };
+    return { lane, checkins: history.slice(0, 14), partnerEmail, partnerName, standing, fallen, encouragements: encouragements ?? [], ownerFirstName: me?.first_name ?? null };
 
   });
 

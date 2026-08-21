@@ -141,20 +141,20 @@ function MockInviteWatchman() {
       <div className="flex items-center gap-2">
         <Users className="h-4 w-4 text-[#c9a84c]" />
         <div className="text-sm font-semibold text-white">Watchmen</div>
-        <span className="ml-auto text-[10px] text-[#a8a094]">1/2</span>
+        <span className="ml-auto text-[10px] text-[#a8a094]">1 active · 1 pending</span>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
-        <div className="text-[11px] text-white">marcus@example.com</div>
+        <div className="text-[11px] text-white">Marcus</div>
         <div className="text-[10px] text-[#4ade80]">Active · accepted yesterday</div>
       </div>
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3">
-        <div className="text-[11px] text-[#c9a84c] mb-2">Second invite pending · expires in 47h</div>
+        <div className="text-[11px] text-[#c9a84c] mb-2">Invite pending · expires in 47h</div>
         <div className="flex items-center gap-2">
           <input readOnly value="kingdom-protocol.app/invite/x9k…" className="flex-1 truncate rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[10px] text-[#b8b0a4] outline-none" />
           <button className="rounded bg-[#c9a84c] px-2 py-1.5 text-[10px] font-bold text-black">Copy</button>
         </div>
       </div>
-      <div className="text-[10px] leading-relaxed text-[#9e968a]">Up to two watchmen per path. In the mouth of two witnesses (Matt. 18:16). Links expire in 48 hours.</div>
+      <div className="text-[10px] leading-relaxed text-[#9e968a]">One active watchman per path, plus one invite pending. Links expire in 48 hours.</div>
     </div>
   );
 }
@@ -172,7 +172,7 @@ function MockPartnerInvite() {
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Path</div>
         <div className="text-sm text-white">Fast · ends Dec 20</div>
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Your role</div>
-        <div className="text-sm text-[#c9a84c]">Watchman — pinged when they miss or break the fast.</div>
+        <div className="text-sm text-[#c9a84c]">Watchman — pinged on a Breach, or after two Silent days.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#b8b0a4]">Decline</button>
@@ -246,7 +246,7 @@ function MockMissedNudge() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Bell className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Nudge — you missed last night</div>
+        <div className="text-sm font-semibold text-white">Nudge — you were Silent last night</div>
       </div>
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3 text-xs text-[#c9a84c]">
         Your fast went un-checked. Your watchman hasn't been pinged yet — submit before morning.
@@ -286,13 +286,13 @@ function MockWatchmanPing() {
 
 function MockPartnerView() {
   const days = [
-    { d: "Mon", state: "clean" },
-    { d: "Tue", state: "clean" },
-    { d: "Wed", state: "stumble" },
-    { d: "Thu", state: "clean" },
-    { d: "Fri", state: "clean" },
-    { d: "Sat", state: "clean" },
-    { d: "Sun", state: "missed" },
+    { d: "Mon", state: "held" },
+    { d: "Tue", state: "held" },
+    { d: "Wed", state: "breach" },
+    { d: "Thu", state: "held" },
+    { d: "Fri", state: "held" },
+    { d: "Sat", state: "sabbath" },
+    { d: "Sun", state: "silent" },
   ];
   return (
     <div className="space-y-3">
@@ -306,9 +306,10 @@ function MockPartnerView() {
             <div
               className={cn(
                 "mx-auto h-8 w-8 rounded-md border",
-                x.state === "clean" && "border-[#c9a84c]/50 bg-[#c9a84c]/15",
-                x.state === "stumble" && "border-[#8a6f2e] bg-[#8a6f2e]/30",
-                x.state === "missed" && "border-red-900/60 bg-red-950/40",
+                x.state === "held" && "border-[#4ade80]/50 bg-[#4ade80]/15",
+                x.state === "sabbath" && "border-[#c9a84c]/50 bg-[#c9a84c]/15",
+                x.state === "breach" && "border-[#f87171]/60 bg-[#f87171]/20",
+                x.state === "silent" && "border-[#f59e0b]/60 bg-[#f59e0b]/15",
               )}
             />
             <div className="mt-1 text-[9px] uppercase tracking-wider text-[#a8a094]">{x.d}</div>
@@ -391,7 +392,7 @@ function MockPathComplete() {
       <div className="text-lg font-bold text-white">Fast complete</div>
       <div className="text-xs text-[#b8b0a4]">21 days · Nov 29 → Dec 20</div>
       <div className="rounded-md border border-[#166534] p-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
-        <div className="text-[11px] text-[#4ade80]">Auto-archived. Watchman notified — path completed honorably.</div>
+        <div className="text-[11px] text-[#4ade80]">End date reached. Archive it yourself when you're ready to close it out.</div>
       </div>
       <div className="text-[11px] italic text-[#b8b0a4]">"Is not this the fast that I have chosen?" — Isa 58:6</div>
     </div>
@@ -434,8 +435,8 @@ const SCENES: Scene[] = [
     id: "invite",
     step: 3,
     role: "user",
-    title: "Invite up to two watchmen",
-    body: "One private invite link per watchman. Copy it, send by text or DM — no email forms, no group chats. Up to two watchmen per path, because in the mouth of two witnesses every word is established (Matt. 18:16).",
+    title: "Invite your watchman",
+    body: "One private invite link. Copy it, send by text or DM — no email forms, no group chats. A path carries one active watchman, with one invite pending while you wait on a reply.",
     why: "Why it matters: one voice can be ignored. Two who love you can't.",
     render: MockInviteWatchman,
     divider: "Your watchman",
@@ -474,7 +475,7 @@ const SCENES: Scene[] = [
     role: "user",
     title: "Miss one night — get a nudge",
     body: "Silence isn't a hiding place. You get a private nudge first thing, with a chance to submit yesterday before 10AM.",
-    why: "Why it matters: life happens. One missed night shouldn't drag in a watchman if you can still own it.",
+    why: "Why it matters: life happens. One Silent night shouldn't drag in a watchman if you can still own it.",
     render: MockMissedNudge,
   },
   {
@@ -491,7 +492,7 @@ const SCENES: Scene[] = [
     step: 9,
     role: "watchman",
     title: "Watchman sees the week, not your soul",
-    body: "Seven dots — aligned, breach, missed. Your breach notes if you wrote them.",
+    body: "Seven dots — Held, Breach, Silent, Sabbath. Your breach notes if you wrote them.",
     why: "Why it matters: the watchman role finally has a screen. Equipped to help, not guess.",
     render: MockPartnerView,
   },
@@ -518,9 +519,9 @@ const SCENES: Scene[] = [
     id: "complete",
     step: 12,
     role: "user",
-    title: "Time-bound paths finish honorably",
-    body: "When the Ends-on date hits, the path auto-archives. Your watchman gets a one-time completion ping — not a missed nudge.",
-    why: "Why it matters: a fast that ends well is a vow kept. The system honors the finish line.",
+    title: "Time-bound paths have a finish line",
+    body: "The Ends-on date is your finish line — it shows on the path so you and your watchman both see it coming. When it lands, you close the path out yourself.",
+    why: "Why it matters: a fast without a visible end drifts. A dated path ends as a vow kept.",
     render: MockPathComplete,
   },
 ];

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,8 +46,19 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     navigate({ to: "/login", replace: true });
   }, [loading, user, hasStoredSession, navigate]);
 
+  // Mandatory name capture: a signed-in user with no first name on file is
+  // pushed to /onboarding before anything else renders. linkPendingLanes
+  // already runs on every gated mount, so it reports the flag.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   useEffect(() => {
-    if (user) link().catch(() => {});
+    if (!user) return;
+    link()
+      .then((r: any) => {
+        if (r?.needsName && pathname !== "/onboarding") {
+          navigate({ to: "/onboarding", replace: true });
+        }
+      })
+      .catch(() => {});
   }, [user?.id]);
 
   if (!user) {
