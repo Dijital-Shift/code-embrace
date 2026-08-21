@@ -39,7 +39,28 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const url = (event.notification.data as { url?: string } | undefined)?.url || "/";
-  event.waitUntil(self.clients.openWindow(url));
+  event.waitUntil(
+    (async () => {
+      const target = new URL(url, self.registration.scope);
+      const windows = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+      });
+      // Reuse an open window — a fresh openWindow() causes a white flash and
+      // a full document load even when the app is already running.
+      const existing = windows.find((c) => new URL(c.url).origin === target.origin);
+      if (existing) {
+        try {
+          await existing.focus();
+        } catch {
+          /* ignore */
+        }
+        existing.postMessage({ type: "NAVIGATE", url: target.pathname + target.search });
+        return;
+      }
+      await self.clients.openWindow(target.href);
+    })(),
+  );
 });
 
 // ------------------------------------------------------- update control
