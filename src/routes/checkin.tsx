@@ -181,17 +181,17 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
       {open && (
         <div className="mt-2.5">
           <textarea
-            rows={2} required value={explanation} onChange={(e) => setExplanation(e.target.value)}
+            rows={2} required minLength={5} value={explanation} onChange={(e) => setExplanation(e.target.value)}
             placeholder="What happened? Be honest."
-            className="w-full p-2.5 text-sm rounded-md bg-[#0a0800] border border-[#2a2518] text-white outline-none resize-none"
+            className="w-full p-2.5 text-base rounded-md bg-[#0a0800] border border-[#2a2518] text-white outline-none resize-none"
           />
           <div className="flex items-center gap-3 mt-2">
             <button
               type="button"
-              disabled={busy || !explanation.trim()}
+              disabled={busy || explanation.trim().length < 5}
               onClick={() => send("breach")}
               className="px-3 py-1.5 rounded-md text-xs font-bold"
-              style={{ background: explanation.trim() ? "#7f1d1d" : "#2a2518", color: explanation.trim() ? "#fff" : "#7d7668" }}
+              style={{ background: explanation.trim().length >= 5 ? "#7f1d1d" : "#2a2518", color: explanation.trim().length >= 5 ? "#fff" : "#7d7668" }}
             >{busy ? "Submitting…" : "Submit"}</button>
             <button type="button" onClick={() => { setOpen(false); setExplanation(""); }} className="text-[0.7rem] text-[#a8a094] underline">Cancel</button>
           </div>

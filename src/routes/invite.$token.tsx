@@ -138,9 +138,10 @@ function InvitePage() {
         <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-1">The path</p>
         <p className="text-base text-white font-semibold">"{preview.laneTitle}"</p>
       </div>
-      <p className="text-sm text-[#b8b0a4] mb-6 leading-relaxed">
-        Watchmen get a ping the moment {ownerName.split(" ")[0]} misses or breaches a check-in.
-        You'll see this path in your app and can reach out when it matters.
+      <p className="text-sm text-[#c8c0b4] mb-6 leading-relaxed">
+        Here's what it costs you: a ping when {ownerName.split(" ")[0]} logs a breach on this path,
+        and a ping if two days pass with no check-in at all. Nothing else — no daily noise.
+        You'll see the path in your app, and you reach out when one of those pings lands.
       </p>
 
       {user ? (
