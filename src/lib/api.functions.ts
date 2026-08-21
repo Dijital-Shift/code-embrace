@@ -113,7 +113,7 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id)
       .eq('user_id', userId)
       .single();
-    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0, encouragements: [] };
+    if (!lane) return { lane: null, checkins: [], partnerEmail: null, standing: 0, fallen: 0, encouragements: [], ownerFirstName: null };
     let partnerEmail: string | null = null;
     if (lane.partner_id) {
       const { data: p } = await supabaseAdmin.from('profiles').select('email').eq('user_id', lane.partner_id).single();
@@ -130,10 +130,11 @@ export const getLane = createServerFn({ method: 'GET' })
     const standing = history.filter((c) => c.status === 'completed').length;
     const fallen = history.filter((c) => c.status === 'breached' || c.status === 'missed').length;
     const { data: encouragements } = await supabase
-      .from('encouragements').select('id, body, created_at')
+      .from('encouragements').select('id, body, created_at, read_at')
       .eq('lane_id', data.id).eq('owner_id', userId)
       .order('created_at', { ascending: false }).limit(5);
-    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen, encouragements: encouragements ?? [] };
+    const { data: me } = await supabase.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
+    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen, encouragements: encouragements ?? [], ownerFirstName: me?.first_name ?? null };
 
   });
 
@@ -327,6 +328,9 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
     if (data.response === 'breach' && !data.explanation?.trim()) return { error: 'Explanation required when reporting a breach.' };
+    if (data.response === 'breach' && (data.explanation ?? '').trim().length < 5) {
+      return { error: 'Write at least a few words about what happened.' };
+    }
     const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found or inactive.' };
@@ -524,4 +528,16 @@ export const isAdmin = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { data } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', context.userId).eq('role', 'admin').maybeSingle();
     return { admin: !!data };
+  });
+
+export const markEncouragementsRead = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ ids: z.array(z.string().uuid()).max(20) }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    if (!data.ids.length) return { success: true };
+    await supabase.from('encouragements')
+      .update({ read_at: new Date().toISOString() })
+      .in('id', data.ids).eq('owner_id', userId).is('read_at', null);
+    return { success: true };
   });
