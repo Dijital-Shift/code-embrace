@@ -140,20 +140,21 @@ function LaneDetail() {
           </p>
           <textarea
             rows={3}
+            minLength={5}
             maxLength={500}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Why are you stepping off this path?"
-            className="w-full px-3 py-2 text-sm bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
+            className="w-full px-3 py-2 text-base bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
           />
           <div className="flex gap-2 mt-3">
             <button
-              disabled={!reason.trim() || setStatus.isPending}
+              disabled={reason.trim().length < 5 || setStatus.isPending}
               onClick={() => {
                 if (pending !== "delete") setStatus.mutate({ status: pending, reason: reason.trim() });
               }}
               className="px-4 py-2 rounded-md text-xs font-bold"
-              style={{ background: reason.trim() ? "#c9a84c" : "#2a2518", color: reason.trim() ? "#0a0800" : "#7d7668" }}
+              style={{ background: reason.trim().length >= 5 ? "#c9a84c" : "#2a2518", color: reason.trim().length >= 5 ? "#0a0800" : "#7d7668" }}
             >
               {pending === "paused" ? "Pause and notify" : "Archive and notify"}
             </button>
