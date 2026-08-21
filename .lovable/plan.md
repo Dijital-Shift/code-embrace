@@ -1,40 +1,35 @@
-# Pass 2 — Check-in interaction, undo, encouragements, library
+# Two fixes: Check In button + notification tap
 
-## 1. Check-in rows: green check / red X
+## 1. Dashboard "Check In" button wraps to two lines
 
-Every path row (both "complete" and "avoid" types) gets the same compact control: a green check button and a red X button, sized as a matched pair instead of long full-width buttons. Tapping the check logs the day immediately. Tapping the X opens the mandatory "What happened? Be honest." field (5-character minimum, already enforced) with a short Submit.
+The button in the "paths need attention" card wraps ("Check" / "In") on narrow
+phones because the card's text block squeezes it.
 
-Same row height and spacing for late/today sections so ten paths still fit on one screen without scroll fatigue.
+Fix in `src/routes/dashboard.tsx`:
+- Add `whitespace-nowrap` and `shrink-0` to the Check In link so it always sits
+  on one line.
+- Let the text block shrink (`min-w-0`) so the layout stays balanced instead of
+  pushing the button narrow.
 
-## 2. Undo after logging
+## 2. Tapping a push notification flashes white / hard-refreshes
 
-Once a day is logged, the row moves to "Logged" and shows an obvious gold "Undo" affordance next to the status. Tapping it reverts the day back to unlogged and the row returns to Today. This wires up the existing but unused revert function on the server.
+Today the service worker always calls `clients.openWindow(url)` on
+`notificationclick`. If the app is already open, that spawns a fresh document
+load — the white flash and the jarring reload.
 
-Undo stays available for the current local day only — once the day rolls over, the record stands.
+Fix in `src/sw.ts`:
+- On `notificationclick`, list existing window clients first.
+- If one is already open on this origin: `focus()` it and send it a
+  `{ type: "NAVIGATE", url }` message instead of reloading.
+- Only fall back to `openWindow(url)` when no window exists.
 
-## 3. Recent encouragements on the watchman page
+Fix on the app side (`src/routes/__root.tsx`):
+- Listen for `navigator.serviceWorker` messages of type `NAVIGATE` and call
+  the router's client-side navigate to that path. No document load, no flash —
+  it slides to the path page the same as tapping a link in-app.
 
-Add a "Recent encouragements" section on the watchman page listing the last encouragements sent, with the path name and date, so a watchman can see what they've already said rather than repeating themselves.
+## Notes
 
-## 4. Pull-to-refresh
-
-Add pull-to-refresh on the main logged-in screens (dashboard, check-in, watchman, paths) so a downward pull at the top of the page refetches that page's data.
-
-## 5. Path library as accordion
-
-The library currently renders every category expanded. Change each category to a collapsible section, all collapsed by default except the first, with the count of paths shown on the header.
-
-## 6. Edit button alignment
-
-The Edit action on the path detail page is a link rather than a button, so its text sits slightly off compared to Pause / Archive / Delete. Match padding, line-height, and centering exactly.
-
-## Technical notes
-
-- `src/routes/checkin.tsx` — replace the `PathRow` yes/no controls with icon buttons (lucide `Check` / `X`), keep the existing honesty-field gating and 5-char minimum.
-- `src/lib/api.functions.ts` — expose `revertComplete` to the client path; guard it to the current local day using `src/lib/localday.ts`, and invalidate `checkin` + path queries.
-- `src/routes/partner.tsx` — extend `getPartnerView` to return recent `encouragements` rows for the signed-in watchman and render them.
-- Pull-to-refresh: small shared hook using touch events + `queryClient.invalidateQueries`, applied inside `AppLayout`.
-- `src/routes/paths.library.tsx` — wrap each category in the existing shadcn `Accordion`.
-- `src/routes/paths.$id.tsx` line ~130 — align the Edit link's classes with the sibling action buttons.
-
-Pass 3 (identity/name gate, invite accept ordering, remove-watchman reason + notification, demo page fixes) stays queued.
+Neither change touches check-in logic, data, or the update/refresh flow.
+The notification behavior only takes effect on the published app after the new
+service worker rolls out (the usual one update cycle).
