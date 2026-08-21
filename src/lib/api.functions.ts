@@ -403,6 +403,13 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       .eq('user_id', userId).eq('status', 'active');
     const { count: myEncouragementCount } = await supabase.from('encouragements')
       .select('id', { count: 'exact', head: true }).eq('watchman_id', userId);
+    const { data: sentEncouragementRows } = await supabase.from('encouragements')
+      .select('id, body, created_at, lane_id')
+      .eq('watchman_id', userId).order('created_at', { ascending: false }).limit(5);
+    const laneTitles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
+    const sentEncouragements = (sentEncouragementRows ?? []).map((e) => ({
+      ...e, lane_title: laneTitles.get(e.lane_id) ?? 'Path',
+    }));
     const { data: profile } = await supabase.from('profiles')
       .select('dismissed_watchman_prompt').eq('user_id', userId).maybeSingle();
     return {
@@ -412,8 +419,10 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       showNudge: (ownLaneCount ?? 0) === 0,
       myActiveLaneCount: ownLaneCount ?? 0,
       myEncouragementCount: myEncouragementCount ?? 0,
+      sentEncouragements,
       dismissedWatchmanPrompt: !!profile?.dismissed_watchman_prompt,
     };
+
   });
 
 export const sendEncouragement = createServerFn({ method: 'POST' })
