@@ -1,0 +1,1 @@
+CREATE POLICY "Owner can mark encouragements read" ON public.encouragements FOR UPDATE TO authenticated USING (owner_id = auth.uid()) WITH CHECK (owner_id = auth.uid());
