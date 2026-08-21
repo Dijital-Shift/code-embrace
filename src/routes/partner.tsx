@@ -144,6 +144,26 @@ function Partner() {
         </section>
       )}
 
+      {(data?.sentEncouragements ?? []).length > 0 && (
+        <section className="mb-10">
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Recent encouragements sent</p>
+          <div className="flex flex-col gap-3">
+            {(data?.sentEncouragements ?? []).map((e: any) => (
+              <div key={e.id} className="p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+                <div className="flex justify-between items-center mb-1.5 gap-3">
+                  <span className="text-xs font-semibold text-[#c9a84c] truncate">{e.lane_title}</span>
+                  <span className="text-[0.7rem] text-[#a8a094] shrink-0">
+                    {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </span>
+                </div>
+                <p className="text-xs text-[#ded8cc] leading-relaxed whitespace-pre-wrap">{e.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+
       {notifications.length > 0 && (
         <section>
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Alert History</p>

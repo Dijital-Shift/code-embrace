@@ -156,6 +156,7 @@ export type Database = {
           id: string
           lane_id: string
           owner_id: string
+          read_at: string | null
           watchman_id: string
         }
         Insert: {
@@ -164,6 +165,7 @@ export type Database = {
           id?: string
           lane_id: string
           owner_id: string
+          read_at?: string | null
           watchman_id: string
         }
         Update: {
@@ -172,6 +174,7 @@ export type Database = {
           id?: string
           lane_id?: string
           owner_id?: string
+          read_at?: string | null
           watchman_id?: string
         }
         Relationships: [
