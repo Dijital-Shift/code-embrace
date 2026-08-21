@@ -129,7 +129,12 @@ export const getLane = createServerFn({ method: 'GET' })
     const history = allChks ?? [];
     const standing = history.filter((c) => c.status === 'completed').length;
     const fallen = history.filter((c) => c.status === 'breached' || c.status === 'missed').length;
-    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen };
+    const { data: encouragements } = await supabase
+      .from('encouragements').select('id, body, created_at')
+      .eq('lane_id', data.id).eq('owner_id', userId)
+      .order('created_at', { ascending: false }).limit(5);
+    return { lane, checkins: history.slice(0, 14), partnerEmail, standing, fallen, encouragements: encouragements ?? [] };
+
   });
 
 
