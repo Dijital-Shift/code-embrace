@@ -68,8 +68,18 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
       return { found: false as const };
     }
     const row = rows[0];
+    // The RPC doesn't expose the path description; fetch it for the invite screen.
+    let laneDescription: string | null = null;
+    const { data: inv } = await supabaseAdmin
+      .from('lane_invites').select('lane_id').eq('token', data.token).maybeSingle();
+    if (inv?.lane_id) {
+      const { data: l } = await supabaseAdmin
+        .from('lanes').select('description').eq('lane_id', inv.lane_id).maybeSingle();
+      laneDescription = l?.description ?? null;
+    }
     return {
       found: true as const,
+      laneDescription,
       status: row.status as 'pending' | 'accepted' | 'revoked' | 'expired',
       expired: row.expired as boolean,
       laneTitle: row.lane_title as string,
