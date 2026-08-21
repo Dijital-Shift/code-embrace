@@ -107,7 +107,24 @@ function LaneDetail() {
       </div>
 
 
+      {(data?.encouragements ?? []).length > 0 && (
+        <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Recent encouragements received</p>
+          <div className="flex flex-col gap-3">
+            {(data?.encouragements ?? []).map((e: any) => (
+              <div key={e.id} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+                <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{e.body}</p>
+                <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
+                  {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} />
+
 
       <div className="mt-8 flex gap-2 flex-wrap">
         {lane.status !== "active" && (
