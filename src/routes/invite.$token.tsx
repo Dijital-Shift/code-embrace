@@ -34,13 +34,13 @@ function InvitePage() {
   async function accept() {
     setAccepting(true);
     setErr(null);
-    const r = await acceptFn({ data: { token } });
+    const r: any = await acceptFn({ data: { token } });
     setAccepting(false);
-    if ("error" in r && r.error) {
-      if ((r as any).alreadyWatchman) {
-        navigate({ to: "/partner" });
-        return;
-      }
+    if (r?.alreadyWatchman) {
+      navigate({ to: "/partner" });
+      return;
+    }
+    if (r?.error) {
       setErr(r.error);
       return;
     }
@@ -137,12 +137,18 @@ function InvitePage() {
       <div className="p-4 rounded-md border border-[#2a2518] mb-6" style={{ background: "#161210" }}>
         <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-1">The path</p>
         <p className="text-base text-white font-semibold">"{preview.laneTitle}"</p>
+        {preview.laneDescription && (
+          <p className="text-xs text-[#b8b0a4] mt-1.5 leading-relaxed">{preview.laneDescription}</p>
+        )}
       </div>
       <p className="text-sm text-[#c8c0b4] mb-6 leading-relaxed">
         Here's what it costs you: a ping when {ownerName.split(" ")[0]} logs a breach on this path,
         and a ping if two days pass with no check-in at all. Nothing else — no daily noise.
         You'll see the path in your app, and you reach out when one of those pings lands.
       </p>
+      <Link to="/demo" className="inline-block text-xs text-[#c9a84c] underline mb-6">
+        How does this work?
+      </Link>
 
       {user ? (
         <>

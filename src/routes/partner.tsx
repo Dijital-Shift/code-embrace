@@ -94,7 +94,7 @@ function Partner() {
                       <p className="font-semibold text-sm mb-1">{lane.title}</p>
                       <p className="text-xs text-[#948d80]">
                         {rel && <span className="text-[#c9a84c] font-semibold">{rel} · </span>}
-                        {lane.owner?.email}
+                        {lane.owner?.first_name || lane.owner?.email}
                       </p>
                     </div>
                     <div className="text-right">

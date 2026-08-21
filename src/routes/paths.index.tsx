@@ -44,7 +44,7 @@ function Lanes() {
                     <p className="font-semibold text-sm">{lane.title}</p>
                     {lane.description && <p className="text-xs text-[#a8a094]">{lane.description}</p>}
                     <p className="text-[0.72rem]" style={{ color: hasWatchman ? "#4ade80" : "#c9a84c" }}>
-                      {hasWatchman ? `Watchman: ${lane.partner_email ?? "—"}` : "No Watchman yet — tap to invite"}
+                      {hasWatchman ? `Watchman: ${(lane as any).partner_name || lane.partner_email || "—"}` : "No Watchman yet — tap to invite"}
                     </p>
                   </div>
                   <span className="text-[0.65rem] px-2 py-1 rounded-full font-semibold uppercase" style={{ background: "#052e16", color: "#4ade80" }}>Active</span>

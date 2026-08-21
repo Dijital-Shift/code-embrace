@@ -139,7 +139,7 @@ function LaneDetail() {
         </div>
       )}
 
-      <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
+      <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} watchmanName={(data as any)?.partnerName ?? null} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
 
 
       <div className="mt-8 flex gap-2 flex-wrap">
@@ -234,7 +234,7 @@ function LaneDetail() {
   );
 }
 
-function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, ownerName, pathTitle }: { laneId: string; hasWatchman: boolean; watchmanEmail: string | null; ownerName?: string | null; pathTitle?: string }) {
+function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, ownerName, pathTitle }: { laneId: string; hasWatchman: boolean; watchmanEmail: string | null; watchmanName?: string | null; ownerName?: string | null; pathTitle?: string }) {
   const inviteText = (url: string) => `${ownerName || "Someone"} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
@@ -298,8 +298,17 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, ownerName, pathTitl
   }
 
   async function remove() {
-    if (!confirm("Remove this Watchman? They'll stop receiving pings for this path.")) return;
-    await removeFn({ data: { laneId } });
+    const reason = window.prompt(
+      "Removing a Watchman is not silent — they'll be told. Why are you removing them?",
+    );
+    if (reason === null) return;
+    if (reason.trim().length < 3) {
+      toast.error("A reason is required to remove a Watchman.");
+      return;
+    }
+    const r: any = await removeFn({ data: { laneId, reason: reason.trim() } });
+    if (r?.error) { toast.error(r.error); return; }
+    toast.success("Watchman removed — they've been notified.");
     qc.invalidateQueries({ queryKey: ["lane", laneId] });
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
@@ -324,7 +333,7 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, ownerName, pathTitl
       {hasWatchman && (
         <div className="flex items-center justify-between gap-3 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#1a1612" }}>
           <div className="min-w-0">
-            <p className="text-sm text-white truncate">{watchmanEmail ?? "—"}</p>
+            <p className="text-sm text-white truncate">{watchmanName || watchmanEmail || "—"}</p>
             <p className="text-xs text-[#4ade80]">Active Watchman</p>
           </div>
           <button onClick={remove} className="text-xs text-[#f87171] px-3 py-1.5 rounded border border-[#3a1a1a]" style={{ background: "#1a0a0a" }}>
