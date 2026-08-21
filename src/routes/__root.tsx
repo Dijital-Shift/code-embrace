@@ -156,8 +156,10 @@ function RootComponent() {
       <AuthProvider>
         <Outlet />
         <UpdateAvailablePill />
+        <Toaster />
       </AuthProvider>
     </QueryClientProvider>
   );
+
 }
 
