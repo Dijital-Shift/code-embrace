@@ -246,7 +246,7 @@ function MockMissedNudge() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Bell className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Nudge — you missed last night</div>
+        <div className="text-sm font-semibold text-white">Nudge — you were Silent last night</div>
       </div>
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3 text-xs text-[#c9a84c]">
         Your fast went un-checked. Your watchman hasn't been pinged yet — submit before morning.
@@ -475,7 +475,7 @@ const SCENES: Scene[] = [
     role: "user",
     title: "Miss one night — get a nudge",
     body: "Silence isn't a hiding place. You get a private nudge first thing, with a chance to submit yesterday before 10AM.",
-    why: "Why it matters: life happens. One missed night shouldn't drag in a watchman if you can still own it.",
+    why: "Why it matters: life happens. One Silent night shouldn't drag in a watchman if you can still own it.",
     render: MockMissedNudge,
   },
   {
@@ -492,7 +492,7 @@ const SCENES: Scene[] = [
     step: 9,
     role: "watchman",
     title: "Watchman sees the week, not your soul",
-    body: "Seven dots — aligned, breach, missed. Your breach notes if you wrote them.",
+    body: "Seven dots — Held, Breach, Silent, Sabbath. Your breach notes if you wrote them.",
     why: "Why it matters: the watchman role finally has a screen. Equipped to help, not guess.",
     render: MockPartnerView,
   },
@@ -519,9 +519,9 @@ const SCENES: Scene[] = [
     id: "complete",
     step: 12,
     role: "user",
-    title: "Time-bound paths finish honorably",
-    body: "When the Ends-on date hits, the path auto-archives. Your watchman gets a one-time completion ping — not a missed nudge.",
-    why: "Why it matters: a fast that ends well is a vow kept. The system honors the finish line.",
+    title: "Time-bound paths have a finish line",
+    body: "The Ends-on date is your finish line — it shows on the path so you and your watchman both see it coming. When it lands, you close the path out yourself.",
+    why: "Why it matters: a fast without a visible end drifts. A dated path ends as a vow kept.",
     render: MockPathComplete,
   },
 ];
