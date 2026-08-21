@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { getCheckinPage, submitCheckin, skipCheckin } from "@/lib/api.functions";
+import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/lib/api.functions";
+import { Check, X } from "lucide-react";
+
 import { AppLayout } from "@/components/AppLayout";
 import { AccessGate, AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
@@ -117,15 +119,17 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
   const qc = useQueryClient();
   const submit = useServerFn(submitCheckin);
   const skip = useServerFn(skipCheckin);
+  const revert = useServerFn(revertComplete);
   const [open, setOpen] = useState(false);
   const [explanation, setExplanation] = useState("");
   const [result, setResult] = useState<null | "completed" | "breached" | "skipped">(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [canUndo, setCanUndo] = useState(false);
 
   const isAvoid = lane.lane_type === "avoid";
-  const yesLabel = isAvoid ? "Yes — held" : "Did it";
-  const noLabel = isAvoid ? "No — breach" : "Didn't";
+  const yesLabel = isAvoid ? "Held" : "Did it";
+  const noLabel = isAvoid ? "Breach" : "Didn't";
 
   async function send(response: "aligned" | "breach") {
     if (busy) return;
@@ -134,6 +138,18 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     setResult(response === "aligned" ? "completed" : "breached");
+    if (response === "aligned") setCanUndo(true);
+    qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["checkin"] });
+  }
+
+  async function undo() {
+    if (busy) return;
+    setBusy(true); setErr(null);
+    const r: any = await revert({ data: { laneId: lane.lane_id } });
+    setBusy(false);
+    if (r?.error) { setErr(r.error); return; }
+    setResult(null); setCanUndo(false); setOpen(false);
     qc.invalidateQueries({ queryKey: ["dashboard"] });
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
@@ -148,9 +164,25 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
 
   if (result) {
     return (
-      <div className="flex justify-between items-center px-3 py-2.5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-        <span className="text-sm text-[#ded8cc]">{lane.title}</span>
-        <span className="text-xs font-semibold" style={{ color: statusColor(result) }}>{statusLabel(result)}</span>
+      <div className="rounded-lg border border-[#2a2518] overflow-hidden" style={{ background: "#161210" }}>
+        <div className="flex justify-between items-center px-3 py-2.5">
+          <span className="text-sm text-[#ded8cc]">{lane.title}</span>
+          <span className="text-xs font-semibold" style={{ color: statusColor(result) }}>{statusLabel(result)}</span>
+        </div>
+        {canUndo && (
+          <div
+            className="flex items-center justify-between gap-3 px-3 py-2.5 border-t border-[#2a2518]"
+            style={{ background: "#0e1a12" }}
+          >
+            <span className="text-xs text-[#9ec9ac]">Logged. You can undo this for 30 minutes.</span>
+            <button
+              type="button" disabled={busy} onClick={undo}
+              className="px-3 py-1.5 rounded-md text-xs font-bold shrink-0"
+              style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
+            >{busy ? "Undoing…" : "Undo"}</button>
+          </div>
+        )}
+        {err && <p className="text-red-400 text-xs px-3 pb-2.5">{err}</p>}
       </div>
     );
   }
@@ -162,21 +194,30 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
           {isLate && <span className="text-[0.6rem] text-[#f59e0b] font-semibold uppercase tracking-wider block">Late — yesterday</span>}
           <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
         </div>
-        <div className="flex gap-1.5 flex-shrink-0">
+        <div className="flex gap-2 flex-shrink-0">
           <button
             type="button" disabled={busy}
+            aria-label={yesLabel}
+            title={yesLabel}
             onClick={() => { setOpen(false); send("aligned"); }}
-            className="px-3 py-1.5 rounded-md text-xs font-semibold"
+            className="w-10 h-10 rounded-full flex items-center justify-center"
             style={{ border: "1px solid #1f5133", background: "#0b2016", color: "#4ade80" }}
-          >{busy && !open ? "…" : yesLabel}</button>
+          >
+            {busy && !open ? <span className="text-xs">…</span> : <Check size={20} strokeWidth={3} />}
+          </button>
           <button
             type="button" disabled={busy}
+            aria-label={noLabel}
+            title={noLabel}
             onClick={() => { setOpen((v) => !v); setErr(null); }}
-            className="px-3 py-1.5 rounded-md text-xs font-semibold"
+            className="w-10 h-10 rounded-full flex items-center justify-center"
             style={{ border: `1px solid ${open ? "#f87171" : "#4a1f1f"}`, background: open ? "#2d0d0d" : "#1a0f0f", color: "#f87171" }}
-          >{noLabel}</button>
+          >
+            <X size={20} strokeWidth={3} />
+          </button>
         </div>
       </div>
+
 
       {open && (
         <div className="mt-2.5">
