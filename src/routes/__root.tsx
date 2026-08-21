@@ -10,6 +10,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import UpdateAvailablePill from "@/components/UpdateAvailablePill";
+import { Toaster } from "@/components/ui/sonner";
+
 
 import appCss from "../styles.css?url";
 
@@ -156,8 +158,10 @@ function RootComponent() {
       <AuthProvider>
         <Outlet />
         <UpdateAvailablePill />
+        <Toaster />
       </AuthProvider>
     </QueryClientProvider>
   );
+
 }
 

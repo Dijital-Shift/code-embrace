@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { getLane, updateLaneStatus, deleteLane } from "@/lib/api.functions";
+import { useEffect, useRef, useState } from "react";
+import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead } from "@/lib/api.functions";
 import {
   createLaneInvite,
   listLaneInvites,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/invites.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { statusColor, statusLabel } from "@/lib/status";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/paths/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -27,8 +28,20 @@ function LaneDetail() {
   const deleteFn = useServerFn(deleteLane);
   const qc = useQueryClient();
   const [err, setErr] = useState<string | null>(null);
+  const markReadFn = useServerFn(markEncouragementsRead);
+  const markedRef = useRef(false);
 
   const { data, isLoading } = useQuery({ queryKey: ["lane", id], queryFn: () => getFn({ data: { id } }) });
+
+  // Mark received encouragements as read once they've been rendered on this page.
+  useEffect(() => {
+    if (markedRef.current) return;
+    const unread = ((data as any)?.encouragements ?? []).filter((e: any) => !e.read_at).map((e: any) => e.id);
+    if (!unread.length) return;
+    markedRef.current = true;
+    markReadFn({ data: { ids: unread } }).catch(() => {});
+  }, [data, markReadFn]);
+
 
   const [pending, setPending] = useState<null | "paused" | "archived" | "delete">(null);
   const [reason, setReason] = useState("");
@@ -113,6 +126,9 @@ function LaneDetail() {
           <div className="flex flex-col gap-3">
             {(data?.encouragements ?? []).map((e: any) => (
               <div key={e.id} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+                {!e.read_at && (
+                  <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5">New</span>
+                )}
                 <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{e.body}</p>
                 <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
                   {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
@@ -123,28 +139,28 @@ function LaneDetail() {
         </div>
       )}
 
-      <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} />
+      <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
 
 
       <div className="mt-8 flex gap-2 flex-wrap">
         {lane.status !== "active" && (
-          <button onClick={() => setStatus.mutate({ status: "active" })} className="px-4 py-2 bg-white text-black rounded-md text-xs font-semibold">Set Active</button>
+          <button onClick={() => setStatus.mutate({ status: "active" })} className="inline-flex items-center justify-center px-4 py-2 bg-white text-black rounded-md text-xs font-semibold leading-none">Set Active</button>
         )}
         {lane.status === "active" && (
-          <button onClick={() => { setErr(null); setReason(""); setPending("paused"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#b8b0a4]" style={{ background: "#2a2518" }}>Pause</button>
+          <button onClick={() => { setErr(null); setReason(""); setPending("paused"); }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#b8b0a4]" style={{ background: "#2a2518" }}>Pause</button>
         )}
         {lane.status !== "archived" && (
-          <button onClick={() => { setErr(null); setReason(""); setPending("archived"); }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
+          <button onClick={() => { setErr(null); setReason(""); setPending("archived"); }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
         )}
         {canDelete && (
           <button
             disabled={del.isPending}
             onClick={() => { setErr(null); del.mutate(); }}
-            className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#f87171]"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]"
             style={{ background: "#1a0a0a" }}
           >{del.isPending ? "Deleting…" : "Delete"}</button>
         )}
-        <Link to="/paths/edit/$id" params={{ id }} className="px-4 py-2 rounded-md text-xs font-semibold border border-[#222] text-[#ded8cc] no-underline" style={{ background: "#2a2518" }}>Edit</Link>
+        <Link to="/paths/edit/$id" params={{ id }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#ded8cc] no-underline" style={{ background: "#2a2518" }}>Edit</Link>
       </div>
 
       {pending && (
@@ -218,7 +234,8 @@ function LaneDetail() {
   );
 }
 
-function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string; hasWatchman: boolean; watchmanEmail: string | null }) {
+function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, ownerName, pathTitle }: { laneId: string; hasWatchman: boolean; watchmanEmail: string | null; ownerName?: string | null; pathTitle?: string }) {
+  const inviteText = (url: string) => `${ownerName || "Someone"} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
   const listFn = useServerFn(listLaneInvites);
@@ -254,7 +271,7 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
     if ("token" in r && r.token) {
       const url = `${window.location.origin}/invite/${r.token}`;
       try {
-        await navigator.clipboard.writeText(url);
+        await navigator.clipboard.writeText(inviteText(url));
         setCopied(url);
       } catch {
         setCopied(url);
@@ -266,8 +283,9 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
   async function copy(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(inviteText(url));
       setCopied(url);
+      toast.success("Invite text copied");
     } catch {
       setCopied(url);
     }
@@ -275,6 +293,7 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
 
   async function revoke(inviteId: string) {
     await revokeFn({ data: { inviteId } });
+    toast.success("Invite canceled");
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
 
@@ -323,7 +342,7 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail }: { laneId: string;
               <button onClick={() => revoke(inv.invite_id)} className="text-[0.65rem] text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
             <div className="flex items-center gap-2">
-              <input readOnly value={url} className="flex-1 px-2 py-1.5 text-xs bg-[#0a0800] border border-[#222] rounded text-[#b8b0a4] outline-none" />
+              <input readOnly value={inviteText(url)} className="flex-1 px-2 py-1.5 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
               <button onClick={() => copy(inv.token)} className="text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold">Copy</button>
             </div>
           </div>

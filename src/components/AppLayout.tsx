@@ -1,6 +1,6 @@
-import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { CheckCircle, Users, Settings as SettingsIcon, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import {
@@ -15,12 +15,6 @@ import {
 } from "@/components/ui/alert-dialog";
 
 
-const items = [
-  { href: "/checkin", icon: CheckCircle, label: "Check In" },
-  { href: "/partner", icon: Users, label: "Watchman" },
-  { href: "/settings", icon: SettingsIcon, label: "Settings" },
-] as const;
-
 const menuItems = [
   { href: "/dashboard", label: "Home" },
   { href: "/paths", label: "Paths" },
@@ -32,7 +26,6 @@ const menuItems = [
 
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { pathname } = useLocation();
   const router = useRouter();
   const { signOut } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -108,19 +101,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </AlertDialogContent>
         </AlertDialog>
 
-        <main className="flex-1 px-5 pb-20 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
-        <nav className="nav-mobile-only fixed bottom-0 left-0 right-0 h-16 flex items-center justify-around z-50" style={{ background: "#0a0a0a", borderTop: "1px solid #1a1a1a", paddingBottom: "env(safe-area-inset-bottom)" }}>
-          {items.map(({ href, icon: Icon, label }) => {
-            const active = pathname === href || pathname.startsWith(href);
-            const color = active ? "#c9a84c" : "#7d7668";
-            return (
-              <Link key={href} to={href} className="flex flex-col items-center justify-center gap-[3px] flex-1 h-full no-underline">
-                <Icon size={22} strokeWidth={active ? 2.5 : 1.5} color={color} />
-                <span className="text-[0.58rem]" style={{ color }}>{label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        <main className="flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
       </div>
     </AuthGate>
   );
