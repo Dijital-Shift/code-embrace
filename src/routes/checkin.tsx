@@ -97,12 +97,7 @@ function CheckIn() {
           <div className="flex flex-col gap-1.5">
             {done.map((l) => {
               const c = todayMap.get(l.lane_id)!;
-              return (
-                <div key={l.lane_id} className="flex justify-between items-center px-3 py-2.5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-                  <span className="text-sm text-[#ded8cc]">{l.title}</span>
-                  <span className="text-xs font-semibold" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
-                </div>
-              );
+              return <LoggedRow key={l.lane_id} lane={l} checkin={c} />;
             })}
           </div>
         </section>
