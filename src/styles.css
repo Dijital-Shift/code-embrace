@@ -51,10 +51,12 @@ button, nav a { user-select: none; -webkit-user-select: none; }
 }
 .nav-mobile-only { display: none; }
 .nav-mobile-top { display: none; }
+.nav-mobile-header { display: none; }
 @media (max-width: 600px) {
   .nav-desktop-bar { display: none; }
   .nav-mobile-only { display: block; }
   .nav-mobile-top { display: flex; }
+  .nav-mobile-header { display: flex; position: sticky; top: 0; z-index: 40; }
 }
 
 /* Lifetime pricing card — one-time shimmer */
