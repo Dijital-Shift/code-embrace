@@ -242,3 +242,48 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
     </div>
   );
 }
+
+/**
+ * A check-in already logged for today. Keeps the Undo affordance alive for
+ * 30 minutes after a "Held" entry, so it survives a page refresh.
+ */
+function LoggedRow({ lane, checkin }: { lane: Lane; checkin: { status: string; completion_time?: string | null } }) {
+  const qc = useQueryClient();
+  const revert = useServerFn(revertComplete);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const ageMin = checkin.completion_time
+    ? (Date.now() - new Date(checkin.completion_time).getTime()) / 60000
+    : Infinity;
+  const canUndo = checkin.status === "completed" && ageMin < 30;
+
+  async function undo() {
+    if (busy) return;
+    setBusy(true); setErr(null);
+    const r: any = await revert({ data: { laneId: lane.lane_id } });
+    setBusy(false);
+    if (r?.error) { setErr(r.error); return; }
+    qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["checkin"] });
+  }
+
+  return (
+    <div className="rounded-lg border border-[#2a2518] overflow-hidden" style={{ background: "#161210" }}>
+      <div className="flex justify-between items-center gap-3 px-3 py-2.5">
+        <span className="text-sm text-[#ded8cc] min-w-0 truncate">{lane.title}</span>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs font-semibold" style={{ color: statusColor(checkin.status) }}>{statusLabel(checkin.status)}</span>
+          {canUndo && (
+            <button
+              type="button" disabled={busy} onClick={undo}
+              className="px-3 py-1.5 rounded-md text-xs font-bold"
+              style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
+            >{busy ? "Undoing…" : "Undo"}</button>
+          )}
+        </div>
+      </div>
+      {err && <p className="text-red-400 text-xs px-3 pb-2.5">{err}</p>}
+    </div>
+  );
+}
