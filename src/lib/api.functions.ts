@@ -293,7 +293,7 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
       .select('lane_id, title, description, lane_type').eq('user_id', userId).eq('status', 'active');
     const ids = (lanes ?? []).map((l) => l.lane_id);
     const { data: chks } = ids.length
-      ? await supabase.from('checkins').select('lane_id, checkin_date, status')
+      ? await supabase.from('checkins').select('lane_id, checkin_date, status, completion_time')
         .eq('user_id', userId).in('checkin_date', [today, yest]).in('lane_id', ids)
       : { data: [] };
     return { lanes: lanes ?? [], checkins: chks ?? [], today, yesterday: yest };
