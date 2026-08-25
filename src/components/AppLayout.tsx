@@ -16,12 +16,11 @@ import {
 
 
 const menuItems = [
-  { href: "/dashboard", label: "Home" },
-  { href: "/paths", label: "Paths" },
-  { href: "/checkin", label: "Check In" },
-  
-  { href: "/partner", label: "Watchman" },
-  { href: "/settings", label: "Settings" },
+  { href: "/dashboard", label: "Home", short: "Home", icon: Home },
+  { href: "/paths", label: "Paths", short: "Paths", icon: RouteIcon },
+  { href: "/checkin", label: "Check In", short: "Check", icon: CircleCheck },
+  { href: "/partner", label: "Watchman", short: "Watch", icon: Eye },
+  { href: "/settings", label: "Settings", short: "Settings", icon: Settings },
 ] as const;
 
 
@@ -29,7 +28,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { signOut } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
 
   return (
