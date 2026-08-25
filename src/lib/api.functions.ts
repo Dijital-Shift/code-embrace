@@ -293,7 +293,7 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
       .select('lane_id, title, description, lane_type').eq('user_id', userId).eq('status', 'active');
     const ids = (lanes ?? []).map((l) => l.lane_id);
     const { data: chks } = ids.length
-      ? await supabase.from('checkins').select('lane_id, checkin_date, status')
+      ? await supabase.from('checkins').select('lane_id, checkin_date, status, completion_time')
         .eq('user_id', userId).in('checkin_date', [today, yest]).in('lane_id', ids)
       : { data: [] };
     return { lanes: lanes ?? [], checkins: chks ?? [], today, yesterday: yest };
@@ -319,11 +319,13 @@ export const revertComplete = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ laneId: z.string().uuid() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { today } = await userDay(supabase, userId);
-    const { data: c } = await supabase.from('checkins')
-      .select('checkin_id, completion_time').eq('lane_id', data.laneId).eq('user_id', userId)
-      .eq('checkin_date', today).eq('status', 'completed').single();
-    if (!c) return { error: 'No completed check-in for today.' };
+    const { today, yesterday } = await userDay(supabase, userId);
+    const { data: rows } = await supabase.from('checkins')
+      .select('checkin_id, completion_time, checkin_date').eq('lane_id', data.laneId).eq('user_id', userId)
+      .in('checkin_date', [today, yesterday]).eq('status', 'completed')
+      .order('checkin_date', { ascending: false });
+    const c = (rows ?? [])[0];
+    if (!c) return { error: 'No completed check-in to undo.' };
     const ageMin = (Date.now() - new Date(c.completion_time!).getTime()) / 60000;
     if (ageMin > 30) return { error: 'Check-ins can only be undone within 30 minutes.' };
     await supabase.from('checkins').delete().eq('checkin_id', c.checkin_id);

@@ -1,6 +1,6 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import {
@@ -16,12 +16,11 @@ import {
 
 
 const menuItems = [
-  { href: "/dashboard", label: "Home" },
-  { href: "/paths", label: "Paths" },
-  { href: "/checkin", label: "Check In" },
-  
-  { href: "/partner", label: "Watchman" },
-  { href: "/settings", label: "Settings" },
+  { href: "/dashboard", label: "Home", short: "Home", icon: Home },
+  { href: "/paths", label: "Paths", short: "Paths", icon: RouteIcon },
+  { href: "/checkin", label: "Check In", short: "Check", icon: CircleCheck },
+  { href: "/partner", label: "Watchman", short: "Watch", icon: Eye },
+  { href: "/settings", label: "Settings", short: "Settings", icon: Settings },
 ] as const;
 
 
@@ -29,7 +28,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { signOut } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
 
   return (
@@ -51,37 +50,37 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
 
-        {/* Mobile top bar — wordmark + hamburger */}
-        <div className="nav-mobile-top items-center justify-between px-5 py-3" style={{ borderBottom: "1px solid #2a2518" }}>
-          <Link to="/" className="font-bold text-white no-underline flex items-center text-sm">
-            <span className="text-[#c9a84c]">◆</span>
-            <span className="ml-2">Kingdom Protocol</span>
-          </Link>
-          <button
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((v) => !v)}
-            className="bg-transparent border-0 p-1 cursor-pointer text-[#c9a84c]"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+        {/* Mobile top bar — wordmark + icon nav */}
+        <div className="nav-mobile-header flex-col" style={{ background: "#0a0800", borderBottom: "1px solid #2a2518" }}>
+          <div className="flex items-center justify-between px-5 py-3">
+            <Link to="/" className="font-bold text-white no-underline flex items-center text-sm">
+              <span className="text-[#c9a84c]">◆</span>
+              <span className="ml-2">Kingdom Protocol</span>
+            </Link>
+          </div>
+          <nav className="grid grid-cols-5" style={{ borderTop: "1px solid #1d190f" }}>
+            {menuItems.map((i) => {
+              const active = pathname === i.href || pathname.startsWith(i.href + "/");
+              const Icon = i.icon;
+              return (
+                <Link
+                  key={i.href}
+                  to={i.href}
+                  aria-label={i.label}
+                  className="flex flex-col items-center justify-center gap-1 py-2 min-h-[52px] no-underline"
+                  style={{
+                    color: active ? "#c9a84c" : "#9e968a",
+                    borderBottom: active ? "2px solid #c9a84c" : "2px solid transparent",
+                  }}
+                >
+                  <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+                  <span className="text-[0.625rem] leading-none">{i.short}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        {menuOpen && (
-          <div className="nav-mobile-top flex-col px-5 py-3 gap-1" style={{ background: "#0e0b04", borderBottom: "1px solid #2a2518" }}>
-            {menuItems.map((i) => (
-              <Link
-                key={i.href}
-                to={i.href}
-                onClick={() => setMenuOpen(false)}
-                className="py-2.5 text-sm no-underline text-[#ded8cc]"
-              >{i.label}</Link>
-            ))}
-            <button
-              onClick={() => { setMenuOpen(false); setConfirmOpen(true); }}
-              className="text-left py-2.5 bg-transparent border-0 text-[#c2af80] text-sm cursor-pointer p-0"
-            >Sign Out</button>
-          </div>
-        )}
 
         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
           <AlertDialogContent className="bg-[#100d05] border border-[#2a2415] text-white">
