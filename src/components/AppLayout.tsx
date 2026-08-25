@@ -1,6 +1,6 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import {
