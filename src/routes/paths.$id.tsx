@@ -69,7 +69,8 @@ function LaneDetail() {
 
   const checkins = data?.checkins ?? [];
   // Delete is only offered while no watchman is locked in — nobody to notify.
-  const canDelete = !lane.partner_id;
+  const canDelete = (data?.watchmen ?? []).length === 0;
+
   
 
   return (
