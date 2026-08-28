@@ -57,6 +57,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <span className="text-[#c9a84c]">◆</span>
               <span className="ml-2">Kingdom Protocol</span>
             </Link>
+            <button
+              onClick={() => setConfirmOpen(true)}
+              className="bg-transparent border-0 text-[#9e968a] text-xs cursor-pointer p-0"
+              aria-label="Sign out"
+            >
+              Sign out
+            </button>
           </div>
           <nav className="grid grid-cols-5" style={{ borderTop: "1px solid #1d190f" }}>
             {menuItems.map((i) => {
