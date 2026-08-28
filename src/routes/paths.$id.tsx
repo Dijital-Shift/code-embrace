@@ -139,7 +139,7 @@ function LaneDetail() {
         </div>
       )}
 
-      <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} watchmanName={(data as any)?.partnerName ?? null} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
+      <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
 
 
       <div className="mt-8 flex gap-2 flex-wrap">
