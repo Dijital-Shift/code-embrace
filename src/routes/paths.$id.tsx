@@ -69,7 +69,8 @@ function LaneDetail() {
 
   const checkins = data?.checkins ?? [];
   // Delete is only offered while no watchman is locked in — nobody to notify.
-  const canDelete = !lane.partner_id;
+  const canDelete = (data?.watchmen ?? []).length === 0;
+
   
 
   return (
@@ -129,17 +130,21 @@ function LaneDetail() {
                 {!e.read_at && (
                   <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5">New</span>
                 )}
+                {e.context && (
+                  <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{e.context}</p>
+                )}
                 <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{e.body}</p>
                 <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
-                  {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                  {e.from_name} · {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                 </p>
+
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <WatchmenPanel laneId={id} hasWatchman={!!lane.partner_id} watchmanEmail={data?.partnerEmail ?? lane.partner_email ?? null} watchmanName={(data as any)?.partnerName ?? null} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
+      <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
 
 
       <div className="mt-8 flex gap-2 flex-wrap">
@@ -234,13 +239,16 @@ function LaneDetail() {
   );
 }
 
-function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, ownerName, pathTitle }: { laneId: string; hasWatchman: boolean; watchmanEmail: string | null; watchmanName?: string | null; ownerName?: string | null; pathTitle?: string }) {
+type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
+
+function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
   const inviteText = (url: string) => `${ownerName || "Someone"} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
   const listFn = useServerFn(listLaneInvites);
   const revokeFn = useServerFn(revokeLaneInvite);
   const removeFn = useServerFn(removeWatchman);
+
 
   const [copied, setCopied] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -297,21 +305,22 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, owner
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
 
-  async function remove() {
+  async function remove(w: WatchmanSlot) {
     const reason = window.prompt(
-      "Removing a Watchman is not silent — they'll be told. Why are you removing them?",
+      `Removing ${w.name} is not silent — they'll be told. Why are you removing them?`,
     );
     if (reason === null) return;
     if (reason.trim().length < 3) {
       toast.error("A reason is required to remove a Watchman.");
       return;
     }
-    const r: any = await removeFn({ data: { laneId, reason: reason.trim() } });
+    const r: any = await removeFn({ data: { laneId, watchmanRowId: w.id, reason: reason.trim() } });
     if (r?.error) { toast.error(r.error); return; }
     toast.success("Watchman removed — they've been notified.");
     qc.invalidateQueries({ queryKey: ["lane", laneId] });
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
+
 
   function hoursLeft(expiresAt: string) {
     const ms = new Date(expiresAt).getTime() - Date.now();
@@ -320,8 +329,9 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, owner
     return `${h}h`;
   }
 
-  const slotCount = (hasWatchman ? 1 : 0) + activePending.length;
+  const slotCount = watchmen.length + activePending.length;
   const atCap = slotCount >= 2;
+  const emptySlots = Math.max(0, 2 - slotCount);
 
   return (
     <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
@@ -330,17 +340,20 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, owner
         <span className="text-xs text-[#a8a094]">{slotCount}/2</span>
       </div>
 
-      {hasWatchman && (
-        <div className="flex items-center justify-between gap-3 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#1a1612" }}>
+      {watchmen.map((w) => (
+        <div key={w.id} className="flex items-center justify-between gap-3 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#1a1612" }}>
           <div className="min-w-0">
-            <p className="text-sm text-white truncate">{watchmanName || watchmanEmail || "—"}</p>
-            <p className="text-xs text-[#4ade80]">Active Watchman</p>
+            <p className="text-sm text-white truncate">{w.name}</p>
+            <p className="text-xs text-[#4ade80]">
+              Active Watchman{w.relationship ? ` · ${w.relationship}` : ""}
+            </p>
           </div>
-          <button onClick={remove} className="text-xs text-[#f87171] px-3 py-1.5 rounded border border-[#3a1a1a]" style={{ background: "#1a0a0a" }}>
+          <button onClick={() => remove(w)} className="text-xs text-[#f87171] px-3 py-1.5 rounded border border-[#3a1a1a]" style={{ background: "#1a0a0a" }}>
             Remove
           </button>
         </div>
-      )}
+      ))}
+
 
       {activePending.map((inv: any) => {
         const url = `${window.location.origin}/invite/${inv.token}`;
@@ -357,6 +370,14 @@ function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, owner
           </div>
         );
       })}
+
+      {Array.from({ length: emptySlots }).map((_, i) => (
+        <div key={`empty-${i}`} className="p-3 rounded border border-dashed border-[#2a2518] mb-3 text-center">
+          <p className="text-xs text-[#7d766b]">Empty slot — no Watchman yet</p>
+        </div>
+      ))}
+
+
 
       <button
         onClick={generate}

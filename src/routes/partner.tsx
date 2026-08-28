@@ -122,7 +122,7 @@ function Partner() {
                     </div>
                   )}
                   {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
-                  <EncourageBox laneId={lane.lane_id} send={sendFn} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })} />
+                  <EncourageBox laneId={lane.lane_id} send={sendFn} alert={(lane as any).latestAlert ?? null} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })} />
                 </div>
               );
             })}
@@ -156,7 +156,11 @@ function Partner() {
                     {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
                 </div>
+                {e.context && (
+                  <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{e.context}</p>
+                )}
                 <p className="text-xs text-[#ded8cc] leading-relaxed whitespace-pre-wrap">{e.body}</p>
+
               </div>
             ))}
           </div>
@@ -188,17 +192,20 @@ function Partner() {
   );
 }
 
-function EncourageBox({ laneId, send, onSent }: { laneId: string; send: any; onSent: () => void }) {
+function EncourageBox({ laneId, send, onSent, alert }: { laneId: string; send: any; onSent: () => void; alert?: { checkin_id: string; label: string } | null }) {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [linked, setLinked] = useState(true);
+
+  const attach = !!alert && linked;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!body.trim()) return;
     setBusy(true); setErr(null);
-    const r = await send({ data: { laneId, body: body.trim() } });
+    const r = await send({ data: { laneId, body: body.trim(), checkinId: attach ? alert!.checkin_id : null } });
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     setBody(""); setSent(true);
@@ -209,6 +216,12 @@ function EncourageBox({ laneId, send, onSent }: { laneId: string; send: any; onS
   return (
     <form onSubmit={submit} className="mt-2 pt-3 border-t border-[#1a1a1a]">
       <p className="text-[0.6rem] uppercase tracking-wider text-[#a8a094] font-semibold mb-2">Send encouragement</p>
+      {alert && (
+        <label className="flex items-center gap-2 mb-2 cursor-pointer">
+          <input type="checkbox" checked={linked} onChange={(e) => setLinked(e.target.checked)} className="accent-[#c9a84c]" />
+          <span className="text-[0.7rem] text-[#c9a84c] font-semibold">{alert.label}</span>
+        </label>
+      )}
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value.slice(0, 280))}
@@ -216,6 +229,7 @@ function EncourageBox({ laneId, send, onSent }: { laneId: string; send: any; onS
         placeholder="A verse, a line, a prayer. They'll see it."
         className="w-full px-3 py-2 text-base bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
       />
+
       <div className="flex justify-between items-center mt-2">
         <span className="text-[0.65rem] text-[#948d80]">{body.length}/280</span>
         <button disabled={busy || !body.trim()} className="text-xs px-4 py-1.5 bg-[#c9a84c] text-black rounded font-semibold disabled:opacity-40">

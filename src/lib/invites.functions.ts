@@ -25,7 +25,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
 
     const { data: lane } = await supabase
       .from('lanes')
-      .select('lane_id, user_id, partner_id, status')
+      .select('lane_id, user_id, status')
       .eq('lane_id', data.laneId)
       .eq('user_id', userId)
       .maybeSingle();
@@ -33,7 +33,12 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     if (!lane) return { error: 'Path not found.' };
     if (lane.status === 'archived') return { error: 'Cannot invite Watchmen to an archived path.' };
 
-    const attached = lane.partner_id ? 1 : 0;
+    // path_watchmen is the source of truth for who is actually watching.
+    const { count: activeCount } = await supabaseAdmin
+      .from('path_watchmen')
+      .select('id', { count: 'exact', head: true })
+      .eq('path_id', data.laneId)
+      .eq('status', 'active');
 
     const { count: pendingCount } = await supabase
       .from('lane_invites')
@@ -42,7 +47,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
       .eq('status', 'pending')
       .gt('expires_at', new Date().toISOString());
 
-    if (attached + (pendingCount ?? 0) >= 2) {
+    if ((activeCount ?? 0) + (pendingCount ?? 0) >= 2) {
       return { error: 'CAP_REACHED', code: 'CAP_REACHED' as const };
     }
 
@@ -58,6 +63,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     if (error) return { error: error.message };
     return { token, expiresInHours: 48 };
   });
+
 
 // Public preview — no auth required (uses SECURITY DEFINER RPC)
 export const getInvitePreview = createServerFn({ method: 'POST' })
@@ -106,15 +112,22 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
 
     const { data: lane } = await supabaseAdmin
       .from('lanes')
-      .select('lane_id, title, partner_id, status')
+      .select('lane_id, title, status')
       .eq('lane_id', invite.lane_id)
       .single();
 
     if (!lane) return { error: 'Path no longer exists.' };
 
-    // Retap / reload: if they're already the watchman, send them to their view
+    // Retap / reload: if they're already a watchman here, send them to their view
     // instead of the "already used" dead end. This check comes FIRST on purpose.
-    if (lane.partner_id === userId) {
+    const { data: mine } = await supabaseAdmin
+      .from('path_watchmen')
+      .select('id')
+      .eq('path_id', lane.lane_id)
+      .eq('watchman_id', userId)
+      .eq('status', 'active')
+      .maybeSingle();
+    if (mine) {
       return { success: true, alreadyWatchman: true, laneId: lane.lane_id, laneTitle: lane.title };
     }
 
@@ -125,34 +138,40 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     }
     if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
     if (lane.status === 'archived') return { error: 'This path has been archived.' };
-    if (lane.partner_id) return { error: 'This path already has a Watchman.' };
 
+    const { count: seatsTaken } = await supabaseAdmin
+      .from('path_watchmen')
+      .select('id', { count: 'exact', head: true })
+      .eq('path_id', lane.lane_id)
+      .eq('status', 'active');
+    if ((seatsTaken ?? 0) >= 2) return { error: 'This path already has two Watchmen.' };
+
+    // Unrelated, separate cap: a watchman can watch at most 2 paths in total.
     const { count: myWatchmanCount } = await supabaseAdmin
-      .from('lanes')
-      .select('lane_id', { count: 'exact', head: true })
-      .eq('partner_id', userId)
+      .from('path_watchmen')
+      .select('id', { count: 'exact', head: true })
+      .eq('watchman_id', userId)
       .eq('status', 'active');
 
     if ((myWatchmanCount ?? 0) >= 2) {
       return { error: "You're already watching 2 paths. That's the limit." };
     }
 
-    // Conditional write closes the read-then-write race: only one concurrent
-    // accept can flip a NULL partner_id, the loser gets zero rows back.
-    const { data: claimed, error: updErr } = await supabaseAdmin
-      .from('lanes')
-      .update({
-        partner_id: userId,
-        partner_email: accepterEmail,
-        partner_relationship: invite.relationship ?? null,
-      })
-      .eq('lane_id', invite.lane_id)
-      .is('partner_id', null)
-      .select('lane_id');
+    // The DB triggers are the real race guard (2 watchmen per path, 2 paths per
+    // watchman). Translate their raw text into copy a human can read.
+    const { error: insErr } = await supabaseAdmin.from('path_watchmen').insert({
+      path_id: lane.lane_id,
+      watchman_id: userId,
+      watchman_email: accepterEmail,
+      relationship: invite.relationship ?? null,
+      status: 'active',
+    });
 
-    if (updErr) return { error: updErr.message };
-    if (!claimed || claimed.length === 0) {
-      return { error: 'This path already has a Watchman.' };
+    if (insErr) {
+      const msg = insErr.message || '';
+      if (/at most 2 active watchmen/i.test(msg)) return { error: 'This path already has two Watchmen.' };
+      if (/already assigned to 2 active paths/i.test(msg)) return { error: "You're already watching 2 paths. That's the limit." };
+      return { error: msg };
     }
 
     await supabaseAdmin
@@ -162,6 +181,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
 
     return { success: true, laneId: invite.lane_id, laneTitle: lane.title };
   });
+
 
 // Owner revokes a pending invite
 export const revokeLaneInvite = createServerFn({ method: 'POST' })
@@ -195,11 +215,12 @@ export const listLaneInvites = createServerFn({ method: 'POST' })
     return rows ?? [];
   });
 
-// Owner removes the current Watchman
+// Owner removes ONE specific Watchman — any other watchman on the path stays put.
 export const removeWatchman = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator(z.object({
     laneId: z.string().uuid(),
+    watchmanRowId: z.string().uuid(),
     reason: z.string().min(3).max(500),
   }))
   .handler(async ({ data, context }) => {
@@ -209,20 +230,30 @@ export const removeWatchman = createServerFn({ method: 'POST' })
 
     const { data: lane } = await supabase
       .from('lanes')
-      .select('lane_id, title, partner_id')
+      .select('lane_id, title')
       .eq('lane_id', data.laneId)
       .eq('user_id', userId)
       .maybeSingle();
     if (!lane) return { error: 'Path not found.' };
-    if (!lane.partner_id) return { error: 'This path has no Watchman.' };
-    const removedId = lane.partner_id;
 
-    const { error } = await supabase
-      .from('lanes')
-      .update({ partner_id: null, partner_email: null })
-      .eq('lane_id', data.laneId)
-      .eq('user_id', userId);
+    const { data: row } = await supabaseAdmin
+      .from('path_watchmen')
+      .select('id, watchman_id, status')
+      .eq('id', data.watchmanRowId)
+      .eq('path_id', data.laneId)
+      .maybeSingle();
+    if (!row || row.status !== 'active') return { error: 'That Watchman is no longer on this path.' };
+    const removedId = row.watchman_id;
+
+    // Only this one seat is released. The sync trigger repoints the path's
+    // primary watchman to whoever is left, or clears it if nobody is.
+    const { error } = await supabaseAdmin
+      .from('path_watchmen')
+      .update({ status: 'removed' })
+      .eq('id', row.id);
     if (error) return { error: error.message };
+
+    if (!removedId) return { success: true };
 
     // Tell the watchman — silently dropping someone is the thing we don't do.
     const { data: owner } = await supabaseAdmin
@@ -252,3 +283,4 @@ export const removeWatchman = createServerFn({ method: 'POST' })
 
     return { success: true };
   });
+
