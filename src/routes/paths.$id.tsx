@@ -234,13 +234,16 @@ function LaneDetail() {
   );
 }
 
-function WatchmenPanel({ laneId, hasWatchman, watchmanEmail, watchmanName, ownerName, pathTitle }: { laneId: string; hasWatchman: boolean; watchmanEmail: string | null; watchmanName?: string | null; ownerName?: string | null; pathTitle?: string }) {
+type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
+
+function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
   const inviteText = (url: string) => `${ownerName || "Someone"} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
   const listFn = useServerFn(listLaneInvites);
   const revokeFn = useServerFn(revokeLaneInvite);
   const removeFn = useServerFn(removeWatchman);
+
 
   const [copied, setCopied] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
