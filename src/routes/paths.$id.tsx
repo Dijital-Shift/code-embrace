@@ -366,6 +366,14 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
         );
       })}
 
+      {Array.from({ length: emptySlots }).map((_, i) => (
+        <div key={`empty-${i}`} className="p-3 rounded border border-dashed border-[#2a2518] mb-3 text-center">
+          <p className="text-xs text-[#7d766b]">Empty slot — no Watchman yet</p>
+        </div>
+      ))}
+
+
+
       <button
         onClick={generate}
         disabled={busy || atCap}
