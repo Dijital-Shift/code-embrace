@@ -141,7 +141,7 @@ function MockInviteWatchman() {
       <div className="flex items-center gap-2">
         <Users className="h-4 w-4 text-[#c9a84c]" />
         <div className="text-sm font-semibold text-white">Watchmen</div>
-        <span className="ml-auto text-[10px] text-[#a8a094]">1 active · 1 pending</span>
+        <span className="ml-auto text-[10px] text-[#a8a094]">2/2 slots · 1 active, 1 pending</span>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
         <div className="text-[11px] text-white">Marcus</div>
@@ -154,7 +154,7 @@ function MockInviteWatchman() {
           <button className="rounded bg-[#c9a84c] px-2 py-1.5 text-[10px] font-bold text-black">Copy</button>
         </div>
       </div>
-      <div className="text-[10px] leading-relaxed text-[#9e968a]">One active watchman per path, plus one invite pending. Links expire in 48 hours.</div>
+      <div className="text-[10px] leading-relaxed text-[#9e968a]">Up to two watchmen per path. Links expire in 48 hours.</div>
     </div>
   );
 }
@@ -172,7 +172,7 @@ function MockPartnerInvite() {
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Path</div>
         <div className="text-sm text-white">Fast · ends Dec 20</div>
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Your role</div>
-        <div className="text-sm text-[#c9a84c]">Watchman — pinged on a Breach, or after two Silent days.</div>
+        <div className="text-sm text-[#c9a84c]">Watchmen — pinged on a Breach, or after two Silent days.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#b8b0a4]">Decline</button>
@@ -436,7 +436,7 @@ const SCENES: Scene[] = [
     step: 3,
     role: "user",
     title: "Invite your watchman",
-    body: "One private invite link. Copy it, send by text or DM — no email forms, no group chats. A path carries one active watchman, with one invite pending while you wait on a reply.",
+    body: "One private invite link. Copy it, send by text or DM — no email forms, no group chats. A path carries up to two watchmen — invite a second while the first is already watching.",
     why: "Why it matters: one voice can be ignored. Two who love you can't.",
     render: MockInviteWatchman,
     divider: "Your watchman",
