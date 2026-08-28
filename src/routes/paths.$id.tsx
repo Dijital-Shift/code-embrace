@@ -270,7 +270,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
     setBusy(false);
     if ("error" in r && r.error) {
       if ((r as any).code === "CAP_REACHED") {
-        setErr("This path already has a Watchman or a pending invite. Remove them first.");
+        setErr("This path already has two Watchmen (active or pending). Remove one before inviting another.");
       } else {
         setErr(r.error);
       }
