@@ -300,21 +300,22 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
 
-  async function remove() {
+  async function remove(w: WatchmanSlot) {
     const reason = window.prompt(
-      "Removing a Watchman is not silent — they'll be told. Why are you removing them?",
+      `Removing ${w.name} is not silent — they'll be told. Why are you removing them?`,
     );
     if (reason === null) return;
     if (reason.trim().length < 3) {
       toast.error("A reason is required to remove a Watchman.");
       return;
     }
-    const r: any = await removeFn({ data: { laneId, reason: reason.trim() } });
+    const r: any = await removeFn({ data: { laneId, watchmanRowId: w.id, reason: reason.trim() } });
     if (r?.error) { toast.error(r.error); return; }
     toast.success("Watchman removed — they've been notified.");
     qc.invalidateQueries({ queryKey: ["lane", laneId] });
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
+
 
   function hoursLeft(expiresAt: string) {
     const ms = new Date(expiresAt).getTime() - Date.now();
