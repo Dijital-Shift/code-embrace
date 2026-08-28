@@ -156,7 +156,11 @@ function Partner() {
                     {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
                 </div>
+                {e.context && (
+                  <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{e.context}</p>
+                )}
                 <p className="text-xs text-[#ded8cc] leading-relaxed whitespace-pre-wrap">{e.body}</p>
+
               </div>
             ))}
           </div>
