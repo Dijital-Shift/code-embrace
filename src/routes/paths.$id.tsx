@@ -324,8 +324,9 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
     return `${h}h`;
   }
 
-  const slotCount = (hasWatchman ? 1 : 0) + activePending.length;
+  const slotCount = watchmen.length + activePending.length;
   const atCap = slotCount >= 2;
+  const emptySlots = Math.max(0, 2 - slotCount);
 
   return (
     <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
@@ -334,17 +335,20 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
         <span className="text-xs text-[#a8a094]">{slotCount}/2</span>
       </div>
 
-      {hasWatchman && (
-        <div className="flex items-center justify-between gap-3 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#1a1612" }}>
+      {watchmen.map((w) => (
+        <div key={w.id} className="flex items-center justify-between gap-3 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#1a1612" }}>
           <div className="min-w-0">
-            <p className="text-sm text-white truncate">{watchmanName || watchmanEmail || "—"}</p>
-            <p className="text-xs text-[#4ade80]">Active Watchman</p>
+            <p className="text-sm text-white truncate">{w.name}</p>
+            <p className="text-xs text-[#4ade80]">
+              Active Watchman{w.relationship ? ` · ${w.relationship}` : ""}
+            </p>
           </div>
-          <button onClick={remove} className="text-xs text-[#f87171] px-3 py-1.5 rounded border border-[#3a1a1a]" style={{ background: "#1a0a0a" }}>
+          <button onClick={() => remove(w)} className="text-xs text-[#f87171] px-3 py-1.5 rounded border border-[#3a1a1a]" style={{ background: "#1a0a0a" }}>
             Remove
           </button>
         </div>
-      )}
+      ))}
+
 
       {activePending.map((inv: any) => {
         const url = `${window.location.origin}/invite/${inv.token}`;
