@@ -122,7 +122,7 @@ function Partner() {
                     </div>
                   )}
                   {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
-                  <EncourageBox laneId={lane.lane_id} send={sendFn} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })} />
+                  <EncourageBox laneId={lane.lane_id} send={sendFn} alert={(lane as any).latestAlert ?? null} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })} />
                 </div>
               );
             })}
