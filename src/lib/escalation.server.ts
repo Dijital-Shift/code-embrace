@@ -99,7 +99,7 @@ export async function markMissedCheckins() {
     .eq('status', 'active').not('ends_at', 'is', null).lt('ends_at', utcToday);
 
   const { data: activeLanes } = await supabaseAdmin.from('lanes')
-    .select('lane_id, partner_id, title, user_id, created_at').eq('status', 'active');
+    .select('lane_id, title, user_id, created_at').eq('status', 'active');
   if (!activeLanes?.length) return { processed: 0, watchmenPinged: 0 };
 
   // Pull user timezones.
