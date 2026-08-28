@@ -8,10 +8,20 @@ import { requireAccess } from './access.server';
 import { userDay, invalidateUserTimezone } from './day.server';
 import { friendlyLaneError } from './lane-errors.server';
 import { localDate, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
+import { alertContextLabel } from './alert-context';
+
+import {
+  activeWatchmen,
+  activeWatchmenFor,
+  watchedPathIds,
+  isActiveWatchman,
+  watchmanName,
+} from './watchmen.server';
 import {
   triggerBreachAlert,
   notifyPartnerSkip,
 } from './escalation.server';
+
 
 // ===== Profile =====
 export const getMyProfile = createServerFn({ method: 'GET' })
@@ -78,8 +88,10 @@ export const linkPendingLanes = createServerFn({ method: 'POST' })
     const email = (claims as any)?.email?.toLowerCase();
     if (!email) return { ok: false };
     await supabaseAdmin.from('profiles').upsert({ user_id: userId, email }, { onConflict: 'user_id' });
-    await supabaseAdmin.from('lanes').update({ partner_id: userId })
-      .eq('partner_email', email).is('partner_id', null);
+    // Claim any watchman seats that were created against this email before signup.
+    await supabaseAdmin.from('path_watchmen').update({ watchman_id: userId })
+      .eq('watchman_email', email).is('watchman_id', null).eq('status', 'active');
+
     const { data: prof } = await supabaseAdmin.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
     const needsName = !(prof?.first_name ?? '').trim();
     // Seed admin role if email in ADMIN_EMAILS
@@ -97,22 +109,21 @@ export const listMyLanes = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const { data } = await supabase
       .from('lanes')
-      .select('lane_id, title, description, notes, status, created_at, partner_email, partner_id, lane_type, support_scripture, ends_at')
+      .select('lane_id, title, description, notes, status, created_at, lane_type, support_scripture, ends_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
     const lanes = data ?? [];
-    const partnerIds = [...new Set(lanes.map((l) => l.partner_id).filter(Boolean))] as string[];
-    const names = new Map<string, string | null>();
-    if (partnerIds.length) {
-      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, first_name').in('user_id', partnerIds);
-      for (const p of ps ?? []) names.set(p.user_id, p.first_name);
-    }
-    return lanes.map((l) => ({
-      ...l,
-      partner_name: l.partner_id ? (names.get(l.partner_id) || null) : null,
-    }));
-
+    const watchmenByPath = await activeWatchmenFor(lanes.map((l) => l.lane_id));
+    return lanes.map((l) => {
+      const ws = watchmenByPath.get(l.lane_id) ?? [];
+      return {
+        ...l,
+        watchman_count: ws.length,
+        watchman_names: ws.map((w) => watchmanName(w)),
+      };
+    });
   });
+
 
 export const getLane = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
@@ -125,32 +136,56 @@ export const getLane = createServerFn({ method: 'GET' })
       .eq('lane_id', data.id)
       .eq('user_id', userId)
       .single();
-    if (!lane) return { lane: null, checkins: [], partnerEmail: null, partnerName: null, standing: 0, fallen: 0, encouragements: [], ownerFirstName: null };
-    let partnerEmail: string | null = null;
-    let partnerName: string | null = null;
-    if (lane.partner_id) {
-      const { data: p } = await supabaseAdmin.from('profiles').select('email, first_name').eq('user_id', lane.partner_id).single();
-      partnerEmail = p?.email ?? null;
-      partnerName = (p?.first_name ?? null) || null;
-    }
+    if (!lane) return { lane: null, checkins: [], watchmen: [], standing: 0, fallen: 0, encouragements: [], ownerFirstName: null };
+
+    const watchmenRows = await activeWatchmen(data.id);
+    const watchmen = watchmenRows.map((w) => ({
+      id: w.id,
+      watchman_id: w.watchman_id,
+      name: watchmanName(w),
+      email: w.watchman_email,
+      relationship: w.relationship,
+    }));
+
     // Full history for this path only — never before the day the path was created.
     const { tz } = await userDay(supabase, userId);
     const createdLocal = localDate(tz, new Date(lane.created_at));
     const { data: allChks } = await supabase
-      .from('checkins').select('checkin_date, status').eq('lane_id', data.id)
+      .from('checkins').select('checkin_id, checkin_date, status').eq('lane_id', data.id)
       .gte('checkin_date', createdLocal)
       .order('checkin_date', { ascending: false });
     const history = allChks ?? [];
     const standing = history.filter((c) => c.status === 'completed').length;
     const fallen = history.filter((c) => c.status === 'breached' || c.status === 'missed').length;
-    const { data: encouragements } = await supabase
-      .from('encouragements').select('id, body, created_at, read_at')
+
+    const { data: encRows } = await supabase
+      .from('encouragements').select('id, body, created_at, read_at, watchman_id, checkin_id')
       .eq('lane_id', data.id).eq('owner_id', userId)
       .order('created_at', { ascending: false }).limit(5);
-    const { data: me } = await supabase.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
-    return { lane, checkins: history.slice(0, 14), partnerEmail, partnerName, standing, fallen, encouragements: encouragements ?? [], ownerFirstName: me?.first_name ?? null };
 
+    const nameByWatchman = new Map(watchmenRows.map((w) => [w.watchman_id, watchmanName(w)]));
+    const chkById = new Map(history.map((c: any) => [c.checkin_id, c]));
+    const encouragements = (encRows ?? []).map((e: any) => {
+      const c = e.checkin_id ? chkById.get(e.checkin_id) : null;
+      return {
+        id: e.id, body: e.body, created_at: e.created_at, read_at: e.read_at,
+        from_name: nameByWatchman.get(e.watchman_id) ?? 'Your watchman',
+        context: c ? alertContextLabel(c.checkin_date, c.status) : null,
+      };
+    });
+
+    const { data: me } = await supabase.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
+    return {
+      lane,
+      checkins: history.slice(0, 14),
+      watchmen,
+      standing,
+      fallen,
+      encouragements,
+      ownerFirstName: me?.first_name ?? null,
+    };
   });
+
 
 
 export const createLane = createServerFn({ method: 'POST' })
@@ -227,27 +262,30 @@ export const updateLaneStatus = createServerFn({ method: 'POST' })
   }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: lane } = await supabase.from('lanes').select('title, partner_id').eq('lane_id', data.id).eq('user_id', userId).single();
+    const { data: lane } = await supabase.from('lanes').select('title').eq('lane_id', data.id).eq('user_id', userId).single();
     const reason = data.reason?.trim() || '';
     if ((data.status === 'paused' || data.status === 'archived') && !reason) {
       return { error: 'A short reason is required — your watchman will see it.' };
     }
     const { error } = await supabase.from('lanes').update({ status: data.status }).eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
-    if ((data.status === 'paused' || data.status === 'archived') && lane?.partner_id) {
+    if (data.status === 'paused' || data.status === 'archived') {
       const verb = data.status === 'paused' ? 'paused' : 'archived';
       const body = `This path was ${verb}. Reason given: "${reason}"`;
-      await supabaseAdmin.from('notifications').insert({
-        lane_id: data.id, partner_id: lane.partner_id, type: 'path_status',
-        status: 'sent', message_content: body, sent_at: new Date().toISOString(),
-      });
-      try {
-        await sendPushToUser(lane.partner_id, {
-          title: `Path ${verb} — ${lane.title}`,
-          body,
-          url: '/partner',
+      for (const w of await activeWatchmen(data.id)) {
+        if (!w.watchman_id) continue;
+        await supabaseAdmin.from('notifications').insert({
+          lane_id: data.id, partner_id: w.watchman_id, type: 'path_status',
+          status: 'sent', message_content: body, sent_at: new Date().toISOString(),
         });
-      } catch {}
+        try {
+          await sendPushToUser(w.watchman_id, {
+            title: `Path ${verb} — ${lane?.title}`,
+            body,
+            url: '/partner',
+          });
+        } catch {}
+      }
     }
     return { success: true };
   });
@@ -257,12 +295,13 @@ export const deleteLane = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ id: z.string().uuid(), reason: z.string().max(500).optional().nullable() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: lane } = await supabase.from('lanes').select('created_at, title, partner_id').eq('lane_id', data.id).eq('user_id', userId).single();
+    const { data: lane } = await supabase.from('lanes').select('created_at, title').eq('lane_id', data.id).eq('user_id', userId).single();
     if (!lane) return { error: 'Path not found.' };
     // Delete is only available while no watchman is locked in — nobody to notify.
-    if (lane.partner_id) {
+    if ((await activeWatchmen(data.id)).length > 0) {
       return { error: 'This path has a watchman. Use Pause or Archive instead.' };
     }
+
     const { error } = await supabase.from('lanes').delete().eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: error.message };
     return { success: true };
@@ -347,7 +386,7 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     if (data.response === 'breach' && (data.explanation ?? '').trim().length < 5) {
       return { error: 'Write at least a few words about what happened.' };
     }
-    const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
+    const { data: lane } = await supabase.from('lanes').select('lane_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found or inactive.' };
     const { today, yesterday } = await userDay(supabase, userId);
@@ -361,12 +400,12 @@ export const submitCheckin = createServerFn({ method: 'POST' })
       breach_explanation: data.response === 'breach' ? data.explanation : null,
     }, { onConflict: 'lane_id,checkin_date' }).select('checkin_id').single();
     if (error) return { error: error.message };
-    if (data.response === 'breach' && lane.partner_id) {
+    if (data.response === 'breach') {
       await triggerBreachAlert({
-        checkinId: chk!.checkin_id, laneId: data.laneId, laneTitle: lane.title,
-        partnerId: lane.partner_id, userId,
+        checkinId: chk!.checkin_id, laneId: data.laneId, laneTitle: lane.title, userId,
       });
     }
+
     return { success: true };
   });
 
@@ -377,7 +416,7 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
-    const { data: lane } = await supabase.from('lanes').select('lane_id, partner_id, title')
+    const { data: lane } = await supabase.from('lanes').select('lane_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found.' };
     const { today } = await userDay(supabase, userId);
@@ -386,9 +425,8 @@ export const skipCheckin = createServerFn({ method: 'POST' })
       status: 'skipped', completion_time: new Date().toISOString(),
     }, { onConflict: 'lane_id,checkin_date' });
     if (error) return { error: error.message };
-    if (lane.partner_id) {
-      await notifyPartnerSkip({ laneTitle: lane.title, partnerId: lane.partner_id, userId });
-    }
+    await notifyPartnerSkip({ laneId: data.laneId, laneTitle: lane.title, userId });
+
     return { success: true };
   });
 
@@ -398,9 +436,22 @@ export const getPartnerView = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { today } = await userDay(supabase, userId);
-    const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, description, notes, status, created_at, user_id, partner_relationship')
-      .eq('partner_id', userId).order('status').order('created_at', { ascending: false });
+
+    // Source of truth is path_watchmen — a second watchman has no lanes.partner_id.
+    const myPathIds = await watchedPathIds(userId);
+    const { data: lanes } = myPathIds.length
+      ? await supabase.from('lanes')
+        .select('lane_id, title, description, notes, status, created_at, user_id')
+        .in('lane_id', myPathIds).order('status').order('created_at', { ascending: false })
+      : { data: [] as any[] };
+
+    // My own seat on each path carries the relationship label.
+    const { data: mySeats } = myPathIds.length
+      ? await supabaseAdmin.from('path_watchmen')
+        .select('path_id, relationship').eq('watchman_id', userId).eq('status', 'active')
+      : { data: [] as any[] };
+    const relByPath = new Map((mySeats ?? []).map((s: any) => [s.path_id, s.relationship]));
+
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
     const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null }>();
     if (userIds.length) {
@@ -410,12 +461,22 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const laneIds = (lanes ?? []).map((l) => l.lane_id);
     const { data: todayChks } = laneIds.length
       ? await supabase.from('checkins')
-        .select('lane_id, status, breach_explanation, completion_time')
+        .select('checkin_id, lane_id, status, breach_explanation, completion_time')
         .in('lane_id', laneIds).eq('checkin_date', today)
       : { data: [] };
     const { data: history } = laneIds.length
-      ? await supabase.from('checkins').select('lane_id, checkin_date, status').in('lane_id', laneIds).order('checkin_date', { ascending: false })
+      ? await supabase.from('checkins').select('checkin_id, lane_id, checkin_date, status').in('lane_id', laneIds).order('checkin_date', { ascending: false })
       : { data: [] };
+
+    // The most recent breach/silent day per path — what an encouragement answers.
+    const latestAlert = new Map<string, { checkin_id: string; checkin_date: string; status: string; label: string }>();
+    for (const c of (history ?? []) as any[]) {
+      if (latestAlert.has(c.lane_id)) continue;
+      if (c.status !== 'breached' && c.status !== 'missed') continue;
+      const label = alertContextLabel(c.checkin_date, c.status);
+      if (label) latestAlert.set(c.lane_id, { checkin_id: c.checkin_id, checkin_date: c.checkin_date, status: c.status, label });
+    }
+
     const { data: notifications } = await supabase.from('notifications')
       .select('notification_id, type, status, message_content, sent_at, lane_id')
       .eq('partner_id', userId).order('sent_at', { ascending: false }).limit(20);
@@ -424,16 +485,27 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const { count: myEncouragementCount } = await supabase.from('encouragements')
       .select('id', { count: 'exact', head: true }).eq('watchman_id', userId);
     const { data: sentEncouragementRows } = await supabase.from('encouragements')
-      .select('id, body, created_at, lane_id')
+      .select('id, body, created_at, lane_id, checkin_id')
       .eq('watchman_id', userId).order('created_at', { ascending: false }).limit(5);
     const laneTitles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
-    const sentEncouragements = (sentEncouragementRows ?? []).map((e) => ({
-      ...e, lane_title: laneTitles.get(e.lane_id) ?? 'Path',
-    }));
+    const chkById = new Map(((history ?? []) as any[]).map((c) => [c.checkin_id, c]));
+    const sentEncouragements = (sentEncouragementRows ?? []).map((e: any) => {
+      const c = e.checkin_id ? chkById.get(e.checkin_id) : null;
+      return {
+        ...e,
+        lane_title: laneTitles.get(e.lane_id) ?? 'Path',
+        context: c ? alertContextLabel(c.checkin_date, c.status) : null,
+      };
+    });
     const { data: profile } = await supabase.from('profiles')
       .select('dismissed_watchman_prompt').eq('user_id', userId).maybeSingle();
     return {
-      lanes: (lanes ?? []).map((l) => ({ ...l, owner: ownerEmails.get(l.user_id) ?? null })),
+      lanes: (lanes ?? []).map((l) => ({
+        ...l,
+        partner_relationship: relByPath.get(l.lane_id) ?? null,
+        owner: ownerEmails.get(l.user_id) ?? null,
+        latestAlert: latestAlert.get(l.lane_id) ?? null,
+      })),
       todayCheckins: todayChks ?? [], history: history ?? [],
       notifications: notifications ?? [],
       showNudge: (ownLaneCount ?? 0) === 0,
@@ -442,21 +514,36 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       sentEncouragements,
       dismissedWatchmanPrompt: !!profile?.dismissed_watchman_prompt,
     };
-
   });
 
 export const sendEncouragement = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ laneId: z.string().uuid(), body: z.string().min(1).max(280) }))
+  .inputValidator(z.object({
+    laneId: z.string().uuid(),
+    body: z.string().min(1).max(280),
+    checkinId: z.string().uuid().optional().nullable(),
+  }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: lane } = await supabase.from('lanes')
+    if (!(await isActiveWatchman(data.laneId, userId))) {
+      return { error: 'You are not an active watchman on this path.' };
+    }
+    const { data: lane } = await supabaseAdmin.from('lanes')
       .select('lane_id, user_id, title, status')
-      .eq('lane_id', data.laneId).eq('partner_id', userId).maybeSingle();
+      .eq('lane_id', data.laneId).maybeSingle();
     if (!lane || lane.status !== 'active') return { error: 'You are not an active watchman on this path.' };
+
+    // Only accept an alert reference that really belongs to this path.
+    let checkinId: string | null = null;
+    if (data.checkinId) {
+      const { data: c } = await supabaseAdmin.from('checkins')
+        .select('checkin_id').eq('checkin_id', data.checkinId).eq('lane_id', data.laneId).maybeSingle();
+      checkinId = c?.checkin_id ?? null;
+    }
+
     const body = data.body.trim();
     const { error } = await supabase.from('encouragements').insert({
-      watchman_id: userId, lane_id: data.laneId, owner_id: lane.user_id, body,
+      watchman_id: userId, lane_id: data.laneId, owner_id: lane.user_id, body, checkin_id: checkinId,
     });
     if (error) return { error: error.message };
     // Mirror to notifications so the owner sees it in-app.
@@ -473,6 +560,7 @@ export const sendEncouragement = createServerFn({ method: 'POST' })
     } catch {}
     return { success: true };
   });
+
 
 // ===== Settings =====
 export const getSettings = createServerFn({ method: 'GET' })

@@ -152,6 +152,7 @@ export type Database = {
       encouragements: {
         Row: {
           body: string
+          checkin_id: string | null
           created_at: string
           id: string
           lane_id: string
@@ -161,6 +162,7 @@ export type Database = {
         }
         Insert: {
           body: string
+          checkin_id?: string | null
           created_at?: string
           id?: string
           lane_id: string
@@ -170,6 +172,7 @@ export type Database = {
         }
         Update: {
           body?: string
+          checkin_id?: string | null
           created_at?: string
           id?: string
           lane_id?: string
@@ -178,6 +181,13 @@ export type Database = {
           watchman_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "encouragements_checkin_id_fkey"
+            columns: ["checkin_id"]
+            isOneToOne: false
+            referencedRelation: "checkins"
+            referencedColumns: ["checkin_id"]
+          },
           {
             foreignKeyName: "encouragements_lane_id_fkey"
             columns: ["lane_id"]
@@ -635,6 +645,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_path_watchman: {
+        Args: { _path_id: string; _user_id: string }
         Returns: boolean
       }
       move_to_dlq: {

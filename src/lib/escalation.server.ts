@@ -2,42 +2,77 @@ import { sendPushToUser } from './push.server';
 import { sendSms, SMS_BREACH, SMS_SILENCE } from './sms.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
+import { activeWatchmen } from './watchmen.server';
 
-// Watchman is pinged immediately on a self-reported breach.
-export async function triggerBreachAlert(args: {
-  checkinId: string; laneId: string; laneTitle: string; partnerId: string; userId: string;
-}) {
-  const { data: u } = await supabaseAdmin.from('profiles').select('email, phone').eq('user_id', args.userId).single();
-  const body = u?.phone ? `${u.email} reported a breach. Phone: ${u.phone}` : `${u?.email} reported a breach. Open to view details.`;
+// Deliver one alert to one watchman: record it, push it, SMS only as fallback.
+async function deliverToWatchman(args: {
+  laneId: string;
+  checkinId?: string | null;
+  watchmanId: string;
+  watchmanPhone: string | null;
+  type: string;
+  body: string;
+  title: string;
+  smsFallback: string;
+}): Promise<boolean> {
   const { data: notif } = await supabaseAdmin.from('notifications').insert({
-    lane_id: args.laneId, partner_id: args.partnerId, checkin_id: args.checkinId,
-    type: 'breach_report', status: 'pending', message_content: body,
+    lane_id: args.laneId,
+    partner_id: args.watchmanId,
+    checkin_id: args.checkinId ?? null,
+    type: args.type,
+    status: 'pending',
+    message_content: args.body,
   }).select('notification_id').single();
-  const sent = await sendPushToUser(args.partnerId, { title: `Breach — ${args.laneTitle}`, body, url: '/partner' });
+
+  const sent = await sendPushToUser(args.watchmanId, { title: args.title, body: args.body, url: '/partner' });
 
   // Fallback only — never dual-send. Generic copy; no details over SMS.
   let channel: 'push' | 'sms' | null = sent ? 'push' : null;
-  if (!sent) {
-    const { data: p } = await supabaseAdmin.from('profiles').select('phone').eq('user_id', args.partnerId).single();
-    if (await sendSms(p?.phone, SMS_BREACH)) channel = 'sms';
-  }
+  if (!sent && (await sendSms(args.watchmanPhone, args.smsFallback))) channel = 'sms';
 
   if (notif) {
     await supabaseAdmin.from('notifications').update({
-      status: channel ? 'sent' : 'failed', sent_at: channel ? new Date().toISOString() : null, channel,
+      status: channel ? 'sent' : 'failed',
+      sent_at: channel ? new Date().toISOString() : null,
+      channel,
     }).eq('notification_id', notif.notification_id);
+  }
+  return !!channel;
+}
+
+// Every active watchman on the path is pinged immediately on a self-reported breach.
+export async function triggerBreachAlert(args: {
+  checkinId: string; laneId: string; laneTitle: string; userId: string;
+}) {
+  const watchmen = await activeWatchmen(args.laneId);
+  if (!watchmen.length) return;
+  const { data: u } = await supabaseAdmin.from('profiles').select('email, phone').eq('user_id', args.userId).single();
+  const body = u?.phone ? `${u.email} reported a breach. Phone: ${u.phone}` : `${u?.email} reported a breach. Open to view details.`;
+
+  for (const w of watchmen) {
+    if (!w.watchman_id) continue;
+    await deliverToWatchman({
+      laneId: args.laneId, checkinId: args.checkinId, watchmanId: w.watchman_id,
+      watchmanPhone: w.phone, type: 'breach_report', body,
+      title: `Breach — ${args.laneTitle}`, smsFallback: SMS_BREACH,
+    });
   }
 }
 
 
-// Sabbath skip — quiet notice to the watchman.
-export async function notifyPartnerSkip(args: { laneTitle: string; partnerId: string; userId: string }) {
+// Sabbath skip — quiet notice to every active watchman.
+export async function notifyPartnerSkip(args: { laneId: string; laneTitle: string; userId: string }) {
+  const watchmen = await activeWatchmen(args.laneId);
+  if (!watchmen.length) return;
   const { data: u } = await supabaseAdmin.from('profiles').select('email').eq('user_id', args.userId).single();
-  await sendPushToUser(args.partnerId, {
-    title: `Sabbath — ${args.laneTitle}`,
-    body: `${u?.email ?? 'Your partner'} is observing the Sabbath. No check-in today.`,
-    url: '/partner',
-  });
+  for (const w of watchmen) {
+    if (!w.watchman_id) continue;
+    await sendPushToUser(w.watchman_id, {
+      title: `Sabbath — ${args.laneTitle}`,
+      body: `${u?.email ?? 'Your partner'} is observing the Sabbath. No check-in today.`,
+      url: '/partner',
+    });
+  }
 }
 
 // Nudge the user that yesterday's check-in is overdue.
@@ -48,6 +83,7 @@ export async function notifyUserMissed(args: { laneTitle: string; userId: string
     url: '/checkin',
   });
 }
+
 
 // Silence Rule threshold 2 — runs frequently.
 // For each active lane, once the user's *local* clock is past 10:00 AM and
@@ -108,43 +144,35 @@ export async function markMissedCheckins() {
 
     await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id });
 
-    // Threshold 2 — the watchman is only pinged on a SILENCE STREAK:
+    // Threshold 2 — watchmen are only pinged on a SILENCE STREAK:
     // yesterday missed AND the day before also missed. Day 1 is the user's alone.
-    if (!lane.partner_id) continue;
+    const watchmen = await activeWatchmen(lane.lane_id);
+    if (!watchmen.length) continue;
     const dayBefore = prevDay(yesterdayLocal);
     const { data: priorMiss } = await supabaseAdmin.from('checkins')
       .select('checkin_id').eq('lane_id', lane.lane_id).eq('checkin_date', dayBefore)
       .eq('status', 'missed').maybeSingle();
     if (!priorMiss) continue; // day 1 — user only
 
-    // Dedup: never ping twice for the same check-in.
-    const { data: prior } = await supabaseAdmin.from('notifications')
-      .select('notification_id').eq('checkin_id', ci.checkin_id).eq('type', 'missed_checkin').maybeSingle();
-    if (prior) continue;
-
     const email = emailMap.get(lane.user_id);
     const body = `${email ?? 'Your partner'} has gone silent on "${lane.title}" two days running. Reach out.`;
-    const { data: notif } = await supabaseAdmin.from('notifications').insert({
-      lane_id: lane.lane_id, partner_id: lane.partner_id, checkin_id: ci.checkin_id,
-      type: 'missed_checkin', status: 'pending', message_content: body,
-    }).select('notification_id').single();
-    const sent = await sendPushToUser(lane.partner_id, {
-      title: `Silence — ${lane.title}`, body, url: '/partner',
-    });
 
-    // Fallback only — never dual-send. Generic copy over SMS.
-    let channel: 'push' | 'sms' | null = sent ? 'push' : null;
-    if (!sent) {
-      const { data: pp } = await supabaseAdmin.from('profiles').select('phone').eq('user_id', lane.partner_id).single();
-      if (await sendSms(pp?.phone, SMS_SILENCE)) channel = 'sms';
+    // Every active watchman is pinged independently, each deduped on their own row.
+    for (const w of watchmen) {
+      if (!w.watchman_id) continue;
+      const { data: prior } = await supabaseAdmin.from('notifications')
+        .select('notification_id').eq('checkin_id', ci.checkin_id)
+        .eq('type', 'missed_checkin').eq('partner_id', w.watchman_id).maybeSingle();
+      if (prior) continue;
+
+      const ok = await deliverToWatchman({
+        laneId: lane.lane_id, checkinId: ci.checkin_id, watchmanId: w.watchman_id,
+        watchmanPhone: w.phone, type: 'missed_checkin', body,
+        title: `Silence — ${lane.title}`, smsFallback: SMS_SILENCE,
+      });
+      if (ok) watchmenPinged++;
     }
 
-    if (notif) {
-      await supabaseAdmin.from('notifications').update({
-        status: channel ? 'sent' : 'failed', sent_at: channel ? new Date().toISOString() : null, channel,
-      }).eq('notification_id', notif.notification_id);
-    }
-    if (channel) watchmenPinged++;
 
   }
   return { processed, watchmenPinged };
