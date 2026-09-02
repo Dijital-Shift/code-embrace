@@ -36,6 +36,7 @@ import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as PathsEditIdRouteImport } from './routes/paths.edit.$id'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicBuildIdRouteImport } from './routes/api/public/build-id'
@@ -183,6 +184,11 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
+  id: '/lovable/email/events',
+  path: '/lovable/email/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InviteTokenWelcomeRoute = InviteTokenWelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
@@ -274,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
@@ -397,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/public/build-id'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
+    | '/lovable/email/events'
     | '/lovable/email/suppression'
     | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/api/public/build-id'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
+    | '/lovable/email/events'
     | '/lovable/email/suppression'
     | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
@@ -477,6 +488,7 @@ export interface FileRouteTypes {
     | '/api/public/build-id'
     | '/api/push/subscribe'
     | '/invite/$token/welcome'
+    | '/lovable/email/events'
     | '/lovable/email/suppression'
     | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
@@ -517,6 +529,7 @@ export interface RootRouteChildren {
   PathsIndexRoute: typeof PathsIndexRoute
   ApiPublicBuildIdRoute: typeof ApiPublicBuildIdRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
+  LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   PathsEditIdRoute: typeof PathsEditIdRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
@@ -720,6 +733,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/events': {
+      id: '/lovable/email/events'
+      path: '/lovable/email/events'
+      fullPath: '/lovable/email/events'
+      preLoaderRoute: typeof LovableEmailEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invite/$token/welcome': {
       id: '/invite/$token/welcome'
       path: '/welcome'
@@ -840,6 +860,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathsIndexRoute: PathsIndexRoute,
   ApiPublicBuildIdRoute: ApiPublicBuildIdRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
+  LovableEmailEventsRoute: LovableEmailEventsRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   PathsEditIdRoute: PathsEditIdRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
