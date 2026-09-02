@@ -37,13 +37,15 @@ function CheckIn() {
   const lanes = (data?.lanes ?? []) as Lane[];
   const checkins = data?.checkins ?? [];
   const today = data?.today ?? "";
-  const yest = data?.yesterday ?? "";
+  const graceOpen = data?.graceOpen ?? false;
 
   const todayMap = new Map(checkins.filter((c) => c.checkin_date === today).map((c) => [c.lane_id, c]));
-  const missedYMap = new Map(checkins.filter((c) => c.checkin_date === yest && c.status === "missed").map((c) => [c.lane_id, c]));
+  // Yesterday is open whenever no entry exists for it — not only once the
+  // sweep has written a "missed" row.
+  const catchUpSet = new Set(data?.catchUp ?? []);
 
-  const late = lanes.filter((l) => missedYMap.has(l.lane_id) && !todayMap.has(l.lane_id));
-  const pending = lanes.filter((l) => !todayMap.has(l.lane_id) && !missedYMap.has(l.lane_id));
+  const late = lanes.filter((l) => catchUpSet.has(l.lane_id));
+  const pending = lanes.filter((l) => !todayMap.has(l.lane_id));
   const done = lanes.filter((l) => todayMap.has(l.lane_id));
   const allDone = pending.length === 0 && late.length === 0;
 
@@ -75,9 +77,11 @@ function CheckIn() {
 
       {late.length > 0 && (
         <section className="mb-6">
-          <p className="text-[0.65rem] text-[#f59e0b] uppercase tracking-wider mb-2 font-semibold">Silent Yesterday — Submit Before 10AM</p>
+          <p className="text-[0.65rem] text-[#f59e0b] uppercase tracking-wider mb-2 font-semibold">
+            {graceOpen ? "Yesterday — Submit Before 10AM" : "Yesterday — Went Silent"}
+          </p>
           <div className="flex flex-col gap-1.5">
-            {late.map((l) => <PathRow key={l.lane_id} lane={l} isLate />)}
+            {late.map((l) => <PathRow key={`y-${l.lane_id}`} lane={l} isLate day="yesterday" />)}
           </div>
         </section>
       )}
@@ -110,7 +114,7 @@ function CheckIn() {
  * One compact row per path — works the same for "complete" and "avoid" paths.
  * Yes submits instantly. No opens the mandatory honesty field.
  */
-function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
+function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?: boolean; day?: "today" | "yesterday" }) {
   const qc = useQueryClient();
   const submit = useServerFn(submitCheckin);
   const skip = useServerFn(skipCheckin);
@@ -129,11 +133,11 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
   async function send(response: "aligned" | "breach") {
     if (busy) return;
     setBusy(true); setErr(null);
-    const r: any = await submit({ data: { laneId: lane.lane_id, response, explanation: response === "breach" ? explanation : null } });
+    const r: any = await submit({ data: { laneId: lane.lane_id, response, explanation: response === "breach" ? explanation : null, forDay: day } });
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     setResult(response === "aligned" ? "completed" : "breached");
-    if (response === "aligned") setCanUndo(true);
+    if (response === "aligned" && day === "today") setCanUndo(true);
     qc.invalidateQueries({ queryKey: ["dashboard"] });
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
@@ -186,7 +190,7 @@ function PathRow({ lane, isLate = false }: { lane: Lane; isLate?: boolean }) {
     <div className="px-3 py-2.5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          {isLate && <span className="text-[0.6rem] text-[#f59e0b] font-semibold uppercase tracking-wider block">Late — yesterday</span>}
+          {isLate && <span className="text-[0.6rem] text-[#f59e0b] font-semibold uppercase tracking-wider block">Yesterday</span>}
           <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
         </div>
         <div className="flex gap-2 flex-shrink-0">

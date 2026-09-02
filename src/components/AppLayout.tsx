@@ -1,5 +1,8 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getUnreadEncouragementCount } from "@/lib/api.functions";
 import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
@@ -29,6 +32,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // A gold dot on Paths whenever a watchman has written something unread.
+  const unreadFn = useServerFn(getUnreadEncouragementCount);
+  const { data: unread } = useQuery({
+    queryKey: ["unread-encouragements"],
+    queryFn: () => unreadFn(),
+    refetchInterval: 120000,
+  });
+  const hasUnread = (unread?.count ?? 0) > 0;
 
 
   return (
@@ -41,7 +52,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex items-center gap-5">
             {menuItems.map((i) => (
-              <Link key={i.href} to={i.href} className="text-[#b8b0a4] text-sm no-underline hover:text-white">{i.label}</Link>
+              <Link key={i.href} to={i.href} className="text-[#b8b0a4] text-sm no-underline hover:text-white">
+                {i.label}
+                {hasUnread && i.href === "/paths" && (
+                  <span className="inline-block ml-1.5 w-2 h-2 rounded-full align-middle" style={{ background: "#e5af38" }} />
+                )}
+              </Link>
             ))}
             <button
               onClick={() => setConfirmOpen(true)}
@@ -80,7 +96,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     borderBottom: active ? "2px solid #c9a84c" : "2px solid transparent",
                   }}
                 >
-                  <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+                  <span className="relative">
+                    <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+                    {hasUnread && i.href === "/paths" && (
+                      <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full" style={{ background: "#e5af38" }} />
+                    )}
+                  </span>
                   <span className="text-[0.625rem] leading-none">{i.short}</span>
                 </Link>
               );

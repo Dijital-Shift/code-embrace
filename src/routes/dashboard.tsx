@@ -43,6 +43,15 @@ function Dashboard() {
 
       <AccessBanner />
 
+      {(data?.unreadEncouragements ?? 0) > 0 && (
+        <Link to="/paths" className="block mb-5 px-4 py-3 rounded-xl border border-[#c9a84c]/50 no-underline" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+          <p className="text-sm font-semibold text-[#e5af38] mb-0.5">
+            {data?.unreadEncouragements} word{(data?.unreadEncouragements ?? 0) > 1 ? "s" : ""} from your watchman
+          </p>
+          <p className="text-xs text-[#c2af80]">Someone wrote to you. Tap to read it on the path.</p>
+        </Link>
+      )}
+
       {needsGender && (
         <Link to="/settings" className="block mb-5 px-4 py-3 rounded-xl border border-[#2a2518] no-underline" style={{ background: "#161210" }}>
           <p className="text-xs text-[#c2af80]">One detail still open in Settings — male or female. Tap to set it whenever you like.</p>

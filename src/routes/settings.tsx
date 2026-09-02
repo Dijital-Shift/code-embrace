@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { getSettings, updateProfile } from "@/lib/api.functions";
+import { getSettings, updateProfile, reactivateLane, deleteArchivedLane } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
@@ -154,15 +154,12 @@ function Settings() {
       )}
 
       {archived.length > 0 && (
-        <div className="mt-12">
+        <div className="mt-12 max-w-md">
           <p className="text-[0.7rem] text-[#9e968a] uppercase tracking-wider font-semibold mb-2">Archived Paths</p>
-
+          <p className="text-xs text-[#b8b0a4] mb-3">Bring one back onto the walk, or clear it out for good.</p>
           <div className="flex flex-col gap-1.5">
             {archived.map((l) => (
-              <div key={l.lane_id} className="flex justify-between items-center px-3 py-2 rounded border border-[#141414]" style={{ background: "#0a0a0a" }}>
-                <span className="text-sm text-[#b8b0a4]">{l.title}</span>
-                <span className="text-xs text-[#948d80]">{new Date(l.created_at).toLocaleDateString()}</span>
-              </div>
+              <ArchivedRow key={l.lane_id} lane={l} onChanged={() => refetch()} />
             ))}
           </div>
         </div>
@@ -191,5 +188,68 @@ function Settings() {
       <AppUpdateSection />
     </div>
 
+  );
+}
+
+/** One archived path with its two ways out: back onto the walk, or gone for good. */
+function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: string; created_at: string }; onChanged: () => void }) {
+  const reactivate = useServerFn(reactivateLane);
+  const remove = useServerFn(deleteArchivedLane);
+  const [busy, setBusy] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function run(fn: () => Promise<any>) {
+    if (busy) return;
+    setBusy(true); setErr(null);
+    const r: any = await fn();
+    setBusy(false);
+    if (r?.error) { setErr(r.error); return; }
+    setConfirming(false);
+    onChanged();
+  }
+
+  return (
+    <div className="px-3 py-2.5 rounded border border-[#2a2518]" style={{ background: "#0d0b09" }}>
+      <div className="flex justify-between items-center gap-3">
+        <div className="min-w-0">
+          <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
+          <span className="text-[0.7rem] text-[#948d80]">Archived · started {new Date(lane.created_at).toLocaleDateString()}</span>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            type="button" disabled={busy}
+            onClick={() => run(() => reactivate({ data: { id: lane.lane_id } }))}
+            className="px-3 py-1.5 rounded text-xs font-bold"
+            style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
+          >Reactivate</button>
+          <button
+            type="button" disabled={busy}
+            onClick={() => setConfirming((v) => !v)}
+            className="px-3 py-1.5 rounded text-xs font-bold"
+            style={{ border: "1px solid #4a1f1f", background: "#1a0f0f", color: "#f87171" }}
+          >Delete</button>
+        </div>
+      </div>
+
+      {confirming && (
+        <div className="mt-2.5 pt-2.5 border-t border-[#2a2518]">
+          <p className="text-xs text-[#f87171] mb-2">
+            Delete "{lane.title}" permanently? Every check-in, alert and encouragement on it goes with it. This cannot be undone.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button" disabled={busy}
+              onClick={() => run(() => remove({ data: { id: lane.lane_id } }))}
+              className="px-3 py-1.5 rounded text-xs font-bold"
+              style={{ background: "#7f1d1d", color: "#fff" }}
+            >{busy ? "Deleting…" : "Delete forever"}</button>
+            <button type="button" onClick={() => setConfirming(false)} className="text-xs text-[#a8a094] underline">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
+    </div>
   );
 }
