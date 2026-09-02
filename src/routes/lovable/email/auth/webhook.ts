@@ -28,37 +28,34 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           sendUrl: process.env['LOVABLE_SEND_URL'],
           emails: {
             signup: {
-              subject: 'Confirm your email',
+              subject: 'Your Kingdom Protocol confirmation code',
               render: (data) =>
                 React.createElement(SignupEmail, {
-                  siteName: SITE_NAME,
-                  siteUrl: SITE_URL,
-                  recipient: data.email,
+                  token: data.token ?? '',
                   confirmationUrl: data.url,
                 }),
             },
             invite: {
-              subject: "You've been invited",
+              subject: 'You have been asked to stand watch',
               render: (data) =>
                 React.createElement(InviteEmail, {
-                  siteName: SITE_NAME,
-                  siteUrl: SITE_URL,
+                  token: data.token ?? '',
                   confirmationUrl: data.url,
                 }),
             },
             magiclink: {
-              subject: 'Your login link',
+              subject: 'Your Kingdom Protocol sign-in code',
               render: (data) =>
                 React.createElement(MagicLinkEmail, {
-                  siteName: SITE_NAME,
+                  token: data.token ?? '',
                   confirmationUrl: data.url,
                 }),
             },
             recovery: {
-              subject: 'Reset your password',
+              subject: 'Reset your Kingdom Protocol password',
               render: (data) =>
                 React.createElement(RecoveryEmail, {
-                  siteName: SITE_NAME,
+                  token: data.token ?? '',
                   confirmationUrl: data.url,
                 }),
             },
@@ -66,19 +63,19 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
               subject: 'Confirm your new email',
               render: (data) =>
                 React.createElement(EmailChangeEmail, {
-                  siteName: SITE_NAME,
-                  oldEmail: data.old_email ?? '',
-                  email: data.email,
-                  newEmail: data.new_email ?? '',
+                  token: data.token ?? '',
                   confirmationUrl: data.url,
+                  oldEmail: data.old_email ?? '',
+                  newEmail: data.new_email ?? '',
                 }),
             },
             reauthentication: {
-              subject: 'Your verification code',
+              subject: 'Your Kingdom Protocol verification code',
               render: (data) =>
                 React.createElement(ReauthenticationEmail, { token: data.token ?? '' }),
             },
           },
+
         })
         return handler(request)
       },
