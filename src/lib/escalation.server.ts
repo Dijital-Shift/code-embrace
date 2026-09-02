@@ -176,7 +176,7 @@ export async function markMissedCheckins() {
         type: 'missed_checkin', status: 'pending', message_content: body,
       }).select('notification_id').single();
 
-      const pending = watchQueue.get(w.watchman_id) ?? { notificationIds: [], phone: w.phone, owners: new Map() };
+      const pending: WatchPending = watchQueue.get(w.watchman_id) ?? { notificationIds: [], phone: w.phone, owners: new Map() };
       if (notif) pending.notificationIds.push(notif.notification_id);
       const titles = pending.owners.get(who) ?? [];
       titles.push(lane.title);

@@ -7,7 +7,7 @@ import { sendPushToUser } from './push.server';
 import { requireAccess } from './access.server';
 import { userDay, invalidateUserTimezone } from './day.server';
 import { friendlyLaneError } from './lane-errors.server';
-import { localDate, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
+import { localDate, localHour, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import { alertContextLabel } from './alert-context';
 
 import {
