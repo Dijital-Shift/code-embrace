@@ -1,15 +1,11 @@
-// Transactional email via Lovable's managed email system.
-// Emails are pre-rendered here and enqueued into the `transactional_emails`
-// pgmq queue; the queue processor route handles sending, retries and backoff.
-import { createElement } from 'react';
-import { render } from '@react-email/render';
+// App email sending via Lovable's managed email API.
+// Delivery, retries, suppression and unsubscribe handling are managed by
+// Lovable; this module only decides what to send and records the outcome
+// in the app's own email_send_log table.
 import { createClient } from '@supabase/supabase-js';
-import { InviteEmail } from './email-templates/invite';
-
+import { sendTemplateEmail } from './email-templates/send-email';
 
 const APP_URL = process.env.APP_URL || 'https://kingdomprotocol.app';
-const SENDER_DOMAIN = 'notify.kingdomprotocol.app';
-const FROM = `Kingdom Protocol <hello@${SENDER_DOMAIN}>`;
 
 function adminClient() {
   const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -20,61 +16,25 @@ function adminClient() {
   });
 }
 
-async function enqueue(opts: {
-  to: string;
-  subject: string;
-  html: string;
-  label: string;
+async function logSend(entry: {
+  template_name: string;
+  recipient_email: string;
+  status: 'sent' | 'suppressed' | 'failed';
+  error_message?: string;
 }) {
   const supabase = adminClient();
-  if (!supabase) {
-    console.warn('[email] Supabase env not configured; skipping send');
-    return;
-  }
-
-  const normalized = opts.to.toLowerCase();
-  const { data: suppressed } = await supabase
-    .from('suppressed_emails')
-    .select('id')
-    .eq('email', normalized)
-    .maybeSingle();
-  if (suppressed) {
-    console.log('[email] recipient suppressed; skipping send');
-    return;
-  }
-
-  const messageId = crypto.randomUUID();
-  await supabase.from('email_send_log').insert({
-    message_id: messageId,
-    template_name: opts.label,
-    recipient_email: opts.to,
-    status: 'pending',
+  if (!supabase) return;
+  const { error } = await supabase.from('email_send_log').insert({
+    message_id: null,
+    template_name: entry.template_name,
+    recipient_email: entry.recipient_email,
+    status: entry.status,
+    error_message: entry.error_message ?? null,
   });
-
-  const { error } = await supabase.rpc('enqueue_email', {
-    queue_name: 'transactional_emails',
-    payload: {
-      message_id: messageId,
-      to: opts.to,
-      from: FROM,
-      sender_domain: SENDER_DOMAIN,
-      subject: opts.subject,
-      html: opts.html,
-      purpose: 'transactional',
-      label: opts.label,
-      idempotency_key: messageId,
-      queued_at: new Date().toISOString(),
-    },
-  });
-
   if (error) {
-    console.error('[email] enqueue failed', error);
-    await supabase.from('email_send_log').insert({
-      message_id: messageId,
-      template_name: opts.label,
-      recipient_email: opts.to,
-      status: 'failed',
-      error_message: 'Failed to enqueue email',
+    console.error('[email] failed to write send log', {
+      code: error.code,
+      message: error.message,
     });
   }
 }
@@ -88,19 +48,39 @@ export async function sendPartnerInvite(opts: {
   const displayName = opts.fromName ?? opts.fromEmail;
   const confirmationUrl = `${APP_URL}/login?email=${encodeURIComponent(opts.toEmail)}`;
 
-  const html = await render(
-    createElement(InviteEmail, {
-      inviterName: displayName,
-      pathTitle: opts.laneTitle,
-      confirmationUrl,
-    }),
-  );
+  try {
+    const result = await sendTemplateEmail('partner-invite', opts.toEmail, {
+      templateData: {
+        inviterName: displayName,
+        pathTitle: opts.laneTitle,
+        confirmationUrl,
+      },
+      idempotencyKey: `partner-invite-${opts.toEmail.toLowerCase()}-${opts.laneTitle}`,
+    });
 
-  await enqueue({
-    to: opts.toEmail,
-    subject: `${displayName} asked you to stand watch`,
-    html,
-    label: 'partner_invite',
-  });
+    if (!result.sent) {
+      console.log('[email] recipient suppressed; skipping send');
+      await logSend({
+        template_name: 'partner_invite',
+        recipient_email: opts.toEmail,
+        status: 'suppressed',
+      });
+      return;
+    }
+
+    await logSend({
+      template_name: 'partner_invite',
+      recipient_email: opts.toEmail,
+      status: 'sent',
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to send email';
+    console.error('[email] partner invite send failed', { message });
+    await logSend({
+      template_name: 'partner_invite',
+      recipient_email: opts.toEmail,
+      status: 'failed',
+      error_message: message,
+    });
+  }
 }
-
