@@ -75,14 +75,8 @@ export async function notifyPartnerSkip(args: { laneId: string; laneTitle: strin
   }
 }
 
-// Nudge the user that yesterday's check-in is overdue.
-export async function notifyUserMissed(args: { laneTitle: string; userId: string }) {
-  await sendPushToUser(args.userId, {
-    title: `Silent — ${args.laneTitle}`,
-    body: "Yesterday went silent — no check-in. The grace window has closed.",
-    url: '/checkin',
-  });
-}
+
+
 
 
 // Silence Rule threshold 2 — runs frequently.
@@ -90,6 +84,10 @@ export async function notifyUserMissed(args: { laneTitle: string; userId: string
 // they have no check-in for their local "yesterday", mark it missed and ping
 // the watchman. Fixed 10 AM grace window — same yardstick for everyone.
 // Idempotent — safe to re-run.
+//
+// Notification policy: alert rows are written per path (full detail lives in
+// alert history), but PUSHES are bundled — one per person per run, however
+// many paths went silent. Nobody's phone gets carpet-bombed.
 export async function markMissedCheckins() {
   const nowUtc = new Date();
   const utcToday = nowUtc.toISOString().split('T')[0];
@@ -105,12 +103,17 @@ export async function markMissedCheckins() {
   // Pull user timezones.
   const userIds = Array.from(new Set(activeLanes.map((l: any) => l.user_id)));
   const { data: profs } = await supabaseAdmin.from('profiles')
-    .select('user_id, timezone, email').in('user_id', userIds);
+    .select('user_id, timezone, email, first_name').in('user_id', userIds);
   const tzMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.timezone || 'America/Chicago']));
-  const emailMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.email]));
+  const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name || p.email]));
 
   let processed = 0;
   let watchmenPinged = 0;
+
+  // Bundled push buckets, filled during the sweep and flushed at the end.
+  const ownerSilent = new Map<string, string[]>();                       // ownerId -> path titles
+  type WatchPending = { notificationIds: string[]; phone: string | null; owners: Map<string, string[]> };
+  const watchQueue = new Map<string, WatchPending>();                    // watchmanId -> pending
 
   for (const lane of activeLanes) {
     const tz = tzMap.get(lane.user_id) ?? 'America/Chicago';
@@ -142,7 +145,10 @@ export async function markMissedCheckins() {
     if (!ci) continue;
     processed++;
 
-    await notifyUserMissed({ laneTitle: lane.title, userId: lane.user_id });
+    // Owner push is bundled — collect, don't send yet.
+    const bucket = ownerSilent.get(lane.user_id) ?? [];
+    bucket.push(lane.title);
+    ownerSilent.set(lane.user_id, bucket);
 
     // Threshold 2 — watchmen are only pinged on a SILENCE STREAK:
     // yesterday missed AND the day before also missed. Day 1 is the user's alone.
@@ -154,27 +160,76 @@ export async function markMissedCheckins() {
       .eq('status', 'missed').maybeSingle();
     if (!priorMiss) continue; // day 1 — user only
 
-    const email = emailMap.get(lane.user_id);
-    const body = `${email ?? 'Your partner'} has gone silent on "${lane.title}" two days running. Reach out.`;
+    const who = nameMap.get(lane.user_id) ?? 'Your partner';
+    const body = `${who} has gone silent on "${lane.title}" two days running. Reach out.`;
 
-    // Every active watchman is pinged independently, each deduped on their own row.
     for (const w of watchmen) {
       if (!w.watchman_id) continue;
+      // One alert per watchman per path per silent day — survives overlapping runs.
       const { data: prior } = await supabaseAdmin.from('notifications')
         .select('notification_id').eq('checkin_id', ci.checkin_id)
         .eq('type', 'missed_checkin').eq('partner_id', w.watchman_id).maybeSingle();
       if (prior) continue;
 
-      const ok = await deliverToWatchman({
-        laneId: lane.lane_id, checkinId: ci.checkin_id, watchmanId: w.watchman_id,
-        watchmanPhone: w.phone, type: 'missed_checkin', body,
-        title: `Silence — ${lane.title}`, smsFallback: SMS_SILENCE,
-      });
-      if (ok) watchmenPinged++;
+      const { data: notif } = await supabaseAdmin.from('notifications').insert({
+        lane_id: lane.lane_id, partner_id: w.watchman_id, checkin_id: ci.checkin_id,
+        type: 'missed_checkin', status: 'pending', message_content: body,
+      }).select('notification_id').single();
+
+      const pending: WatchPending = watchQueue.get(w.watchman_id) ?? { notificationIds: [], phone: w.phone, owners: new Map() };
+      if (notif) pending.notificationIds.push(notif.notification_id);
+      const titles = pending.owners.get(who) ?? [];
+      titles.push(lane.title);
+      pending.owners.set(who, titles);
+      watchQueue.set(w.watchman_id, pending);
+    }
+  }
+
+  // ---- Flush: one push per person, whatever the path count. ----
+
+  for (const [ownerId, titles] of ownerSilent) {
+    const body = titles.length === 1
+      ? `Yesterday went silent on "${titles[0]}". The grace window has closed.`
+      : `${titles.length} paths went silent yesterday. The grace window has closed.`;
+    await sendPushToUser(ownerId, {
+      title: titles.length === 1 ? `Silent — ${titles[0]}` : 'Silent — yesterday',
+      body,
+      url: '/checkin',
+    });
+  }
+
+  for (const [watchmanId, pending] of watchQueue) {
+    const owners = [...pending.owners.entries()];
+    const pathCount = owners.reduce((n, [, t]) => n + t.length, 0);
+    let title: string;
+    let body: string;
+    if (owners.length === 1 && pathCount === 1) {
+      const [who, titles] = owners[0]!;
+      title = `Silence — ${titles[0]}`;
+      body = `${who} has gone silent on "${titles[0]}" two days running. Reach out.`;
+    } else if (owners.length === 1) {
+      const [who, titles] = owners[0]!;
+      title = `Silence — ${who}`;
+      body = `${who} has gone silent on ${titles.length} paths, two days running. Reach out.`;
+    } else {
+      title = 'Silence — your watch';
+      body = `${owners.length} people you watch have gone silent, two days running. Reach out.`;
     }
 
+    const sent = await sendPushToUser(watchmanId, { title, body, url: '/partner' });
+    let channel: 'push' | 'sms' | null = sent ? 'push' : null;
+    if (!sent && (await sendSms(pending.phone, SMS_SILENCE))) channel = 'sms';
+    if (channel) watchmenPinged++;
 
+    if (pending.notificationIds.length) {
+      await supabaseAdmin.from('notifications').update({
+        status: channel ? 'sent' : 'failed',
+        sent_at: channel ? new Date().toISOString() : null,
+        channel,
+      }).in('notification_id', pending.notificationIds);
+    }
   }
+
   return { processed, watchmenPinged };
 }
 

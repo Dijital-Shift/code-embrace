@@ -18,6 +18,7 @@ function Partner() {
   const dismissFn = useServerFn(dismissWatchmanPrompt);
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["partner"], queryFn: () => fn() });
+  const [showAllAlerts, setShowAllAlerts] = useState(false);
 
   const dismissMut = useMutation({
     mutationFn: () => dismissFn(),
@@ -32,6 +33,14 @@ function Partner() {
   const active = lanes.filter((l) => l.status === "active");
   const inactive = lanes.filter((l) => l.status !== "active");
   const statusColor: Record<string, string> = { completed: "#4ade80", breached: "#f87171", missed: "#f59e0b", pending: "#333", skipped: "#c9a84c" };
+
+  // A watchman can hold several paths. Only the ones actually asking for a
+  // response open by default; the rest stay one quiet line each.
+  const needsYou = active.filter((l) => {
+    const c = today.get(l.lane_id);
+    return c?.status === "breached" || c?.status === "missed";
+  });
+  const quiet = active.filter((l) => !needsYou.includes(l));
 
   const showMicroPrompt =
     (data?.myEncouragementCount ?? 0) >= 1 &&
@@ -75,57 +84,30 @@ function Partner() {
         </div>
       )}
 
-      {active.length > 0 && (
+      {needsYou.length > 0 && (
         <section className="mb-10">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Active ({active.length})</p>
-
+          <p className="text-[0.65rem] text-[#f87171] uppercase tracking-wider mb-3 font-semibold">Needs you ({needsYou.length})</p>
           <div className="flex flex-col gap-3">
-            {active.map((lane) => {
-              const c = today.get(lane.lane_id);
-              const todayLabel = c ? c.status.charAt(0).toUpperCase() + c.status.slice(1) : "Pending";
-              const todayCol = c ? statusColor[c.status] ?? "#333" : "#f59e0b";
-              const needsContact = c?.status === "breached" || c?.status === "missed";
-              const phone = lane.owner?.phone;
-              const rel = (lane as any).partner_relationship as string | null | undefined;
-              return (
-                <div key={lane.lane_id} className="p-4 rounded-lg border border-[#1a1a1a]" style={{ background: "#0d0d0d" }}>
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold text-sm mb-1">{lane.title}</p>
-                      <p className="text-xs text-[#948d80]">
-                        {rel && <span className="text-[#c9a84c] font-semibold">{rel} · </span>}
-                        {lane.owner?.first_name || lane.owner?.email}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[0.7rem] text-[#948d80] mb-1">Today</p>
-                      <p className="text-xs font-semibold" style={{ color: todayCol }}>{todayLabel}</p>
-                    </div>
-                  </div>
-                  {lane.notes && (
-                    <div className="mb-3 pl-2.5 border-l-2 border-[#c9a84c]/50">
-                      <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-0.5">Notes from them</p>
-                      <p className="text-xs text-[#ded8cc] whitespace-pre-wrap">{lane.notes}</p>
-                    </div>
-                  )}
-                  {c?.status === "breached" && c.breach_explanation && (
-                    <div className="p-2.5 rounded mb-3 border border-[#3d1515]" style={{ background: "#1a0a0a" }}>
-                      <p className="text-[0.7rem] text-[#f87171] font-semibold mb-1">Breach explanation</p>
-                      <p className="text-xs text-[#ded8cc]">{c.breach_explanation}</p>
-                    </div>
-                  )}
-                  {needsContact && phone && (
-                    <div className="flex items-center gap-2 mb-3">
-                      <a href={`tel:${phone}`} className="px-5 py-2 rounded text-sm font-semibold bg-white text-black border border-[#222]">Call</a>
-                      <a href={`sms:${phone}`} className="px-5 py-2 rounded text-sm font-semibold text-white border border-[#222]" style={{ background: "#1a1a1a" }}>Text</a>
-                      <span className="text-xs text-[#948d80] ml-1">{phone}</span>
-                    </div>
-                  )}
-                  {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
-                  <EncourageBox laneId={lane.lane_id} send={sendFn} alert={(lane as any).latestAlert ?? null} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })} />
-                </div>
-              );
-            })}
+            {needsYou.map((lane) => (
+              <AssignmentCard
+                key={lane.lane_id} lane={lane} checkin={today.get(lane.lane_id)} statusColor={statusColor}
+                defaultOpen sendFn={sendFn} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {quiet.length > 0 && (
+        <section className="mb-10">
+          <p className="text-[0.65rem] text-[#4ade80] uppercase tracking-wider mb-3 font-semibold">Quiet — walking well ({quiet.length})</p>
+          <div className="flex flex-col gap-1.5">
+            {quiet.map((lane) => (
+              <AssignmentCard
+                key={lane.lane_id} lane={lane} checkin={today.get(lane.lane_id)} statusColor={statusColor}
+                sendFn={sendFn} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })}
+              />
+            ))}
           </div>
         </section>
       )}
@@ -148,7 +130,7 @@ function Partner() {
         <section className="mb-10">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Recent encouragements sent</p>
           <div className="flex flex-col gap-3">
-            {(data?.sentEncouragements ?? []).map((e: any) => (
+            {(data?.sentEncouragements ?? []).slice(0, 3).map((e: any) => (
               <div key={e.id} className="p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
                 <div className="flex justify-between items-center mb-1.5 gap-3">
                   <span className="text-xs font-semibold text-[#c9a84c] truncate">{e.lane_title}</span>
@@ -172,7 +154,7 @@ function Partner() {
         <section>
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Alert History</p>
           <div className="flex flex-col gap-3">
-            {notifications.map((n) => (
+            {(showAllAlerts ? notifications : notifications.slice(0, 5)).map((n) => (
               <div key={n.notification_id} className="p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
                 <div className="flex justify-between mb-1.5">
                   <span className="text-[0.7rem] px-2 py-0.5 rounded" style={{ background: n.type === "breach_report" ? "#2d0d0d" : "#1a1200", color: n.type === "breach_report" ? "#f87171" : "#f59e0b" }}>
@@ -186,7 +168,75 @@ function Partner() {
               </div>
             ))}
           </div>
+          {notifications.length > 5 && (
+            <button
+              type="button" onClick={() => setShowAllAlerts((v) => !v)}
+              className="text-xs text-[#c9a84c] underline mt-3"
+            >{showAllAlerts ? "Show less" : `Show all ${notifications.length}`}</button>
+          )}
         </section>
+      )}
+    </div>
+  );
+}
+
+/**
+ * One watched path. Urgent ones render expanded; quiet ones collapse to a
+ * single line so watching several people stays readable.
+ */
+function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, sendFn, onSent }: {
+  lane: any; checkin: any; statusColor: Record<string, string>; defaultOpen?: boolean; sendFn: any; onSent: () => void;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const todayLabel = c ? c.status.charAt(0).toUpperCase() + c.status.slice(1) : "Pending";
+  const todayCol = c ? statusColor[c.status] ?? "#333" : "#f59e0b";
+  const needsContact = c?.status === "breached" || c?.status === "missed";
+  const phone = lane.owner?.phone;
+  const rel = lane.partner_relationship as string | null | undefined;
+
+  return (
+    <div className="rounded-lg border border-[#1a1a1a]" style={{ background: "#0d0d0d" }}>
+      <button
+        type="button" onClick={() => setOpen((v) => !v)}
+        className="w-full flex justify-between items-center gap-3 text-left px-4 py-3"
+      >
+        <div className="min-w-0">
+          <p className="font-semibold text-sm truncate">{lane.title}</p>
+          <p className="text-xs text-[#948d80] truncate">
+            {rel && <span className="text-[#c9a84c] font-semibold">{rel} · </span>}
+            {lane.owner?.first_name || lane.owner?.email}
+          </p>
+        </div>
+        <div className="text-right shrink-0">
+          <p className="text-xs font-semibold" style={{ color: todayCol }}>{todayLabel}</p>
+          <p className="text-[0.65rem] text-[#948d80]">{open ? "Hide" : "Open"}</p>
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4">
+          {lane.notes && (
+            <div className="mb-3 pl-2.5 border-l-2 border-[#c9a84c]/50">
+              <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-0.5">Notes from them</p>
+              <p className="text-xs text-[#ded8cc] whitespace-pre-wrap">{lane.notes}</p>
+            </div>
+          )}
+          {c?.status === "breached" && c.breach_explanation && (
+            <div className="p-2.5 rounded mb-3 border border-[#3d1515]" style={{ background: "#1a0a0a" }}>
+              <p className="text-[0.7rem] text-[#f87171] font-semibold mb-1">Breach explanation</p>
+              <p className="text-xs text-[#ded8cc]">{c.breach_explanation}</p>
+            </div>
+          )}
+          {needsContact && phone && (
+            <div className="flex items-center gap-2 mb-3">
+              <a href={`tel:${phone}`} className="px-5 py-2 rounded text-sm font-semibold bg-white text-black border border-[#222]">Call</a>
+              <a href={`sms:${phone}`} className="px-5 py-2 rounded text-sm font-semibold text-white border border-[#222]" style={{ background: "#1a1a1a" }}>Text</a>
+              <span className="text-xs text-[#948d80] ml-1">{phone}</span>
+            </div>
+          )}
+          {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
+          <EncourageBox laneId={lane.lane_id} send={sendFn} alert={lane.latestAlert ?? null} onSent={onSent} />
+        </div>
       )}
     </div>
   );

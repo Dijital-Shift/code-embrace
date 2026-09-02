@@ -27,6 +27,11 @@ export function localDate(tz: string, nowUtc: Date = new Date()): string {
   return localParts(nowUtc, tz || DEFAULT_TZ).date;
 }
 
+/** The user's local hour (0-23). */
+export function localHour(tz: string, nowUtc: Date = new Date()): number {
+  return localParts(nowUtc, tz || DEFAULT_TZ).hour;
+}
+
 export function prevDay(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00Z');
   d.setUTCDate(d.getUTCDate() - 1);

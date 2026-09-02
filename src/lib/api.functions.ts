@@ -7,7 +7,7 @@ import { sendPushToUser } from './push.server';
 import { requireAccess } from './access.server';
 import { userDay, invalidateUserTimezone } from './day.server';
 import { friendlyLaneError } from './lane-errors.server';
-import { localDate, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
+import { localDate, localHour, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import { alertContextLabel } from './alert-context';
 
 import {
@@ -156,7 +156,10 @@ export const getLane = createServerFn({ method: 'GET' })
       .order('checkin_date', { ascending: false });
     const history = allChks ?? [];
     const standing = history.filter((c) => c.status === 'completed').length;
-    const fallen = history.filter((c) => c.status === 'breached' || c.status === 'missed').length;
+    // Silence counts as a fall — but the breakdown keeps confession and hiding distinct.
+    const breached = history.filter((c) => c.status === 'breached').length;
+    const missed = history.filter((c) => c.status === 'missed').length;
+    const fallen = breached + missed;
 
     const { data: encRows } = await supabase
       .from('encouragements').select('id, body, created_at, read_at, watchman_id, checkin_id')
@@ -181,6 +184,8 @@ export const getLane = createServerFn({ method: 'GET' })
       watchmen,
       standing,
       fallen,
+      breached,
+      missed,
       encouragements,
       ownerFirstName: me?.first_name ?? null,
     };
@@ -307,6 +312,45 @@ export const deleteLane = createServerFn({ method: 'POST' })
     return { success: true };
   });
 
+/** Bring an archived path back onto the walk, subject to the active-path cap. */
+export const reactivateLane = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ id: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
+    const { data: lane } = await supabase.from('lanes').select('lane_id, status')
+      .eq('lane_id', data.id).eq('user_id', userId).maybeSingle();
+    if (!lane || lane.status !== 'archived') return { error: 'Path not found in your archive.' };
+    const { count } = await supabase.from('lanes').select('lane_id', { count: 'exact', head: true })
+      .eq('user_id', userId).eq('status', 'active');
+    if ((count ?? 0) >= 10) {
+      return { error: 'You already have 10 active paths. Archive one before bringing this back.' };
+    }
+    const { error } = await supabase.from('lanes').update({ status: 'active' })
+      .eq('lane_id', data.id).eq('user_id', userId);
+    if (error) return { error: error.message };
+    return { success: true };
+  });
+
+/** Permanently remove an archived path and everything recorded on it. */
+export const deleteArchivedLane = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ id: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: lane } = await supabase.from('lanes').select('lane_id, status')
+      .eq('lane_id', data.id).eq('user_id', userId).maybeSingle();
+    if (!lane || lane.status !== 'archived') return { error: 'Only archived paths can be deleted.' };
+    // Check-ins, alerts, watchman seats and encouragements cascade with the row.
+    const { error } = await supabase.from('lanes').delete().eq('lane_id', data.id).eq('user_id', userId);
+    if (error) return { error: error.message };
+    return { success: true };
+  });
+
+
+
 // ===== Check-in =====
 
 export const getDashboard = createServerFn({ method: 'GET' })
@@ -314,28 +358,53 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { today } = await userDay(supabase, userId);
-    const [{ data: profile }, { data: lanes }, { data: todayChks }] = await Promise.all([
+    const [{ data: profile }, { data: lanes }, { data: todayChks }, { count: unread }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
+      supabase.from('encouragements').select('id', { count: 'exact', head: true }).eq('owner_id', userId).is('read_at', null),
     ]);
-    return { profile: profile ?? null, lanes: lanes ?? [], todayCheckins: todayChks ?? [] };
+    return {
+      profile: profile ?? null,
+      lanes: lanes ?? [],
+      todayCheckins: todayChks ?? [],
+      unreadEncouragements: unread ?? 0,
+    };
+  });
 
+/** Small, cheap poll used by the nav to show an unread-encouragement dot. */
+export const getUnreadEncouragementCount = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { count } = await supabase.from('encouragements')
+      .select('id', { count: 'exact', head: true }).eq('owner_id', userId).is('read_at', null);
+    return { count: count ?? 0 };
   });
 
 export const getCheckinPage = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const { today, yesterday: yest } = await userDay(supabase, userId);
+    const { tz, today, yesterday: yest } = await userDay(supabase, userId);
     const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, description, lane_type').eq('user_id', userId).eq('status', 'active');
+      .select('lane_id, title, description, lane_type, created_at').eq('user_id', userId).eq('status', 'active');
     const ids = (lanes ?? []).map((l) => l.lane_id);
     const { data: chks } = ids.length
       ? await supabase.from('checkins').select('lane_id, checkin_date, status, completion_time')
         .eq('user_id', userId).in('checkin_date', [today, yest]).in('lane_id', ids)
       : { data: [] };
-    return { lanes: lanes ?? [], checkins: chks ?? [], today, yesterday: yest };
+
+    // Catch-up is derived from the ABSENCE of yesterday's entry, not from a
+    // "missed" row — that row is only written by the 10 AM sweep, so before
+    // 10 AM the grace window is open with nothing to show otherwise.
+    const yestRows = new Set((chks ?? []).filter((c) => c.checkin_date === yest).map((c) => c.lane_id));
+    const catchUp = (lanes ?? [])
+      .filter((l) => !yestRows.has(l.lane_id) && localDate(tz, new Date((l as any).created_at)) <= yest)
+      .map((l) => l.lane_id);
+    const graceOpen = localHour(tz) < 10;
+
+    return { lanes: lanes ?? [], checkins: chks ?? [], today, yesterday: yest, catchUp, graceOpen };
   });
 
 export const logComplete = createServerFn({ method: 'POST' })
@@ -377,6 +446,7 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     laneId: z.string().uuid(),
     response: z.enum(['aligned', 'breach']),
     explanation: z.string().max(1000).optional().nullable(),
+    forDay: z.enum(['today', 'yesterday']).optional(),
   }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -390,9 +460,16 @@ export const submitCheckin = createServerFn({ method: 'POST' })
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found or inactive.' };
     const { today, yesterday } = await userDay(supabase, userId);
-    const { data: missedY } = await supabase.from('checkins').select('checkin_id')
-      .eq('lane_id', data.laneId).eq('checkin_date', yesterday).eq('status', 'missed').maybeSingle();
-    const target = missedY ? yesterday : today;
+    // The page says which day it is answering for; fall back to the old
+    // behaviour (a written "missed" row means yesterday is the open one).
+    let target = today;
+    if (data.forDay === 'yesterday') {
+      target = yesterday;
+    } else if (!data.forDay) {
+      const { data: missedY } = await supabase.from('checkins').select('checkin_id')
+        .eq('lane_id', data.laneId).eq('checkin_date', yesterday).eq('status', 'missed').maybeSingle();
+      if (missedY) target = yesterday;
+    }
     const { data: chk, error } = await supabase.from('checkins').upsert({
       lane_id: data.laneId, user_id: userId, checkin_date: target,
       status: data.response === 'aligned' ? 'completed' : 'breached',
