@@ -1,80 +1,88 @@
 import * as React from 'react'
 
-import { Button, Text } from '@react-email/components'
-
-import { CodeBlock, Panel, Shell, button, text, verse } from './_brand'
+import {
+  Body,
+  Button,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Link,
+  Preview,
+  Text,
+} from '@react-email/components'
 
 interface InviteEmailProps {
-  token?: string
-  confirmationUrl?: string
-  inviterName?: string
-  pathTitle?: string
+  siteName: string
+  siteUrl: string
+  confirmationUrl: string
 }
 
 export const InviteEmail = ({
-  token,
+  siteName,
+  siteUrl,
   confirmationUrl,
-  inviterName,
-  pathTitle,
-}: InviteEmailProps) => {
-  const who = inviterName || 'Someone you know'
-  return (
-    <Shell
-      preview={`${who} asked you to stand watch over their path`}
-      heading={`${who} asked you to watch their path.`}
-    >
-      <Text style={text}>
-        They put a specific behavior in writing
-        {pathTitle ? (
-          <>
-            {' '}
-            &mdash; <strong>{pathTitle}</strong>
-          </>
-        ) : null}
-        , set the terms themselves, and then put your name on it. Not a friend
-        request. A watch.
-      </Text>
-
-      <Panel
-        title="What this asks of you"
-        lines={[
-          'Most days you hear nothing. Silence means they are standing.',
-          'If they go quiet two days running, you get one message. One.',
-          <>
-            Your job is not the app. Your job is to reach out &mdash; a call, a
-            verse, a meet-up.
-          </>,
-        ]}
-      />
-
-      <Text style={text}>
-        They could have kept this private. They chose you instead, and no one
-        else is watching this. If you say yes, be the person who actually picks
-        up the phone.
-      </Text>
-
-      <Text style={verse}>
-        &ldquo;But if the watchman see the sword come, and blow not the
-        trumpet, and the people be not warned&hellip;&rdquo;
-        <br />
-        &mdash; Ezekiel 33:6 (KJV)
-      </Text>
-
-      {confirmationUrl ? (
+}: InviteEmailProps) => (
+  <Html lang="en" dir="ltr">
+    <Head>
+      <style>{darkModeCss}</style>
+    </Head>
+    <Preview>You've been invited to join {siteName}</Preview>
+    <Body style={main}>
+      <Container style={container}>
+        <Heading style={h1}>You've been invited</Heading>
         <Text style={text}>
-          <Button style={button} href={confirmationUrl}>
-            Accept and stand watch
-          </Button>
+          You've been invited to join{' '}
+          <Link href={siteUrl} style={link}>
+            <strong>{siteName}</strong>
+          </Link>
+          . Click the button below to accept the invitation and create your
+          account.
         </Text>
-      ) : null}
-      {!confirmationUrl && token ? <CodeBlock token={token} /> : null}
-
-      <Text style={text}>
-        If you weren&rsquo;t expecting this, you can ignore it &mdash; nothing
-        happens and no account is created.
-      </Text>
-    </Shell>
-  )
-}
+        <Button className="dm-btn" style={button} href={confirmationUrl}>
+          Accept Invitation
+        </Button>
+        <Text style={footer}>
+          If you weren't expecting this invitation, you can safely ignore this
+          email.
+        </Text>
+      </Container>
+    </Body>
+  </Html>
+)
 
 export default InviteEmail
+
+const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
+const container = { padding: '20px 25px' }
+const h1 = {
+  fontSize: '22px',
+  fontWeight: 'bold' as const,
+  color: '#000000',
+  margin: '0 0 20px',
+}
+const text = {
+  fontSize: '14px',
+  color: '#55575d',
+  lineHeight: '1.5',
+  margin: '0 0 25px',
+}
+const link = { color: 'inherit', textDecoration: 'underline' }
+const button = {
+  backgroundColor: '#000000',
+  color: '#ffffff',
+  fontSize: '14px',
+  border: '1px solid #000000',
+  borderRadius: '8px',
+  padding: '12px 20px',
+  textDecoration: 'none',
+}
+const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+// Rendered as a text child, which React may HTML-escape: keep this CSS free of >, &, and quotes.
+const darkModeCss = `
+  @media (prefers-color-scheme: dark) {
+    .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
+  }
+  [data-ogsc] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
+  [data-ogsb] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
+`
