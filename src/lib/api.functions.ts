@@ -366,17 +366,26 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { today } = await userDay(supabase, userId);
-    const [{ data: profile }, { data: lanes }, { data: todayChks }, { count: unread }] = await Promise.all([
+    const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: unreadRows }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
-      supabase.from('encouragements').select('id', { count: 'exact', head: true }).eq('owner_id', userId).is('read_at', null),
+      supabase.from('encouragements').select('lane_id').eq('owner_id', userId).is('read_at', null),
     ]);
+    // Which paths hold the unread words — so the banner can point at one.
+    const unreadByPath = new Map<string, number>();
+    for (const r of (unreadRows ?? []) as any[]) {
+      unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
+    }
+    const titles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
     return {
       profile: profile ?? null,
       lanes: lanes ?? [],
       todayCheckins: todayChks ?? [],
-      unreadEncouragements: unread ?? 0,
+      unreadEncouragements: unreadRows?.length ?? 0,
+      unreadPaths: [...unreadByPath.entries()].map(([lane_id, count]) => ({
+        lane_id, count, title: titles.get(lane_id) ?? 'a path',
+      })),
     };
   });
 
