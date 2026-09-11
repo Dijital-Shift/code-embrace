@@ -42,7 +42,12 @@ function Lanes() {
               return (
                 <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center gap-3 px-4 py-4 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm">{lane.title}</p>
+                    <p className="font-semibold text-sm flex items-center gap-2">
+                      <span className="truncate">{lane.title}</span>
+                      {((lane as any).unread_encouragements ?? 0) > 0 && (
+                        <span className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-bold uppercase shrink-0" style={{ background: "#1c1608", color: "#e5af38", border: "1px solid #c9a84c" }}>New</span>
+                      )}
+                    </p>
                     {lane.description && <p className="text-xs text-[#a8a094]">{lane.description}</p>}
                     <p className="text-[0.72rem]" style={{ color: hasWatchman ? "#4ade80" : "#c9a84c" }}>
                       {hasWatchman

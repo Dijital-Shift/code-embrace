@@ -43,14 +43,30 @@ function Dashboard() {
 
       <AccessBanner />
 
-      {(data?.unreadEncouragements ?? 0) > 0 && (
-        <Link to="/paths" className="block mb-5 px-4 py-3 rounded-xl border border-[#c9a84c]/50 no-underline" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-          <p className="text-sm font-semibold text-[#e5af38] mb-0.5">
-            {data?.unreadEncouragements} word{(data?.unreadEncouragements ?? 0) > 1 ? "s" : ""} from your watchman
-          </p>
-          <p className="text-xs text-[#c2af80]">Someone wrote to you. Tap to read it on the path.</p>
-        </Link>
-      )}
+      {(data?.unreadEncouragements ?? 0) > 0 && (() => {
+        const paths = (data?.unreadPaths ?? []) as { lane_id: string; count: number; title: string }[];
+        const one = paths.length === 1 ? paths[0] : null;
+        const total = data?.unreadEncouragements ?? 0;
+        const inner = (
+          <>
+            <p className="text-sm font-semibold text-[#e5af38] mb-0.5">
+              {one
+                ? `${total > 1 ? `${total} words` : "A word"} from your watchman on ${one.title}`
+                : `${total} word${total > 1 ? "s" : ""} from your watchman`}
+            </p>
+            <p className="text-xs text-[#c2af80]">
+              {one ? "Tap to read it." : `Waiting on ${paths.length} paths — marked New in your list.`}
+            </p>
+          </>
+        );
+        const cls = "block mb-5 px-4 py-3 rounded-xl border border-[#c9a84c]/50 no-underline";
+        const style = { background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" };
+        return one ? (
+          <Link to="/paths/$id" params={{ id: one.lane_id }} search={{ newlyCreated: false }} className={cls} style={style}>{inner}</Link>
+        ) : (
+          <Link to="/paths" className={cls} style={style}>{inner}</Link>
+        );
+      })()}
 
       {needsGender && (
         <Link to="/settings" className="block mb-5 px-4 py-3 rounded-xl border border-[#2a2518] no-underline" style={{ background: "#161210" }}>

@@ -615,7 +615,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
         latestAlert: latestAlert.get(l.lane_id) ?? null,
       })),
       todayCheckins: todayChks ?? [], history: history ?? [],
-      notifications: notifications ?? [],
+      notifications: alertHistory,
       showNudge: (ownLaneCount ?? 0) === 0,
       myActiveLaneCount: ownLaneCount ?? 0,
       myEncouragementCount: myEncouragementCount ?? 0,
