@@ -29,7 +29,7 @@ const menuItems = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, session, loading: authLoading } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // A gold dot on Paths whenever a watchman has written something unread.
