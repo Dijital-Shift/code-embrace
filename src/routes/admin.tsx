@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AppLayout } from "@/components/AppLayout";
 import { getAdminOverview, getAdminUsers, setUserStatus, isAdmin } from "@/lib/api.functions";
+import { getAdminFeedback } from "@/lib/feedback.functions";
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -25,6 +26,8 @@ function AdminPage() {
 
   const { data: ov } = useQuery({ queryKey: ["adminOv"], queryFn: () => overviewFn(), enabled: !!adminCheck?.admin });
   const { data: us, refetch } = useQuery({ queryKey: ["adminUsers"], queryFn: () => usersFn(), enabled: !!adminCheck?.admin });
+  const fbFn = useServerFn(getAdminFeedback);
+  const { data: fb } = useQuery({ queryKey: ["adminFeedback"], queryFn: () => fbFn(), enabled: !!adminCheck?.admin });
   const mut = useMutation({
     mutationFn: (v: { user_id: string; status: "active" | "suspended" }) => setStatus({ data: v }),
     onSuccess: () => refetch(),
