@@ -582,6 +582,20 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       .select('id, body, created_at, lane_id, checkin_id')
       .eq('watchman_id', userId).order('created_at', { ascending: false }).limit(5);
     const laneTitles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
+    // Alert lines are rebuilt from the CURRENT owner name and path title —
+    // stored text froze whatever the name was the day the alert fired.
+    const laneOwner = new Map((lanes ?? []).map((l) => [l.lane_id, l.user_id]));
+    const alertHistory = (notifications ?? []).map((n: any) => {
+      const title = laneTitles.get(n.lane_id);
+      const prof = ownerEmails.get(laneOwner.get(n.lane_id) ?? '');
+      const who = (prof?.first_name || '').trim() || prof?.email || null;
+      let line: string | null = null;
+      if (title && who) {
+        if (n.type === 'missed_checkin') line = `${who} has gone silent on "${title}" two days running. Reach out.`;
+        else if (n.type === 'breach_report') line = `${who} reported a breach on "${title}".`;
+      }
+      return { ...n, message_content: line ?? n.message_content };
+    });
     const chkById = new Map(((history ?? []) as any[]).map((c) => [c.checkin_id, c]));
     const sentEncouragements = (sentEncouragementRows ?? []).map((e: any) => {
       const c = e.checkin_id ? chkById.get(e.checkin_id) : null;
