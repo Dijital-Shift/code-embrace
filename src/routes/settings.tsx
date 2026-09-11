@@ -6,6 +6,7 @@ import { getSettings, updateProfile, reactivateLane, deleteArchivedLane } from "
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
+import { FeedbackModal } from "@/components/FeedbackModal";
 import { TIMEZONE_OPTIONS } from "@/lib/localday";
 
 
@@ -30,6 +31,7 @@ function Settings() {
   const [saved, setSaved] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const m = useMutation({
     mutationFn: () => update({ data: { first_name: first, last_name: last, phone, bedtime, timezone: tz, gender: gender || null } }),
     onSuccess: (r: any) => { if (r?.error) setErr(r.error); else { setSaved(true); refetch(); } },
@@ -184,6 +186,21 @@ function Settings() {
           )}
         </div>
       )}
+
+      <div className="mt-12 max-w-md">
+        <p className="text-[0.7rem] text-[#9e968a] uppercase tracking-wider font-semibold mb-2">Feedback</p>
+        <p className="text-xs text-[#b8b0a4] mb-3">Tell us what's working and what isn't.</p>
+        <button
+          type="button"
+          onClick={() => setFeedbackOpen(true)}
+          className="px-4 py-2.5 rounded-md text-sm font-bold"
+          style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
+        >
+          Send Feedback
+        </button>
+      </div>
+
+      {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
 
       <AppUpdateSection />
     </div>

@@ -197,6 +197,33 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          message: string
+          rating: number | null
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          rating?: number | null
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          rating?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       lane_invites: {
         Row: {
           accepted_at: string | null
