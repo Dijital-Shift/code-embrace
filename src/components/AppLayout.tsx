@@ -35,8 +35,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   // A gold dot on Paths whenever a watchman has written something unread.
   const unreadFn = useServerFn(getUnreadEncouragementCount);
   const { data: unread } = useQuery({
-    queryKey: ["unread-encouragements"],
-    queryFn: () => unreadFn(),
+    queryKey: ["unread-encouragements", session?.user?.id ?? null],
+    // Never let this background poll surface as a page-level error.
+    queryFn: () => unreadFn().catch(() => ({ count: 0 })),
+    enabled: !authLoading && !!session?.access_token,
+    retry: false,
+    throwOnError: false,
     refetchInterval: 120000,
   });
   const hasUnread = (unread?.count ?? 0) > 0;
