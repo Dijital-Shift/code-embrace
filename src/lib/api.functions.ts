@@ -114,12 +114,20 @@ export const listMyLanes = createServerFn({ method: 'GET' })
       .order('created_at', { ascending: false });
     const lanes = data ?? [];
     const watchmenByPath = await activeWatchmenFor(lanes.map((l) => l.lane_id));
+    // Unread words from a watchman, per path — drives the "New" mark.
+    const { data: unreadRows } = await supabase.from('encouragements')
+      .select('lane_id').eq('owner_id', userId).is('read_at', null);
+    const unreadByPath = new Map<string, number>();
+    for (const r of (unreadRows ?? []) as any[]) {
+      unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
+    }
     return lanes.map((l) => {
       const ws = watchmenByPath.get(l.lane_id) ?? [];
       return {
         ...l,
         watchman_count: ws.length,
         watchman_names: ws.map((w) => watchmanName(w)),
+        unread_encouragements: unreadByPath.get(l.lane_id) ?? 0,
       };
     });
   });
