@@ -114,12 +114,20 @@ export const listMyLanes = createServerFn({ method: 'GET' })
       .order('created_at', { ascending: false });
     const lanes = data ?? [];
     const watchmenByPath = await activeWatchmenFor(lanes.map((l) => l.lane_id));
+    // Unread words from a watchman, per path — drives the "New" mark.
+    const { data: unreadRows } = await supabase.from('encouragements')
+      .select('lane_id').eq('owner_id', userId).is('read_at', null);
+    const unreadByPath = new Map<string, number>();
+    for (const r of (unreadRows ?? []) as any[]) {
+      unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
+    }
     return lanes.map((l) => {
       const ws = watchmenByPath.get(l.lane_id) ?? [];
       return {
         ...l,
         watchman_count: ws.length,
         watchman_names: ws.map((w) => watchmanName(w)),
+        unread_encouragements: unreadByPath.get(l.lane_id) ?? 0,
       };
     });
   });
@@ -358,17 +366,26 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { today } = await userDay(supabase, userId);
-    const [{ data: profile }, { data: lanes }, { data: todayChks }, { count: unread }] = await Promise.all([
+    const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: unreadRows }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
-      supabase.from('encouragements').select('id', { count: 'exact', head: true }).eq('owner_id', userId).is('read_at', null),
+      supabase.from('encouragements').select('lane_id').eq('owner_id', userId).is('read_at', null),
     ]);
+    // Which paths hold the unread words — so the banner can point at one.
+    const unreadByPath = new Map<string, number>();
+    for (const r of (unreadRows ?? []) as any[]) {
+      unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
+    }
+    const titles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
     return {
       profile: profile ?? null,
       lanes: lanes ?? [],
       todayCheckins: todayChks ?? [],
-      unreadEncouragements: unread ?? 0,
+      unreadEncouragements: unreadRows?.length ?? 0,
+      unreadPaths: [...unreadByPath.entries()].map(([lane_id, count]) => ({
+        lane_id, count, title: titles.get(lane_id) ?? 'a path',
+      })),
     };
   });
 
@@ -565,6 +582,20 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       .select('id, body, created_at, lane_id, checkin_id')
       .eq('watchman_id', userId).order('created_at', { ascending: false }).limit(5);
     const laneTitles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
+    // Alert lines are rebuilt from the CURRENT owner name and path title —
+    // stored text froze whatever the name was the day the alert fired.
+    const laneOwner = new Map((lanes ?? []).map((l) => [l.lane_id, l.user_id]));
+    const alertHistory = (notifications ?? []).map((n: any) => {
+      const title = laneTitles.get(n.lane_id);
+      const prof = ownerEmails.get(laneOwner.get(n.lane_id) ?? '');
+      const who = (prof?.first_name || '').trim() || prof?.email || null;
+      let line: string | null = null;
+      if (title && who) {
+        if (n.type === 'missed_checkin') line = `${who} has gone silent on "${title}" two days running. Reach out.`;
+        else if (n.type === 'breach_report') line = `${who} reported a breach on "${title}".`;
+      }
+      return { ...n, message_content: line ?? n.message_content };
+    });
     const chkById = new Map(((history ?? []) as any[]).map((c) => [c.checkin_id, c]));
     const sentEncouragements = (sentEncouragementRows ?? []).map((e: any) => {
       const c = e.checkin_id ? chkById.get(e.checkin_id) : null;
@@ -584,7 +615,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
         latestAlert: latestAlert.get(l.lane_id) ?? null,
       })),
       todayCheckins: todayChks ?? [], history: history ?? [],
-      notifications: notifications ?? [],
+      notifications: alertHistory,
       showNudge: (ownLaneCount ?? 0) === 0,
       myActiveLaneCount: ownLaneCount ?? 0,
       myEncouragementCount: myEncouragementCount ?? 0,
