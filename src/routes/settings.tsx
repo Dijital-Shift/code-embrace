@@ -131,20 +131,20 @@ function Settings() {
       </form>
 
       {ref && "code" in ref && (
-        <div className="mt-12 max-w-md p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
+        <div className="mt-12 w-full max-w-md p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
           <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
             This is your invite link. Send it to anyone you want using Kingdom Protocol. They open it, sign up, and start their own paths — it does not make them your watchman.
           </p>
           <div className="flex items-center gap-2">
-            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
+            <input readOnly value={refUrl} className="flex-1 min-w-0 px-3 py-2 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
             <button
               type="button"
               onClick={async () => {
                 try { await navigator.clipboard.writeText(refUrl); } catch {}
                 setCopied(true); setTimeout(() => setCopied(false), 2000);
               }}
-              className="text-xs px-3 py-2 bg-[#c9a84c] text-black rounded font-semibold"
+              className="shrink-0 text-xs px-3 py-2 bg-[#c9a84c] text-black rounded font-semibold"
             >
               {copied ? "Copied" : "Copy"}
             </button>
