@@ -76,6 +76,24 @@ function AdminPage() {
           </div>
         ))}
       </div>
+      <p className="text-xs text-[#9e968a] uppercase tracking-wide mb-2 mt-8 font-semibold">Feedback ({fb?.feedback.length ?? 0})</p>
+      <div className="flex flex-col gap-2">
+        {(fb?.feedback ?? []).length === 0 && <p className="text-xs text-[#9e968a]">No feedback yet.</p>}
+        {(fb?.feedback ?? []).map((f: any) => (
+          <div key={f.id} className="p-3 rounded-md" style={{ background: "#0d0d0d", border: "1px solid #1a1a1a" }}>
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              {f.rating != null && <span className="text-xs" style={{ color: "#e5af38" }}>{"★".repeat(f.rating)}<span className="text-[#3a3428]">{"★".repeat(5 - f.rating)}</span></span>}
+              {f.category && (
+                <span className="text-[0.65rem] px-2 py-0.5 rounded-full" style={{ background: "#1c1608", color: "#e5af38", border: "1px solid #2a2518" }}>{f.category}</span>
+              )}
+              <span className="text-[0.7rem] text-[#9e968a] ml-auto">{new Date(f.created_at).toLocaleString()}</span>
+            </div>
+            <p className="text-sm text-[#ded8cc] whitespace-pre-wrap">{f.message}</p>
+            <p className="text-[0.7rem] text-[#9e968a] mt-1.5">{f.submitter}</p>
+          </div>
+        ))}
+      </div>
+
       <Link to="/dashboard" className="inline-block mt-6 text-sm text-[#b8b0a4]">← Back to app</Link>
     </div>
   );
