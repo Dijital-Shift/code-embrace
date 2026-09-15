@@ -135,26 +135,16 @@ function NewLane() {
           <p className="text-sm text-[#b8b0a4] max-w-xl">
             Scripture-backed paths. Tap one to prefill the form — edit before creating.
           </p>
-          {PATH_CATEGORIES.map((cat) => {
-            const items = PATH_TEMPLATES.filter((t) => t.category === cat);
-            return (
-              <section key={cat}>
-                <p className="text-[0.65rem] text-[#c9a84c] uppercase tracking-[0.22em] font-bold mb-3">
-                  {cat}
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                  {items.map((t) => (
-                    <PathTemplateCard
-                      key={t.id}
-                      template={t}
-                      variant="condensed"
-                      onSelect={pickTemplate}
-                    />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
+          <PathCategoryAccordion
+            renderCard={(t) => (
+              <PathTemplateCard
+                key={t.id}
+                template={t}
+                variant="condensed"
+                onSelect={pickTemplate}
+              />
+            )}
+          />
         </div>
       ) : (
         <form onSubmit={submit} className="flex flex-col gap-6">
