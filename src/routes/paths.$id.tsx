@@ -50,7 +50,7 @@ function LaneDetail() {
   }, [data]);
 
   // Only mark a note as seen once it has actually been on screen.
-  function handleSeen(encId: string) {
+  const handleSeen = useCallback((encId: string) => {
     if (sentRef.current.has(encId)) return;
     sentRef.current.add(encId);
     pendingRef.current.add(encId);
