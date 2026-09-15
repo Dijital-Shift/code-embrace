@@ -4,6 +4,23 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
 
+/**
+ * Owners whose free month has ended without a plan are "resting": no silence
+ * rows are written for them and no watchman is pinged, so the gap never counts
+ * against them and nobody's phone lights up for a paused account.
+ */
+async function accessibleOwners(userIds: string[]): Promise<Set<string>> {
+  const ok = new Set<string>();
+  await Promise.all(
+    userIds.map(async (id) => {
+      const { data, error } = await supabaseAdmin.rpc('has_access', { _user_id: id });
+      // Fail open: a transient DB error must not silence a paying user's watchman.
+      if (error || data === true) ok.add(id);
+    }),
+  );
+  return ok;
+}
+
 // Deliver one alert to one watchman: record it, push it, SMS only as fallback.
 async function deliverToWatchman(args: {
   laneId: string;
