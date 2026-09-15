@@ -6,6 +6,7 @@ import { getUnreadEncouragementCount } from "@/lib/api.functions";
 import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
+import { TrialEndingModal } from "@/components/AccessBanner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -133,6 +134,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </AlertDialog>
 
         <main className="flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
+        <TrialEndingModal />
       </div>
     </AuthGate>
   );

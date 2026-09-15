@@ -7,9 +7,10 @@ interface Props {
   customerEmail?: string;
   userId?: string;
   returnUrl?: string;
+  deferToTrialEnd?: boolean;
 }
 
-export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnUrl }: Props) {
+export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnUrl, deferToTrialEnd }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
     const result = await createCheckoutSession({
       data: {
@@ -18,6 +19,7 @@ export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnU
         userId,
         returnUrl: returnUrl || window.location.href,
         environment: getStripeEnvironment(),
+        deferToTrialEnd,
       },
     });
     if ("error" in result) throw new Error(result.error);

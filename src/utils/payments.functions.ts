@@ -45,6 +45,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     userId?: string;
     returnUrl: string;
     environment: StripeEnv;
+    /** Defer the first charge to the end of the user's free month. */
+    deferToTrialEnd?: boolean;
   }) => {
     if (!/^[a-zA-Z0-9_-]+$/.test(data.priceId)) throw new Error("Invalid priceId");
     return data;
@@ -70,6 +72,32 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         productDescription = product.name;
       }
 
+      // Locking a plan in during the free month must not cost the remaining
+      // free days: read the trial end off the profile (server-side, never
+      // trusted from the client) and hand it to Stripe as the trial end.
+      let trialEnd: number | undefined;
+      if (isRecurring && data.deferToTrialEnd && data.userId) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: profile } = await supabaseAdmin
+          .from("profiles")
+          .select("trial_ends_at")
+          .eq("user_id", data.userId)
+          .maybeSingle();
+        const ends = (profile as any)?.trial_ends_at
+          ? Math.floor(new Date((profile as any).trial_ends_at).getTime() / 1000)
+          : 0;
+        // Stripe requires a trial end at least 48 hours out.
+        const min = Math.floor(Date.now() / 1000) + 49 * 3600;
+        if (ends > min) trialEnd = ends;
+      }
+
+      const subscriptionData = isRecurring
+        ? {
+            ...(data.userId && { metadata: { userId: data.userId } }),
+            ...(trialEnd && { trial_end: trialEnd }),
+          }
+        : undefined;
+
       const session = await stripe.checkout.sessions.create({
         line_items: [{ price: stripePrice.id, quantity: 1 }],
         mode: isRecurring ? "subscription" : "payment",
@@ -77,9 +105,9 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         return_url: data.returnUrl,
         ...(customerId && { customer: customerId }),
         ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-        ...(data.userId && {
-          metadata: { userId: data.userId },
-          ...(isRecurring && { subscription_data: { metadata: { userId: data.userId } } }),
+        ...(data.userId && { metadata: { userId: data.userId } }),
+        ...(subscriptionData && Object.keys(subscriptionData).length > 0 && {
+          subscription_data: subscriptionData,
         }),
       });
 

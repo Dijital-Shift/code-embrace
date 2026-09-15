@@ -4,6 +4,23 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
 
+/**
+ * Owners whose free month has ended without a plan are "resting": no silence
+ * rows are written for them and no watchman is pinged, so the gap never counts
+ * against them and nobody's phone lights up for a paused account.
+ */
+async function accessibleOwners(userIds: string[]): Promise<Set<string>> {
+  const ok = new Set<string>();
+  await Promise.all(
+    userIds.map(async (id) => {
+      const { data, error } = await supabaseAdmin.rpc('has_access', { _user_id: id });
+      // Fail open: a transient DB error must not silence a paying user's watchman.
+      if (error || data === true) ok.add(id);
+    }),
+  );
+  return ok;
+}
+
 // Deliver one alert to one watchman: record it, push it, SMS only as fallback.
 async function deliverToWatchman(args: {
   laneId: string;
@@ -106,6 +123,7 @@ export async function markMissedCheckins() {
     .select('user_id, timezone, email, first_name').in('user_id', userIds);
   const tzMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.timezone || 'America/Chicago']));
   const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name || p.email]));
+  const withAccess = await accessibleOwners(userIds as string[]);
 
   let processed = 0;
   let watchmenPinged = 0;
@@ -116,6 +134,8 @@ export async function markMissedCheckins() {
   const watchQueue = new Map<string, WatchPending>();                    // watchmanId -> pending
 
   for (const lane of activeLanes) {
+    // Resting account — no silence recorded, no watchman pinged.
+    if (!withAccess.has(lane.user_id)) continue;
     const tz = tzMap.get(lane.user_id) ?? 'America/Chicago';
     const { date: localToday, hour: localHour } = localParts(nowUtc, tz);
 
@@ -238,8 +258,11 @@ export async function sendBedtimeReminders() {
   const { data: profiles } = await supabaseAdmin.from('profiles')
     .select('user_id, timezone').eq('status', 'active').eq('reminder_utc_hour', utcHour);
   if (!profiles?.length) return { sent: 0 };
+  const reminderAccess = await accessibleOwners(profiles.map((p: any) => p.user_id));
   let sent = 0;
   for (const p of profiles) {
+    // Resting accounts get no nightly nudge.
+    if (!reminderAccess.has(p.user_id)) continue;
     const today = localDate((p as any).timezone || DEFAULT_TZ);
     const { data: lanes } = await supabaseAdmin.from('lanes')
       .select('lane_id').eq('user_id', p.user_id).eq('status', 'active');
