@@ -552,6 +552,15 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name').in('user_id', userIds);
       for (const p of ps ?? []) ownerEmails.set(p.user_id, { email: p.email, phone: p.phone, first_name: p.first_name });
     }
+    // Owners whose free month lapsed are resting — the watchman sees a quiet
+    // label, never anything about money.
+    const restingOwners = new Set<string>();
+    await Promise.all(
+      userIds.map(async (id) => {
+        const { data: ok, error } = await supabaseAdmin.rpc('has_access', { _user_id: id });
+        if (!error && ok !== true) restingOwners.add(id);
+      }),
+    );
     const laneIds = (lanes ?? []).map((l) => l.lane_id);
     const { data: todayChks } = laneIds.length
       ? await supabase.from('checkins')
