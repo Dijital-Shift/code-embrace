@@ -29,18 +29,49 @@ function LaneDetail() {
   const qc = useQueryClient();
   const [err, setErr] = useState<string | null>(null);
   const markReadFn = useServerFn(markEncouragementsRead);
-  const markedRef = useRef(false);
 
   const { data, isLoading } = useQuery({ queryKey: ["lane", id], queryFn: () => getFn({ data: { id } }) });
 
-  // Mark received encouragements as read once they've been rendered on this page.
+  // Which encouragements were unread when this page first loaded — drives the
+  // "New" tag independently of the refreshed server data.
+  const [unreadIds, setUnreadIds] = useState<string[]>([]);
+  const [fadedIds, setFadedIds] = useState<string[]>([]);
+  const capturedRef = useRef(false);
+  const sentRef = useRef<Set<string>>(new Set());
+  const pendingRef = useRef<Set<string>>(new Set());
+  const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
-    if (markedRef.current) return;
-    const unread = ((data as any)?.encouragements ?? []).filter((e: any) => !e.read_at).map((e: any) => e.id);
-    if (!unread.length) return;
-    markedRef.current = true;
-    markReadFn({ data: { ids: unread } }).catch(() => {});
-  }, [data, markReadFn]);
+    if (capturedRef.current) return;
+    const list = (data as any)?.encouragements;
+    if (!list) return;
+    capturedRef.current = true;
+    setUnreadIds(list.filter((e: any) => !e.read_at).map((e: any) => e.id));
+  }, [data]);
+
+  // Only mark a note as seen once it has actually been on screen.
+  function handleSeen(encId: string) {
+    if (sentRef.current.has(encId)) return;
+    sentRef.current.add(encId);
+    pendingRef.current.add(encId);
+    // Let the reader register the gold tag before it fades.
+    setTimeout(() => setFadedIds((f) => (f.includes(encId) ? f : [...f, encId])), 4000);
+    if (flushTimer.current) clearTimeout(flushTimer.current);
+    flushTimer.current = setTimeout(() => {
+      const ids = Array.from(pendingRef.current);
+      pendingRef.current.clear();
+      if (!ids.length) return;
+      markReadFn({ data: { ids } })
+        .then(() => {
+          qc.invalidateQueries({ queryKey: ["lane", id] });
+          qc.invalidateQueries({ queryKey: ["lanes"] });
+          qc.invalidateQueries({ queryKey: ["dashboard"] });
+          qc.invalidateQueries({ queryKey: ["unread-encouragements"] });
+        })
+        .catch(() => {});
+    }, 800);
+  }
+
 
 
   const [pending, setPending] = useState<null | "paused" | "archived" | "delete">(null);
