@@ -5,8 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { createLane, listMyLanes } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AccessGate } from "@/components/AccessBanner";
-import { PATH_CATEGORIES, PATH_TEMPLATES, getPathTemplate } from "@/lib/path-templates";
+import { getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
+import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
 
 type LaneNewSearch = { template?: string };
 
