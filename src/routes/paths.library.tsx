@@ -36,49 +36,9 @@ function Library() {
         avoid what He warns against, complete what He calls you to.
       </p>
 
-      <div className="flex flex-col gap-2">
-        {PATH_CATEGORIES.map((cat) => {
-          const items = PATH_TEMPLATES.filter((t) => t.category === cat);
-          if (items.length === 0) return null;
-          const isOpen = openCat === cat;
-          return (
-            <section
-              key={cat}
-              className="rounded-xl border border-[#2a2518] overflow-hidden"
-              style={{ background: "#120f0d" }}
-            >
-              <button
-                type="button"
-                ref={(el) => {
-                  headerRefs.current[cat] = el;
-                }}
-                onClick={() => toggle(cat)}
-                aria-expanded={isOpen}
-                className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left"
-              >
-                <span className="text-[0.68rem] text-[#c9a84c] uppercase tracking-[0.22em] font-bold">
-                  {cat}
-                </span>
-                <span className="flex items-center gap-2 shrink-0">
-                  <span className="text-[0.68rem] text-[#8a8276]">{items.length}</span>
-                  <ChevronDown
-                    size={16}
-                    className="text-[#8a8276] transition-transform duration-200"
-                    style={{ transform: isOpen ? "rotate(180deg)" : "none" }}
-                  />
-                </span>
-              </button>
-              {isOpen && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 pb-4 pt-1">
-                  {items.map((t) => (
-                    <PathTemplateCard key={t.id} template={t} />
-                  ))}
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </div>
+      <PathCategoryAccordion
+        renderCard={(t) => <PathTemplateCard key={t.id} template={t} />}
+      />
 
 
       <div className="mt-12 p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
