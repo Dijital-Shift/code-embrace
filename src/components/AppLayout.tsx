@@ -133,6 +133,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </AlertDialog>
 
         <main className="flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
+        <TrialEndingModal />
       </div>
     </AuthGate>
   );
