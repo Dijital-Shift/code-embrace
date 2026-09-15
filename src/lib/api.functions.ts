@@ -622,6 +622,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
         partner_relationship: relByPath.get(l.lane_id) ?? null,
         owner: ownerEmails.get(l.user_id) ?? null,
         latestAlert: latestAlert.get(l.lane_id) ?? null,
+        resting: restingOwners.has(l.user_id),
       })),
       todayCheckins: todayChks ?? [], history: history ?? [],
       notifications: alertHistory,
