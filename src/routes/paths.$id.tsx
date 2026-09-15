@@ -271,6 +271,61 @@ function LaneDetail() {
   );
 }
 
+function EncouragementCard({
+  enc,
+  isNew,
+  faded,
+  onSeen,
+}: {
+  enc: any;
+  isNew: boolean;
+  faded: boolean;
+  onSeen: (id: string) => void;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      onSeen(enc.id);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((en) => en.isIntersecting)) {
+          onSeen(enc.id);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [enc.id, onSeen]);
+
+  return (
+    <div ref={ref} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+      {isNew && (
+        <span
+          className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5 transition-opacity duration-700"
+          style={{ opacity: faded ? 0 : 1 }}
+        >
+          New
+        </span>
+      )}
+      {enc.context && (
+        <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
+      )}
+      <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
+      <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
+        {enc.from_name} ·{" "}
+        {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+      </p>
+    </div>
+  );
+}
+
 type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
 
 function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
