@@ -6,6 +6,7 @@ interface CheckoutOptions {
   customerEmail?: string;
   userId?: string;
   returnUrl?: string;
+  deferToTrialEnd?: boolean;
 }
 
 export function useStripeCheckout() {
