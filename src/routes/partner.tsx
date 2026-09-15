@@ -217,6 +217,12 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
 
       {open && (
         <div className="px-4 pb-4">
+          {lane.resting && (
+            <p className="text-xs text-[#948d80] mb-3 leading-relaxed">
+              This path is resting. Their history is all still here — you just won't get alerts
+              until they pick it back up.
+            </p>
+          )}
           {lane.notes && (
             <div className="mb-3 pl-2.5 border-l-2 border-[#c9a84c]/50">
               <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-0.5">Notes from them</p>
