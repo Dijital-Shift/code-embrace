@@ -258,8 +258,11 @@ export async function sendBedtimeReminders() {
   const { data: profiles } = await supabaseAdmin.from('profiles')
     .select('user_id, timezone').eq('status', 'active').eq('reminder_utc_hour', utcHour);
   if (!profiles?.length) return { sent: 0 };
+  const reminderAccess = await accessibleOwners(profiles.map((p: any) => p.user_id));
   let sent = 0;
   for (const p of profiles) {
+    // Resting accounts get no nightly nudge.
+    if (!reminderAccess.has(p.user_id)) continue;
     const today = localDate((p as any).timezone || DEFAULT_TZ);
     const { data: lanes } = await supabaseAdmin.from('lanes')
       .select('lane_id').eq('user_id', p.user_id).eq('status', 'active');
