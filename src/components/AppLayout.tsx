@@ -6,6 +6,7 @@ import { getUnreadEncouragementCount } from "@/lib/api.functions";
 import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
+import { TrialEndingModal } from "@/components/AccessBanner";
 import {
   AlertDialog,
   AlertDialogAction,
