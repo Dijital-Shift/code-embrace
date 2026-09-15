@@ -123,6 +123,7 @@ export async function markMissedCheckins() {
     .select('user_id, timezone, email, first_name').in('user_id', userIds);
   const tzMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.timezone || 'America/Chicago']));
   const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name || p.email]));
+  const withAccess = await accessibleOwners(userIds as string[]);
 
   let processed = 0;
   let watchmenPinged = 0;
