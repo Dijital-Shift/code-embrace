@@ -70,7 +70,7 @@ function LaneDetail() {
         })
         .catch(() => {});
     }, 800);
-  }
+  }, [markReadFn, qc, id]);
 
 
 
