@@ -134,6 +134,8 @@ export async function markMissedCheckins() {
   const watchQueue = new Map<string, WatchPending>();                    // watchmanId -> pending
 
   for (const lane of activeLanes) {
+    // Resting account — no silence recorded, no watchman pinged.
+    if (!withAccess.has(lane.user_id)) continue;
     const tz = tzMap.get(lane.user_id) ?? 'America/Chicago';
     const { date: localToday, hour: localHour } = localParts(nowUtc, tz);
 
