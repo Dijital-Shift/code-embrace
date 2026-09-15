@@ -35,9 +35,21 @@ It never shows for anyone already on a plan, and it stops entirely once they've 
 
 Once monthly is locked in during the free month, the strip and pop-up disappear and are replaced by a quiet line: "You're set. First payment DATE, $4.99/month." Lifetime buyers see "Lifetime — you're set."
 
-**5. Softer wording after it ends**
+**5. If they don't choose — the account rests, it is not deleted**
 
-The expired panel stays, but the tone shifts from a wall to an invitation: "Your free month is up. Everything is still here." with the same two buttons.
+Recommended policy, and what this plan implements:
+
+- Nothing is deleted. Ever. Paths, history, notes, watchmen and encouragements stay exactly as they were, however long the account sits unpaid.
+- They can still sign in and read everything — paths, days held, days fallen, words from their watchman.
+- What stops is the active part: checking in, creating or editing paths, and inviting watchmen.
+- Their watchmen stop getting alerts about them, and they stop getting nightly reminders. No silent alarms firing for an account that isn't being used.
+- Their watchmen see a quiet line on the affected path: "This path is resting." No shaming, no price talk shown to the watchman.
+- Being someone else's watchman is still completely free and unaffected.
+- The moment they pay — day 1 or day 300 — everything switches back on exactly where it was. Days held and days fallen pick up from the pause; the gap days aren't counted as falls.
+
+No 30-day data wipe. Storage for text records costs almost nothing, and deleting someone's honest record of their walk is a bad look for a product built on not hiding. If that changes later, we add a warning email first, not a silent delete.
+
+The expired screen's tone shifts from a wall to an invitation: "Your free month is up. Everything is still here." with the same two buttons.
 
 ## Technical notes
 
