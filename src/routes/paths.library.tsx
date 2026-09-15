@@ -23,27 +23,6 @@ export const Route = createFileRoute("/paths/library")({
 });
 
 function Library() {
-  const [openCat, setOpenCat] = useState<string | null>(PATH_CATEGORIES[0] ?? null);
-  const headerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const anchor = useRef<{ cat: string; top: number } | null>(null);
-
-  // Keep the tapped header visually still when sections above/below resize.
-  useLayoutEffect(() => {
-    const a = anchor.current;
-    if (!a) return;
-    anchor.current = null;
-    const el = headerRefs.current[a.cat];
-    if (!el) return;
-    const delta = el.getBoundingClientRect().top - a.top;
-    if (Math.abs(delta) > 1) window.scrollBy({ top: delta, behavior: "auto" });
-  }, [openCat]);
-
-  function toggle(cat: string) {
-    const el = headerRefs.current[cat];
-    if (el) anchor.current = { cat, top: el.getBoundingClientRect().top };
-    setOpenCat((cur) => (cur === cat ? null : cat));
-  }
-
   return (
     <div>
       <div className="flex items-center gap-3 mb-2">
