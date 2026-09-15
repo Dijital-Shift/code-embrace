@@ -57,4 +57,6 @@ The expired screen's tone shifts from a wall to an invitation: "Your free month 
 - `getAccessState` additionally returns `inFinalStretch` (trial active, `daysLeft <= 5`) and the subscription's `price_id` / `current_period_end` so the confirmation line can render.
 - New `TrialEndingModal` component; daily dismissal stored in `localStorage` keyed by user id + local date.
 - `AccessBanner` gains the final-stretch and locked-in states; `PlanButtons` is reused as-is.
+- Resting accounts: the nightly silence sweep and the bedtime reminder job skip owners whose `has_access` is false, so no check-in rows are written and no watchman alerts fire during a lapse. Because no Silent rows are created, the gap simply doesn't count against them.
+- `/partner` shows a "resting" label for paths whose owner has no access; the watchman is never shown pricing.
 - No database changes needed.
