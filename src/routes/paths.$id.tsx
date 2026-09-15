@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead } from "@/lib/api.functions";
 import {
   createLaneInvite,
@@ -29,18 +29,49 @@ function LaneDetail() {
   const qc = useQueryClient();
   const [err, setErr] = useState<string | null>(null);
   const markReadFn = useServerFn(markEncouragementsRead);
-  const markedRef = useRef(false);
 
   const { data, isLoading } = useQuery({ queryKey: ["lane", id], queryFn: () => getFn({ data: { id } }) });
 
-  // Mark received encouragements as read once they've been rendered on this page.
+  // Which encouragements were unread when this page first loaded — drives the
+  // "New" tag independently of the refreshed server data.
+  const [unreadIds, setUnreadIds] = useState<string[]>([]);
+  const [fadedIds, setFadedIds] = useState<string[]>([]);
+  const capturedRef = useRef(false);
+  const sentRef = useRef<Set<string>>(new Set());
+  const pendingRef = useRef<Set<string>>(new Set());
+  const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
-    if (markedRef.current) return;
-    const unread = ((data as any)?.encouragements ?? []).filter((e: any) => !e.read_at).map((e: any) => e.id);
-    if (!unread.length) return;
-    markedRef.current = true;
-    markReadFn({ data: { ids: unread } }).catch(() => {});
-  }, [data, markReadFn]);
+    if (capturedRef.current) return;
+    const list = (data as any)?.encouragements;
+    if (!list) return;
+    capturedRef.current = true;
+    setUnreadIds(list.filter((e: any) => !e.read_at).map((e: any) => e.id));
+  }, [data]);
+
+  // Only mark a note as seen once it has actually been on screen.
+  const handleSeen = useCallback((encId: string) => {
+    if (sentRef.current.has(encId)) return;
+    sentRef.current.add(encId);
+    pendingRef.current.add(encId);
+    // Let the reader register the gold tag before it fades.
+    setTimeout(() => setFadedIds((f) => (f.includes(encId) ? f : [...f, encId])), 4000);
+    if (flushTimer.current) clearTimeout(flushTimer.current);
+    flushTimer.current = setTimeout(() => {
+      const ids = Array.from(pendingRef.current);
+      pendingRef.current.clear();
+      if (!ids.length) return;
+      markReadFn({ data: { ids } })
+        .then(() => {
+          qc.invalidateQueries({ queryKey: ["lane", id] });
+          qc.invalidateQueries({ queryKey: ["lanes"] });
+          qc.invalidateQueries({ queryKey: ["dashboard"] });
+          qc.invalidateQueries({ queryKey: ["unread-encouragements"] });
+        })
+        .catch(() => {});
+    }, 800);
+  }, [markReadFn, qc, id]);
+
 
 
   const [pending, setPending] = useState<null | "paused" | "archived" | "delete">(null);
@@ -126,19 +157,13 @@ function LaneDetail() {
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Recent encouragements received</p>
           <div className="flex flex-col gap-3">
             {(data?.encouragements ?? []).map((e: any) => (
-              <div key={e.id} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
-                {!e.read_at && (
-                  <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5">New</span>
-                )}
-                {e.context && (
-                  <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{e.context}</p>
-                )}
-                <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{e.body}</p>
-                <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
-                  {e.from_name} · {new Date(e.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-                </p>
-
-              </div>
+              <EncouragementCard
+                key={e.id}
+                enc={e}
+                isNew={unreadIds.includes(e.id)}
+                faded={fadedIds.includes(e.id)}
+                onSeen={handleSeen}
+              />
             ))}
           </div>
         </div>
@@ -242,6 +267,61 @@ function LaneDetail() {
         </p>
       </div>
 
+    </div>
+  );
+}
+
+function EncouragementCard({
+  enc,
+  isNew,
+  faded,
+  onSeen,
+}: {
+  enc: any;
+  isNew: boolean;
+  faded: boolean;
+  onSeen: (id: string) => void;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      onSeen(enc.id);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((en) => en.isIntersecting)) {
+          onSeen(enc.id);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [enc.id, onSeen]);
+
+  return (
+    <div ref={ref} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+      {isNew && (
+        <span
+          className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5 transition-opacity duration-700"
+          style={{ opacity: faded ? 0 : 1 }}
+        >
+          New
+        </span>
+      )}
+      {enc.context && (
+        <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
+      )}
+      <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
+      <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
+        {enc.from_name} ·{" "}
+        {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+      </p>
     </div>
   );
 }
