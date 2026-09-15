@@ -208,7 +208,9 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
           </p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-xs font-semibold" style={{ color: todayCol }}>{todayLabel}</p>
+          <p className="text-xs font-semibold" style={{ color: lane.resting ? "#948d80" : todayCol }}>
+            {lane.resting ? "Resting" : todayLabel}
+          </p>
           <p className="text-[0.65rem] text-[#948d80]">{open ? "Hide" : "Open"}</p>
         </div>
       </button>
