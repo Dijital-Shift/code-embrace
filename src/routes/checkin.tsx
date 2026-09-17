@@ -16,6 +16,26 @@ export const Route = createFileRoute("/checkin")({
 
 type Lane = { lane_id: string; title: string; description?: string | null; lane_type: string };
 
+/** Undoable for 30 minutes after it was logged. */
+function undoable(checkin?: { status?: string; completion_time?: string | null } | null) {
+  if (!checkin) return false;
+  if (checkin.status !== "completed" && checkin.status !== "skipped") return false;
+  if (!checkin.completion_time) return false;
+  return (Date.now() - new Date(checkin.completion_time).getTime()) / 60000 < 30;
+}
+
+/** Small, quiet undo affordance — no block, no extra row. */
+function UndoLink({ busy, onClick }: { busy: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button" disabled={busy} onClick={onClick}
+      aria-label="Undo this check-in"
+      title="You have 30 minutes to undo"
+      className="text-[0.7rem] text-[#c9a84c] underline underline-offset-2 shrink-0"
+    >{busy ? "Undoing…" : "Undo"}</button>
+  );
+}
+
 function CheckIn() {
   const fn = useServerFn(getCheckinPage);
   const { data, isLoading } = useQuery({ queryKey: ["checkin"], queryFn: () => fn() });
@@ -37,9 +57,11 @@ function CheckIn() {
   const lanes = (data?.lanes ?? []) as Lane[];
   const checkins = data?.checkins ?? [];
   const today = data?.today ?? "";
+  const yesterday = data?.yesterday ?? "";
   const graceOpen = data?.graceOpen ?? false;
 
   const todayMap = new Map(checkins.filter((c) => c.checkin_date === today).map((c) => [c.lane_id, c]));
+  const yesterdayMap = new Map(checkins.filter((c) => c.checkin_date === yesterday).map((c) => [c.lane_id, c]));
   // Yesterday is open whenever no entry exists for it — not only once the
   // sweep has written a "missed" row.
   const catchUpSet = new Set(data?.catchUp ?? []);
@@ -47,6 +69,9 @@ function CheckIn() {
   const late = lanes.filter((l) => catchUpSet.has(l.lane_id));
   const pending = lanes.filter((l) => !todayMap.has(l.lane_id));
   const done = lanes.filter((l) => todayMap.has(l.lane_id));
+  // Yesterday entries that are still inside the undo window stay visible, so a
+  // mis-click on a catch-up answer can be taken back after a refresh.
+  const undoableYesterday = lanes.filter((l) => undoable(yesterdayMap.get(l.lane_id) as any));
   const allDone = pending.length === 0 && late.length === 0;
 
   if (!lanes.length) {
@@ -95,13 +120,16 @@ function CheckIn() {
         </section>
       )}
 
-      {done.length > 0 && (
+      {(done.length > 0 || undoableYesterday.length > 0) && (
         <section className="mb-6">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Logged</p>
           <div className="flex flex-col gap-1.5">
+            {undoableYesterday.map((l) => (
+              <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" />
+            ))}
             {done.map((l) => {
               const c = todayMap.get(l.lane_id)!;
-              return <LoggedRow key={l.lane_id} lane={l} checkin={c} />;
+              return <LoggedRow key={l.lane_id} lane={l} checkin={c as any} />;
             })}
           </div>
         </section>
@@ -137,7 +165,8 @@ function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?:
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     setResult(response === "aligned" ? "completed" : "breached");
-    if (response === "aligned" && day === "today") setCanUndo(true);
+    // Undo covers a mis-click on either day.
+    if (response === "aligned") setCanUndo(true);
     qc.invalidateQueries({ queryKey: ["dashboard"] });
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
@@ -158,29 +187,21 @@ function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?:
     await skip({ data: { laneId: lane.lane_id } });
     setBusy(false);
     setResult("skipped");
+    setCanUndo(true);
     qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["checkin"] });
   }
 
   if (result) {
     return (
-      <div className="rounded-lg border border-[#2a2518] overflow-hidden" style={{ background: "#161210" }}>
-        <div className="flex justify-between items-center px-3 py-2.5">
-          <span className="text-sm text-[#ded8cc]">{lane.title}</span>
-          <span className="text-xs font-semibold" style={{ color: statusColor(result) }}>{statusLabel(result)}</span>
-        </div>
-        {canUndo && (
-          <div
-            className="flex items-center justify-between gap-3 px-3 py-2.5 border-t border-[#2a2518]"
-            style={{ background: "#0e1a12" }}
-          >
-            <span className="text-xs text-[#9ec9ac]">Logged. You can undo this for 30 minutes.</span>
-            <button
-              type="button" disabled={busy} onClick={undo}
-              className="px-3 py-1.5 rounded-md text-xs font-bold shrink-0"
-              style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
-            >{busy ? "Undoing…" : "Undo"}</button>
+      <div className="rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+        <div className="flex justify-between items-center gap-3 px-3 py-2.5">
+          <span className="text-sm text-[#ded8cc] min-w-0 truncate">{lane.title}</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-xs font-semibold" style={{ color: statusColor(result) }}>{statusLabel(result)}</span>
+            {canUndo && <UndoLink busy={busy} onClick={undo} />}
           </div>
-        )}
+        </div>
         {err && <p className="text-red-400 text-xs px-3 pb-2.5">{err}</p>}
       </div>
     );
@@ -248,19 +269,20 @@ function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?:
 }
 
 /**
- * A check-in already logged for today. Keeps the Undo affordance alive for
- * 30 minutes after a "Held" entry, so it survives a page refresh.
+ * A check-in already logged. Keeps a quiet inline Undo alive for 30 minutes
+ * after a "Held" or Sabbath entry, so it survives a page refresh.
  */
-function LoggedRow({ lane, checkin }: { lane: Lane; checkin: { status: string; completion_time?: string | null } }) {
+function LoggedRow({ lane, checkin, dayTag }: {
+  lane: Lane;
+  checkin: { status: string; completion_time?: string | null };
+  dayTag?: string;
+}) {
   const qc = useQueryClient();
   const revert = useServerFn(revertComplete);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const ageMin = checkin.completion_time
-    ? (Date.now() - new Date(checkin.completion_time).getTime()) / 60000
-    : Infinity;
-  const canUndo = checkin.status === "completed" && ageMin < 30;
+  const canUndo = undoable(checkin);
 
   async function undo() {
     if (busy) return;
@@ -273,18 +295,15 @@ function LoggedRow({ lane, checkin }: { lane: Lane; checkin: { status: string; c
   }
 
   return (
-    <div className="rounded-lg border border-[#2a2518] overflow-hidden" style={{ background: "#161210" }}>
+    <div className="rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
       <div className="flex justify-between items-center gap-3 px-3 py-2.5">
-        <span className="text-sm text-[#ded8cc] min-w-0 truncate">{lane.title}</span>
+        <div className="min-w-0">
+          {dayTag && <span className="text-[0.6rem] text-[#a8a094] font-semibold uppercase tracking-wider block">{dayTag}</span>}
+          <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
+        </div>
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-xs font-semibold" style={{ color: statusColor(checkin.status) }}>{statusLabel(checkin.status)}</span>
-          {canUndo && (
-            <button
-              type="button" disabled={busy} onClick={undo}
-              className="px-3 py-1.5 rounded-md text-xs font-bold"
-              style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
-            >{busy ? "Undoing…" : "Undo"}</button>
-          )}
+          {canUndo && <UndoLink busy={busy} onClick={undo} />}
         </div>
       </div>
       {err && <p className="text-red-400 text-xs px-3 pb-2.5">{err}</p>}

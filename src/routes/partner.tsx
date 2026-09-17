@@ -18,7 +18,7 @@ function Partner() {
   const dismissFn = useServerFn(dismissWatchmanPrompt);
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["partner"], queryFn: () => fn() });
-  const [showAllAlerts, setShowAllAlerts] = useState(false);
+  
 
   const dismissMut = useMutation({
     mutationFn: () => dismissFn(),
@@ -56,6 +56,9 @@ function Partner() {
           <h2 className="text-xl font-bold mb-1">Your Assignments</h2>
         </div>
         <p className="text-[#a8a094] text-sm">You'll only be pinged when something goes wrong. Silence means they're aligned.</p>
+        {lanes.length > 0 && (
+          <p className="text-[0.7rem] text-[#c9a84c] mt-2">Tap a path to send encouragement.</p>
+        )}
       </div>
 
       {showMicroPrompt && (
@@ -152,30 +155,22 @@ function Partner() {
 
       {notifications.length > 0 && (
         <section>
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Alert History</p>
-          <div className="flex flex-col gap-3">
-            {(showAllAlerts ? notifications : notifications.slice(0, 5)).map((n) => (
-              <div key={n.notification_id} className="p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-                <div className="flex justify-between mb-1.5">
-                  <span className="text-[0.7rem] px-2 py-0.5 rounded" style={{ background: n.type === "breach_report" ? "#2d0d0d" : "#1a1200", color: n.type === "breach_report" ? "#f87171" : "#f59e0b" }}>
-                    {n.type === "breach_report" ? "Breach" : n.type === "encouragement" ? "Encouragement" : "Missed"}
-                  </span>
-                  <span className="text-[0.7rem] text-[#948d80]">
-                    {n.sent_at ? new Date(n.sent_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Pending"}
-                  </span>
-                </div>
-                <p className="text-xs text-[#b8b0a4] leading-relaxed">{n.message_content}</p>
-              </div>
+          <div className="flex items-baseline justify-between gap-3 mb-3">
+            <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Alert History</p>
+            <p className="text-[0.7rem] text-[#948d80]">
+              <span className="text-[#f59e0b] font-semibold">{notifications.filter((n) => n.type !== "breach_report").length} silent</span>
+              <span className="mx-1.5">·</span>
+              <span className="text-[#f87171] font-semibold">{notifications.filter((n) => n.type === "breach_report").length} breach</span>
+            </p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {groupAlerts(notifications, lanes).map((g) => (
+              <AlertGroup key={g.key} group={g} />
             ))}
           </div>
-          {notifications.length > 5 && (
-            <button
-              type="button" onClick={() => setShowAllAlerts((v) => !v)}
-              className="text-xs text-[#c9a84c] underline mt-3"
-            >{showAllAlerts ? "Show less" : `Show all ${notifications.length}`}</button>
-          )}
         </section>
       )}
+
     </div>
   );
 }
@@ -211,7 +206,7 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
           <p className="text-xs font-semibold" style={{ color: lane.resting ? "#948d80" : todayCol }}>
             {lane.resting ? "Resting" : todayLabel}
           </p>
-          <p className="text-[0.65rem] text-[#948d80]">{open ? "Hide" : "Open"}</p>
+          <p className="text-[0.65rem] text-[#c9a84c]">{open ? "Hide" : "Tap to encourage"}</p>
         </div>
       </button>
 
@@ -296,5 +291,76 @@ function EncourageBox({ laneId, send, onSent, alert }: { laneId: string; send: a
       </div>
       {err && <p className="text-red-400 text-[0.7rem] mt-1">{err}</p>}
     </form>
+  );
+}
+
+type AlertItem = { notification_id: string; type: string; sent_at: string | null; message_content: string | null; lane_id: string | null };
+type AlertGroupData = { key: string; title: string; who: string | null; silent: number; breach: number; last: string | null; items: AlertItem[] };
+
+/** One line per path instead of a wall of near-identical alert cards. */
+function groupAlerts(notifications: any[], lanes: any[]): AlertGroupData[] {
+  const meta = new Map(lanes.map((l: any) => [l.lane_id, l]));
+  const groups = new Map<string, AlertGroupData>();
+  for (const n of notifications as AlertItem[]) {
+    const key = n.lane_id ?? "other";
+    const lane = n.lane_id ? meta.get(n.lane_id) : null;
+    let g = groups.get(key);
+    if (!g) {
+      g = {
+        key,
+        title: lane?.title ?? "Path",
+        who: lane ? (lane.owner?.first_name || lane.owner?.email || null) : null,
+        silent: 0, breach: 0, last: null, items: [],
+      };
+      groups.set(key, g);
+    }
+    if (n.type === "breach_report") g.breach++; else g.silent++;
+    if (!g.last && n.sent_at) g.last = n.sent_at;
+    g.items.push(n);
+  }
+  return [...groups.values()];
+}
+
+function AlertGroup({ group }: { group: AlertGroupData }) {
+  const [open, setOpen] = useState(false);
+  const parts: string[] = [];
+  if (group.silent) parts.push(`${group.silent} silent`);
+  if (group.breach) parts.push(`${group.breach} breach`);
+  const lastLabel = group.last
+    ? new Date(group.last).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : null;
+
+  return (
+    <div className="rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+      <button type="button" onClick={() => setOpen((v) => !v)} className="w-full flex justify-between items-center gap-3 text-left px-4 py-3">
+        <div className="min-w-0">
+          <p className="text-sm text-[#ded8cc] truncate">
+            {group.title}{group.who ? <span className="text-[#948d80]"> · {group.who}</span> : null}
+          </p>
+          <p className="text-[0.7rem] text-[#948d80]">
+            {parts.join(", ")}{lastLabel ? ` — last ${lastLabel}` : ""}
+          </p>
+        </div>
+        <span className="text-[0.65rem] text-[#c9a84c] shrink-0">{open ? "Hide" : "Open"}</span>
+      </button>
+
+      {open && (
+        <div className="px-4 pb-3 flex flex-col gap-2">
+          {group.items.map((n) => (
+            <div key={n.notification_id} className="p-3 rounded-lg border border-[#2a2518]" style={{ background: "#0d0b06" }}>
+              <div className="flex justify-between mb-1.5 gap-2">
+                <span className="text-[0.7rem] px-2 py-0.5 rounded" style={{ background: n.type === "breach_report" ? "#2d0d0d" : "#1a1200", color: n.type === "breach_report" ? "#f87171" : "#f59e0b" }}>
+                  {n.type === "breach_report" ? "Breach" : n.type === "encouragement" ? "Encouragement" : "Missed"}
+                </span>
+                <span className="text-[0.7rem] text-[#948d80] shrink-0">
+                  {n.sent_at ? new Date(n.sent_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Pending"}
+                </span>
+              </div>
+              <p className="text-xs text-[#b8b0a4] leading-relaxed">{n.message_content}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

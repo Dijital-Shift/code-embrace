@@ -126,36 +126,48 @@ function LaneDetail() {
         </div>
       )}
 
-      <div className="p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-        {lane.description && <p className="text-[#b8b0a4] text-sm mb-3">{lane.description}</p>}
-        {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
-          <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
-        ))}
-        {/^send scripture/i.test(lane.title ?? "") && (
-          <p className="text-xs text-[#a8a094] mt-2">
-            Easy way to do this:{" "}
-            <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
+      {/* The word first, then where you stand — both above the fold. */}
+      <p className="text-[0.75rem] italic text-[#c9a84c] mb-4 leading-relaxed">
+        For a just man falleth seven times, and riseth up again. — Proverbs 24:16 (KJV)
+      </p>
+
+      <div className="p-4 rounded-xl border border-[#2a2518] mb-5" style={{ background: "#161210" }}>
+        <div className="flex items-center justify-center gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-extrabold text-[#4ade80]">{data?.standing ?? 0}</div>
+            <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Days Standing</div>
+          </div>
+          <span className="text-[#948d80] text-xl">·</span>
+          <div className="text-center">
+            <div className="text-3xl font-extrabold text-[#f87171]">{data?.fallen ?? 0}</div>
+            <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Days Fallen</div>
+          </div>
+        </div>
+        {(data?.fallen ?? 0) > 0 && (
+          <p className="text-center text-[0.7rem] text-[#a8a094] mt-2">
+            {data?.breached ?? 0} breach{(data?.breached ?? 0) === 1 ? "" : "es"} · {data?.missed ?? 0} silent
           </p>
         )}
-        {lane.notes && (
-          <div className="mt-3 pl-3 border-l-2 border-[#c9a84c]/60">
-            <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
-            <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
-          </div>
-        )}
-        <p className="text-xs text-[#a8a094] mt-2">
-          Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span>
-          {lane.ends_at && (
-            <span className="ml-3">Ends <span className="text-[#c9a84c]">{lane.ends_at}</span></span>
-          )}
-        </p>
       </div>
 
+      <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Last 14 Days</p>
+      {checkins.length === 0 ? (
+        <p className="text-[#948d80] text-sm">No check-ins yet.</p>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          {checkins.map((c) => (
+            <div key={c.checkin_date} className="flex justify-between px-3 py-2 rounded border border-[#2a2518]" style={{ background: "#161210" }}>
+              <span className="text-sm">{c.checkin_date}</span>
+              <span className="text-xs" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {(data?.encouragements ?? []).length > 0 && (
-        <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Recent encouragements received</p>
-          <div className="flex flex-col gap-3">
+        <div className="mt-6">
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Encouragements received</p>
+          <div className="flex flex-col gap-1.5">
             {(data?.encouragements ?? []).map((e: any) => (
               <EncouragementCard
                 key={e.id}
@@ -169,8 +181,32 @@ function LaneDetail() {
         </div>
       )}
 
-      <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
+      <div className="mt-6 p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+        {lane.description && <p className="text-[#b8b0a4] text-sm mb-2">{lane.description}</p>}
+        {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
+          <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
+        ))}
+        {/^send scripture/i.test(lane.title ?? "") && (
+          <p className="text-xs text-[#a8a094] mt-2">
+            Easy way to do this:{" "}
+            <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
+          </p>
+        )}
+        {lane.notes && (
+          <div className="mt-2 pl-3 border-l-2 border-[#c9a84c]/60">
+            <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
+            <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
+          </div>
+        )}
+        <p className="text-xs text-[#a8a094] mt-2">
+          Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span>
+          {lane.ends_at && (
+            <span className="ml-3">Ends <span className="text-[#c9a84c]">{lane.ends_at}</span></span>
+          )}
+        </p>
+      </div>
 
+      <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
 
       <div className="mt-8 flex gap-2 flex-wrap">
         {lane.status !== "active" && (
@@ -182,6 +218,7 @@ function LaneDetail() {
         {lane.status !== "archived" && (
           <button onClick={() => { setErr(null); setReason(""); setPending("archived"); }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
         )}
+        <Link to="/paths/edit/$id" params={{ id }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#ded8cc] no-underline" style={{ background: "#2a2518" }}>Edit</Link>
         {canDelete && (
           <button
             disabled={del.isPending}
@@ -190,7 +227,6 @@ function LaneDetail() {
             style={{ background: "#1a0a0a" }}
           >{del.isPending ? "Deleting…" : "Delete"}</button>
         )}
-        <Link to="/paths/edit/$id" params={{ id }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#ded8cc] no-underline" style={{ background: "#2a2518" }}>Edit</Link>
       </div>
 
       {pending && (
@@ -228,44 +264,6 @@ function LaneDetail() {
 
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
-      <div className="mt-8">
-        <div className="p-4 rounded-xl border border-[#2a2518] mb-4" style={{ background: "#161210" }}>
-          <div className="flex items-center justify-center gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-extrabold text-[#4ade80]">{data?.standing ?? 0}</div>
-              <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Days Standing</div>
-            </div>
-            <span className="text-[#948d80] text-xl">·</span>
-            <div className="text-center">
-              <div className="text-3xl font-extrabold text-[#f87171]">{data?.fallen ?? 0}</div>
-              <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Days Fallen</div>
-            </div>
-          </div>
-          {(data?.fallen ?? 0) > 0 && (
-            <p className="text-center text-[0.7rem] text-[#a8a094] mt-2">
-              {data?.breached ?? 0} breach{(data?.breached ?? 0) === 1 ? "" : "es"} · {data?.missed ?? 0} silent
-            </p>
-          )}
-        </div>
-
-        <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Last 14 Days</p>
-        {checkins.length === 0 ? (
-          <p className="text-[#948d80] text-sm">No check-ins yet.</p>
-        ) : (
-          <div className="flex flex-col gap-1.5">
-            {checkins.map((c) => (
-              <div key={c.checkin_date} className="flex justify-between px-3 py-2 rounded border border-[#2a2518]" style={{ background: "#161210" }}>
-                <span className="text-sm">{c.checkin_date}</span>
-                <span className="text-xs" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <p className="text-[0.7rem] italic text-[#a8a094] mt-6">
-          For a just man falleth seven times, and riseth up again. — Proverbs 24:16 (KJV)
-        </p>
-      </div>
 
     </div>
   );
@@ -283,6 +281,7 @@ function EncouragementCard({
   onSeen: (id: string) => void;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -304,27 +303,46 @@ function EncouragementCard({
     return () => obs.disconnect();
   }, [enc.id, onSeen]);
 
+  // Thin row by default; tap to read the whole note.
   return (
-    <div ref={ref} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
-      {isNew && (
-        <span
-          className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5 transition-opacity duration-700"
-          style={{ opacity: faded ? 0 : 1 }}
-        >
-          New
+    <div ref={ref} className="rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+      <button
+        type="button"
+        onClick={() => { setOpen((v) => !v); onSeen(enc.id); }}
+        className="w-full flex items-center justify-between gap-3 text-left px-3 py-2.5"
+      >
+        <div className="min-w-0 flex items-center gap-2">
+          {isNew && (
+            <span
+              className="shrink-0 text-[0.55rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-1.5 py-0.5 rounded-full transition-opacity duration-700"
+              style={{ opacity: faded ? 0 : 1 }}
+            >New</span>
+          )}
+          <span className="text-sm text-[#e8dfc4] truncate">
+            {open ? enc.from_name : enc.body}
+          </span>
+        </div>
+        <span className="text-[0.65rem] text-[#a8a094] shrink-0">
+          {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
         </span>
+      </button>
+
+      {open && (
+        <div className="px-3 pb-3">
+          {enc.context && (
+            <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
+          )}
+          <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
+          <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
+            {enc.from_name} ·{" "}
+            {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+          </p>
+        </div>
       )}
-      {enc.context && (
-        <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
-      )}
-      <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
-      <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
-        {enc.from_name} ·{" "}
-        {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-      </p>
     </div>
   );
 }
+
 
 type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
 
