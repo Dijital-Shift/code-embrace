@@ -1,45 +1,56 @@
-# Subtle inline Undo for check-ins (today and yesterday)
+# Inline Undo (all responses) + condensed alert history
 
-## Problem
+## 1. Subtle inline Undo — today, yesterday, and Sabbath
 
-- Confirming a path for **yesterday** gives no Undo at all: the client only enables
-  Undo when `day === "today"` (`PathRow.send` in `src/routes/checkin.tsx`). Worse,
-  once yesterday's row is written, the path leaves the "Yesterday" list entirely
-  (it becomes a normal pending "Today" path), so the confirmation vanishes with
-  no way to undo a mis-click.
-- Today's Undo is a full-width green block under the row — too heavy when there
-  are several paths. The user wants a subtle inline link.
+### Problem
 
-The server side is already correct: `revertComplete` (`src/lib/api.functions.ts:442`)
-looks at both today's and yesterday's completed rows, picks the newest, enforces
-the 30-minute window, and deletes it. Only the check-in page needs changes.
+- Undo only appears for **today's** "Held/Did it" confirmation. Confirming
+  yesterday's path (or skipping for Sabbath) gives nothing: `PathRow.send`
+  only enables Undo when `day === "today"`, and `revertComplete` only matches
+  `completed` rows. Once yesterday's row is written, the path also leaves the
+  "Yesterday" list entirely, so there's nowhere to undo a mis-click.
+- Today's Undo is a full-width green block under the row — too heavy with
+  several paths. The ask: a subtle inline link instead.
 
-## Changes — `src/routes/checkin.tsx` only
+### Changes
 
-1. **Yesterday's logged entries stay visible.** In `CheckIn`, build a
-   `yesterdayMap` from `checkins` (rows where `checkin_date === data.yesterday`).
-   Yesterday's completed/breached entries render in the existing "Logged"
-   section (labeled with a small "Yesterday" tag), using the same `LoggedRow`
-   pattern already used for today — so Undo survives a refresh there too.
+- **Server** — `revertComplete` in `src/lib/api.functions.ts` already resolves
+  the right day (today or yesterday); extend its status filter from
+  `completed` only to `('completed', 'skipped')` so a Sabbath skip can be
+  undone too. Same 30-minute window, same delete. No watchman notification on
+  undo (it's a mis-click fix, mirroring today's behavior).
+- **`src/routes/checkin.tsx`**:
+  - Replace the full-width undo banner with a small inline "Undo" text link
+    next to the status label — muted gold (`#c9a84c`), underlined, small,
+    `title="You have 30 minutes to undo"`. No extra vertical space.
+  - `PathRow.send` sets `canUndo` for `aligned` on either day.
+  - Skip rows (Sabbath) also show the inline Undo for 30 minutes.
+  - Build a `yesterdayMap` from `checkins` so yesterday's completed entries
+    stay visible in the "Logged" section (tagged "Yesterday") with the same
+    inline Undo — Undo survives a refresh for both days.
 
-2. **Subtle inline Undo replaces the block.** In both the transient result state
-   of `PathRow` and `LoggedRow`, remove the full-width undo banner and put a
-   small "Undo" text link inline next to the status label — muted gold
-   (`#c9a84c`), small text, underlined, with `title="You have 30 minutes to undo"`
-   and an aria-label. No extra rows, no banners; it takes no vertical space in a
-   long list.
+## 2. Condensed Alert History (Watch page)
 
-3. **Undo enabled for yesterday confirmations.** `PathRow.send` sets `canUndo`
-   for `aligned` on either day (not just today). The transient result row shows
-   the same subtle inline Undo; once the query refreshes, the entry moves to the
-   Logged section (yesterday) where the 30-minute Undo link continues.
+`src/routes/partner.tsx` Alert History currently renders one card per alert
+with the full message text — repeated "Missed" cards stack into a wall.
 
-4. **No change to the 30-minute rule or to breach/skip behavior.** Undo remains
-   for "Held/Did it" completions only; `revertComplete` is untouched.
+- **Counter at the top**, in the path-page style: e.g. `4 silent · 1 breach`
+  totals across the history.
+- **Group alerts by path**: one condensed line per path —
+  `Worship · Justin — 4 silent, last Sep 15` — with an "Open" toggle that
+  reveals the individual alert cards for that path (current styling kept).
+  "Show all" behavior stays, scoped inside the expanded path.
+
+## 3. Path page order — confirmation
+
+Current order on `/paths/$id` (verified): path details card → encouragements
+received → Watchmen panel → action buttons (Pause / Archive / Delete / Edit)
+→ Standing/Fallen counters with breach/silent breakdown → Last 14 Days list →
+Proverbs 24:16. If you want a different order, say so and it goes in this plan.
 
 ## Verification
 
-- `npx tsgo --noEmit` clean; build log shows `build OK`.
-- Playwright against `/checkin`: confirm a path for yesterday → subtle inline
-  Undo link appears → tap it → path returns to the "Yesterday" list; same flow
-  for today including after a page refresh.
+- `npx tsgo --noEmit` clean; build log `build OK`.
+- Playwright on `/checkin`: confirm yesterday + today + Sabbath, inline Undo
+  appears, undo restores each; refresh persistence. Watch page: condensed
+  groups + counter render and expand.
