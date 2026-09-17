@@ -447,10 +447,10 @@ export const revertComplete = createServerFn({ method: 'POST' })
     const { today, yesterday } = await userDay(supabase, userId);
     const { data: rows } = await supabase.from('checkins')
       .select('checkin_id, completion_time, checkin_date').eq('lane_id', data.laneId).eq('user_id', userId)
-      .in('checkin_date', [today, yesterday]).eq('status', 'completed')
+      .in('checkin_date', [today, yesterday]).in('status', ['completed', 'skipped'])
       .order('checkin_date', { ascending: false });
     const c = (rows ?? [])[0];
-    if (!c) return { error: 'No completed check-in to undo.' };
+    if (!c) return { error: 'Nothing to undo.' };
     const ageMin = (Date.now() - new Date(c.completion_time!).getTime()) / 60000;
     if (ageMin > 30) return { error: 'Check-ins can only be undone within 30 minutes.' };
     await supabase.from('checkins').delete().eq('checkin_id', c.checkin_id);
