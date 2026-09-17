@@ -302,27 +302,46 @@ function EncouragementCard({
     return () => obs.disconnect();
   }, [enc.id, onSeen]);
 
+  // Thin row by default; tap to read the whole note.
   return (
-    <div ref={ref} className="p-3 rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
-      {isNew && (
-        <span
-          className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-2 py-0.5 rounded-full mb-1.5 transition-opacity duration-700"
-          style={{ opacity: faded ? 0 : 1 }}
-        >
-          New
+    <div ref={ref} className="rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+      <button
+        type="button"
+        onClick={() => { setOpen((v) => !v); onSeen(enc.id); }}
+        className="w-full flex items-center justify-between gap-3 text-left px-3 py-2.5"
+      >
+        <div className="min-w-0 flex items-center gap-2">
+          {isNew && (
+            <span
+              className="shrink-0 text-[0.55rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-1.5 py-0.5 rounded-full transition-opacity duration-700"
+              style={{ opacity: faded ? 0 : 1 }}
+            >New</span>
+          )}
+          <span className="text-sm text-[#e8dfc4] truncate">
+            {open ? enc.from_name : enc.body}
+          </span>
+        </div>
+        <span className="text-[0.65rem] text-[#a8a094] shrink-0">
+          {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
         </span>
+      </button>
+
+      {open && (
+        <div className="px-3 pb-3">
+          {enc.context && (
+            <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
+          )}
+          <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
+          <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
+            {enc.from_name} ·{" "}
+            {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+          </p>
+        </div>
       )}
-      {enc.context && (
-        <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
-      )}
-      <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
-      <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
-        {enc.from_name} ·{" "}
-        {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-      </p>
     </div>
   );
 }
+
 
 type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
 
