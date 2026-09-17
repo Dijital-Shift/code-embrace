@@ -56,6 +56,9 @@ function Partner() {
           <h2 className="text-xl font-bold mb-1">Your Assignments</h2>
         </div>
         <p className="text-[#a8a094] text-sm">You'll only be pinged when something goes wrong. Silence means they're aligned.</p>
+        {lanes.length > 0 && (
+          <p className="text-[0.7rem] text-[#c9a84c] mt-2">Tap a path to send encouragement.</p>
+        )}
       </div>
 
       {showMicroPrompt && (
