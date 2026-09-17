@@ -281,6 +281,7 @@ function EncouragementCard({
   onSeen: (id: string) => void;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
