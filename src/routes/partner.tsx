@@ -18,7 +18,7 @@ function Partner() {
   const dismissFn = useServerFn(dismissWatchmanPrompt);
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["partner"], queryFn: () => fn() });
-  const [showAllAlerts, setShowAllAlerts] = useState(false);
+  
 
   const dismissMut = useMutation({
     mutationFn: () => dismissFn(),
