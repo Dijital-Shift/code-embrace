@@ -152,30 +152,22 @@ function Partner() {
 
       {notifications.length > 0 && (
         <section>
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Alert History</p>
-          <div className="flex flex-col gap-3">
-            {(showAllAlerts ? notifications : notifications.slice(0, 5)).map((n) => (
-              <div key={n.notification_id} className="p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-                <div className="flex justify-between mb-1.5">
-                  <span className="text-[0.7rem] px-2 py-0.5 rounded" style={{ background: n.type === "breach_report" ? "#2d0d0d" : "#1a1200", color: n.type === "breach_report" ? "#f87171" : "#f59e0b" }}>
-                    {n.type === "breach_report" ? "Breach" : n.type === "encouragement" ? "Encouragement" : "Missed"}
-                  </span>
-                  <span className="text-[0.7rem] text-[#948d80]">
-                    {n.sent_at ? new Date(n.sent_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Pending"}
-                  </span>
-                </div>
-                <p className="text-xs text-[#b8b0a4] leading-relaxed">{n.message_content}</p>
-              </div>
+          <div className="flex items-baseline justify-between gap-3 mb-3">
+            <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Alert History</p>
+            <p className="text-[0.7rem] text-[#948d80]">
+              <span className="text-[#f59e0b] font-semibold">{notifications.filter((n) => n.type !== "breach_report").length} silent</span>
+              <span className="mx-1.5">·</span>
+              <span className="text-[#f87171] font-semibold">{notifications.filter((n) => n.type === "breach_report").length} breach</span>
+            </p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {groupAlerts(notifications, lanes).map((g) => (
+              <AlertGroup key={g.key} group={g} />
             ))}
           </div>
-          {notifications.length > 5 && (
-            <button
-              type="button" onClick={() => setShowAllAlerts((v) => !v)}
-              className="text-xs text-[#c9a84c] underline mt-3"
-            >{showAllAlerts ? "Show less" : `Show all ${notifications.length}`}</button>
-          )}
         </section>
       )}
+
     </div>
   );
 }
