@@ -39,18 +39,39 @@ with the full message text — repeated "Missed" cards stack into a wall.
 - **Group alerts by path**: one condensed line per path —
   `Worship · Justin — 4 silent, last Sep 15` — with an "Open" toggle that
   reveals the individual alert cards for that path (current styling kept).
-  "Show all" behavior stays, scoped inside the expanded path.
 
-## 3. Path page order — confirmation
+## 3. "Tap to send encouragement" hint (Watch page)
 
-Current order on `/paths/$id` (verified): path details card → encouragements
-received → Watchmen panel → action buttons (Pause / Archive / Delete / Edit)
-→ Standing/Fallen counters with breach/silent breakdown → Last 14 Days list →
-Proverbs 24:16. If you want a different order, say so and it goes in this plan.
+Collapsed assignment cards give no sign that opening one lets you write. Add
+a small muted gold line under the assignments heading:
+"Tap a path to send encouragement." — plus, on each collapsed card, the
+"Open" caption becomes "Tap to encourage" so the affordance is obvious
+without adding a second line of chrome.
+
+## 4. Path page reorder — `src/routes/paths.$id.tsx`
+
+New section order:
+
+1. Header — path title (with type/status line)
+2. Proverbs 24:16 verse — moved from last to directly under the header
+3. Standing / Fallen counter with the breach · silent breakdown — at-a-glance,
+   no scrolling
+4. Last 14 Days list
+5. Encouragements received — thin collapsed rows, tap to expand, matching the
+   `PathCategoryAccordion` pattern; the unread "New" badge and the
+   IntersectionObserver read-tracking still work (a row counts as seen when
+   expanded or when visible, so nothing is silently marked read)
+6. Path details card (description, scripture, notes, ends-at) + Watchmen panel
+   with tightened spacing
+7. Pause / Archive / Edit / Delete at the bottom
+
+The "Path created" banner stays near the top while `newlyCreated` is set.
 
 ## Verification
 
 - `npx tsgo --noEmit` clean; build log `build OK`.
 - Playwright on `/checkin`: confirm yesterday + today + Sabbath, inline Undo
-  appears, undo restores each; refresh persistence. Watch page: condensed
-  groups + counter render and expand.
+  appears, undo restores each; refresh persistence.
+- Playwright on `/paths/$id` and `/partner` at 414px: section order, collapsed
+  encouragement rows, condensed alert groups, and the encouragement hint.
+
