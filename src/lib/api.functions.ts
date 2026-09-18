@@ -441,13 +441,17 @@ export const logComplete = createServerFn({ method: 'POST' })
 
 export const revertComplete = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ laneId: z.string().uuid() }))
+  .inputValidator(z.object({ laneId: z.string().uuid(), forDay: z.enum(['today', 'yesterday']).optional() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { today, yesterday } = await userDay(supabase, userId);
+    // Undo the day the page asked for; without it, fall back to the newest.
+    const days = data.forDay === 'yesterday' ? [yesterday]
+      : data.forDay === 'today' ? [today]
+      : [today, yesterday];
     const { data: rows } = await supabase.from('checkins')
       .select('checkin_id, completion_time, checkin_date').eq('lane_id', data.laneId).eq('user_id', userId)
-      .in('checkin_date', [today, yesterday]).in('status', ['completed', 'skipped'])
+      .in('checkin_date', days).in('status', ['completed', 'skipped'])
       .order('checkin_date', { ascending: false });
     const c = (rows ?? [])[0];
     if (!c) return { error: 'Nothing to undo.' };

@@ -125,7 +125,7 @@ function CheckIn() {
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Logged</p>
           <div className="flex flex-col gap-1.5">
             {undoableYesterday.map((l) => (
-              <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" />
+              <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" day="yesterday" />
             ))}
             {done.map((l) => {
               const c = todayMap.get(l.lane_id)!;
@@ -174,7 +174,7 @@ function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?:
   async function undo() {
     if (busy) return;
     setBusy(true); setErr(null);
-    const r: any = await revert({ data: { laneId: lane.lane_id } });
+    const r: any = await revert({ data: { laneId: lane.lane_id, forDay: day } });
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     setResult(null); setCanUndo(false); setOpen(false);
@@ -272,10 +272,11 @@ function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?:
  * A check-in already logged. Keeps a quiet inline Undo alive for 30 minutes
  * after a "Held" or Sabbath entry, so it survives a page refresh.
  */
-function LoggedRow({ lane, checkin, dayTag }: {
+function LoggedRow({ lane, checkin, dayTag, day = "today" }: {
   lane: Lane;
   checkin: { status: string; completion_time?: string | null };
   dayTag?: string;
+  day?: "today" | "yesterday";
 }) {
   const qc = useQueryClient();
   const revert = useServerFn(revertComplete);
@@ -287,7 +288,7 @@ function LoggedRow({ lane, checkin, dayTag }: {
   async function undo() {
     if (busy) return;
     setBusy(true); setErr(null);
-    const r: any = await revert({ data: { laneId: lane.lane_id } });
+    const r: any = await revert({ data: { laneId: lane.lane_id, forDay: day } });
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     qc.invalidateQueries({ queryKey: ["dashboard"] });
