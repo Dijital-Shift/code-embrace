@@ -288,7 +288,7 @@ function LoggedRow({ lane, checkin, dayTag, day = "today" }: {
   async function undo() {
     if (busy) return;
     setBusy(true); setErr(null);
-    const r: any = await revert({ data: { laneId: lane.lane_id } });
+    const r: any = await revert({ data: { laneId: lane.lane_id, forDay: day } });
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     qc.invalidateQueries({ queryKey: ["dashboard"] });
