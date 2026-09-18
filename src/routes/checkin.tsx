@@ -125,7 +125,7 @@ function CheckIn() {
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Logged</p>
           <div className="flex flex-col gap-1.5">
             {undoableYesterday.map((l) => (
-              <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" />
+              <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" day="yesterday" />
             ))}
             {done.map((l) => {
               const c = todayMap.get(l.lane_id)!;
