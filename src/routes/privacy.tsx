@@ -1,98 +1,117 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { LegalPageLayout, LegalSection, legalHead } from "@/components/LegalPageLayout";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Notice — Kingdom Protocol" },
-      { name: "description", content: "How Kingdom Protocol collects and uses your data." },
-      { property: "og:title", content: "Privacy Notice — Kingdom Protocol" },
-      { property: "og:description", content: "How Kingdom Protocol collects and uses your data." },
-    ],
-  }),
+  head: () => legalHead("Privacy Notice", "How Kingdom Protocol collects, uses, and protects your information."),
   component: PrivacyPage,
 });
 
 function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">← Home</Link>
-        <h1 className="mt-6 text-3xl font-bold">Privacy Notice</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Last updated: June 11, 2026</p>
+    <LegalPageLayout title="Privacy Notice" updated="October 9, 2026">
+      <p>
+        This Notice explains how <strong>Dijital Shift LLC</strong> ("Dijital Shift", "we", "us"), a Wyoming
+        limited liability company, collects and uses personal information in connection with Kingdom Protocol
+        (kingdomprotocol.app and the installable web app).
+      </p>
 
-        <div className="mt-10 space-y-8 text-sm leading-relaxed text-muted-foreground">
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">1. Who we are</h2>
-            <p>Kingdom Protocol is operated by <strong>Dijital Shift LLC</strong>. We act as the data controller for personal data collected through the service. Contact: <a className="underline" href="mailto:dijitalshift@protonmail.com">dijitalshift@protonmail.com</a>.</p>
-          </section>
+      <LegalSection title="Our role">
+        <p>
+          Dijital Shift acts as the data controller for information collected through the Service. Payment card
+          and billing details are collected and processed by Stripe as an independent controller; see{" "}
+          <a href="https://stripe.com/privacy" className="underline hover:text-[#c9a84c]" target="_blank" rel="noreferrer">
+            stripe.com/privacy
+          </a>
+          .
+        </p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">2. Data we collect</h2>
-            <ul className="ml-6 list-disc space-y-1">
-              <li><strong>Account data</strong> — name, email, password hash, phone number (optional).</li>
-              <li><strong>Profile & preferences</strong> — timezone, bedtime, accountability partners.</li>
-              <li><strong>Behavioral data</strong> — paths (commitments), check-ins, breach reports, missed-check-in events.</li>
-              <li><strong>Support communications</strong> — messages you send us.</li>
-              <li><strong>Technical data</strong> — IP address, device identifiers, browser/user-agent, basic usage telemetry, push-notification tokens.</li>
-            </ul>
-          </section>
+      <LegalSection title="What we collect">
+        <p><strong>Account.</strong> Your email address, first name, and optional phone number. Sign-in uses one-time codes or Google — we do not store passwords.</p>
+        <p><strong>Your Paths.</strong> The Paths you create, their notes and end dates, your daily check-ins (Held, Breach, Silent, Sabbath), and the honesty notes you write when you breach.</p>
+        <p><strong>Watchmen.</strong> Who you invite, invitation status, encouragements exchanged, and alert history.</p>
+        <p><strong>Preferences.</strong> Timezone, bedtime reminder time, and notification settings.</p>
+        <p><strong>Technical.</strong> Push-notification tokens, device and browser type, and IP addresses briefly processed for security.</p>
+        <p><strong>Feedback.</strong> Notes you send us through the in-app feedback form.</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">3. Why we use it</h2>
-            <ul className="ml-6 list-disc space-y-1">
-              <li><strong>Provide the service</strong> — create your account, run check-ins, notify partners (contract performance).</li>
-              <li><strong>Security & fraud prevention</strong> — protect accounts and the platform (legitimate interests).</li>
-              <li><strong>Improvement</strong> — diagnose issues, measure feature usage (legitimate interests).</li>
-              <li><strong>Support</strong> — respond to your inquiries (contract / legitimate interests).</li>
-              <li><strong>Legal compliance</strong> — meet obligations under applicable law.</li>
-            </ul>
-          </section>
+      <LegalSection title="Why we use it">
+        <ul className="list-disc pl-5 space-y-1">
+          <li>To run your daily check-ins and bedtime reminders.</li>
+          <li>To alert your Watchmen when a Path is breached or goes silent.</li>
+          <li>To deliver encouragements between you and your Watchmen.</li>
+          <li>To manage your free month and paid access.</li>
+          <li>To keep accounts secure and prevent abuse.</li>
+          <li>To comply with legal obligations.</li>
+        </ul>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">4. Who we share it with</h2>
-            <ul className="ml-6 list-disc space-y-1">
-              <li><strong>Accountability partners you assign</strong> — they receive your name and (only when you breach or go silent) your phone number, so they can reach out.</li>
-              <li><strong>Service providers / subprocessors</strong> — hosting and database (Supabase), transactional email (Resend), application hosting (Cloudflare / Lovable).</li>
-              <li><strong>Merchant of Record</strong> — Paddle.com handles all sales, subscription management, payments, tax compliance, and invoicing. See Paddle's <a className="underline" href="https://www.paddle.com/legal/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>.</li>
-              <li><strong>Professional advisers</strong> — legal and accounting, where necessary.</li>
-              <li><strong>Authorities</strong> — when required by law.</li>
-            </ul>
-            <p>We do not sell your personal data.</p>
-          </section>
+      <LegalSection title="Legal basis">
+        <p>
+          We rely on the performance of our contract with you, our legitimate interests (security and service
+          improvement), and compliance with legal obligations, as applicable.
+        </p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">5. Retention</h2>
-            <p>We keep personal data for as long as your account is active and for a reasonable period afterward to meet legal, accounting, or reporting obligations. When data is no longer needed, we delete or anonymise it.</p>
-          </section>
+      <LegalSection title="Who we share it with">
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>Watchmen you choose</strong> — they see your first name, the Paths they watch, and alerts for those Paths. If you add a phone number, it may be used for text-message alerts.</li>
+          <li><strong>Hosting and infrastructure</strong> — our cloud provider, which hosts the database, sign-in, and email delivery.</li>
+          <li><strong>Stripe</strong> — for payments, subscriptions, tax, receipts, and refunds.</li>
+          <li><strong>Text-message provider</strong> — only to deliver alerts when push notifications are unavailable.</li>
+          <li><strong>Authorities</strong> — only where disclosure is required by law.</li>
+        </ul>
+        <p>We do not sell personal information.</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">6. International transfers</h2>
-            <p>Our service providers may process data outside your country, including in the United States. Where required, we rely on appropriate safeguards (such as Standard Contractual Clauses or adequacy decisions).</p>
-          </section>
+      <LegalSection title="International transfers">
+        <p>
+          The Service is operated from the United States. Information may be processed in the U.S. and other
+          jurisdictions where our providers operate, subject to appropriate safeguards where required.
+        </p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">7. Your rights</h2>
-            <p>Depending on where you live, you may have the right to access, correct, delete, restrict, port, or object to processing of your personal data, and to withdraw consent. EU/UK residents may lodge a complaint with their supervisory authority. To exercise any right, email <a className="underline" href="mailto:dijitalshift@protonmail.com">dijitalshift@protonmail.com</a>. We will respond within one month.</p>
-          </section>
+      <LegalSection title="How long we keep it">
+        <p>
+          We keep your data while your account exists, including when your access is resting after the free month.
+          When your account is deleted, personal data is removed within 30 days, except records we must keep for
+          legal or tax reasons.
+        </p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">8. Security</h2>
-            <p>We use appropriate technical and organisational measures — including encryption in transit, access controls, and row-level security on the database — to protect personal data. No system is fully secure; we cannot guarantee absolute security.</p>
-          </section>
+      <LegalSection title="Your rights">
+        <p>
+          Depending on where you live, you may have rights to access, correct, delete, restrict, or port your
+          personal information and to object to certain processing. You may also lodge a complaint with your
+          local supervisory authority.
+        </p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">9. Cookies</h2>
-            <p>We use only essential cookies and local storage required to keep you signed in and operate the service. We do not use third-party advertising or tracking cookies.</p>
-          </section>
+      <LegalSection title="Security">
+        <p>
+          We use encryption in transit, row-level security on our database, passwordless sign-in, and
+          least-privilege access. No system is perfectly secure; we cannot guarantee absolute security.
+        </p>
+      </LegalSection>
 
-          <section>
-            <h2 className="text-lg font-semibold text-foreground">10. Changes</h2>
-            <p>We may update this Privacy Notice from time to time. Material changes will be communicated through the service or by email.</p>
-          </section>
-        </div>
+      <LegalSection title="Cookies & local storage">
+        <p>
+          We use only essential local storage to keep you signed in and remember small preferences. We do not use
+          advertising or tracking cookies.
+        </p>
+      </LegalSection>
 
-        <p className="mt-12 text-xs text-muted-foreground">Dijital System · 02</p>
-      </div>
-    </main>
+      <LegalSection title="Children">
+        <p>The Service is not directed to children under 13, and we do not knowingly collect their information.</p>
+      </LegalSection>
+
+      <LegalSection title="Changes to this Notice">
+        <p>Material changes will be reflected by the "Last updated" date above.</p>
+      </LegalSection>
+
+      <LegalSection title="Contact">
+        <p>Dijital Shift LLC — Wyoming, USA. Reach us through the feedback form in Settings.</p>
+      </LegalSection>
+    </LegalPageLayout>
   );
 }
