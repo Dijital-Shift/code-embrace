@@ -4,6 +4,8 @@ export type PathCategory =
   | "Purity"
   | "Substances"
   | "Speech"
+  | "Mind"
+  | "Stewardship"
   | "Heart & Action";
 
 export type PathTemplate = {
@@ -226,6 +228,77 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     ],
   },
 
+  {
+    id: "no-foolish-jesting",
+    category: "Speech",
+    title: "No foolish talking or jesting",
+    description: "Put away coarse jesting and biting words that wound.",
+    lane_type: "avoid",
+    support_scripture: [
+      "Neither filthiness, nor foolish talking, nor jesting, which are not convenient: but rather giving of thanks. — Ephesians 5:4 (KJV)",
+      "As a mad man who casteth firebrands, arrows, and death, so is the man that deceiveth his neighbour, and saith, Am not I in sport? — Proverbs 26:18-19 (KJV)",
+    ],
+  },
+
+  // ── Mind ───────────────────────────────────────────────────
+  {
+    id: "no-negative-self-talk",
+    category: "Mind",
+    title: "No negative self-talk",
+    description: "Refuse to speak death over yourself. Think on what is true.",
+    lane_type: "avoid",
+    support_scripture: [
+      "Whatsoever things are true… honest… just… pure… lovely… of good report; think on these things. — Philippians 4:8 (KJV)",
+      "Death and life are in the power of the tongue. — Proverbs 18:21 (KJV)",
+    ],
+  },
+  {
+    id: "rule-your-spirit",
+    category: "Mind",
+    title: "Rule your spirit (no unchecked anger)",
+    description: "Be slow to wrath. He that ruleth his spirit is better than the mighty.",
+    lane_type: "avoid",
+    support_scripture: [
+      "He that is slow to anger is better than the mighty; and he that ruleth his spirit than he that taketh a city. — Proverbs 16:32 (KJV)",
+      "Be not hasty in thy spirit to be angry: for anger resteth in the bosom of fools. — Ecclesiastes 7:9 (KJV)",
+    ],
+  },
+  {
+    id: "cast-your-care",
+    category: "Mind",
+    title: "Cast your care — no dwelling in worry",
+    description: "Bring the care to God instead of turning it over all day.",
+    lane_type: "avoid",
+    support_scripture: [
+      "Cast thy burden upon the LORD, and he shall sustain thee. — Psalm 55:22 (KJV)",
+      "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. — Philippians 4:6 (KJV)",
+    ],
+  },
+
+  // ── Stewardship ────────────────────────────────────────────
+  {
+    id: "no-unplanned-spending",
+    category: "Stewardship",
+    title: "No unplanned spending",
+    description: "Know the state of thy flocks. Spend on purpose, not on impulse.",
+    lane_type: "avoid",
+    support_scripture: [
+      "There is treasure to be desired and oil in the dwelling of the wise; but a foolish man spendeth it up. — Proverbs 21:20 (KJV)",
+      "Be thou diligent to know the state of thy flocks, and look well to thy herds. — Proverbs 27:23 (KJV)",
+    ],
+  },
+  {
+    id: "open-hand",
+    category: "Stewardship",
+    title: "Open hand — give and do good willingly",
+    description: "Withhold not good when it is in your power. Lend freely to the needy.",
+    lane_type: "complete",
+    support_scripture: [
+      "Withhold not good from them to whom it is due, when it is in the power of thine hand to do it. — Proverbs 3:27 (KJV)",
+      "Thou shalt surely give him, and thine heart shall not be grieved when thou givest unto him. — Deuteronomy 15:10 (KJV)",
+    ],
+  },
+
   // ── Heart & Action ─────────────────────────────────────────
   {
     id: "give-to-the-poor",
@@ -290,6 +363,8 @@ export const PATH_CATEGORIES: PathCategory[] = [
   "Purity",
   "Substances",
   "Speech",
+  "Mind",
+  "Stewardship",
   "Heart & Action",
 ];
 
