@@ -509,7 +509,7 @@ export const submitCheckin = createServerFn({ method: 'POST' })
 
 export const skipCheckin = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ laneId: z.string().uuid() }))
+  .inputValidator(z.object({ laneId: z.string().uuid(), forDay: z.enum(['today', 'yesterday']).optional() }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const denied = await requireAccess(supabase as any, userId);
@@ -517,9 +517,12 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     const { data: lane } = await supabase.from('lanes').select('lane_id, title')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found.' };
-    const { today } = await userDay(supabase, userId);
+    const { today, yesterday } = await userDay(supabase, userId);
+    // The page says which day it is skipping; default to today. Writing the
+    // right date is what makes the 30-minute Undo find the row afterwards.
+    const target = data.forDay === 'yesterday' ? yesterday : today;
     const { error } = await supabase.from('checkins').upsert({
-      lane_id: data.laneId, user_id: userId, checkin_date: today,
+      lane_id: data.laneId, user_id: userId, checkin_date: target,
       status: 'skipped', completion_time: new Date().toISOString(),
     }, { onConflict: 'lane_id,checkin_date' });
     if (error) return { error: error.message };

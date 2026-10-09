@@ -184,8 +184,9 @@ function PathRow({ lane, isLate = false, day = "today" }: { lane: Lane; isLate?:
 
   async function doSkip() {
     setBusy(true);
-    await skip({ data: { laneId: lane.lane_id } });
+    const r: any = await skip({ data: { laneId: lane.lane_id, forDay: day } });
     setBusy(false);
+    if (r?.error) { setErr(r.error); return; }
     setResult("skipped");
     setCanUndo(true);
     qc.invalidateQueries({ queryKey: ["dashboard"] });
