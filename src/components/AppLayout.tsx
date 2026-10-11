@@ -7,6 +7,7 @@ import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-rea
 import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import { TrialEndingModal } from "@/components/AccessBanner";
+import { useOfflineCheckinSync } from "@/lib/offline-checkins";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,6 +46,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     refetchInterval: 120000,
   });
   const hasUnread = (unread?.count ?? 0) > 0;
+  useOfflineCheckinSync(!authLoading && !!session?.access_token);
 
 
   return (
