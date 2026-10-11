@@ -159,7 +159,7 @@ export const getLane = createServerFn({ method: 'GET' })
     const { tz } = await userDay(supabase, userId);
     const createdLocal = localDate(tz, new Date(lane.created_at));
     const { data: allChks } = await supabase
-      .from('checkins').select('checkin_id, checkin_date, status').eq('lane_id', data.id)
+      .from('checkins').select('checkin_id, checkin_date, status, breach_explanation').eq('lane_id', data.id)
       .gte('checkin_date', createdLocal)
       .order('checkin_date', { ascending: false });
     const history = allChks ?? [];
@@ -378,10 +378,35 @@ export const getDashboard = createServerFn({ method: 'GET' })
       unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
     }
     const titles = new Map((lanes ?? []).map((l) => [l.lane_id, l.title]));
+
+    // Per-path momentum + watchman seats for the dashboard cards.
+    const ids = (lanes ?? []).map((l) => l.lane_id);
+    const standingByLane: Record<string, number> = {};
+    const seatsByLane: Record<string, { active: number; pending: number }> = {};
+    if (ids.length) {
+      const { tz } = await userDay(supabase, userId);
+      const { data: laneMeta } = await supabase.from('lanes').select('lane_id, created_at').in('lane_id', ids);
+      const createdBy = new Map((laneMeta ?? []).map((l) => [l.lane_id, localDate(tz, new Date(l.created_at))]));
+      const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+      const [{ data: held }, { data: seats }, { data: invites }] = await Promise.all([
+        supabase.from('checkins').select('lane_id, checkin_date').eq('user_id', userId).eq('status', 'completed').in('lane_id', ids),
+        supabaseAdmin.from('path_watchmen').select('path_id').in('path_id', ids).eq('status', 'active'),
+        supabase.from('lane_invites').select('lane_id').in('lane_id', ids).eq('status', 'pending').gt('expires_at', new Date().toISOString()),
+      ]);
+      for (const id of ids) { standingByLane[id] = 0; seatsByLane[id] = { active: 0, pending: 0 }; }
+      for (const c of held ?? []) {
+        const from = createdBy.get(c.lane_id);
+        if (!from || c.checkin_date >= from) standingByLane[c.lane_id] = (standingByLane[c.lane_id] ?? 0) + 1;
+      }
+      for (const s of seats ?? []) seatsByLane[s.path_id].active++;
+      for (const i of invites ?? []) seatsByLane[i.lane_id].pending++;
+    }
     return {
       profile: profile ?? null,
       lanes: lanes ?? [],
       todayCheckins: todayChks ?? [],
+      standingByLane,
+      seatsByLane,
       unreadEncouragements: unreadRows?.length ?? 0,
       unreadPaths: [...unreadByPath.entries()].map(([lane_id, count]) => ({
         lane_id, count, title: titles.get(lane_id) ?? 'a path',
