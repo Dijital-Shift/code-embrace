@@ -6,6 +6,7 @@ import { getSettings, updateProfile, reactivateLane, deleteArchivedLane } from "
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
+import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { TIMEZONE_OPTIONS } from "@/lib/localday";
 
@@ -30,7 +31,6 @@ function Settings() {
   const [showGender, setShowGender] = useState(false);
   const [saved, setSaved] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const m = useMutation({
     mutationFn: () => update({ data: { first_name: first, last_name: last, phone, bedtime, timezone: tz, gender: gender || null } }),
@@ -51,7 +51,7 @@ function Settings() {
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const archived = data?.archivedLanes ?? [];
   const savedGender = ((data?.profile as any)?.gender ?? "") as "male" | "female" | "";
-  const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full";
+  const inputCls = "px-4 py-3 bg-[#0a0800] border border-[#c9a84c]/20 rounded-lg text-white outline-none w-full min-w-0 focus:border-[#c9a84c]/60";
   const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
 
   const genderToggle = (
@@ -74,91 +74,86 @@ function Settings() {
     </div>
   );
 
+  const sectionLabel = "text-[0.65rem] text-[#a8a094] uppercase tracking-[0.18em] font-semibold mb-3 px-1";
+  const label = "text-xs font-semibold text-[#ded8cc]";
+  const hint = "text-[0.7rem] text-[#9e968a] leading-relaxed";
+
   return (
-    <div>
+    <div className="max-w-md mx-auto w-full">
       <div className="flex items-center gap-3 mb-1">
         <Link to="/dashboard" className="text-[#a8a094]">←</Link>
-        <h2 className="text-xl font-bold">Settings</h2>
+        <h2 className="text-2xl text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>Settings</h2>
       </div>
-      <p className="text-[#b8b0a4] text-sm mb-8">Your name, contact info, bedtime and timezone. This is also where you get your invite link.</p>
+      <p className="text-[#a8a094] text-xs mb-8">Your profile, your day, and your invite.</p>
 
-      <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="flex flex-col gap-6 max-w-md">
-        <div className="flex gap-3">
-          <div className="flex flex-col gap-2 flex-1">
-            <label className="text-sm font-semibold text-[#ded8cc]">First Name</label>
+      <p className={sectionLabel}>Profile</p>
+      <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="kp-card p-5 flex flex-col gap-5">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1.5 min-w-0">
+            <label className={label}>First name</label>
             <input value={first} onChange={(e) => setFirst(e.target.value)} maxLength={50} className={inputCls} />
           </div>
-          <div className="flex flex-col gap-2 flex-1">
-            <label className="text-sm font-semibold text-[#ded8cc]">Last Name</label>
+          <div className="flex flex-col gap-1.5 min-w-0">
+            <label className={label}>Last name</label>
             <input value={last} onChange={(e) => setLast(e.target.value)} maxLength={50} className={inputCls} />
           </div>
         </div>
 
-        {!savedGender && (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ded8cc]">Are you male or female?</label>
-            {genderToggle}
-            <p className="text-xs text-[#b8b0a4]">Used so watchmen are matched man-to-man and woman-to-woman. Never shown publicly.</p>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ded8cc]">Email</label>
+        <div className="flex flex-col gap-1.5">
+          <label className={label}>Email</label>
           <input value={data?.profile?.email ?? ""} disabled className={inputCls + " text-[#948d80] cursor-not-allowed"} />
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ded8cc]">Phone Number</label>
+        <div className="flex flex-col gap-1.5">
+          <label className={label}>Phone</label>
           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 000 0000" className={inputCls} />
-          <p className="text-xs text-[#b8b0a4]">Shared with watchmen only when you breach or go silent.</p>
+          <p className={hint}>Shared with watchmen only when you breach or go silent.</p>
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ded8cc]">Bedtime</label>
-          <p className="text-xs text-[#b8b0a4]">We nudge you one hour before this time, so you can close the day out before you sleep.</p>
-          <input type="time" required value={bedtime} onChange={(e) => setBedtime(e.target.value)} className={inputCls} />
+
+        <div className="flex flex-col gap-1.5">
+          <label className={label}>Male or female</label>
+          {!savedGender || showGender ? (
+            <>
+              {genderToggle}
+              <p className={hint}>Watchmen are matched man-to-man and woman-to-woman. Never shown publicly.</p>
+            </>
+          ) : (
+            <p className="text-sm text-[#ded8cc] capitalize">
+              {savedGender}{" "}
+              <button type="button" onClick={() => setShowGender(true)} className="ml-2 normal-case text-xs text-[#c9a84c] underline bg-transparent border-0 p-0">Change</button>
+            </p>
+          )}
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ded8cc]">Timezone</label>
-          <select value={tz} onChange={(e) => setTz(e.target.value)} className={inputCls}>
-            {TIMEZONE_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-          </select>
-          <p className="text-xs text-[#b8b0a4]">Your day starts and ends on this clock — check-ins are counted against it.</p>
+
+        <div className="h-px bg-[#c9a84c]/15" />
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1.5 min-w-0">
+            <label className={label}>Bedtime</label>
+            <input type="time" required value={bedtime} onChange={(e) => setBedtime(e.target.value)} className={inputCls} />
+          </div>
+          <div className="flex flex-col gap-1.5 min-w-0">
+            <label className={label}>Timezone</label>
+            <select value={tz} onChange={(e) => setTz(e.target.value)} className={inputCls}>
+              {TIMEZONE_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
         </div>
+        <p className={hint + " -mt-3"}>We nudge you an hour before bedtime. Your day is counted on this clock.</p>
+
         {err && <p className="text-red-400 text-sm">{err}</p>}
         {saved && <p className="text-[#4ade80] text-sm">Settings saved.</p>}
-        <button disabled={m.isPending} className="py-3 bg-white text-black rounded-md font-semibold">
-          {m.isPending ? "Saving…" : "Save"}
+        <button disabled={m.isPending} onClick={() => setShowGender(false)} className="kp-lifetime-btn py-3 text-[#0a0800] rounded-xl font-bold text-sm">
+          {m.isPending ? "Saving…" : "Save changes"}
         </button>
       </form>
 
       {ref && "code" in ref && (
-        <div className="mt-12 w-full max-w-md p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
-          <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
-          <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
-            This is your invite link. Send it to anyone you want using Kingdom Protocol. They open it, sign up, and start their own paths — it does not make them your watchman.
-          </p>
-          <div className="flex items-center gap-2">
-            <input readOnly value={refUrl} className="flex-1 min-w-0 px-3 py-2 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
-            <button
-              type="button"
-              onClick={async () => {
-                try { await navigator.clipboard.writeText(refUrl); } catch {}
-                setCopied(true); setTimeout(() => setCopied(false), 2000);
-              }}
-              className="shrink-0 text-xs px-3 py-2 bg-[#c9a84c] text-black rounded font-semibold"
-            >
-              {copied ? "Copied" : "Copy"}
-            </button>
-          </div>
-          <p className="text-[0.7rem] text-[#9e968a] mt-3">
-            You've invited <span className="text-[#c9a84c] font-semibold">{ref.invited}</span> · <span className="text-[#c9a84c] font-semibold">{ref.walking}</span> are walking.
-          </p>
-        </div>
+        <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited} walking={ref.walking} />
       )}
 
       {archived.length > 0 && (
-        <div className="mt-12 max-w-md">
-          <p className="text-[0.7rem] text-[#9e968a] uppercase tracking-wider font-semibold mb-2">Archived Paths</p>
-          <p className="text-xs text-[#b8b0a4] mb-3">Bring one back onto the walk, or clear it out for good.</p>
+        <div className="mt-10">
+          <p className={sectionLabel}>Archived paths · {archived.length}</p>
           <div className="flex flex-col gap-1.5">
             {archived.map((l) => (
               <ArchivedRow key={l.lane_id} lane={l} onChanged={() => refetch()} />
@@ -167,44 +162,30 @@ function Settings() {
         </div>
       )}
 
-      {savedGender && (
-        <div className="mt-12 max-w-md">
-          {!showGender ? (
-            <p className="text-xs text-[#a8a094]">
-              Recorded as <span className="capitalize text-[#ded8cc]">{savedGender}</span>.{" "}
-              <button type="button" onClick={() => setShowGender(true)} className="text-[#c9a84c] underline bg-transparent border-0 p-0 cursor-pointer text-xs">Change</button>
-            </p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {genderToggle}
-              <button
-                type="button"
-                onClick={() => { setErr(null); setSaved(false); m.mutate(); setShowGender(false); }}
-                className="py-2 bg-white text-black rounded-md font-semibold text-sm"
-              >Save change</button>
-            </div>
-          )}
+      <div className="mt-10">
+        <p className={sectionLabel}>More</p>
+        <div className="kp-card overflow-hidden divide-y divide-[#c9a84c]/10">
+          <button type="button" onClick={() => setFeedbackOpen(true)} className="w-full flex items-center justify-between px-4 py-3.5 text-left bg-transparent border-0">
+            <span>
+              <span className="block text-sm text-[#ded8cc] font-medium">Send feedback</span>
+              <span className="block text-[0.7rem] text-[#8f887c]">Tell us what's working and what isn't.</span>
+            </span>
+            <span className="text-[#c9a84c]">›</span>
+          </button>
+          <a href="/?view=landing" className="flex items-center justify-between px-4 py-3.5 no-underline">
+            <span>
+              <span className="block text-sm text-[#ded8cc] font-medium">Kingdom Protocol homepage</span>
+              <span className="block text-[0.7rem] text-[#8f887c]">See or share the main page.</span>
+            </span>
+            <span className="text-[#c9a84c]">›</span>
+          </a>
         </div>
-      )}
-
-      <div className="mt-12 max-w-md">
-        <p className="text-[0.7rem] text-[#9e968a] uppercase tracking-wider font-semibold mb-2">Feedback</p>
-        <p className="text-xs text-[#b8b0a4] mb-3">Tell us what's working and what isn't.</p>
-        <button
-          type="button"
-          onClick={() => setFeedbackOpen(true)}
-          className="px-4 py-2.5 rounded-md text-sm font-bold"
-          style={{ border: "1px solid #c9a84c", background: "#1c1608", color: "#e5af38" }}
-        >
-          Send Feedback
-        </button>
       </div>
 
       {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
 
       <AppUpdateSection />
     </div>
-
   );
 }
 
@@ -227,7 +208,7 @@ function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: stri
   }
 
   return (
-    <div className="px-3 py-2.5 rounded border border-[#2a2518]" style={{ background: "#0d0b09" }}>
+    <div className="kp-card px-4 py-3">
       <div className="flex justify-between items-center gap-3">
         <div className="min-w-0">
           <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
