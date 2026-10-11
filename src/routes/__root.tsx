@@ -11,7 +11,7 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import UpdateAvailablePill from "@/components/UpdateAvailablePill";
-import { SplashScreen } from "@/components/SplashScreen";
+import { SplashScreen, StaticSplash, SPLASH_BOOT_SCRIPT } from "@/components/SplashScreen";
 import { Toaster } from "@/components/ui/sonner";
 
 
@@ -126,11 +126,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: SPLASH_BOOT_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
+        <StaticSplash />
         {children}
         <Scripts />
       </body>
