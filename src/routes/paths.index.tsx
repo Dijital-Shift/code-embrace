@@ -40,7 +40,7 @@ function Lanes() {
               const names = ((lane as any).watchman_names ?? []) as string[];
               const hasWatchman = names.length > 0;
               return (
-                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center gap-3 px-4 py-4 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
+                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm flex items-center gap-2">
                       <span className="truncate">{lane.title}</span>
@@ -69,7 +69,7 @@ function Lanes() {
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Paused</p>
           <div className="flex flex-col gap-2">
             {paused.map((lane) => (
-              <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-4 rounded-xl border border-[#2a2518] text-white opacity-50" style={{ background: "#161210" }}>
+              <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="kp-card flex justify-between items-center px-4 py-4 text-white opacity-50 no-underline">
                 <p className="font-semibold text-sm">{lane.title}</p>
                 <span className="text-[0.65rem] px-2 py-1 rounded-full" style={{ background: "#1a1a1a", color: "#555" }}>Paused</span>
               </Link>
