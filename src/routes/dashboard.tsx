@@ -38,7 +38,7 @@ function Dashboard() {
         <p className="text-xs text-[#9e968a] uppercase tracking-wider mb-1">
           {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
         </p>
-        <h2 className="text-3xl font-extrabold tracking-tight">{greeting}</h2>
+        <h2 className="text-3xl tracking-wide text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>{greeting}</h2>
       </div>
 
       <AccessBanner />
@@ -59,7 +59,7 @@ function Dashboard() {
             </p>
           </>
         );
-        const cls = "block mb-5 px-4 py-3 rounded-xl border border-[#c9a84c]/50 no-underline";
+        const cls = "block mb-5 px-4 py-3 kp-card-glow no-underline";
         const style = { background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" };
         return one ? (
           <Link to="/paths/$id" params={{ id: one.lane_id }} search={{ newlyCreated: false }} className={cls} style={style}>{inner}</Link>
@@ -69,28 +69,28 @@ function Dashboard() {
       })()}
 
       {needsGender && (
-        <Link to="/settings" className="block mb-5 px-4 py-3 rounded-xl border border-[#2a2518] no-underline" style={{ background: "#161210" }}>
+        <Link to="/settings" className="block mb-5 px-4 py-3 kp-card no-underline">
           <p className="text-xs text-[#c2af80]">One detail still open in Settings — male or female. Tap to set it whenever you like.</p>
         </Link>
       )}
 
       {pendingCount > 0 ? (
-        <div className="p-5 rounded-xl border border-[#c9a84c33]" style={{ background: "linear-gradient(135deg, #0f0d00 0%, #0a0800 100%)" }}>
+        <div className="p-5 kp-card-glow">
           <div className="flex justify-between items-center gap-3">
             <div className="min-w-0">
               <p className="font-semibold mb-1">{pendingCount} path{pendingCount > 1 ? "s" : ""} need attention</p>
               <p className="text-[#b8b0a4] text-sm">Check in before your bedtime window closes.</p>
             </div>
-            <Link to="/checkin" className="shrink-0 whitespace-nowrap px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-sm">Check In</Link>
+            <Link to="/checkin" className="shrink-0 whitespace-nowrap px-4 py-2 kp-lifetime-btn text-black rounded-lg font-bold text-sm">Check In</Link>
           </div>
         </div>
       ) : lanes.length > 0 ? (
-        <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
+        <div className="p-5 kp-card">
           <p className="text-[#4ade80] font-semibold">All clear.</p>
           <p className="text-[#9e968a] text-xs">Every path checked in. Stay aligned.</p>
         </div>
       ) : (
-        <div className="p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
+        <div className="p-5 kp-card">
           <p className="text-[#b8b0a4] text-sm mb-4">No active paths yet.</p>
           <Link to="/paths/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
         </div>
@@ -110,7 +110,7 @@ function Dashboard() {
               const st = statusByLane.get(lane.lane_id) ?? "pending";
               const color = statusColor(st);
               return (
-                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 rounded-xl border border-[#2a2518] text-white no-underline" style={{ background: "#161210" }}>
+                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 kp-card text-white no-underline transition-colors hover:border-[#c9a84c]/40">
                   <span className="text-sm font-medium">{lane.title}</span>
                   <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color, background: `${color}1a` }}>
                     {st === "pending" ? "Open" : statusLabel(st)}

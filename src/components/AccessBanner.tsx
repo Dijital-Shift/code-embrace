@@ -242,14 +242,5 @@ export function AccessGate({ children, action }: { children: React.ReactNode; ac
   const { data, isLoading } = useAccessState();
   if (isLoading || !data) return <>{children}</>;
   if (data.hasAccess) return <>{children}</>;
-  return (
-    <div className="p-6 rounded-xl border border-[#3a2f12]" style={{ background: "#161008" }}>
-      <p className="text-sm font-semibold" style={{ color: GOLD }}>Your free month is up. Everything is still here.</p>
-      <p className="text-xs text-[#c2af80] mt-1 leading-relaxed">
-        {action} needs an active plan. Nothing is deleted while your account rests, and being
-        someone else's watchman stays free.
-      </p>
-      <PlanButtons />
-    </div>
-  );
+  return <AccessBanner />;
 }
