@@ -11,7 +11,7 @@ export function PathCategoryAccordion({
 }: {
   renderCard: (template: PathTemplate) => React.ReactNode;
 }) {
-  const [openCat, setOpenCat] = useState<string | null>(PATH_CATEGORIES[0] ?? null);
+  const [openCat, setOpenCat] = useState<string | null>(null);
   const headerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const contentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const anchor = useRef<{ cat: string; top: number } | null>(null);
