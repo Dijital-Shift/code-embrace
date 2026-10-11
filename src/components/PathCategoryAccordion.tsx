@@ -113,7 +113,7 @@ export function PathCategoryAccordion({
                 ref={(el) => {
                   contentRefs.current[cat] = el;
                 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 pb-4 pt-1 scroll-mt-24"
+                className="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 pb-4 pt-1 scroll-mt-28"
               >
                 {items.map((t) => renderCard(t))}
               </div>
@@ -121,6 +121,7 @@ export function PathCategoryAccordion({
           </section>
         );
       })}
+      </div>
     </div>
   );
 }
