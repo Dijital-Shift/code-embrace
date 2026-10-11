@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { AccessBanner } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
+import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -20,7 +21,7 @@ function Dashboard() {
   const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fn() });
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
 
-  if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
+  if (isLoading) return <DashboardSkeleton />;
   const lanes = data?.lanes ?? [];
   const todayCheckins = data?.todayCheckins ?? [];
   const statusByLane = new Map(todayCheckins.map((c) => [c.lane_id, c.status]));
@@ -73,11 +74,15 @@ function Dashboard() {
         </Link>
       )}
 
+      {lanes.length > 0 && (
+        <DayProgressBar statuses={lanes.map((l) => statusByLane.get(l.lane_id) ?? "pending")} />
+      )}
+
       {pendingCount > 0 ? (
         <div className="p-5 kp-card-glow">
           <div className="flex justify-between items-center gap-3">
             <div className="min-w-0">
-              <p className="font-semibold mb-1">{pendingCount} path{pendingCount > 1 ? "s" : ""} need attention</p>
+              <p className="font-semibold mb-1">{pendingCount} still open tonight</p>
               <p className="text-[#b8b0a4] text-sm">Check in before your bedtime window closes.</p>
             </div>
             <Link to="/checkin" className="shrink-0 whitespace-nowrap px-4 py-2 kp-lifetime-btn text-black rounded-lg font-bold text-sm">Check In</Link>
@@ -96,9 +101,10 @@ function Dashboard() {
       )}
 
       <div className="mt-8">
-        <div className="flex justify-between items-center mb-3">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Active Paths</p>
-          <Link to="/paths/new" className="text-xs text-[#c9a84c] font-semibold">+ New</Link>
+        <div className="flex items-center gap-3 mb-3">
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold shrink-0">Active Paths</p>
+          <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, #c9a84c55, transparent)" }} />
+          <Link to="/paths/new" className="text-xs text-[#c9a84c] font-semibold shrink-0">+ New</Link>
         </div>
 
         {lanes.length === 0 ? (
@@ -108,13 +114,29 @@ function Dashboard() {
             {lanes.map((lane) => {
               const st = statusByLane.get(lane.lane_id) ?? "pending";
               const color = statusColor(st);
+              const standing = data?.standingByLane?.[lane.lane_id] ?? 0;
+              const seats = data?.seatsByLane?.[lane.lane_id] ?? { active: 0, pending: 0 };
               return (
-                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="flex justify-between items-center px-4 py-3.5 kp-card text-white no-underline transition-colors hover:border-[#c9a84c]/40">
-                  <span className="text-sm font-medium">{lane.title}</span>
-                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color, background: `${color}1a` }}>
-                    {st === "pending" ? "Open" : statusLabel(st)}
-
-                  </span>
+                <Link
+                  key={lane.lane_id}
+                  to="/paths/$id"
+                  params={{ id: lane.lane_id }}
+                  search={{ newlyCreated: false }}
+                  className="relative overflow-hidden flex justify-between items-center gap-3 px-4 py-3.5 kp-card text-white no-underline transition-colors hover:border-[#c9a84c]/50"
+                >
+                  {st === "pending" && (
+                    <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r" style={{ background: "#e5af38", boxShadow: "0 0 10px #e5af3899" }} />
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{lane.title}</p>
+                    <p className="text-[0.68rem] text-[#4ade80]/90 mt-0.5">{standing} standing</p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <WatchmanPips active={seats.active} pending={seats.pending} />
+                    <span className="text-[0.7rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color, background: `${color}1a` }}>
+                      {statusLabel(st)}
+                    </span>
+                  </div>
                 </Link>
               );
             })}
