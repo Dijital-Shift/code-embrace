@@ -1,32 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-/** Cold-launch splash — installed PWA only, once per app session. */
-export function SplashScreen() {
-  const [phase, setPhase] = useState<"off" | "on" | "out">("off");
+/**
+ * Inline script that runs before first paint: on a cold launch of the
+ * installed app it turns on the static splash, so the homepage never flashes.
+ */
+export const SPLASH_BOOT_SCRIPT = `(function(){try{var s=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(s&&!sessionStorage.getItem('kp_splash')){document.documentElement.classList.add('kp-splash');}}catch(e){}})();`;
 
-  useEffect(() => {
-    try {
-      const standalone =
-        window.matchMedia("(display-mode: standalone)").matches ||
-        (navigator as unknown as { standalone?: boolean }).standalone === true;
-      if (!standalone || sessionStorage.getItem("kp_splash")) return;
-      sessionStorage.setItem("kp_splash", "1");
-    } catch {
-      return;
-    }
-    setPhase("on");
-    const t1 = window.setTimeout(() => setPhase("out"), 1300);
-    const t2 = window.setTimeout(() => setPhase("off"), 1800);
-    return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
-  }, []);
-
-  if (phase === "off") return null;
+/** Server-rendered splash markup — hidden unless the boot script enables it. */
+export function StaticSplash() {
   return (
-    <div
-      aria-hidden
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
-      style={{ background: "#0a0800", opacity: phase === "out" ? 0 : 1, transition: "opacity 500ms ease" }}
-    >
+    <div id="kp-splash-static" aria-hidden>
       <div className="relative">
         <div className="kp-splash-aura absolute inset-[-40%] rounded-full" />
         <img src="/kingdom-protocol-logo.png" alt="" className="relative w-28 h-28 object-contain" />
@@ -39,4 +22,18 @@ export function SplashScreen() {
       </p>
     </div>
   );
+}
+
+/** Times the fade-out of the static splash once the app is running. */
+export function SplashScreen() {
+  useEffect(() => {
+    const html = document.documentElement;
+    if (!html.classList.contains("kp-splash")) return;
+    try { sessionStorage.setItem("kp_splash", "1"); } catch { /* private mode */ }
+    const el = document.getElementById("kp-splash-static");
+    const t1 = window.setTimeout(() => el?.classList.add("kp-out"), 1300);
+    const t2 = window.setTimeout(() => { html.classList.remove("kp-splash"); el?.classList.remove("kp-out"); }, 1800);
+    return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
+  }, []);
+  return null;
 }

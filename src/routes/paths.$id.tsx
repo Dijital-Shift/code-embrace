@@ -230,7 +230,16 @@ function LaneDetail() {
       </div>
 
       {pending && (
-        <div className="mt-4 p-5 rounded-xl border border-[#3a2f12]" style={{ background: "#1a1408" }}>
+        <div
+          key={pending}
+          ref={(el) => {
+            if (!el) return;
+            requestAnimationFrame(() => {
+              el.scrollIntoView({ behavior: "smooth", block: "center" });
+              el.querySelector("textarea")?.focus({ preventScroll: true });
+            });
+          }}
+          className="mt-4 p-5 rounded-xl border border-[#3a2f12] scroll-mt-24" style={{ background: "#1a1408" }}>
           <p className="text-sm font-semibold text-[#c9a84c] mb-1">
             {pending === "paused" ? "Pause this path?" : "Archive this path?"}
           </p>
