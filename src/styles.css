@@ -135,3 +135,8 @@ html.kp-splash body { overflow: hidden; }
 @media (max-width: 640px) {
   .lifetime-card { transform: translateY(-3px); }
 }
+
+.kp-cat-sticky { position: sticky; top: 0; }
+@media (max-width: 767px) {
+  .kp-cat-sticky { top: calc(var(--kp-mobile-header-h, 49px) + env(safe-area-inset-top, 0px)); }
+}
