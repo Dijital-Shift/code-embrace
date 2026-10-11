@@ -23,7 +23,7 @@ function formatDay(iso: string | null) {
   return new Date(iso).toLocaleDateString("en-US", { month: "long", day: "numeric" });
 }
 
-function PlanButtons({ compact, deferToTrialEnd }: { compact?: boolean; deferToTrialEnd?: boolean }) {
+function PlanButtons({ compact, deferToTrialEnd, premium }: { compact?: boolean; deferToTrialEnd?: boolean; premium?: boolean }) {
   const { user } = useAuth();
   const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const start = (priceId: string) =>
@@ -37,6 +37,36 @@ function PlanButtons({ compact, deferToTrialEnd }: { compact?: boolean; deferToT
 
   return (
     <>
+      {premium ? (
+        <div className="mt-5 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => start("kp_lifetime_once")}
+            className="kp-lifetime-btn w-full rounded-xl px-5 py-4 text-left text-[#0a0800]"
+          >
+            <span className="flex items-center justify-between gap-3">
+              <span>
+                <span className="block text-[0.6rem] font-bold tracking-[0.2em] uppercase opacity-75">Walk for life · Best value</span>
+                <span className="block text-lg font-extrabold mt-0.5">Lifetime</span>
+              </span>
+              <span className="text-right">
+                <span className="block text-2xl font-extrabold leading-none">$99</span>
+                <span className="block text-[0.65rem] font-semibold opacity-75 mt-1">one time, never again</span>
+              </span>
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => start("kp_premium_monthly")}
+            className="w-full rounded-xl border border-[#c9a84c]/45 bg-[#0a0800]/60 px-5 py-3.5 text-left text-[#e8dcc0]"
+          >
+            <span className="flex items-center justify-between gap-3">
+              <span className="text-sm font-semibold">Monthly</span>
+              <span className="text-sm"><span className="font-bold text-[#c9a84c]">$4.99</span><span className="text-[#a49d8e]"> / month · cancel anytime</span></span>
+            </span>
+          </button>
+        </div>
+      ) : (
       <div className="flex gap-2 mt-3">
         <button
           type="button"
@@ -53,8 +83,9 @@ function PlanButtons({ compact, deferToTrialEnd }: { compact?: boolean; deferToT
           $99 lifetime
         </button>
       </div>
+      )}
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
+        <div className="fixed inset-0 z-[60] bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
           <div className="w-full max-w-2xl mt-8 bg-white rounded-2xl overflow-hidden">
             <div className="flex justify-end p-2">
               <button type="button" onClick={closeCheckout} className="text-gray-600 hover:text-black px-3 py-1 text-sm font-medium">
@@ -77,14 +108,32 @@ export function AccessBanner() {
   // Lapsed — the account is resting, nothing is lost.
   if (!data.hasAccess) {
     return (
-      <div className="mb-5 p-5 rounded-xl border border-[#3a2f12]" style={{ background: "#161008" }}>
-        <p className="text-sm font-semibold" style={{ color: GOLD }}>Your free month is up. Everything is still here.</p>
-        <p className="text-xs text-[#c2af80] mt-1 leading-relaxed">
-          Your paths, your history and your watchmen are exactly where you left them. This path is
-          resting until you pick a plan — nothing gets deleted, and nothing counts against you while
-          it rests. Being someone else's watchman stays free.
-        </p>
-        <PlanButtons />
+      <div className="kp-upgrade mb-6">
+        <div className="kp-upgrade-inner">
+          <div className="flex justify-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#c9a84c]/40 px-3 py-1 text-[0.6rem] font-bold tracking-[0.22em] uppercase text-[#c9a84c]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#c9a84c]" /> Resting · Record intact
+            </span>
+          </div>
+          <h2 className="mt-4 text-center text-xl leading-snug text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>
+            Your free month is up.<br />
+            <span className="text-[#c9a84c]">Everything is still here.</span>
+          </h2>
+          <ul className="mt-5 space-y-2.5 text-sm text-[#d6c9a8]">
+            {[
+              "Your paths, history and watchmen stay exactly where you left them",
+              "Nothing counts against you while it rests",
+              "Being someone else's watchman stays free",
+            ].map((t) => (
+              <li key={t} className="flex gap-2.5">
+                <span className="mt-[3px] text-[#c9a84c] text-xs">◆</span>
+                <span className="leading-snug">{t}</span>
+              </li>
+            ))}
+          </ul>
+          <PlanButtons premium />
+          <p className="mt-4 text-center text-[0.7rem] text-[#8f887c]">Pick a plan and your walk resumes immediately.</p>
+        </div>
       </div>
     );
   }
