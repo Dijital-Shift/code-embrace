@@ -3,10 +3,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/lib/api.functions";
-import { Check, X } from "lucide-react";
+import { Check, X, Lock } from "lucide-react";
 
 import { AppLayout } from "@/components/AppLayout";
-import { AccessGate, AccessBanner, useAccessState } from "@/components/AccessBanner";
+import { AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 
 export const Route = createFileRoute("/checkin")({
@@ -43,13 +43,30 @@ function CheckIn() {
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   if (access && !access.hasAccess) {
+    const resting = (data?.lanes ?? []) as Lane[];
     return (
       <div>
         <div className="flex items-center gap-3 mb-6">
           <Link to="/dashboard" className="text-[#a8a094]">←</Link>
           <h2 className="text-xl font-bold">Check-In</h2>
         </div>
-        <AccessGate action="Checking in">{null}</AccessGate>
+        <AccessBanner />
+        {resting.length > 0 && (
+          <section>
+            <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Waiting on you · {resting.length}</p>
+            <div className="flex flex-col gap-2">
+              {resting.map((l) => (
+                <div key={l.lane_id} className="kp-card flex items-center justify-between gap-3 px-4 py-3.5">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[#ded8cc] truncate">{l.title}</p>
+                    <p className="text-[0.7rem] text-[#8f887c]">Resting — record intact</p>
+                  </div>
+                  <Lock size={16} className="text-[#c9a84c] shrink-0" />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     );
   }
