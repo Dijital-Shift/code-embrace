@@ -138,5 +138,5 @@ html.kp-splash body { overflow: hidden; }
 
 .kp-cat-sticky { position: sticky; top: 0; }
 @media (max-width: 767px) {
-  .kp-cat-sticky { top: calc(var(--kp-mobile-header-h, 49px) + env(safe-area-inset-top, 0px)); }
+  .kp-cat-sticky { top: calc(var(--kp-mobile-header-h, 69px); }
 }
