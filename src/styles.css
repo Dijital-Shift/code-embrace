@@ -70,7 +70,7 @@ button, nav a { user-select: none; -webkit-user-select: none; }
 
 /* Splash aura */
 @keyframes kp-aura { 0%,100% { opacity: .45; transform: scale(.92); } 50% { opacity: .9; transform: scale(1.05); } }
-.kp-splash-aura { background: radial-gradient(circle, rgba(229,175,56,0.45) 0%, rgba(201,168,76,0.12) 45%, transparent 70%); animation: kp-aura 1.4s ease-in-out infinite; }
+.kp-splash-aura { background: radial-gradient(circle, rgba(229,175,56,0.45) 0%, rgba(201,168,76,0.12) 45%, transparent 70%); animation: kp-aura 1.9s ease-in-out infinite; }
 
 /* Static splash — painted by the server, shown before any app code runs */
 #kp-splash-static { display: none; position: fixed; inset: 0; z-index: 100; background: #0a0800; flex-direction: column; align-items: center; justify-content: center; transition: opacity 500ms ease; }
