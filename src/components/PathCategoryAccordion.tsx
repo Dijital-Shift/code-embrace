@@ -13,22 +13,40 @@ export function PathCategoryAccordion({
 }) {
   const [openCat, setOpenCat] = useState<string | null>(PATH_CATEGORIES[0] ?? null);
   const headerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const contentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const anchor = useRef<{ cat: string; top: number } | null>(null);
+  const scrollToContent = useRef<string | null>(null);
 
   useLayoutEffect(() => {
     const a = anchor.current;
-    if (!a) return;
-    anchor.current = null;
-    const el = headerRefs.current[a.cat];
-    if (!el) return;
-    const delta = el.getBoundingClientRect().top - a.top;
-    if (Math.abs(delta) > 1) window.scrollBy({ top: delta, behavior: "auto" });
+    if (a) {
+      anchor.current = null;
+      const el = headerRefs.current[a.cat];
+      if (el) {
+        const delta = el.getBoundingClientRect().top - a.top;
+        if (Math.abs(delta) > 1) window.scrollBy({ top: delta, behavior: "auto" });
+      }
+    }
+    const target = scrollToContent.current;
+    if (target) {
+      scrollToContent.current = null;
+      const el = contentRefs.current[target];
+      if (el) {
+        requestAnimationFrame(() => {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    }
   }, [openCat]);
 
   function toggle(cat: string) {
     const el = headerRefs.current[cat];
     if (el) anchor.current = { cat, top: el.getBoundingClientRect().top };
-    setOpenCat((cur) => (cur === cat ? null : cat));
+    setOpenCat((cur) => {
+      const next = cur === cat ? null : cat;
+      if (next) scrollToContent.current = next;
+      return next;
+    });
   }
 
   return (
@@ -65,7 +83,12 @@ export function PathCategoryAccordion({
               </span>
             </button>
             {isOpen && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 pb-4 pt-1">
+              <div
+                ref={(el) => {
+                  contentRefs.current[cat] = el;
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 pb-4 pt-1 scroll-mt-24"
+              >
                 {items.map((t) => renderCard(t))}
               </div>
             )}

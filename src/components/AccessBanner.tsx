@@ -42,17 +42,15 @@ function PlanButtons({ compact, deferToTrialEnd, premium }: { compact?: boolean;
           <button
             type="button"
             onClick={() => start("kp_lifetime_once")}
-            className="kp-lifetime-btn w-full rounded-xl px-5 py-4 text-left text-[#0a0800]"
+            className="kp-lifetime-btn w-full rounded-xl px-5 py-4 text-[#0a0800]"
           >
-            <span className="flex items-center justify-between gap-3">
-              <span>
-                <span className="block text-[0.6rem] font-bold tracking-[0.2em] uppercase opacity-75">Walk for life · Best value</span>
-                <span className="block text-lg font-extrabold mt-0.5">Lifetime</span>
+            <span className="block text-center text-[0.6rem] font-bold tracking-[0.28em] uppercase opacity-70">Walk for life</span>
+            <span className="mt-1.5 flex items-end justify-between gap-3">
+              <span className="text-left">
+                <span className="block text-xl font-extrabold leading-none">Lifetime</span>
+                <span className="block text-[0.68rem] font-semibold opacity-75 mt-1.5">One time. Never again.</span>
               </span>
-              <span className="text-right">
-                <span className="block text-2xl font-extrabold leading-none">$99</span>
-                <span className="block text-[0.65rem] font-semibold opacity-75 mt-1">one time, never again</span>
-              </span>
+              <span className="text-3xl font-extrabold leading-none tracking-tight">$99</span>
             </span>
           </button>
           <button
