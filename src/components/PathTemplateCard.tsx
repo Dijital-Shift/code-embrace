@@ -20,7 +20,7 @@ export function PathTemplateCard({
       <div className="flex items-start justify-between gap-3 mb-2">
         <p className="font-semibold text-sm text-white leading-snug">{template.title}</p>
         <span
-          className="text-[0.58rem] px-2 py-0.5 rounded-full font-bold uppercase tracking-[0.12em] shrink-0 border"
+          className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border"
           style={{ background: chipBg, color: chipFg, borderColor: chipBorder }}
         >
           {isAvoid ? "Avoid" : "Complete"}
@@ -28,7 +28,7 @@ export function PathTemplateCard({
       </div>
       <p className="text-xs text-[#b8b0a4] mb-3 leading-relaxed">{template.description}</p>
       {variant === "full" && template.support_scripture[0] && (
-        <p className="text-[0.72rem] text-[#9a8b5c] italic leading-relaxed mb-3 border-l-2 border-[#c9a84c]/40 pl-3">
+        <p className="text-xs text-[#c9a84c]/85 italic leading-relaxed mb-3 border-l border-[#c9a84c]/40 pl-2.5">
           {template.support_scripture[0]}
         </p>
       )}
