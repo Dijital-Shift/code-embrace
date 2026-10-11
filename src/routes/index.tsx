@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Wordmark } from "@/components/Wordmark";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
@@ -656,8 +657,20 @@ function Footer() {
 }
 
 
+function useSignedInRedirect() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (loading || !user) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("view") === "landing") return;
+    void navigate({ to: "/dashboard", replace: true });
+  }, [user, loading, navigate]);
+}
+
 function Landing() {
   if (typeof window !== "undefined") useCaptureReferral();
+  useSignedInRedirect();
   return (
     <main className="min-h-[100dvh]" style={{ background: "#0a0800" }}>
       <PaymentTestModeBanner />
