@@ -148,7 +148,7 @@ function Settings() {
       </form>
 
       {ref && "code" in ref && (
-        <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited} walking={ref.walking} />
+        <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
       )}
 
       {archived.length > 0 && (
