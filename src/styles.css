@@ -52,11 +52,41 @@ button, nav a { user-select: none; -webkit-user-select: none; }
 .nav-mobile-only { display: none; }
 .nav-mobile-top { display: none; }
 .nav-mobile-header { display: none; }
+.nav-mobile-dock { display: none; }
 @media (max-width: 600px) {
   .nav-desktop-bar { display: none; }
   .nav-mobile-only { display: block; }
   .nav-mobile-top { display: flex; }
-  .nav-mobile-header { display: flex; position: sticky; top: 0; z-index: 40; }
+  .nav-mobile-header { display: flex; position: sticky; top: 0; z-index: 40; padding-top: env(safe-area-inset-top); }
+  .nav-mobile-dock {
+    display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: rgba(10, 8, 0, 0.92);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid #2a2518;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .app-main { padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+}
+
+/* Splash aura */
+@keyframes kp-aura { 0%,100% { opacity: .45; transform: scale(.92); } 50% { opacity: .9; transform: scale(1.05); } }
+.kp-splash-aura { background: radial-gradient(circle, rgba(229,175,56,0.45) 0%, rgba(201,168,76,0.12) 45%, transparent 70%); animation: kp-aura 1.4s ease-in-out infinite; }
+
+/* Premium upgrade card */
+.kp-upgrade {
+  position: relative; overflow: hidden; border-radius: 1.25rem; padding: 1px;
+  background: linear-gradient(140deg, #e5af38 0%, #5a4617 35%, #2a2110 60%, #c9a84c 100%);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 50px rgba(201,168,76,0.14);
+}
+.kp-upgrade-inner {
+  position: relative; border-radius: calc(1.25rem - 1px); padding: 1.5rem 1.25rem;
+  background: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(201,168,76,0.16) 0%, transparent 65%), linear-gradient(180deg, #15100a 0%, #0c0904 100%);
+}
+.kp-lifetime-btn { position: relative; overflow: hidden; background: linear-gradient(135deg, #f0cd6a 0%, #c9a84c 50%, #a8842e 100%); box-shadow: 0 8px 24px rgba(201,168,76,0.35); }
+.kp-lifetime-btn::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+  transform: translateX(-100%) skewX(-12deg); animation: lifetime-shimmer 1.6s ease-out 0.6s 1 forwards;
 }
 
 /* Lifetime pricing card — one-time shimmer */
