@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
 import { getDashboard } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { CallToWallCard } from "@/components/CallToWallCard";
 import { AccessBanner } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 
@@ -19,7 +19,6 @@ function Dashboard() {
   const refFn = useServerFn(getMyReferral);
   const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fn() });
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
-  const [copied, setCopied] = useState(false);
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const lanes = data?.lanes ?? [];
@@ -124,28 +123,7 @@ function Dashboard() {
       </div>
 
       {ref && "code" in ref && (
-        <div className="mt-8 p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
-          <p className="text-sm font-semibold text-[#c9a84c] mb-1">Call someone to the wall.</p>
-          <p className="text-xs text-[#b8b0a4] mb-4 leading-relaxed">
-            This is your invite link. Send it to anyone you want using Kingdom Protocol. They open it, sign up, and start their own paths — it does not make them your watchman.
-          </p>
-          <div className="flex items-center gap-2">
-            <input readOnly value={refUrl} className="flex-1 px-3 py-2 text-xs bg-[#0a0800] border border-[#222] rounded text-[#c8c0b4] outline-none" />
-            <button
-              type="button"
-              onClick={async () => {
-                try { await navigator.clipboard.writeText(refUrl); } catch {}
-                setCopied(true); setTimeout(() => setCopied(false), 2000);
-              }}
-              className="text-xs px-3 py-2 bg-[#c9a84c] text-black rounded font-semibold"
-            >
-              {copied ? "Copied" : "Copy"}
-            </button>
-          </div>
-          <p className="text-[0.7rem] text-[#9e968a] mt-3">
-            You've invited <span className="text-[#c9a84c] font-semibold">{ref.invited}</span> · <span className="text-[#c9a84c] font-semibold">{ref.walking}</span> are walking.
-          </p>
-        </div>
+        <CallToWallCard className="mt-8" url={refUrl} invited={ref.invited} walking={ref.walking} />
       )}
     </div>
   );
