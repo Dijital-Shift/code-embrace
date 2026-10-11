@@ -50,7 +50,33 @@ export function PathCategoryAccordion({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div>
+      <div
+        className="sticky top-0 z-20 -mx-1 px-1 py-2 flex gap-2 overflow-x-auto"
+        style={{ background: "rgba(10,8,6,0.92)", backdropFilter: "blur(8px)" }}
+      >
+        {PATH_CATEGORIES.map((cat) => {
+          const count = PATH_TEMPLATES.filter((t) => t.category === cat).length;
+          if (count === 0) return null;
+          const active = openCat === cat;
+          return (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => toggle(cat)}
+              className="shrink-0 px-3 py-1.5 rounded-full border text-[0.68rem] uppercase tracking-[0.14em] font-semibold transition-colors"
+              style={{
+                borderColor: active ? "#c9a84c" : "#2a2518",
+                background: active ? "rgba(201,168,76,0.12)" : "#120f0d",
+                color: active ? "#c9a84c" : "#8a8276",
+              }}
+            >
+              {cat} · {count}
+            </button>
+          );
+        })}
+      </div>
+      <div className="flex flex-col gap-2 mt-2">
       {PATH_CATEGORIES.map((cat) => {
         const items = PATH_TEMPLATES.filter((t) => t.category === cat);
         if (items.length === 0) return null;
