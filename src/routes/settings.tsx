@@ -179,6 +179,19 @@ function Settings() {
             </span>
             <span className="text-[#c9a84c]">›</span>
           </a>
+          {([
+            ["/terms", "Terms of Service", "The rules of the walk."],
+            ["/privacy", "Privacy Policy", "What we keep and why."],
+            ["/refund", "Refund Policy", "Handled through Stripe."],
+          ] as const).map(([to, title, sub]) => (
+            <Link key={to} to={to} className="flex items-center justify-between px-4 py-3.5 no-underline">
+              <span>
+                <span className="block text-sm text-[#ded8cc] font-medium">{title}</span>
+                <span className="block text-[0.7rem] text-[#8f887c]">{sub}</span>
+              </span>
+              <span className="text-[#c9a84c]">›</span>
+            </Link>
+          ))}
         </div>
       </div>
 
