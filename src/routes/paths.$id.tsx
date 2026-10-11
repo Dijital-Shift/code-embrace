@@ -131,38 +131,31 @@ function LaneDetail() {
         For a just man falleth seven times, and riseth up again. — Proverbs 24:16 (KJV)
       </p>
 
-      <div className="kp-card-glow p-5 mb-5">
-        <div className="flex items-center justify-center gap-6">
+      <div className="kp-card-glow p-6 mb-5">
+        <div className="grid grid-cols-2 divide-x divide-[#2a2518]">
           <div className="text-center">
-            <div className="text-3xl font-extrabold text-[#4ade80]">{data?.standing ?? 0}</div>
-            <div className="text-[0.6rem] uppercase tracking-wider text-[#4ade80]">Days Standing</div>
+            <div className="text-5xl font-extrabold text-[#4ade80] leading-none" style={{ textShadow: "0 0 24px #4ade8040" }}>{data?.standing ?? 0}</div>
+            <div className="text-[0.62rem] uppercase tracking-[0.2em] text-[#4ade80] mt-2">Days Standing</div>
           </div>
-          <span className="text-[#948d80] text-xl">·</span>
           <div className="text-center">
-            <div className="text-3xl font-extrabold text-[#f87171]">{data?.fallen ?? 0}</div>
-            <div className="text-[0.6rem] uppercase tracking-wider text-[#f87171]">Days Fallen</div>
+            <div className="text-5xl font-extrabold text-[#f87171] leading-none" style={{ textShadow: "0 0 24px #f8717140" }}>{data?.fallen ?? 0}</div>
+            <div className="text-[0.62rem] uppercase tracking-[0.2em] text-[#f87171] mt-2">Days Fallen</div>
           </div>
         </div>
         {(data?.fallen ?? 0) > 0 && (
-          <p className="text-center text-[0.7rem] text-[#a8a094] mt-2">
+          <p className="text-center text-[0.7rem] text-[#a8a094] mt-3">
             {data?.breached ?? 0} breach{(data?.breached ?? 0) === 1 ? "" : "es"} · {data?.missed ?? 0} silent
+          </p>
+        )}
+        {lane.created_at && (
+          <p className="text-center text-[0.68rem] text-[#8a8276] mt-2">
+            Since {new Date(lane.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {(data?.standing ?? 0) + (data?.fallen ?? 0)} days walked
           </p>
         )}
       </div>
 
       <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Last 14 Days</p>
-      {checkins.length === 0 ? (
-        <p className="text-[#948d80] text-sm">No check-ins yet.</p>
-      ) : (
-        <div className="flex flex-col gap-1.5">
-          {checkins.map((c) => (
-            <div key={c.checkin_date} className="kp-card flex justify-between px-3 py-2">
-              <span className="text-sm">{c.checkin_date}</span>
-              <span className="text-xs" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <LineageTimeline checkins={checkins as any} />
 
       {(data?.encouragements ?? []).length > 0 && (
         <div className="mt-6">
