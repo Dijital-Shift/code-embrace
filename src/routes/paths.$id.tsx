@@ -131,7 +131,7 @@ function LaneDetail() {
         For a just man falleth seven times, and riseth up again. — Proverbs 24:16 (KJV)
       </p>
 
-      <div className="p-4 rounded-xl border border-[#2a2518] mb-5" style={{ background: "#161210" }}>
+      <div className="kp-card-glow p-5 mb-5">
         <div className="flex items-center justify-center gap-6">
           <div className="text-center">
             <div className="text-3xl font-extrabold text-[#4ade80]">{data?.standing ?? 0}</div>
@@ -156,7 +156,7 @@ function LaneDetail() {
       ) : (
         <div className="flex flex-col gap-1.5">
           {checkins.map((c) => (
-            <div key={c.checkin_date} className="flex justify-between px-3 py-2 rounded border border-[#2a2518]" style={{ background: "#161210" }}>
+            <div key={c.checkin_date} className="kp-card flex justify-between px-3 py-2">
               <span className="text-sm">{c.checkin_date}</span>
               <span className="text-xs" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
             </div>
@@ -181,7 +181,7 @@ function LaneDetail() {
         </div>
       )}
 
-      <div className="mt-6 p-4 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+      <div className="kp-card mt-6 p-4">
         {lane.description && <p className="text-[#b8b0a4] text-sm mb-2">{lane.description}</p>}
         {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
           <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
@@ -448,7 +448,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
   const emptySlots = Math.max(0, 2 - slotCount);
 
   return (
-    <div className="mt-6 p-5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+    <div className="kp-card mt-6 p-5">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Watchmen</p>
         <span className="text-xs text-[#a8a094]">{slotCount}/2</span>
