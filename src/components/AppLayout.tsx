@@ -86,7 +86,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               Sign out
             </button>
           </div>
-          <nav className="grid grid-cols-5" style={{ borderTop: "1px solid #1d190f" }}>
+        </div>
+
+        {/* Mobile bottom dock — sticky, app-style */}
+        <nav className="nav-mobile-dock grid grid-cols-5" aria-label="Primary">
             {menuItems.map((i) => {
               const active = pathname === i.href || pathname.startsWith(i.href + "/");
               const Icon = i.icon;
@@ -95,14 +98,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   key={i.href}
                   to={i.href}
                   aria-label={i.label}
-                  className="flex flex-col items-center justify-center gap-1 py-2 min-h-[52px] no-underline"
-                  style={{
-                    color: active ? "#c9a84c" : "#9e968a",
-                    borderBottom: active ? "2px solid #c9a84c" : "2px solid transparent",
-                  }}
+                  className="relative flex flex-col items-center justify-center gap-1 pt-2.5 pb-1.5 min-h-[54px] no-underline"
+                  style={{ color: active ? "#c9a84c" : "#8f887c" }}
                 >
+                  {active && (
+                    <span className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-full" style={{ background: "#c9a84c", boxShadow: "0 0 10px rgba(201,168,76,0.7)" }} />
+                  )}
                   <span className="relative">
-                    <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+                    <Icon size={22} strokeWidth={active ? 2.4 : 1.8} />
                     {hasUnread && i.href === "/paths" && (
                       <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full" style={{ background: "#e5af38" }} />
                     )}
@@ -111,8 +114,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
-          </nav>
-        </div>
+        </nav>
 
 
         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
@@ -133,7 +135,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </AlertDialogContent>
         </AlertDialog>
 
-        <main className="flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
+        <main className="app-main flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
         <TrialEndingModal />
       </div>
     </AuthGate>

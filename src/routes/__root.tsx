@@ -11,6 +11,7 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import UpdateAvailablePill from "@/components/UpdateAvailablePill";
+import { SplashScreen } from "@/components/SplashScreen";
 import { Toaster } from "@/components/ui/sonner";
 
 
@@ -170,6 +171,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <SplashScreen />
         <Outlet />
         <UpdateAvailablePill />
         <Toaster />
