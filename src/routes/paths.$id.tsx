@@ -11,7 +11,7 @@ import {
   removeWatchman,
 } from "@/lib/invites.functions";
 import { AppLayout } from "@/components/AppLayout";
-import { statusColor, statusLabel } from "@/lib/status";
+// status helpers used by timeline
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/paths/$id")({
