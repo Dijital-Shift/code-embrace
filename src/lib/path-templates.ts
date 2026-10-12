@@ -170,16 +170,29 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     lane_type: "avoid",
     support_scripture: [
       "The works of the flesh are manifest, which are these… witchcraft… they which do such things shall not inherit the kingdom of God. — Galatians 5:19-21 (KJV)",
+      "Be sober, be vigilant; because your adversary the devil, as a roaring lion, walketh about, seeking whom he may devour. — 1 Peter 5:8 (KJV)",
+    ],
+  },
+  {
+    id: "no-cannabis",
+    category: "Substances",
+    title: "No cannabis",
+    description: "Stay sober-minded and vigilant. Keep a clear head — no smoking, vaping, or edibles.",
+    lane_type: "avoid",
+    support_scripture: [
+      "Be sober, be vigilant; because your adversary the devil, as a roaring lion, walketh about, seeking whom he may devour. — 1 Peter 5:8 (KJV)",
+      "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind. — 2 Timothy 1:7 (KJV)",
     ],
   },
   {
     id: "no-smoking",
     category: "Substances",
-    title: "Don't defile the temple (no smoking)",
+    title: "No smoking or vaping",
     description: "Your body is the temple of God — keep it holy.",
     lane_type: "avoid",
     support_scripture: [
       "If any man defile the temple of God, him shall God destroy; for the temple of God is holy, which temple ye are. — 1 Corinthians 3:16-17 (KJV)",
+      "Your body is the temple of the Holy Ghost… therefore glorify God in your body. — 1 Corinthians 6:19-20 (KJV)",
     ],
   },
 
