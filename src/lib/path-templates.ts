@@ -288,29 +288,19 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     ],
   },
   {
-    id: "open-hand",
+    id: "contentment",
     category: "Stewardship",
-    title: "Open hand — give and do good willingly",
-    description: "Withhold not good when it is in your power. Lend freely to the needy.",
-    lane_type: "complete",
+    title: "Contentment (no covetousness)",
+    description: "Be content with such things as ye have. Refuse envy, greed, and murmuring over what you do not have.",
+    lane_type: "avoid",
     support_scripture: [
-      "Withhold not good from them to whom it is due, when it is in the power of thine hand to do it. — Proverbs 3:27 (KJV)",
-      "Thou shalt surely give him, and thine heart shall not be grieved when thou givest unto him. — Deuteronomy 15:10 (KJV)",
+      "Let your conversation be without covetousness; and be content with such things as ye have: for he hath said, I will never leave thee, nor forsake thee. — Hebrews 13:5 (KJV)",
+      "But godliness with contentment is great gain. For we brought nothing into this world, and it is certain we can carry nothing out. — 1 Timothy 6:6-7 (KJV)",
+      "Better is little with the fear of the LORD than great treasure and trouble therewith. — Proverbs 15:16 (KJV)",
     ],
   },
 
   // ── Heart & Action ─────────────────────────────────────────
-  {
-    id: "give-to-the-poor",
-    category: "Heart & Action",
-    title: "Give — tithe and care for the poor",
-    description: "He that hath pity upon the poor lendeth unto the LORD.",
-    lane_type: "complete",
-    support_scripture: [
-      "He that hath pity upon the poor lendeth unto the LORD; and that which he hath given will he pay him again. — Proverbs 19:17 (KJV)",
-      "Bring ye all the tithes into the storehouse… and prove me now herewith, saith the LORD of hosts. — Malachi 3:10 (KJV)",
-    ],
-  },
   {
     id: "forgive-quickly",
     category: "Heart & Action",
