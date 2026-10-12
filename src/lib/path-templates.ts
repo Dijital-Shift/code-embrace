@@ -60,8 +60,9 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     description: "Send a verse to someone every day — a word in season, not a sermon. Easy way to do this: SendScripture.xyz",
     lane_type: "complete",
     support_scripture: [
-      "A word fitly spoken is like apples of gold in pictures of silver. — Proverbs 25:11 (KJV)",
-      "Let the word of Christ dwell in you richly in all wisdom; teaching and admonishing one another. — Colossians 3:16 (KJV)",
+      "Preach the word; be instant in season, out of season; reprove, rebuke, exhort with all longsuffering and doctrine. — 2 Timothy 4:2 (KJV)",
+      "Go ye into all the world, and preach the gospel to every creature. — Mark 16:15 (KJV)",
+      "But exhort one another daily, while it is called To day; lest any of you be hardened through the deceitfulness of sin. — Hebrews 3:13 (KJV)",
     ],
   },
 
