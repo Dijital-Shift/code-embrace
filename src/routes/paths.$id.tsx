@@ -21,6 +21,41 @@ export const Route = createFileRoute("/paths/$id")({
   component: () => <AppLayout><LaneDetail /></AppLayout>,
 });
 
+const TYPE_PILL = {
+  avoid: { bg: "#241009", fg: "#f0957a", border: "rgba(240,149,122,0.3)" },
+  complete: { bg: "#0c2010", fg: "#6ee7a0", border: "rgba(110,231,160,0.3)" },
+} as const;
+
+const STATUS_META: Record<string, { fg: string; border: string; dot: string }> = {
+  active: { fg: "#6ee7a0", border: "rgba(110,231,160,0.28)", dot: "#4ade80" },
+  paused: { fg: "#c9a84c", border: "rgba(201,168,76,0.32)", dot: "#c9a84c" },
+  archived: { fg: "#8a8276", border: "#2a2518", dot: "#6b6459" },
+};
+
+function Pill({
+  label,
+  bg,
+  fg,
+  border,
+  dot,
+}: {
+  label: string;
+  bg: string;
+  fg: string;
+  border: string;
+  dot?: string;
+}) {
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] leading-none border"
+      style={{ background: bg, color: fg, borderColor: border }}
+    >
+      {dot && <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: dot }} />}
+      {label}
+    </span>
+  );
+}
+
 function LaneDetail() {
   const { id } = Route.useParams();
   const { newlyCreated } = Route.useSearch();
@@ -103,16 +138,55 @@ function LaneDetail() {
   // Delete is only offered while no watchman is locked in — nobody to notify.
   const canDelete = (data?.watchmen ?? []).length === 0;
 
+  const isAvoid = (lane.lane_type ?? "complete") !== "complete";
+  const type = TYPE_PILL[isAvoid ? "avoid" : "complete"];
+  const status = STATUS_META[lane.status] ?? STATUS_META.paused;
+  const scriptures = (lane.support_scripture ?? []).filter(Boolean);
+  const hasDetails =
+    scriptures.length > 0 ||
+    Boolean(lane.notes) ||
+    Boolean(lane.ends_at) ||
+    /^send scripture/i.test(lane.title ?? "");
+
+
   
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <Link to="/paths" className="text-[#9e968a] text-sm">← Paths</Link>
-          <h2 className="text-xl font-bold">{lane.title}</h2>
+      <div className="mb-7">
+        <Link
+          to="/paths"
+          className="inline-flex items-center gap-1 text-[0.68rem] uppercase tracking-[0.18em] font-semibold text-[#8a8276] no-underline transition-colors hover:text-[#c9a84c]"
+        >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Paths
+        </Link>
+
+        <div className="flex items-center gap-2 flex-wrap mt-5">
+          <Pill label={isAvoid ? "Avoid" : "Complete"} bg={type.bg} fg={type.fg} border={type.border} />
+          <Pill label={lane.status} bg="#12100a" fg={status.fg} border={status.border} dot={status.dot} />
         </div>
+
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug mt-3">
+          {lane.title}
+        </h1>
+        {lane.description && (
+          <p className="text-xs sm:text-sm text-[#b8b0a4] leading-relaxed mt-2">{lane.description}</p>
+        )}
       </div>
+
 
       {newlyCreated && (
         <div className="mb-5 p-4 rounded-md border border-[#3a2f12]" style={{ background: "#1e1808" }}>
@@ -128,9 +202,15 @@ function LaneDetail() {
       )}
 
       {/* The word first, then where you stand — both above the fold. */}
-      <p className="text-[0.75rem] italic text-[#c9a84c] mb-4 leading-relaxed">
-        For a just man falleth seven times, and riseth up again. — Proverbs 24:16 (KJV)
-      </p>
+      <div className="mb-5 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
+        <p className="text-xs italic text-[#c9a84c]/90 leading-relaxed">
+          “For a just man falleth seven times, and riseth up again.”
+        </p>
+        <p className="text-[0.62rem] uppercase tracking-[0.16em] text-[#8a8276] mt-1.5">
+          Proverbs 24:16 (KJV)
+        </p>
+      </div>
+
 
       <div className="kp-card-glow p-6 mb-5">
         <div className="grid grid-cols-2 divide-x divide-[#2a2518]">
@@ -175,30 +255,32 @@ function LaneDetail() {
         </div>
       )}
 
-      <div className="kp-card mt-6 p-4">
-        {lane.description && <p className="text-[#b8b0a4] text-sm mb-2">{lane.description}</p>}
-        {(lane.support_scripture ?? []).filter(Boolean).map((s, i) => (
-          <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
-        ))}
-        {/^send scripture/i.test(lane.title ?? "") && (
-          <p className="text-xs text-[#a8a094] mt-2">
-            Easy way to do this:{" "}
-            <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
-          </p>
-        )}
-        {lane.notes && (
-          <div className="mt-2 pl-3 border-l-2 border-[#c9a84c]/60">
-            <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
-            <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
-          </div>
-        )}
-        <p className="text-xs text-[#a8a094] mt-2">
-          Status: <span className="capitalize" style={{ color: lane.status === "active" ? "#4ade80" : "#888" }}>{lane.status}</span>
-          {lane.ends_at && (
-            <span className="ml-3">Ends <span className="text-[#c9a84c]">{lane.ends_at}</span></span>
+      {hasDetails && (
+        <div className="kp-card mt-6 p-4">
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Path details</p>
+          {scriptures.map((s, i) => (
+            <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
+          ))}
+          {/^send scripture/i.test(lane.title ?? "") && (
+            <p className="text-xs text-[#a8a094] mt-2">
+              Easy way to do this:{" "}
+              <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
+            </p>
           )}
-        </p>
-      </div>
+          {lane.notes && (
+            <div className="mt-2 pl-3 border-l-2 border-[#c9a84c]/60">
+              <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
+              <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
+            </div>
+          )}
+          {lane.ends_at && (
+            <p className="text-xs text-[#a8a094] mt-3">
+              Ends <span className="text-[#c9a84c]">{lane.ends_at}</span>
+            </p>
+          )}
+        </div>
+      )}
+
 
       <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
 
