@@ -35,7 +35,7 @@ export const fetchPathScripture = createServerFn({ method: "POST" })
           "content-type": "application/json",
           "x-device-id": `kingdom-protocol-${context.userId}`,
         },
-        body: JSON.stringify({ text: data.text }),
+        body: JSON.stringify({ text: expandQuery(data.text) }),
       });
       if (!res.ok) {
         console.error("[send-scripture] status", res.status);
