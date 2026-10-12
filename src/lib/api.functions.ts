@@ -370,7 +370,7 @@ export const getDashboard = createServerFn({ method: 'GET' })
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
-      supabase.from('encouragements').select('lane_id').eq('owner_id', userId).is('read_at', null),
+      supabase.from('encouragements').select('id, lane_id, body, created_at, watchman_id').eq('owner_id', userId).is('read_at', null).order('created_at', { ascending: false }),
     ]);
     // Which paths hold the unread words — so the banner can point at one.
     const unreadByPath = new Map<string, number>();
@@ -411,6 +411,20 @@ export const getDashboard = createServerFn({ method: 'GET' })
       unreadPaths: [...unreadByPath.entries()].map(([lane_id, count]) => ({
         lane_id, count, title: titles.get(lane_id) ?? 'a path',
       })),
+      unreadWords: await (async () => {
+        const rows = (unreadRows ?? []) as any[];
+        if (!rows.length) return [];
+        const wIds = [...new Set(rows.map((r) => r.watchman_id).filter(Boolean))];
+        const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+        const { data: profs } = wIds.length
+          ? await supabaseAdmin.from('profiles').select('user_id, first_name').in('user_id', wIds)
+          : { data: [] as any[] };
+        const nm = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name]));
+        return rows.map((r) => ({
+          id: r.id as string, lane_id: r.lane_id as string, body: r.body as string, created_at: r.created_at as string,
+          from_name: (nm.get(r.watchman_id) as string) || 'Your watchman',
+        }));
+      })(),
     };
   });
 
