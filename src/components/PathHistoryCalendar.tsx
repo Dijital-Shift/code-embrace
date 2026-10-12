@@ -39,7 +39,12 @@ export function PathHistoryCalendar({ checkins, words, startDate, today, renderW
         showOutsideDays={false}
         fixedWeeks
         className="pointer-events-auto w-full bg-transparent p-0"
-        classNames={{ today: "rounded-md ring-1 ring-primary/40", selected: "rounded-md ring-2 ring-primary" }}
+        classNames={{
+          today: "rounded-md ring-1 ring-primary/40",
+          day: "relative h-11 w-full select-none p-0 text-center",
+          week: "mt-1 flex w-full gap-1",
+          weekday: "flex-1 select-none text-xs font-normal text-muted-foreground",
+        }}
         components={{ DayButton: ({ day, modifiers, className, children, ...props }: React.ComponentProps<typeof DayButton>) => {
           const date = format(day.date, "yyyy-MM-dd");
           const checkin = byDate.get(date);
@@ -59,7 +64,7 @@ export function PathHistoryCalendar({ checkins, words, startDate, today, renderW
       />
       <div className="mt-4 flex flex-wrap gap-x-3 gap-y-2 text-[0.65rem] text-muted-foreground">
         {[["completed", "Held"], ["breached", "Breach"], ["missed", "Silent"], ["skipped", "Sabbath"]].map(([status, label]) => (
-          <span key={status} className="flex items-center gap-1.5"><span className={`history-${status} h-2 w-2 rounded-sm`} />{label}</span>
+          <span key={status} className="flex items-center gap-1.5"><span className={`history-${status} history-swatch h-2 w-2 rounded-sm`} />{label}</span>
         ))}
         <span className="flex items-center gap-1.5"><span className="h-1 w-1 rounded-full bg-history-breach" />Breach note</span>
         <span className="flex items-center gap-1.5"><span className="h-1 w-1 rounded-full bg-primary" />Watchman words</span>

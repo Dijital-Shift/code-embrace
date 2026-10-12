@@ -22,6 +22,7 @@
 .history-missed { color: var(--color-history-silent); background: color-mix(in oklab, var(--color-history-silent) 14%, transparent); }
 .history-skipped { color: var(--color-history-sabbath); background: color-mix(in oklab, var(--color-history-sabbath) 14%, transparent); }
 .history-day:hover { background: color-mix(in oklab, var(--color-primary) 18%, transparent); }
+.history-swatch { background: currentColor; }
 
 :root {
   --background: #0a0800;
