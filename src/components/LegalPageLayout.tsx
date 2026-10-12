@@ -30,13 +30,17 @@ export function LegalPageLayout({
         style={{ background: "rgba(10,8,0,0.88)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div className="px-5 max-w-2xl mx-auto w-full">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1 text-sm text-[#a8a094] hover:text-[#c9a84c] py-2 min-h-[2.75rem]"
+        <button
+          type="button"
+          onClick={() => {
+            if (window.history.length > 1) window.history.back();
+            else window.location.href = "/";
+          }}
+          className="inline-flex items-center gap-1 text-sm text-[#a8a094] hover:text-[#c9a84c] py-2 min-h-[2.75rem] bg-transparent border-0 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
-          Home
-        </Link>
+          Back
+        </button>
         </div>
       </div>
       <main className="flex-1 px-5 py-8 max-w-2xl mx-auto w-full">
