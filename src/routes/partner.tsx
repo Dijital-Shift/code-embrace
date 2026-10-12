@@ -37,10 +37,12 @@ function Partner() {
   // A watchman can hold several paths. Only the ones actually asking for a
   // response open by default; the rest stay one quiet line each.
   const needsYou = active.filter((l) => {
+    if (l.resting) return false;
     const c = today.get(l.lane_id);
     return c?.status === "breached" || c?.status === "missed";
   });
-  const quiet = active.filter((l) => !needsYou.includes(l));
+  const resting = active.filter((l) => l.resting);
+  const quiet = active.filter((l) => !needsYou.includes(l) && !l.resting);
 
   const showMicroPrompt =
     (data?.myEncouragementCount ?? 0) >= 1 &&
@@ -115,14 +117,32 @@ function Partner() {
         </section>
       )}
 
+      {resting.length > 0 && (
+        <section className="mb-10">
+          <p className="text-[0.65rem] text-[#948d80] uppercase tracking-wider mb-1 font-semibold">Resting ({resting.length})</p>
+          <p className="text-[0.7rem] text-[#7d776c] mb-3">Their account is paused for now. No alerts until they pick it back up.</p>
+          <div className="flex flex-col gap-1.5">
+            {resting.map((lane) => (
+              <AssignmentCard
+                key={lane.lane_id} lane={lane} checkin={today.get(lane.lane_id)} statusColor={statusColor}
+                sendFn={sendFn} onSent={() => qc.invalidateQueries({ queryKey: ["partner"] })}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       {inactive.length > 0 && (
         <section className="mb-10">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-3 font-semibold">Inactive</p>
           <div className="flex flex-col gap-3">
             {inactive.map((lane) => (
               <div key={lane.lane_id} className="p-4 rounded-lg border border-[#1a1a1a] opacity-60" style={{ background: "#0d0d0d" }}>
-                <p className="font-semibold text-sm">{lane.title}</p>
-                <p className="text-xs text-[#948d80]">{lane.owner?.email}</p>
+                <div className="flex justify-between items-center gap-3">
+                  <p className="font-semibold text-sm truncate">{lane.title}</p>
+                  <span className="text-[0.6rem] uppercase tracking-wider px-2 py-0.5 rounded border border-[#2a2518] text-[#948d80] shrink-0">{lane.status === "archived" ? "Archived" : "Paused"}</span>
+                </div>
+                <p className="text-xs text-[#948d80]">{lane.owner?.first_name || lane.owner?.email}</p>
               </div>
             ))}
           </div>
@@ -344,22 +364,59 @@ function AlertGroup({ group }: { group: AlertGroupData }) {
         <span className="text-[0.65rem] text-[#c9a84c] shrink-0">{open ? "Hide" : "Open"}</span>
       </button>
 
-      {open && (
-        <div className="px-4 pb-3 flex flex-col gap-2">
-          {group.items.map((n) => (
-            <div key={n.notification_id} className="p-3 rounded-lg border border-[#2a2518]" style={{ background: "#0d0b06" }}>
-              <div className="flex justify-between mb-1.5 gap-2">
-                <span className="text-[0.7rem] px-2 py-0.5 rounded" style={{ background: n.type === "breach_report" ? "#2d0d0d" : "#1a1200", color: n.type === "breach_report" ? "#f87171" : "#f59e0b" }}>
-                  {n.type === "breach_report" ? "Breach" : n.type === "encouragement" ? "Encouragement" : "Missed"}
-                </span>
-                <span className="text-[0.7rem] text-[#948d80] shrink-0">
-                  {n.sent_at ? new Date(n.sent_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Pending"}
-                </span>
-              </div>
-              <p className="text-xs text-[#b8b0a4] leading-relaxed">{n.message_content}</p>
-            </div>
-          ))}
-        </div>
+      {open && <IncidentList items={group.items} />}
+    </div>
+  );
+}
+
+type Incident = { key: string; kind: "breach" | "silent"; start: Date; end: Date; count: number; items: AlertItem[] };
+
+/** Back-to-back alerts of the same kind (within ~36h) become one incident. */
+function batchIncidents(items: AlertItem[]): Incident[] {
+  const sorted = items
+    .filter((n) => n.sent_at)
+    .map((n) => ({ n, t: new Date(n.sent_at!) }))
+    .sort((a, b) => b.t.getTime() - a.t.getTime());
+  const out: Incident[] = [];
+  for (const { n, t } of sorted) {
+    const kind = n.type === "breach_report" ? "breach" : "silent";
+    const cur = out[out.length - 1];
+    if (cur && cur.kind === kind && cur.start.getTime() - t.getTime() <= 36 * 3600_000) {
+      cur.start = t; cur.count++; cur.items.push(n);
+    } else {
+      out.push({ key: n.notification_id, kind, start: t, end: t, count: 1, items: [n] });
+    }
+  }
+  return out;
+}
+
+function IncidentList({ items }: { items: AlertItem[] }) {
+  const [showAll, setShowAll] = useState(false);
+  const incidents = batchIncidents(items);
+  const visible = showAll ? incidents : incidents.slice(0, 3);
+  const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return (
+    <div className="px-4 pb-3 flex flex-col gap-1.5">
+      {visible.map((i) => {
+        const breach = i.kind === "breach";
+        const range = fmt(i.start) === fmt(i.end) ? fmt(i.end) : `${fmt(i.start)} – ${fmt(i.end)}`;
+        const label = breach
+          ? (i.count > 1 ? `${i.count} breaches` : "Breach")
+          : (i.count > 1 ? `Silent ${i.count} days` : "Silent day");
+        return (
+          <div key={i.key} className="flex justify-between items-center gap-3 px-3 py-2 rounded-md border border-[#2a2518]" style={{ background: "#0d0b06" }}>
+            <span className="flex items-center gap-2 min-w-0">
+              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: breach ? "#f87171" : "#f59e0b" }} />
+              <span className="text-xs font-semibold truncate" style={{ color: breach ? "#f87171" : "#f59e0b" }}>{label}</span>
+            </span>
+            <span className="text-[0.7rem] text-[#948d80] shrink-0">{range}</span>
+          </div>
+        );
+      })}
+      {incidents.length > 3 && (
+        <button type="button" onClick={() => setShowAll((v) => !v)} className="text-[0.7rem] text-[#c9a84c] self-start mt-1">
+          {showAll ? "Show fewer" : `Show ${incidents.length - 3} earlier`}
+        </button>
       )}
     </div>
   );
