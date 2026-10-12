@@ -234,9 +234,7 @@ function LaneDetail() {
             });
           }}
           className="mt-4 p-5 rounded-xl border border-[#3a2f12] scroll-mt-24" style={{ background: "#1a1408" }}>
-          <p className="text-sm font-semibold text-[#c9a84c] mb-1">
-            {pending === "paused" ? "Pause this path?" : "Archive this path?"}
-          </p>
+          <StatusHelp kind={pending === "paused" ? "paused" : "archived"} />
           <p className="text-xs text-[#c2af80] leading-relaxed mb-3">
             Your watchman will be told you did this. You cannot do it quietly. Write a short reason — they will see it word for word.
           </p>
