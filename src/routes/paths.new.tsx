@@ -8,6 +8,7 @@ import { AccessGate } from "@/components/AccessBanner";
 import { getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
+import { ScriptureFields } from "@/components/ScriptureFields";
 
 type LaneNewSearch = { template?: string };
 
@@ -207,16 +208,7 @@ function NewLane() {
             <p className="text-[0.7rem] text-[#9e968a]">Honest context helps your watchman walk this with you, not guess at it.</p>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#ded8cc]">Support Scripture <span className="text-[#948d80]">(optional — up to 3)</span></label>
-            {[
-              { v: s1, set: setS1, p: "e.g. Prov. 27:17" },
-              { v: s2, set: setS2, p: "e.g. Heb. 10:24" },
-              { v: s3, set: setS3, p: "e.g. 1 Cor. 9:27" },
-            ].map((x, i) => (
-              <input key={i} value={x.v} onChange={(e) => x.set(e.target.value)} placeholder={x.p} maxLength={200} className={inputCls + " mb-1"} />
-            ))}
-          </div>
+          <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>

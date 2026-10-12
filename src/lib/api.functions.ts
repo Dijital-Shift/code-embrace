@@ -212,7 +212,7 @@ export const createLane = createServerFn({ method: 'POST' })
       description: z.string().max(300).optional().nullable(),
       notes: z.string().max(500).optional().nullable(),
       lane_type: z.enum(['avoid', 'complete']),
-      support_scripture: z.array(z.string().max(200)).max(3).optional(),
+      support_scripture: z.array(z.string().max(800)).max(3).optional(),
       ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     }),
   )
@@ -250,7 +250,7 @@ export const updateLane = createServerFn({ method: 'POST' })
       title: z.string().min(1).max(80),
       description: z.string().max(300).optional().nullable(),
       notes: z.string().max(500).optional().nullable(),
-      support_scripture: z.array(z.string().max(200)).max(3).optional(),
+      support_scripture: z.array(z.string().max(800)).max(3).optional(),
       ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     }),
   )
