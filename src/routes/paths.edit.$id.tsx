@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getLane, updateLane } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { ScriptureFields } from "@/components/ScriptureFields";
 
 export const Route = createFileRoute("/paths/edit/$id")({
   head: () => ({ meta: [{ title: "Edit Path — Kingdom Protocol" }] }),
@@ -81,12 +82,7 @@ function EditPath() {
           <label className="text-sm font-semibold text-[#ded8cc]">Notes <span className="text-[#948d80]">(your watchman sees these)</span></label>
           <textarea maxLength={500} rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} className={inputCls + " resize-none"} />
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-[#ded8cc]">Support Scripture <span className="text-[#948d80]">(up to 3)</span></label>
-          {[{ v: s1, set: setS1 }, { v: s2, set: setS2 }, { v: s3, set: setS3 }].map((x, i) => (
-            <input key={i} value={x.v} onChange={(e) => x.set(e.target.value)} maxLength={200} className={inputCls + " mb-1"} />
-          ))}
-        </div>
+        <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
           <input type="date" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} className={inputCls} />
