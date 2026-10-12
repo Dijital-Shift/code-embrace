@@ -8,6 +8,8 @@ import { CallToWallCard } from "@/components/CallToWallCard";
 import { AccessBanner } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
+import { WatchmanWordsModal, type Word } from "@/components/WatchmanWordsModal";
+import { useEffect, useState } from "react";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -20,6 +22,13 @@ function Dashboard() {
   const refFn = useServerFn(getMyReferral);
   const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fn() });
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
+  const [openLane, setOpenLane] = useState<string | null>(null);
+  // Snapshot the words when opened so the modal survives the refetch that clears them.
+  const [openWords, setOpenWords] = useState<Word[]>([]);
+  useEffect(() => {
+    if (!openLane) { setOpenWords([]); return; }
+    setOpenWords((prev) => prev.length ? prev : ((data as any)?.unreadWords ?? []).filter((w: Word) => w.lane_id === openLane));
+  }, [openLane]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) return <DashboardSkeleton />;
   const lanes = data?.lanes ?? [];
@@ -63,7 +72,7 @@ function Dashboard() {
         const cls = "block mb-5 px-4 py-3 kp-card-glow no-underline";
         const style = { background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" };
         return one ? (
-          <Link to="/paths/$id" params={{ id: one.lane_id }} search={{ newlyCreated: false }} className={cls} style={style}>{inner}</Link>
+          <button type="button" onClick={() => setOpenLane(one.lane_id)} className={`${cls} w-full text-left`} style={style}>{inner}</button>
         ) : (
           <Link to="/paths" className={cls} style={style}>{inner}</Link>
         );
@@ -139,7 +148,13 @@ function Dashboard() {
                         {isAvoid ? "Avoid" : "Complete"}
                       </span>
                       {unread > 0 && (
-                        <span className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0" style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}>New</span>
+                        <button
+                          type="button"
+                          aria-label={`Read new words from your Watchman on ${lane.title}`}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenLane(lane.lane_id); }}
+                          className="text-[0.6rem] px-2 py-1 -my-1 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 cursor-pointer"
+                          style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}
+                        >New</button>
                       )}
                     </p>
                     {lane.description && <p className="text-xs text-[#b8b0a4] leading-relaxed mt-1 mb-1.5 line-clamp-2">{lane.description}</p>}
@@ -160,6 +175,15 @@ function Dashboard() {
 
       {ref && "code" in ref && (
         <CallToWallCard className="mt-8" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
+      )}
+
+      {openLane && openWords.length > 0 && (
+        <WatchmanWordsModal
+          laneId={openLane}
+          title={lanes.find((l) => l.lane_id === openLane)?.title ?? "Your path"}
+          words={openWords}
+          onClose={() => setOpenLane(null)}
+        />
       )}
     </div>
   );
