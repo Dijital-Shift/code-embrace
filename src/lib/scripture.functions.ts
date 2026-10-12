@@ -9,6 +9,19 @@ const SS_KEY =
 
 type SSVerse = { reference: string; start_verse: number; end_verse: number; verses: { full_text: string }[] };
 
+// Modern substance terms aren't KJV vocabulary — translate them into the
+// biblical concepts (sober mind, temple of the body) before querying.
+const CONCEPT_MAP: [RegExp, string][] = [
+  [/\b(cannabis|marijuana|weed|pot|thc|edibles?)\b/i, "sober minded vigilant sound mind"],
+  [/\b(smok(e|ing)|vap(e|ing)|tobacco|cigarettes?|nicotine)\b/i, "body temple of God holy"],
+  [/\b(drugs?|substances?|pills?)\b/i, "sober vigilant walk in the Spirit"],
+];
+
+function expandQuery(text: string): string {
+  const extras = CONCEPT_MAP.filter(([re]) => re.test(text)).map(([, v]) => v);
+  return extras.length ? `${text}. ${extras.join(". ")}` : text;
+}
+
 export const fetchPathScripture = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ text: z.string().trim().min(2).max(400) }).parse(d))
