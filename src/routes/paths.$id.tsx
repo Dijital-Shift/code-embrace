@@ -511,3 +511,39 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
     </div>
   );
 }
+
+const STATUS_HELP = {
+  paused: {
+    title: "Pause this path?",
+    body: "Rest this path for a season — sickness, travel, a planned break. Daily check-ins and Watchman alerts stop while it rests, and your record stays as it is. Set it active again whenever you are ready.",
+  },
+  archived: {
+    title: "Archive this path?",
+    body: "Close this path when the walk is finished or no longer yours to keep. It leaves your daily check-in, your full record is kept, and you can restore it later from your archived Paths.",
+  },
+} as const;
+
+function StatusHelp({ kind }: { kind: "paused" | "archived" }) {
+  const [open, setOpen] = useState(false);
+  const h = STATUS_HELP[kind];
+  return (
+    <div className="mb-1">
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-semibold text-[#c9a84c]">{h.title}</p>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={`What does ${kind === "paused" ? "pause" : "archive"} do?`}
+          className="!min-h-0 w-5 h-5 rounded-full border text-[0.65rem] font-bold leading-none flex items-center justify-center"
+          style={{ borderColor: open ? "#c9a84c" : "#5a4a22", color: open ? "#0a0800" : "#c9a84c", background: open ? "#c9a84c" : "transparent" }}
+        >
+          ?
+        </button>
+      </div>
+      {open && (
+        <p className="mt-2 mb-2 text-xs leading-relaxed text-[#e0d4b0] pl-3 border-l-2 border-[#c9a84c]/60">{h.body}</p>
+      )}
+    </div>
+  );
+}
