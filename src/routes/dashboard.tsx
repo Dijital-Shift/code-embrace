@@ -27,6 +27,7 @@ function Dashboard() {
   const statusByLane = new Map(todayCheckins.map((c) => [c.lane_id, c.status]));
   const checkedIds = new Set(todayCheckins.map((c) => c.lane_id));
   const pendingCount = lanes.filter((l) => !checkedIds.has(l.lane_id)).length;
+  const unreadByLane = new Map(((data?.unreadPaths ?? []) as { lane_id: string; count: number }[]).map((p) => [p.lane_id, p.count]));
 
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
   const needsGender = data?.profile && !((data.profile as any).gender);
