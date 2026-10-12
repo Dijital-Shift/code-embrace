@@ -176,6 +176,15 @@ function Dashboard() {
       {ref && "code" in ref && (
         <CallToWallCard className="mt-8" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
       )}
+
+      {openLane && openWords.length > 0 && (
+        <WatchmanWordsModal
+          laneId={openLane}
+          title={lanes.find((l) => l.lane_id === openLane)?.title ?? "Your path"}
+          words={openWords}
+          onClose={() => setOpenLane(null)}
+        />
+      )}
     </div>
   );
 }
