@@ -1,4 +1,6 @@
-import { useRef, useState, useLayoutEffect } from "react";
+import { useRef, useState, useLayoutEffect, useEffect } from "react";
+
+const CAT_KEY = "kp-library-cat";
 import { PATH_CATEGORIES, PATH_TEMPLATES, type PathTemplate } from "@/lib/path-templates";
 
 /**
@@ -14,6 +16,20 @@ export function PathCategoryAccordion({
   const gridRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const pendingScroll = useRef(false);
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(CAT_KEY);
+      if (saved && PATH_CATEGORIES.includes(saved as never)) setOpenCat(saved);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (openCat) sessionStorage.setItem(CAT_KEY, openCat);
+      else sessionStorage.removeItem(CAT_KEY);
+    } catch {}
+  }, [openCat]);
 
   useLayoutEffect(() => {
     if (!pendingScroll.current || !openCat) return;
@@ -43,7 +59,7 @@ export function PathCategoryAccordion({
     <div>
       <div
         ref={gridRef}
-        className="kp-cat-sticky z-20 -mx-4 px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-2"
+        className="kp-cat-sticky z-20 -mx-4 px-4 pt-3 pb-3 grid grid-cols-2 md:grid-cols-4 gap-2"
         style={{
           background: "rgba(10,8,0,0.9)",
           backdropFilter: "blur(12px)",

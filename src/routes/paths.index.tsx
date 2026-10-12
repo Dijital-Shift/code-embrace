@@ -6,6 +6,10 @@ import { AppLayout } from "@/components/AppLayout";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [{ title: "Paths — Kingdom Protocol" }] }),
+  loader: ({ context }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["lanes"], queryFn: () => listMyLanes() });
+  },
   component: () => <AppLayout><Lanes /></AppLayout>,
 });
 
@@ -42,13 +46,13 @@ function Lanes() {
               return (
                 <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50">
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm flex items-center gap-2">
+                    <p className="font-semibold text-sm leading-snug flex items-center gap-2">
                       <span className="truncate">{lane.title}</span>
                       {((lane as any).unread_encouragements ?? 0) > 0 && (
-                        <span className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-bold uppercase shrink-0" style={{ background: "#1c1608", color: "#e5af38", border: "1px solid #c9a84c" }}>New</span>
+                        <span className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0" style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}>New</span>
                       )}
                     </p>
-                    {lane.description && <p className="text-xs text-[#a8a094]">{lane.description}</p>}
+                    {lane.description && <p className="text-xs text-[#b8b0a4] leading-relaxed mt-1 mb-1.5 line-clamp-2">{lane.description}</p>}
                     <p className="text-[0.72rem]" style={{ color: hasWatchman ? "#4ade80" : "#c9a84c" }}>
                       {hasWatchman
                         ? `${names.length > 1 ? "Watchmen" : "Watchman"}: ${names.join(", ")}`
@@ -56,7 +60,7 @@ function Lanes() {
                     </p>
                   </div>
 
-                  <span className="text-[0.65rem] px-2 py-1 rounded-full font-semibold uppercase" style={{ background: "#052e16", color: "#4ade80" }}>Active</span>
+                  <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={{ background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>Active</span>
                 </Link>
               );
             })}
@@ -69,9 +73,9 @@ function Lanes() {
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Paused</p>
           <div className="flex flex-col gap-2">
             {paused.map((lane) => (
-              <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="kp-card flex justify-between items-center px-4 py-4 text-white opacity-50 no-underline">
+              <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="kp-card flex justify-between items-center px-4 py-4 text-white opacity-60 no-underline">
                 <p className="font-semibold text-sm">{lane.title}</p>
-                <span className="text-[0.65rem] px-2 py-1 rounded-full" style={{ background: "#1a1a1a", color: "#555" }}>Paused</span>
+                <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border" style={{ background: "#16130e", color: "#a8a094", borderColor: "#2a2518" }}>Paused</span>
               </Link>
             ))}
           </div>
