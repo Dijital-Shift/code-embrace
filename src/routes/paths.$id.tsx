@@ -15,6 +15,14 @@ import { AppLayout } from "@/components/AppLayout";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/paths/$id")({
+  head: () => ({ meta: [
+    { title: "Path history — Kingdom Protocol" },
+    { name: "description", content: "Walk your Path with daily accountability, check-in history, and words from your Watchmen." },
+    { property: "og:title", content: "Path history — Kingdom Protocol" },
+    { property: "og:description", content: "Daily accountability, check-in history, and words from your Watchmen." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: (s: Record<string, unknown>) => ({
     newlyCreated: s.newlyCreated === true || s.newlyCreated === "true",
   }),
@@ -236,13 +244,16 @@ function LaneDetail() {
       </div>
 
       <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Last 14 Days</p>
-      <LineageTimeline checkins={checkins as any} />
+      <LineageTimeline checkins={checkins} words={data?.encouragements ?? []}
+        startDate={data?.historyStartDate ?? lane.created_at.slice(0, 10)}
+        today={data?.historyToday ?? lane.created_at.slice(0, 10)}
+        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} />} />
 
       {(data?.encouragements ?? []).length > 0 && (
         <div className="mt-6">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Encouragements received</p>
           <div className="flex flex-col gap-1.5">
-            {(data?.encouragements ?? []).map((e: any) => (
+            {(data?.encouragements ?? []).slice(0, 5).map((e: any) => (
               <EncouragementCard
                 key={e.id}
                 enc={e}

@@ -11,7 +11,18 @@
   --color-muted-foreground: oklch(0.55 0 0);
   --color-border: oklch(0.2 0.01 80);
   --color-card: oklch(0.1 0.01 80);
+  --color-history-held: oklch(0.8 0.2 145);
+  --color-history-breach: oklch(0.71 0.16 22);
+  --color-history-silent: oklch(0.77 0.17 70);
+  --color-history-sabbath: oklch(0.75 0.13 80);
 }
+
+.history-completed { color: var(--color-history-held); background: color-mix(in oklab, var(--color-history-held) 14%, transparent); }
+.history-breached { color: var(--color-history-breach); background: color-mix(in oklab, var(--color-history-breach) 14%, transparent); }
+.history-missed { color: var(--color-history-silent); background: color-mix(in oklab, var(--color-history-silent) 14%, transparent); }
+.history-skipped { color: var(--color-history-sabbath); background: color-mix(in oklab, var(--color-history-sabbath) 14%, transparent); }
+.history-day:hover { background: color-mix(in oklab, var(--color-primary) 18%, transparent); }
+.history-swatch { background: currentColor; }
 
 :root {
   --background: #0a0800;

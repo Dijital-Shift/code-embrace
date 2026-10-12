@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { statusColor, statusLabel } from "@/lib/status";
+import { PathHistoryCalendar, type HistoryWord } from "@/components/PathHistoryCalendar";
+import { Button } from "@/components/ui/button";
+import type { ReactNode } from "react";
 
 type Chk = { checkin_date: string; status: string; breach_explanation?: string | null };
 
@@ -8,16 +11,15 @@ function fmt(d: string) {
 }
 
 /** 14 squares, oldest left → newest right. Only days with a breach note are tappable. */
-export function LineageTimeline({ checkins }: { checkins: Chk[] }) {
+export function LineageTimeline({ checkins, words, startDate, today, renderWord }: { checkins: Chk[]; words: HistoryWord[]; startDate: string; today: string; renderWord: (word: HistoryWord) => ReactNode }) {
   const days = [...checkins].slice(0, 14).reverse();
   const [sel, setSel] = useState<string | null>(null);
   const [full, setFull] = useState(false);
   const picked = days.find((d) => d.checkin_date === sel);
 
-  if (days.length === 0) return <p className="text-[#948d80] text-sm">No check-ins yet.</p>;
-
   return (
     <div>
+      {days.length === 0 ? <p className="text-sm text-muted-foreground">No check-ins yet.</p> : (
       <div className="kp-card p-4">
         <div className="grid gap-1.5" style={{ gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
           {days.map((d) => {
@@ -68,18 +70,12 @@ export function LineageTimeline({ checkins }: { checkins: Chk[] }) {
           </div>
         )}
       </div>
-      <button type="button" onClick={() => setFull((v) => !v)} className="mt-2 text-xs text-[#c9a84c] font-semibold !min-h-0 py-1">
+      )}
+      <Button type="button" variant="link" onClick={() => setFull((v) => !v)} aria-expanded={full} className="mt-2 px-0 text-xs text-primary font-semibold">
         {full ? "Hide full history" : "Show full history"}
-      </button>
+      </Button>
       {full && (
-        <div className="flex flex-col gap-1.5 mt-2">
-          {checkins.map((c) => (
-            <div key={c.checkin_date} className="kp-card flex justify-between px-3 py-2">
-              <span className="text-sm">{fmt(c.checkin_date)}</span>
-              <span className="text-xs" style={{ color: statusColor(c.status) }}>{statusLabel(c.status)}</span>
-            </div>
-          ))}
-        </div>
+        <PathHistoryCalendar checkins={checkins} words={words} startDate={startDate} today={today} renderWord={renderWord} />
       )}
     </div>
   );

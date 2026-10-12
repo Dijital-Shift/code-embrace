@@ -172,7 +172,7 @@ export const getLane = createServerFn({ method: 'GET' })
     const { data: encRows } = await supabase
       .from('encouragements').select('id, body, created_at, read_at, watchman_id, checkin_id')
       .eq('lane_id', data.id).eq('owner_id', userId)
-      .order('created_at', { ascending: false }).limit(5);
+      .order('created_at', { ascending: false });
 
     const nameByWatchman = new Map(watchmenRows.map((w) => [w.watchman_id, watchmanName(w)]));
     const chkById = new Map(history.map((c: any) => [c.checkin_id, c]));
@@ -181,6 +181,7 @@ export const getLane = createServerFn({ method: 'GET' })
       return {
         id: e.id, body: e.body, created_at: e.created_at, read_at: e.read_at,
         from_name: nameByWatchman.get(e.watchman_id) ?? 'Your watchman',
+        history_date: c?.checkin_date ?? localDate(tz, new Date(e.created_at)),
         context: c ? alertContextLabel(c.checkin_date, c.status) : null,
       };
     });
@@ -188,7 +189,9 @@ export const getLane = createServerFn({ method: 'GET' })
     const { data: me } = await supabase.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
     return {
       lane,
-      checkins: history.slice(0, 14),
+      checkins: history,
+      historyStartDate: createdLocal,
+      historyToday: localDate(tz),
       watchmen,
       standing,
       fallen,
