@@ -7,7 +7,7 @@ function fmt(d: string) {
   return new Date(`${d}T12:00:00`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
-/** 14 squares, oldest left → newest right. Tap one to see that day. */
+/** 14 squares, oldest left → newest right. Only days with a breach note are tappable. */
 export function LineageTimeline({ checkins }: { checkins: Chk[] }) {
   const days = [...checkins].slice(0, 14).reverse();
   const [sel, setSel] = useState<string | null>(null);
@@ -23,20 +23,27 @@ export function LineageTimeline({ checkins }: { checkins: Chk[] }) {
           {days.map((d) => {
             const c = statusColor(d.status);
             const on = sel === d.checkin_date;
+            const label = `${fmt(d.checkin_date)}: ${statusLabel(d.status)}`;
+            const style = {
+              background: `${c}cc`,
+              outline: on ? "2px solid #e5af38" : "none",
+              outlineOffset: 2,
+              boxShadow: on ? `0 0 10px ${c}` : "none",
+            };
+            if (!d.breach_explanation) {
+              return <div key={d.checkin_date} title={label} aria-label={label} className="aspect-square rounded-[4px]" style={style} />;
+            }
             return (
               <button
                 key={d.checkin_date}
                 type="button"
                 onClick={() => setSel(on ? null : d.checkin_date)}
-                aria-label={`${fmt(d.checkin_date)}: ${statusLabel(d.status)}`}
-                className="aspect-square rounded-[4px] !min-h-0 p-0"
-                style={{
-                  background: `${c}cc`,
-                  outline: on ? "2px solid #e5af38" : "none",
-                  outlineOffset: 2,
-                  boxShadow: on ? `0 0 10px ${c}` : "none",
-                }}
-              />
+                aria-label={`${label} — read note`}
+                className="relative aspect-square rounded-[4px] !min-h-0 p-0"
+                style={style}
+              >
+                <span className="absolute top-[2px] right-[2px] w-1 h-1 rounded-full bg-[#fff3d6]" />
+              </button>
             );
           })}
         </div>
@@ -44,6 +51,9 @@ export function LineageTimeline({ checkins }: { checkins: Chk[] }) {
           <span>{fmt(days[0].checkin_date)}</span>
           <span>{fmt(days[days.length - 1].checkin_date)}</span>
         </div>
+        {!picked && days.some((d) => d.breach_explanation) && (
+          <p className="text-[0.65rem] text-[#8a8276] mt-2">Squares with a dot hold a breach note — tap to read it.</p>
+        )}
         {picked && (
           <div className="mt-3 pt-3 border-t border-[#2a2518]">
             <div className="flex justify-between items-center">

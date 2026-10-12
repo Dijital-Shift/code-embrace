@@ -41,14 +41,18 @@ function Library() {
       />
 
 
-      <div className="mt-12 p-5 rounded-xl border border-[#2a2518]" style={{ background: "#161210" }}>
-        <p className="text-sm text-[#ded8cc] font-semibold mb-1">Walking something not listed?</p>
-        <p className="text-xs text-[#b0a89c] mb-3">
+      <div className="mt-12 kp-card-glow p-6 text-center">
+        <p className="text-[0.65rem] uppercase tracking-[0.18em] text-[#c9a84c] font-semibold mb-2">Your own walk</p>
+        <p className="text-base text-[#f0e8d8] font-semibold mb-1.5" style={{ fontFamily: "'Cinzel', Georgia, serif" }}>
+          Walking something not listed?
+        </p>
+        <p className="text-xs text-[#b8b0a4] leading-relaxed mb-5 max-w-sm mx-auto">
           The library is a starting place, not a ceiling. Build your own path with your own Scripture.
         </p>
         <Link
           to="/paths/new"
-          className="inline-block px-4 py-2 rounded-md border border-[#c9a84c]/50 text-[#c9a84c] font-semibold text-xs"
+          className="inline-flex items-center justify-center px-5 py-2.5 rounded-md font-semibold text-xs no-underline"
+          style={{ background: "linear-gradient(135deg, #f0cd6a 0%, #c9a84c 55%, #a8842e 100%)", color: "#0a0800", boxShadow: "0 6px 20px rgba(201,168,76,0.25)" }}
         >
           Create a custom path →
         </Link>
