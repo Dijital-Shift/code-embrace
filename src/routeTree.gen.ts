@@ -9,105 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as StandingRouteImport } from './routes/standing'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RefundRouteImport } from './routes/refund'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PartnerRouteImport } from './routes/partner'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as DemoRouteImport } from './routes/demo'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as CheckinRouteImport } from './routes/checkin'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PathsIndexRouteImport } from './routes/paths.index'
-import { Route as LanesIndexRouteImport } from './routes/lanes.index'
-import { Route as PathsNewRouteImport } from './routes/paths.new'
-import { Route as PathsLibraryRouteImport } from './routes/paths.library'
-import { Route as PathsIdRouteImport } from './routes/paths.$id'
-import { Route as LanesNewRouteImport } from './routes/lanes.new'
-import { Route as LanesIdRouteImport } from './routes/lanes.$id'
-import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RefundRouteImport } from './routes/refund'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as StandingRouteImport } from './routes/standing'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
-import { Route as PathsEditIdRouteImport } from './routes/paths.edit.$id'
-import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
-import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
-import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as LanesIndexRouteImport } from './routes/lanes.index'
+import { Route as LanesIdRouteImport } from './routes/lanes.$id'
+import { Route as LanesNewRouteImport } from './routes/lanes.new'
+import { Route as PathsIndexRouteImport } from './routes/paths.index'
+import { Route as PathsIdRouteImport } from './routes/paths.$id'
+import { Route as PathsLibraryRouteImport } from './routes/paths.library'
+import { Route as PathsNewRouteImport } from './routes/paths.new'
 import { Route as ApiPublicBuildIdRouteImport } from './routes/api/public/build-id'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
-import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
+import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
+import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
+import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
+import { Route as PathsEditIdRouteImport } from './routes/paths.edit.$id'
 import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
+import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StandingRoute = StandingRouteImport.update({
-  id: '/standing',
-  path: '/standing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RefundRoute = RefundRouteImport.update({
-  id: '/refund',
-  path: '/refund',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartnerRoute = PartnerRouteImport.update({
-  id: '/partner',
-  path: '/partner',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoRoute = DemoRouteImport.update({
-  id: '/demo',
-  path: '/demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckinRoute = CheckinRouteImport.update({
-  id: '/checkin',
-  path: '/checkin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -115,49 +55,69 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PathsIndexRoute = PathsIndexRouteImport.update({
-  id: '/paths/',
-  path: '/paths/',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LanesIndexRoute = LanesIndexRouteImport.update({
-  id: '/lanes/',
-  path: '/lanes/',
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PathsNewRoute = PathsNewRouteImport.update({
-  id: '/paths/new',
-  path: '/paths/new',
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PathsLibraryRoute = PathsLibraryRouteImport.update({
-  id: '/paths/library',
-  path: '/paths/library',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PathsIdRoute = PathsIdRouteImport.update({
-  id: '/paths/$id',
-  path: '/paths/$id',
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LanesNewRoute = LanesNewRouteImport.update({
-  id: '/lanes/new',
-  path: '/lanes/new',
+const PartnerRoute = PartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LanesIdRoute = LanesIdRouteImport.update({
-  id: '/lanes/$id',
-  path: '/lanes/$id',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InviteTokenRoute = InviteTokenRouteImport.update({
-  id: '/invite/$token',
-  path: '/invite/$token',
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandingRoute = StandingRouteImport.update({
+  id: '/standing',
+  path: '/standing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
@@ -165,24 +125,44 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PathsEditIdRoute = PathsEditIdRouteImport.update({
-  id: '/paths/edit/$id',
-  path: '/paths/edit/$id',
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
-  id: '/lovable/email/events',
-  path: '/lovable/email/events',
+const LanesIndexRoute = LanesIndexRouteImport.update({
+  id: '/lanes/',
+  path: '/lanes/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InviteTokenWelcomeRoute = InviteTokenWelcomeRouteImport.update({
-  id: '/welcome',
-  path: '/welcome',
-  getParentRoute: () => InviteTokenRoute,
+const LanesIdRoute = LanesIdRouteImport.update({
+  id: '/lanes/$id',
+  path: '/lanes/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
-  id: '/api/push/subscribe',
-  path: '/api/push/subscribe',
+const LanesNewRoute = LanesNewRouteImport.update({
+  id: '/lanes/new',
+  path: '/lanes/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsIndexRoute = PathsIndexRouteImport.update({
+  id: '/paths/',
+  path: '/paths/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsIdRoute = PathsIdRouteImport.update({
+  id: '/paths/$id',
+  path: '/paths/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsLibraryRoute = PathsLibraryRouteImport.update({
+  id: '/paths/library',
+  path: '/paths/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsNewRoute = PathsNewRouteImport.update({
+  id: '/paths/new',
+  path: '/paths/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicBuildIdRoute = ApiPublicBuildIdRouteImport.update({
@@ -190,26 +170,30 @@ const ApiPublicBuildIdRoute = ApiPublicBuildIdRouteImport.update({
   path: '/api/public/build-id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailTransactionalPreviewRoute =
-  LovableEmailTransactionalPreviewRouteImport.update({
-    id: '/lovable/email/transactional/preview',
-    path: '/lovable/email/transactional/preview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
+const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
+  id: '/api/push/subscribe',
+  path: '/api/push/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
+const InviteTokenWelcomeRoute = InviteTokenWelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => InviteTokenRoute,
+} as any)
+const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
+  id: '/lovable/email/events',
+  path: '/lovable/email/events',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
+const PathsEditIdRoute = PathsEditIdRouteImport.update({
+  id: '/paths/edit/$id',
+  path: '/paths/edit/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksBedtimeReminderRoute =
+  ApiPublicHooksBedtimeReminderRouteImport.update({
+    id: '/api/public/hooks/bedtime-reminder',
+    path: '/api/public/hooks/bedtime-reminder',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksMissedCheckinsRoute =
@@ -218,10 +202,26 @@ const ApiPublicHooksMissedCheckinsRoute =
     path: '/api/public/hooks/missed-checkins',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksBedtimeReminderRoute =
-  ApiPublicHooksBedtimeReminderRouteImport.update({
-    id: '/api/public/hooks/bedtime-reminder',
-    path: '/api/public/hooks/bedtime-reminder',
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -490,95 +490,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/unsubscribe': {
-      id: '/unsubscribe'
-      path: '/unsubscribe'
-      fullPath: '/unsubscribe'
-      preLoaderRoute: typeof UnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/standing': {
-      id: '/standing'
-      path: '/standing'
-      fullPath: '/standing'
-      preLoaderRoute: typeof StandingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/refund': {
-      id: '/refund'
-      path: '/refund'
-      fullPath: '/refund'
-      preLoaderRoute: typeof RefundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partner': {
-      id: '/partner'
-      path: '/partner'
-      fullPath: '/partner'
-      preLoaderRoute: typeof PartnerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo': {
-      id: '/demo'
-      path: '/demo'
-      fullPath: '/demo'
-      preLoaderRoute: typeof DemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkin': {
-      id: '/checkin'
-      path: '/checkin'
-      fullPath: '/checkin'
-      preLoaderRoute: typeof CheckinRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -588,67 +504,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/paths/': {
-      id: '/paths/'
-      path: '/paths'
-      fullPath: '/paths/'
-      preLoaderRoute: typeof PathsIndexRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lanes/': {
-      id: '/lanes/'
-      path: '/lanes'
-      fullPath: '/lanes/'
-      preLoaderRoute: typeof LanesIndexRouteImport
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/paths/new': {
-      id: '/paths/new'
-      path: '/paths/new'
-      fullPath: '/paths/new'
-      preLoaderRoute: typeof PathsNewRouteImport
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/paths/library': {
-      id: '/paths/library'
-      path: '/paths/library'
-      fullPath: '/paths/library'
-      preLoaderRoute: typeof PathsLibraryRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/paths/$id': {
-      id: '/paths/$id'
-      path: '/paths/$id'
-      fullPath: '/paths/$id'
-      preLoaderRoute: typeof PathsIdRouteImport
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lanes/new': {
-      id: '/lanes/new'
-      path: '/lanes/new'
-      fullPath: '/lanes/new'
-      preLoaderRoute: typeof LanesNewRouteImport
+    '/partner': {
+      id: '/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof PartnerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lanes/$id': {
-      id: '/lanes/$id'
-      path: '/lanes/$id'
-      fullPath: '/lanes/$id'
-      preLoaderRoute: typeof LanesIdRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/$token': {
-      id: '/invite/$token'
-      path: '/invite/$token'
-      fullPath: '/invite/$token'
-      preLoaderRoute: typeof InviteTokenRouteImport
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standing': {
+      id: '/standing'
+      path: '/standing'
+      fullPath: '/standing'
+      preLoaderRoute: typeof StandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/return': {
@@ -658,32 +602,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/paths/edit/$id': {
-      id: '/paths/edit/$id'
-      path: '/paths/edit/$id'
-      fullPath: '/paths/edit/$id'
-      preLoaderRoute: typeof PathsEditIdRouteImport
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/events': {
-      id: '/lovable/email/events'
-      path: '/lovable/email/events'
-      fullPath: '/lovable/email/events'
-      preLoaderRoute: typeof LovableEmailEventsRouteImport
+    '/lanes/': {
+      id: '/lanes/'
+      path: '/lanes'
+      fullPath: '/lanes/'
+      preLoaderRoute: typeof LanesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/$token/welcome': {
-      id: '/invite/$token/welcome'
-      path: '/welcome'
-      fullPath: '/invite/$token/welcome'
-      preLoaderRoute: typeof InviteTokenWelcomeRouteImport
-      parentRoute: typeof InviteTokenRoute
+    '/lanes/$id': {
+      id: '/lanes/$id'
+      path: '/lanes/$id'
+      fullPath: '/lanes/$id'
+      preLoaderRoute: typeof LanesIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/api/push/subscribe': {
-      id: '/api/push/subscribe'
-      path: '/api/push/subscribe'
-      fullPath: '/api/push/subscribe'
-      preLoaderRoute: typeof ApiPushSubscribeRouteImport
+    '/lanes/new': {
+      id: '/lanes/new'
+      path: '/lanes/new'
+      fullPath: '/lanes/new'
+      preLoaderRoute: typeof LanesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/': {
+      id: '/paths/'
+      path: '/paths'
+      fullPath: '/paths/'
+      preLoaderRoute: typeof PathsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/$id': {
+      id: '/paths/$id'
+      path: '/paths/$id'
+      fullPath: '/paths/$id'
+      preLoaderRoute: typeof PathsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/library': {
+      id: '/paths/library'
+      path: '/paths/library'
+      fullPath: '/paths/library'
+      preLoaderRoute: typeof PathsLibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/new': {
+      id: '/paths/new'
+      path: '/paths/new'
+      fullPath: '/paths/new'
+      preLoaderRoute: typeof PathsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/build-id': {
@@ -693,32 +665,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBuildIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+    '/api/push/subscribe': {
+      id: '/api/push/subscribe'
+      path: '/api/push/subscribe'
+      fullPath: '/api/push/subscribe'
+      preLoaderRoute: typeof ApiPushSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/webhook': {
-      id: '/lovable/email/auth/webhook'
-      path: '/lovable/email/auth/webhook'
-      fullPath: '/lovable/email/auth/webhook'
-      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+    '/invite/$token/welcome': {
+      id: '/invite/$token/welcome'
+      path: '/welcome'
+      fullPath: '/invite/$token/welcome'
+      preLoaderRoute: typeof InviteTokenWelcomeRouteImport
+      parentRoute: typeof InviteTokenRoute
+    }
+    '/lovable/email/events': {
+      id: '/lovable/email/events'
+      path: '/lovable/email/events'
+      fullPath: '/lovable/email/events'
+      preLoaderRoute: typeof LovableEmailEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+    '/paths/edit/$id': {
+      id: '/paths/edit/$id'
+      path: '/paths/edit/$id'
+      fullPath: '/paths/edit/$id'
+      preLoaderRoute: typeof PathsEditIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+    '/api/public/hooks/bedtime-reminder': {
+      id: '/api/public/hooks/bedtime-reminder'
+      path: '/api/public/hooks/bedtime-reminder'
+      fullPath: '/api/public/hooks/bedtime-reminder'
+      preLoaderRoute: typeof ApiPublicHooksBedtimeReminderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/missed-checkins': {
@@ -728,11 +707,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMissedCheckinsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/bedtime-reminder': {
-      id: '/api/public/hooks/bedtime-reminder'
-      path: '/api/public/hooks/bedtime-reminder'
-      fullPath: '/api/public/hooks/bedtime-reminder'
-      preLoaderRoute: typeof ApiPublicHooksBedtimeReminderRouteImport
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
