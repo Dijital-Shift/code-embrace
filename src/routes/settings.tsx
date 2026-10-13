@@ -1,4 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
@@ -200,10 +205,50 @@ function Settings() {
 
       <AppUpdateSection />
 
+      <SignOutRow />
+
       <DeleteAccountSection
         requestedAt={(data?.profile as any)?.deletion_requested_at ?? null}
         onChanged={() => refetch()}
       />
+    </div>
+  );
+}
+
+function SignOutRow() {
+  const { signOut } = useAuth();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mt-6">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="kp-card w-full flex items-center justify-between px-4 py-3.5 text-left cursor-pointer"
+      >
+        <span>
+          <span className="block text-sm text-[#ded8cc] font-medium">Sign out</span>
+          <span className="block text-[0.7rem] text-[#8f887c]">You'll need your emailed code or Google to return.</span>
+        </span>
+        <span className="text-[#8f887c]">›</span>
+      </button>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent className="bg-[#100d05] border border-[#2a2415] text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Sign out of Kingdom Protocol?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[#a49d8e]">
+              You will need your emailed code or Google to sign back in.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border-[#2a2415] text-[#cfc8b8] hover:bg-[#1a1509] hover:text-white">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => { await signOut(); router.navigate({ to: "/login" }); }}
+              className="bg-[#c9a84c] text-[#0a0800] hover:bg-[#dcbb5c]"
+            >Sign Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
