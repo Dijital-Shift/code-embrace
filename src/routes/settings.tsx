@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getSettings, updateProfile, reactivateLane, deleteArchivedLane } from "@/lib/api.functions";
+import { requestAccountDeletion, cancelAccountDeletion } from "@/lib/deletion.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
@@ -198,6 +199,97 @@ function Settings() {
       {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
 
       <AppUpdateSection />
+
+      <DeleteAccountSection
+        requestedAt={(data?.profile as any)?.deletion_requested_at ?? null}
+        onChanged={() => refetch()}
+      />
+    </div>
+  );
+}
+
+/** Self-serve account deletion: reason required, watchmen alerted, 14-day hold. */
+function DeleteAccountSection({ requestedAt, onChanged }: { requestedAt: string | null; onChanged: () => void }) {
+  const requestFn = useServerFn(requestAccountDeletion);
+  const cancelFn = useServerFn(cancelAccountDeletion);
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function run(fn: () => Promise<any>) {
+    if (busy) return;
+    setBusy(true); setErr(null);
+    const r: any = await fn();
+    setBusy(false);
+    if (r?.error) { setErr(r.error); return; }
+    setOpen(false); setReason("");
+    onChanged();
+  }
+
+  if (requestedAt) {
+    const purgeDate = new Date(new Date(requestedAt).getTime() + 14 * 86400000);
+    return (
+      <div className="mt-10 kp-card p-5" style={{ borderColor: "#4a1f1f" }}>
+        <p className="text-sm text-[#f87171] font-semibold mb-1">Account deletion pending</p>
+        <p className="text-[0.7rem] text-[#9e968a] leading-relaxed mb-3">
+          Your watchmen have been told. Everything is permanently deleted on{" "}
+          <span className="text-[#ded8cc]">{purgeDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>{" "}
+          unless you change your mind.
+        </p>
+        <button
+          type="button" disabled={busy}
+          onClick={() => run(() => cancelFn({}))}
+          className="kp-lifetime-btn px-4 py-2.5 rounded-lg text-[#0a0800] text-xs font-bold"
+        >{busy ? "Restoring…" : "Keep my account"}</button>
+        {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10">
+      <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-[0.18em] font-semibold mb-3 px-1">Danger zone</p>
+      <div className="kp-card overflow-hidden" style={{ borderColor: "#4a1f1f" }}>
+        <button type="button" onClick={() => setOpen((v) => !v)} className="w-full flex items-center justify-between px-4 py-3.5 text-left bg-transparent border-0">
+          <span>
+            <span className="block text-sm text-[#f87171] font-medium">Delete account</span>
+            <span className="block text-[0.7rem] text-[#8f887c]">Your watchmen are told first. Nothing happens quietly.</span>
+          </span>
+          <span className="text-[#f87171]">›</span>
+        </button>
+        {open && (
+          <div className="px-4 pb-4 pt-1 border-t border-[#2a2518]">
+            <ul className="text-[0.7rem] text-[#9e968a] leading-relaxed list-disc pl-4 my-3 flex flex-col gap-1">
+              <li>Every active watchman receives your reason before anything is deleted.</li>
+              <li>Your account is held for 14 days — sign in anytime to cancel with one tap.</li>
+              <li>An active monthly plan is cancelled so no further charges occur.</li>
+              <li>A lifetime plan is forfeited — coming back later means buying again.</li>
+              <li>After the hold, your profile, paths, check-ins and messages are gone for good.</li>
+            </ul>
+            <textarea
+              rows={3}
+              minLength={5}
+              maxLength={500}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Why are you leaving? Your watchmen will read this word for word."
+              className="w-full px-3 py-2 text-base bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
+            />
+            <div className="flex gap-2 mt-3">
+              <button
+                type="button"
+                disabled={reason.trim().length < 5 || busy}
+                onClick={() => run(() => requestFn({ data: { reason: reason.trim() } }))}
+                className="px-4 py-2 rounded-md text-xs font-bold"
+                style={{ background: reason.trim().length >= 5 ? "#7f1d1d" : "#2a2518", color: reason.trim().length >= 5 ? "#fff" : "#7d7668" }}
+              >{busy ? "Notifying watchmen…" : "Notify watchmen and delete"}</button>
+              <button type="button" onClick={() => { setOpen(false); setReason(""); }} className="text-xs text-[#a8a094] underline bg-transparent border-0">Cancel</button>
+            </div>
+            {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
