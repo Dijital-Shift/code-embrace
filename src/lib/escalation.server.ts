@@ -3,6 +3,7 @@ import { sendSms, SMS_BREACH, SMS_SILENCE } from './sms.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
+import { reachOutLine } from './sibling';
 
 /**
  * Owners whose free month has ended without a plan are "resting": no silence
@@ -120,9 +121,10 @@ export async function markMissedCheckins() {
   // Pull user timezones.
   const userIds = Array.from(new Set(activeLanes.map((l: any) => l.user_id)));
   const { data: profs } = await supabaseAdmin.from('profiles')
-    .select('user_id, timezone, email, first_name').in('user_id', userIds);
+    .select('user_id, timezone, email, first_name, gender').in('user_id', userIds);
   const tzMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.timezone || 'America/Chicago']));
   const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name || p.email]));
+  const genderMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.gender ?? null]));
   const withAccess = await accessibleOwners(userIds as string[]);
 
   let processed = 0;
