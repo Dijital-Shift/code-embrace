@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listMyLanes } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { WatchmanPips } from "@/components/DashboardPieces";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [{ title: "Paths — Kingdom Protocol" }] }),
@@ -44,10 +45,15 @@ function Lanes() {
               const names = ((lane as any).watchman_names ?? []) as string[];
               const hasWatchman = names.length > 0;
               return (
-                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50">
+                <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="relative overflow-hidden kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50">
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm leading-snug flex items-center gap-2">
+                    <p className="text-sm font-semibold leading-snug flex items-center gap-2">
                       <span className="truncate">{lane.title}</span>
+                      <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={lane.lane_type === "avoid"
+                        ? { background: "#201008", color: "#e0a075", borderColor: "rgba(224,160,117,0.35)" }
+                        : { background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>
+                        {lane.lane_type === "avoid" ? "Avoid" : "Complete"}
+                      </span>
                       {((lane as any).unread_encouragements ?? 0) > 0 && (
                         <span className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0" style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}>New</span>
                       )}
@@ -59,8 +65,10 @@ function Lanes() {
                         : "No Watchman yet — tap to invite"}
                     </p>
                   </div>
-
-                  <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={{ background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>Active</span>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <WatchmanPips active={names.length} pending={0} />
+                    <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border" style={{ background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>Active</span>
+                  </div>
                 </Link>
               );
             })}
