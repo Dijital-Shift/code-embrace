@@ -27,6 +27,10 @@ export const Route = createFileRoute("/paths/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
     newlyCreated: s.newlyCreated === true || s.newlyCreated === "true",
   }),
+  loader: ({ context, params }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["lane", params.id], queryFn: () => getLane({ data: { id: params.id } }) }).catch(() => {});
+  },
   component: () => <AppLayout><LaneDetail /></AppLayout>,
 });
 
