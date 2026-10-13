@@ -1,5 +1,4 @@
-import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getUnreadEncouragementCount } from "@/lib/api.functions";
@@ -8,17 +7,6 @@ import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import { TrialEndingModal } from "@/components/AccessBanner";
 import { useOfflineCheckinSync } from "@/lib/offline-checkins";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
 
 const menuItems = [
   { href: "/dashboard", label: "Home", short: "Home", icon: Home },
@@ -28,11 +16,8 @@ const menuItems = [
   { href: "/settings", label: "Settings", short: "Settings", icon: Settings },
 ] as const;
 
-
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const { signOut, session, loading: authLoading } = useAuth();
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const { session, loading: authLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // A gold dot on Paths whenever a watchman has written something unread.
   const unreadFn = useServerFn(getUnreadEncouragementCount);
@@ -47,7 +32,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   });
   const hasUnread = (unread?.count ?? 0) > 0;
   useOfflineCheckinSync(!authLoading && !!session?.access_token);
-
 
   return (
     <AuthGate>
@@ -66,27 +50,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 )}
               </Link>
             ))}
-            <button
-              onClick={() => setConfirmOpen(true)}
-              className="bg-transparent border-0 text-[#9e968a] text-sm cursor-pointer p-0"
-            >Sign Out</button>
           </div>
         </nav>
 
-        {/* Mobile top bar — wordmark + icon nav */}
+        {/* Mobile top bar — wordmark only */}
         <div className="nav-mobile-header flex-col" style={{ background: "#0a0800", borderBottom: "1px solid #2a2518" }}>
           <div className="flex items-center justify-between px-5 py-3">
             <Link to="/" className="font-bold text-white no-underline flex items-center text-sm">
               <span className="text-[#c9a84c]">◆</span>
               <span className="ml-2">Kingdom Protocol</span>
             </Link>
-            <button
-              onClick={() => setConfirmOpen(true)}
-              className="bg-transparent border-0 text-[#9e968a] text-xs cursor-pointer p-0"
-              aria-label="Sign out"
-            >
-              Sign out
-            </button>
           </div>
         </div>
 
@@ -117,25 +90,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               );
             })}
         </nav>
-
-
-        <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-          <AlertDialogContent className="bg-[#100d05] border border-[#2a2415] text-white">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-white">Sign out of Kingdom Protocol?</AlertDialogTitle>
-              <AlertDialogDescription className="text-[#a49d8e]">
-                You will need your emailed code or Google to sign back in.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="bg-transparent border-[#2a2415] text-[#cfc8b8] hover:bg-[#1a1509] hover:text-white">Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={async () => { await signOut(); router.navigate({ to: "/login" }); }}
-                className="bg-[#c9a84c] text-[#0a0800] hover:bg-[#dcbb5c]"
-              >Sign Out</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
 
         <main className="app-main flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
         <TrialEndingModal />
