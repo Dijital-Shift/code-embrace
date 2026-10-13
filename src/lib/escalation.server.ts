@@ -183,7 +183,7 @@ export async function markMissedCheckins() {
     if (!priorMiss) continue; // day 1 — user only
 
     const who = nameMap.get(lane.user_id) ?? 'Your partner';
-    const body = `${who} has gone silent on "${lane.title}" two days running. Reach out.`;
+    const body = `${who} has gone silent on "${lane.title}" two days running. ${reachOutLine(genderMap.get(lane.user_id))}`;
 
     for (const w of watchmen) {
       if (!w.watchman_id) continue;
@@ -228,14 +228,14 @@ export async function markMissedCheckins() {
     if (owners.length === 1 && pathCount === 1) {
       const [who, titles] = owners[0]!;
       title = `Silence — ${titles[0]}`;
-      body = `${who} has gone silent on "${titles[0]}" two days running. Reach out.`;
+      body = `${who} has gone silent on "${titles[0]}" two days running. ${reachOutLine(genderMap.get(who))}`;
     } else if (owners.length === 1) {
       const [who, titles] = owners[0]!;
       title = `Silence — ${who}`;
-      body = `${who} has gone silent on ${titles.length} paths, two days running. Reach out.`;
+      body = `${who} has gone silent on ${titles.length} paths, two days running. ${reachOutLine(genderMap.get(who))}`;
     } else {
       title = 'Silence — your watch';
-      body = `${owners.length} people you watch have gone silent, two days running. Reach out.`;
+      body = `${owners.length} people you watch have gone silent, two days running. Reach out to them.`;
     }
 
     const sent = await sendPushToUser(watchmanId, { title, body, url: '/partner' });
