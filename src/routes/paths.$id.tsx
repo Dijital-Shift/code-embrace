@@ -161,7 +161,15 @@ function LaneDetail() {
 
   return (
     <div>
-      <div className="mb-7">
+      <div
+        className="sticky z-30 -mx-5 px-5 py-2.5 mb-5 border-b border-[#2a2518]/60"
+        style={{
+          top: "calc(48px + env(safe-area-inset-top, 0px))",
+          background: "rgba(10,8,0,0.92)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }}
+      >
         <Link
           to="/paths"
           className="inline-flex items-center gap-1 text-[0.68rem] uppercase tracking-[0.18em] font-semibold text-[#8a8276] no-underline transition-colors hover:text-[#c9a84c]"

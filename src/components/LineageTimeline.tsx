@@ -15,7 +15,21 @@ export function LineageTimeline({ checkins, words, startDate, today, renderWord 
   const days = [...checkins].slice(0, 14).reverse();
   const [sel, setSel] = useState<string | null>(null);
   const [full, setFull] = useState(false);
+  const fullRef = useRef<HTMLDivElement | null>(null);
   const picked = days.find((d) => d.checkin_date === sel);
+
+  const toggleFull = () => {
+    setFull((v) => {
+      const next = !v;
+      if (next) {
+        // Bring the whole calendar into view once it has rendered.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => fullRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+        });
+      }
+      return next;
+    });
+  };
 
   return (
     <div>

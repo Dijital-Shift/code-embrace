@@ -37,7 +37,6 @@ export function PathHistoryCalendar({ checkins, words, startDate, today, renderW
         endMonth={startOfMonth(parseISO(today))}
         disabled={[{ before: parseISO(startDate) }, { after: parseISO(today) }]}
         showOutsideDays={false}
-        fixedWeeks
         className="pointer-events-auto w-full bg-transparent p-0"
         classNames={{
           today: "rounded-md ring-1 ring-primary/40",
