@@ -15,6 +15,10 @@ import { StarterWalkCard } from "@/components/StarterWalkCard";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Kingdom Protocol" }] }),
+  loader: ({ context }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["dashboard"], queryFn: () => getDashboard() }).catch(() => {});
+  },
   component: () => <AppLayout><Dashboard /></AppLayout>,
 });
 

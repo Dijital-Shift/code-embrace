@@ -9,6 +9,10 @@ import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 
 export const Route = createFileRoute("/partner")({
   head: () => ({ meta: [{ title: "Watchman — Kingdom Protocol" }] }),
+  loader: ({ context }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["partner"], queryFn: () => getPartnerView() }).catch(() => {});
+  },
   component: () => <AppLayout><Partner /></AppLayout>,
 });
 

@@ -10,8 +10,21 @@ import { AppLayout } from "@/components/AppLayout";
 import { AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 
+async function loadCheckin(call: () => Promise<any>) {
+  try { const d = await call(); saveCheckinCache(d); return { ...d, offline: false }; }
+  catch (e) {
+    const cached = readCheckinCache<any>();
+    if (cached && isNetworkError(e)) return { ...cached, offline: true };
+    throw e;
+  }
+}
+
 export const Route = createFileRoute("/checkin")({
   head: () => ({ meta: [{ title: "Check-In — Kingdom Protocol" }] }),
+  loader: ({ context }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["checkin"], queryFn: () => loadCheckin(() => getCheckinPage()) }).catch(() => {});
+  },
   component: () => <AppLayout><CheckIn /></AppLayout>,
 });
 
@@ -41,13 +54,11 @@ function CheckIn() {
   const fn = useServerFn(getCheckinPage);
   const { data, isLoading } = useQuery({
     queryKey: ["checkin"],
-    queryFn: async () => {
-      try { const d = await fn(); saveCheckinCache(d); return { ...d, offline: false }; }
-      catch (e) {
-        const cached = readCheckinCache<any>();
-        if (cached && isNetworkError(e)) return { ...cached, offline: true };
-        throw e;
-      }
+    queryFn: () => loadCheckin(() => fn()),
+    // Show the last known list on frame one; fresh data replaces it silently.
+    placeholderData: () => {
+      const c = typeof window !== "undefined" ? readCheckinCache<any>() : null;
+      return c ? { ...c, offline: false } : undefined;
     },
   });
   const [queue, setQueue] = useState<QueuedCheckin[]>([]);

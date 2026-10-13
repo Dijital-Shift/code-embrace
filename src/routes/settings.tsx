@@ -20,6 +20,10 @@ import { TIMEZONE_OPTIONS } from "@/lib/localday";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — Kingdom Protocol" }] }),
+  loader: ({ context }) => {
+    if (typeof window === "undefined") return;
+    void context.queryClient.prefetchQuery({ queryKey: ["settings"], queryFn: () => getSettings() }).catch(() => {});
+  },
   component: () => <AppLayout><Settings /></AppLayout>,
 });
 
