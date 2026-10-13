@@ -14,6 +14,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
+import { AvatarPicker } from "@/components/AvatarPicker";
 import { TIMEZONE_OPTIONS } from "@/lib/localday";
 
 
@@ -94,6 +95,12 @@ function Settings() {
 
       <p className={sectionLabel}>Profile</p>
       <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="kp-card p-5 flex flex-col gap-5">
+        {data?.profile && (
+          <AvatarPicker
+            initial={(data.profile as any).avatar_url ?? null}
+            name={`${first} ${last}`.trim()}
+          />
+        )}
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1.5 min-w-0">
             <label className={label}>First name</label>

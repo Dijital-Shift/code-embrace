@@ -10,6 +10,7 @@ import {
   revokeLaneInvite,
   removeWatchman,
 } from "@/lib/invites.functions";
+import { Avatar } from "@/components/AvatarPicker";
 import { AppLayout } from "@/components/AppLayout";
 // status helpers used by timeline
 import { toast } from "sonner";
@@ -425,6 +426,7 @@ function EncouragementCard({
         className="w-full flex items-center justify-between gap-3 text-left px-3 py-2.5"
       >
         <div className="min-w-0 flex items-center gap-2">
+          <Avatar src={enc.from_avatar} name={enc.from_name} size={24} />
           {isNew && (
             <span
               className="shrink-0 text-[0.55rem] font-bold uppercase tracking-wider text-[#0a0800] bg-[#c9a84c] px-1.5 py-0.5 rounded-full transition-opacity duration-700"

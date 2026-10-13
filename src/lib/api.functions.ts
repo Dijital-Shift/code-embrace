@@ -72,6 +72,21 @@ export const updateProfile = createServerFn({ method: 'POST' })
     return { success: true };
   });
 
+/** Optional profile photo, stored as a small pre-resized JPEG data URL. */
+export const updateAvatar = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    z.object({
+      avatar_url: z.string().max(200000).regex(/^data:image\/(jpeg|png|webp);base64,/).nullable(),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase.from('profiles').update({ avatar_url: data.avatar_url }).eq('user_id', userId);
+    if (error) return { error: error.message };
+    return { success: true };
+  });
+
 export const dismissWatchmanPrompt = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -176,11 +191,21 @@ export const getLane = createServerFn({ method: 'GET' })
 
     const nameByWatchman = new Map(watchmenRows.map((w) => [w.watchman_id, watchmanName(w)]));
     const chkById = new Map(history.map((c: any) => [c.checkin_id, c]));
+    const avatarByWatchman = new Map<string, string | null>();
+    {
+      const wIds = [...new Set((encRows ?? []).map((e: any) => e.watchman_id).filter(Boolean))];
+      if (wIds.length) {
+        const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+        const { data: av } = await supabaseAdmin.from('profiles').select('user_id, avatar_url').in('user_id', wIds);
+        for (const a of av ?? []) avatarByWatchman.set(a.user_id, a.avatar_url ?? null);
+      }
+    }
     const encouragements = (encRows ?? []).map((e: any) => {
       const c = e.checkin_id ? chkById.get(e.checkin_id) : null;
       return {
         id: e.id, body: e.body, created_at: e.created_at, read_at: e.read_at,
         from_name: nameByWatchman.get(e.watchman_id) ?? 'Your watchman',
+        from_avatar: avatarByWatchman.get(e.watchman_id) ?? null,
         history_date: c?.checkin_date ?? localDate(tz, new Date(e.created_at)),
         context: c ? alertContextLabel(c.checkin_date, c.status) : null,
       };
@@ -735,7 +760,7 @@ export const getSettings = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from('profiles')
-      .select('email, first_name, last_name, phone, timezone, bedtime, gender, deletion_requested_at, deletion_reason').eq('user_id', userId).single();
+      .select('email, first_name, last_name, phone, timezone, bedtime, gender, deletion_requested_at, deletion_reason, avatar_url').eq('user_id', userId).single();
     const { data: archived } = await supabase.from('lanes')
       .select('lane_id, title, created_at').eq('user_id', userId).eq('status', 'archived').order('created_at', { ascending: false });
     return { profile: profile ?? null, archivedLanes: archived ?? [] };

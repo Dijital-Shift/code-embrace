@@ -434,6 +434,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           bedtime: string
           created_at: string
           deletion_reason: string | null
@@ -452,6 +453,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
           bedtime?: string
           created_at?: string
           deletion_reason?: string | null
@@ -470,6 +472,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
           bedtime?: string
           created_at?: string
           deletion_reason?: string | null

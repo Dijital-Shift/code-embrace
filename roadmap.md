@@ -6,5 +6,5 @@
 - [x] Path page: Path scripture under title; Proverbs 24:16 inside Standing/Fallen card; details renamed "Notes & details".
 - [x] Sign out moved to Settings.
 - [x] Encouragements capped at 5 with "Show earlier".
-- [ ] Optional profile photo (upload + initials fallback) — next pass.
-- [ ] Send Scripture Path auto-added for new free members — next pass.
+- [x] Optional profile photo (Settings upload, shown on Watchman encouragements).
+- [x] Send Scripture Path auto-added for all new members.
