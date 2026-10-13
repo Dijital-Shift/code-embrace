@@ -10,6 +10,7 @@ import { statusColor, statusLabel } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
 import { WatchmanWordsModal, type Word } from "@/components/WatchmanWordsModal";
 import { useEffect, useState } from "react";
+import { StarterWalkCard } from "@/components/StarterWalkCard";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -109,6 +110,11 @@ function Dashboard() {
           <Link to="/paths/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
         </div>
       )}
+
+      {(() => {
+        const starter = lanes.find((l) => l.title === "Send Scripture");
+        return starter ? <StarterWalkCard laneId={starter.lane_id} /> : null;
+      })()}
 
       <div className="mt-8">
         <div className="flex items-center gap-3 mb-3">
