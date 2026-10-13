@@ -150,8 +150,8 @@ function LaneDetail() {
   const type = TYPE_PILL[isAvoid ? "avoid" : "complete"];
   const status = STATUS_META[lane.status] ?? STATUS_META.paused;
   const scriptures = (lane.support_scripture ?? []).filter(Boolean);
+  const [showAllWords, setShowAllWords] = useState(false);
   const hasDetails =
-    scriptures.length > 0 ||
     Boolean(lane.notes) ||
     Boolean(lane.ends_at) ||
     /^send scripture/i.test(lane.title ?? "");
@@ -203,8 +203,14 @@ function LaneDetail() {
         {lane.description && (
           <p className="text-xs sm:text-sm text-[#b8b0a4] leading-relaxed mt-2">{lane.description}</p>
         )}
+        {scriptures.length > 0 && (
+          <div className="mt-4 flex flex-col gap-2 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
+            {scriptures.map((s, i) => (
+              <p key={i} className="text-xs italic text-[#c9a84c]/90 leading-relaxed">“{s}”</p>
+            ))}
+          </div>
+        )}
       </div>
-
 
       {newlyCreated && (
         <div className="mb-5 p-4 rounded-md border border-[#3a2f12]" style={{ background: "#1e1808" }}>
@@ -218,17 +224,6 @@ function LaneDetail() {
           >Edit this path</Link>
         </div>
       )}
-
-      {/* The word first, then where you stand — both above the fold. */}
-      <div className="mb-5 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
-        <p className="text-xs italic text-[#c9a84c]/90 leading-relaxed">
-          “For a just man falleth seven times, and riseth up again.”
-        </p>
-        <p className="text-[0.62rem] uppercase tracking-[0.16em] text-[#8a8276] mt-1.5">
-          Proverbs 24:16 (KJV)
-        </p>
-      </div>
-
 
       <div className="kp-card-glow p-6 mb-5">
         <div className="grid grid-cols-2 divide-x divide-[#2a2518]">
@@ -251,6 +246,12 @@ function LaneDetail() {
             Since {new Date(lane.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {(data?.standing ?? 0) + (data?.fallen ?? 0)} days walked
           </p>
         )}
+        <div className="mt-4 pt-4 border-t border-[#2a2518] text-center">
+          <p className="text-xs italic text-[#c9a84c]/90 leading-relaxed">
+            “For a just man falleth seven times, and riseth up again.”
+          </p>
+          <p className="text-[0.6rem] uppercase tracking-[0.16em] text-[#8a8276] mt-1.5">Proverbs 24:16 (KJV)</p>
+        </div>
       </div>
 
       <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Last 14 Days</p>
@@ -263,7 +264,7 @@ function LaneDetail() {
         <div className="mt-6">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Encouragements received</p>
           <div className="flex flex-col gap-1.5">
-            {(data?.encouragements ?? []).slice(0, 5).map((e: any) => (
+            {(data?.encouragements ?? []).slice(0, showAllWords ? undefined : 5).map((e: any) => (
               <EncouragementCard
                 key={e.id}
                 enc={e}
@@ -273,15 +274,21 @@ function LaneDetail() {
               />
             ))}
           </div>
+          {(data?.encouragements ?? []).length > 5 && (
+            <button
+              type="button"
+              onClick={() => setShowAllWords((v) => !v)}
+              className="mt-2 bg-transparent border-0 p-0 text-[0.72rem] font-semibold text-[#c9a84c] cursor-pointer"
+            >
+              {showAllWords ? "Show fewer" : `Show earlier (${(data?.encouragements ?? []).length - 5})`}
+            </button>
+          )}
         </div>
       )}
 
       {hasDetails && (
         <div className="kp-card mt-6 p-4">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Path details</p>
-          {scriptures.map((s, i) => (
-            <p key={i} className="text-[#c9a84c] text-xs italic mb-1">{i + 1}. "{s}"</p>
-          ))}
+          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Notes & details</p>
           {/^send scripture/i.test(lane.title ?? "") && (
             <p className="text-xs text-[#a8a094] mt-2">
               Easy way to do this:{" "}
