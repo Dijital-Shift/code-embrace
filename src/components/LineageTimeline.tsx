@@ -85,11 +85,13 @@ export function LineageTimeline({ checkins, words, startDate, today, renderWord 
         )}
       </div>
       )}
-      <Button type="button" variant="link" onClick={() => setFull((v) => !v)} aria-expanded={full} className="mt-2 px-0 text-xs text-primary font-semibold">
+      <Button type="button" variant="link" onClick={toggleFull} aria-expanded={full} className="mt-2 px-0 text-xs text-primary font-semibold">
         {full ? "Hide full history" : "Show full history"}
       </Button>
       {full && (
-        <PathHistoryCalendar checkins={checkins} words={words} startDate={startDate} today={today} renderWord={renderWord} />
+        <div ref={fullRef} className="scroll-mt-24">
+          <PathHistoryCalendar checkins={checkins} words={words} startDate={startDate} today={today} renderWord={renderWord} />
+        </div>
       )}
     </div>
   );
