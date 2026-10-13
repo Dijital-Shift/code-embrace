@@ -72,6 +72,21 @@ export const updateProfile = createServerFn({ method: 'POST' })
     return { success: true };
   });
 
+/** Optional profile photo, stored as a small pre-resized JPEG data URL. */
+export const updateAvatar = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    z.object({
+      avatar_url: z.string().max(200000).regex(/^data:image\/(jpeg|png|webp);base64,/).nullable(),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase.from('profiles').update({ avatar_url: data.avatar_url }).eq('user_id', userId);
+    if (error) return { error: error.message };
+    return { success: true };
+  });
+
 export const dismissWatchmanPrompt = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
