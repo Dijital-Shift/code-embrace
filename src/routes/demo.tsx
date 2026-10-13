@@ -66,37 +66,35 @@ function Pill({ label, tone = "muted" }: { label: string; tone?: Tone }) {
 /* ---------------- Mock screens (mirror the real app) ---------------- */
 
 function MockPathLibrary() {
+  const cats = ["Devotion", "Body", "Purity", "Substances", "Speech", "Mind", "Stewardship", "Heart & Action"];
   const items: { title: string; type: "avoid" | "complete"; verse: string }[] = [
     { title: "Pray three times a day", type: "complete", verse: "Daniel 6:10" },
     { title: "Fast", type: "complete", verse: "Matthew 6:17-18" },
-    { title: "No pornography / lustful looking", type: "avoid", verse: "Job 31:1" },
-    { title: "No drunkenness", type: "avoid", verse: "Eph. 5:18" },
-    { title: "Forgive quickly — no sundown anger", type: "complete", verse: "Eph. 4:26" },
-    { title: "No corrupt speech", type: "avoid", verse: "Eph. 4:29" },
+    { title: "Read Scripture daily", type: "complete", verse: "Joshua 1:8" },
   ];
   return (
     <div className="space-y-3">
-      <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a84c]">Devotion · Purity · Speech</div>
+      <div className="rounded-md border border-[#c9a84c]/50 p-2.5" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+        <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#c9a84c]">Your Starter Walk</div>
+        <div className="mt-0.5 text-[12px] font-semibold text-white">Send Scripture is active</div>
+        <div className="text-[10px] text-[#b8b0a4]">Send a verse to at least one person every day. Edit, pause, or remove anytime.</div>
+      </div>
       <div className="text-sm font-semibold text-white">Path Library</div>
-      <div className="text-[11px] text-[#b8b0a4]">Scripture-backed paths. Tap one to start.</div>
+      <div className="grid grid-cols-4 gap-1.5">
+        {cats.map((c, i) => (
+          <div key={c} className={cn("rounded-md border px-2 py-1.5 text-center text-[10px] font-semibold", i === 0 ? "border-[#c9a84c] text-[#c9a84c] bg-[#1a1408]" : "border-[#2a2518] text-[#b8b0a4] bg-[#161210]")}>{c}</div>
+        ))}
+      </div>
       <div className="grid grid-cols-1 gap-2">
-        {items.map((p) => {
-          const isAvoid = p.type === "avoid";
-          return (
-            <div key={p.title} className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
-              <div className="flex items-start justify-between gap-2">
-                <div className="text-[12px] font-semibold leading-snug text-white">{p.title}</div>
-                <span
-                  className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider"
-                  style={{ background: isAvoid ? "#2a1410" : "#102a14", color: isAvoid ? "#f87171" : "#4ade80" }}
-                >
-                  {isAvoid ? "Avoid" : "Complete"}
-                </span>
-              </div>
-              <div className="mt-1 text-[10px] italic text-[#9a8b5c]">— {p.verse} (KJV)</div>
+        {items.map((p) => (
+          <div key={p.title} className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
+            <div className="flex items-start justify-between gap-2">
+              <div className="text-[12px] font-semibold leading-snug text-white">{p.title}</div>
+              <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider" style={{ background: "#102a14", color: "#4ade80" }}>Complete</span>
             </div>
-          );
-        })}
+            <div className="mt-1 text-[10px] italic text-[#9a8b5c]">— {p.verse} (KJV)</div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -172,7 +170,7 @@ function MockPartnerInvite() {
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Path</div>
         <div className="text-sm text-white">Fast · ends Dec 20</div>
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Your role</div>
-        <div className="text-sm text-[#c9a84c]">Watchmen — pinged on a Breach, or after two Silent days.</div>
+        <div className="text-sm text-[#c9a84c]">Watchman — pinged on a Breach or a Silent day. Silence means they're walking well.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#b8b0a4]">Decline</button>
@@ -188,18 +186,19 @@ function MockCheckin() {
       <div className="flex items-center gap-2">
         <Moon className="h-4 w-4 text-[#c9a84c]" />
         <div className="text-sm font-semibold text-white">Check-In</div>
-        <span className="ml-auto"><Pill label="Tonight" tone="primary" /></span>
+        <span className="ml-auto"><Pill label="Today" tone="primary" /></span>
       </div>
 
       <div className="text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Complete</div>
       <div className="flex items-center gap-3 rounded-xl border border-[#166534] px-3 py-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4ade80] text-[10px] font-bold text-black">✓</span>
-        <span className="flex-1 text-sm text-[#4ade80]">Pray three times</span>
-        <span className="text-[10px] text-[#4ade80]">Held</span>
+        <span className="flex-1 text-sm text-[#4ade80]">Send Scripture</span>
+        <span className="text-[10px] text-[#a8a094] underline">Undo</span>
       </div>
       <div className="flex items-center gap-3 rounded-xl border border-[#2a2518] bg-[#161210] px-3 py-3">
         <span className="h-5 w-5 rounded-full border-2 border-[#333]" />
         <span className="flex-1 text-sm text-white">Fast</span>
+        <span className="text-[10px] text-[#c9a84c]">Sabbath</span>
       </div>
 
       <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Avoid</div>
@@ -246,13 +245,13 @@ function MockMissedNudge() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Bell className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">Nudge — you were Silent last night</div>
+        <div className="text-sm font-semibold text-white">Nudge — yesterday is still open</div>
       </div>
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3 text-xs text-[#c9a84c]">
-        Your fast went un-checked. Your watchman hasn't been pinged yet — submit before morning.
+        Your fast went un-checked. Your watchman hasn't been pinged yet — own it before the day closes Silent.
       </div>
       <div className="rounded-xl border border-[#f59e0b]/40 bg-[#0d0a04] p-3">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Silent yesterday · submit before 10AM</div>
+        <div className="text-[10px] font-bold uppercase tracking-wider text-[#f59e0b]">Yesterday · not checked in</div>
         <div className="mt-2 text-sm font-semibold text-white">Fast</div>
         <div className="mt-2 grid grid-cols-2 gap-2">
           <button className="rounded-lg border border-[#222] py-2 text-xs font-semibold text-[#a8a094]">Held</button>
@@ -285,40 +284,30 @@ function MockWatchmanPing() {
 }
 
 function MockPartnerView() {
-  const days = [
-    { d: "Mon", state: "held" },
-    { d: "Tue", state: "held" },
-    { d: "Wed", state: "breach" },
-    { d: "Thu", state: "held" },
-    { d: "Fri", state: "held" },
-    { d: "Sat", state: "sabbath" },
-    { d: "Sun", state: "silent" },
-  ];
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Eye className="h-4 w-4 text-[#c9a84c]" />
-        <div className="text-sm font-semibold text-white">David — Fast · past 7 days</div>
+        <div className="text-sm font-semibold text-white">Your Assignments</div>
       </div>
-      <div className="grid grid-cols-7 gap-1">
-        {days.map((x) => (
-          <div key={x.d} className="text-center">
-            <div
-              className={cn(
-                "mx-auto h-8 w-8 rounded-md border",
-                x.state === "held" && "border-[#4ade80]/50 bg-[#4ade80]/15",
-                x.state === "sabbath" && "border-[#c9a84c]/50 bg-[#c9a84c]/15",
-                x.state === "breach" && "border-[#f87171]/60 bg-[#f87171]/20",
-                x.state === "silent" && "border-[#f59e0b]/60 bg-[#f59e0b]/15",
-              )}
-            />
-            <div className="mt-1 text-[9px] uppercase tracking-wider text-[#a8a094]">{x.d}</div>
+      <div className="text-[9px] font-semibold uppercase tracking-wider text-[#f87171]">Needs you (1)</div>
+      <div className="rounded-md border border-red-900/40 bg-red-950/20 p-2.5">
+        <div className="text-[11px] font-semibold text-white">David · Fast</div>
+        <div className="text-[10px] text-red-300/80">Breach today — "Broke the fast at lunch. Owning it."</div>
+      </div>
+      <div className="text-[9px] font-semibold uppercase tracking-wider text-[#4ade80]">Walking well (1)</div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] px-2.5 py-2 text-[11px] text-white">Marcus · Pray three times</div>
+      <div className="text-[9px] font-semibold uppercase tracking-wider text-[#948d80]">Resting (1)</div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] px-2.5 py-2 text-[11px] text-[#948d80]">James · No drunkenness — alerts paused</div>
+      <div className="rounded-md border border-[#2a2518] bg-[#0d0b06] p-2.5 space-y-1.5">
+        <div className="text-[9px] uppercase tracking-wider text-[#a8a094]">Alert history · David</div>
+        {[["Breach", "Sep 20", "#f87171"], ["Silent 4 days", "Sep 12 – Sep 15", "#f59e0b"], ["Breach", "Sep 3", "#f87171"]].map(([l, d, c]) => (
+          <div key={l + d} className="flex justify-between text-[10px]">
+            <span className="flex items-center gap-1.5" style={{ color: c }}><span className="h-1.5 w-1.5 rounded-full" style={{ background: c }} />{l}</span>
+            <span className="text-[#948d80]">{d}</span>
           </div>
         ))}
-      </div>
-      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-3">
-        <div className="text-[10px] uppercase tracking-wider text-[#a8a094]">Breach note · Wed</div>
-        <div className="mt-1 text-xs text-white">"Broke the fast at lunch — was at a work thing. Owning it."</div>
+        <div className="text-[10px] text-[#c9a84c]">Show 2 earlier</div>
       </div>
     </div>
   );
@@ -348,39 +337,28 @@ function MockEncourage() {
 
 function MockStreak() {
   return (
-    <div className="space-y-3 text-center">
-      <Target className="mx-auto h-8 w-8 text-[#c9a84c]" />
-      <div className="flex items-baseline justify-center gap-3">
-        <div>
-          <div className="text-3xl font-extrabold text-white">26</div>
-          <div className="text-[9px] uppercase tracking-wider text-[#4ade80]">Standing</div>
+    <div className="space-y-3">
+      <div className="flex gap-1.5"><Pill label="Complete" tone="primary" /><Pill label="Active" /></div>
+      <div className="text-base font-bold text-white">Fast</div>
+      <div className="text-[11px] text-[#b8b0a4]">No fried foods. Liquids only after 6pm.</div>
+      <div className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
+        <div className="text-[9px] uppercase tracking-wider text-[#a8a094]">Guiding Scripture</div>
+        <p className="mt-1 text-[11px] italic text-[#c9a84c]">"When thou fastest, anoint thine head, and wash thy face." — Matt. 6:17</p>
+      </div>
+      <div className="rounded-xl border border-[#c9a84c]/30 bg-[#1a1408] p-3 text-center">
+        <div className="flex items-baseline justify-center gap-4">
+          <div><div className="text-3xl font-extrabold text-white">26</div><div className="text-[9px] uppercase tracking-wider text-[#4ade80]">Standing</div></div>
+          <div><div className="text-2xl font-bold text-[#f87171]">2</div><div className="text-[9px] uppercase tracking-wider text-[#f87171]">Fallen</div></div>
         </div>
-        <div className="text-[#948d80] text-xl">·</div>
-        <div>
-          <div className="text-2xl font-bold text-[#f87171]">2</div>
-          <div className="text-[9px] uppercase tracking-wider text-[#f87171]">Fallen</div>
-        </div>
+        <p className="mt-2 text-[11px] italic text-[#c9a84c] leading-snug">"For a just man falleth seven times, and riseth up again."</p>
+        <p className="text-[9px] uppercase tracking-wider text-[#c2af80] mt-0.5">Proverbs 24:16 · KJV</p>
       </div>
-      <div className="text-[11px] uppercase tracking-wider text-[#b8b0a4]">Fast · no fried foods</div>
-      <div className="text-[10px] text-[#c2af80]">26 standing · 2 fallen — still rising.</div>
-      <div className="mx-auto grid max-w-[260px] grid-cols-7 gap-1">
-        {Array.from({ length: 28 }).map((_, i) => {
-          const fell = i === 6 || i === 18;
-          return (
-            <div
-              key={i}
-              className="h-3 w-3 rounded-sm"
-              style={{ background: fell ? "rgba(248,113,113,0.6)" : "rgba(201,168,76,0.7)" }}
-            />
-          );
-        })}
+      <div className="grid grid-cols-14 gap-1" style={{ gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
+        {Array.from({ length: 14 }).map((_, i) => (
+          <div key={i} className="h-3 rounded-sm" style={{ background: i === 6 ? "rgba(248,113,113,0.6)" : i === 9 ? "rgba(201,168,76,0.7)" : "rgba(74,222,128,0.55)" }} />
+        ))}
       </div>
-      <div className="rounded-md border border-[#c9a84c]/30 bg-[#1a1408] p-2.5 text-left">
-        <p className="text-[11px] italic text-[#c9a84c] leading-snug">
-          "For a just man falleth seven times, and riseth up again."
-        </p>
-        <p className="text-[9px] uppercase tracking-wider text-[#c2af80] mt-1">Proverbs 24:16 · KJV</p>
-      </div>
+      <div className="text-[10px] text-[#c9a84c]">Show full history →</div>
     </div>
   );
 }
@@ -417,8 +395,8 @@ const SCENES: Scene[] = [
     id: "library",
     step: 1,
     role: "user",
-    title: "Pick a path — straight from the Word",
-    body: "Open the library. Every path is scripture-backed and labeled Avoid or Complete. Build your own too — but start with what He already commanded.",
+    title: "Start walking on day one",
+    body: "Every new member starts with Send Scripture already active — keep it, edit it, or remove it. Then pick more from eight categories, each path scripture-backed and labeled Avoid or Complete.",
     why: "Why it matters: vague accountability fails. A named path with a verse behind it is something you can actually walk.",
     render: MockPathLibrary,
   },
@@ -455,8 +433,8 @@ const SCENES: Scene[] = [
     id: "checkin",
     step: 5,
     role: "user",
-    title: "Nightly check-in — one screen, two columns",
-    body: "Complete paths tap to hold. Avoid paths choose Held or Breach. The whole thing takes under thirty seconds.",
+    title: "Check in — today, or catch up yesterday",
+    body: "Complete paths tap to hold. Avoid paths choose Held or Breach. Missed last night? Yesterday's row is right there. Tapped the wrong one? Undo sits inline for 30 minutes.",
     why: "Why it matters: most paths don't fall to one big choice. They fall to small unspoken nights.",
     render: MockCheckin,
   },
@@ -473,17 +451,17 @@ const SCENES: Scene[] = [
     id: "nudge",
     step: 7,
     role: "user",
-    title: "Miss one night — get a nudge",
-    body: "Silence isn't a hiding place. You get a private nudge first thing, with a chance to submit yesterday before 10AM.",
-    why: "Why it matters: life happens. One Silent night shouldn't drag in a watchman if you can still own it.",
+    title: "Miss a night — get a private nudge first",
+    body: "Silence isn't a hiding place. You're nudged privately first, with a chance to own yesterday before it closes as Silent.",
+    why: "Why it matters: life happens. You get the first chance to tell the truth yourself.",
     render: MockMissedNudge,
   },
   {
     id: "ping",
     step: 8,
     role: "watchman",
-    title: "Stay silent — your watchman is pinged",
-    body: "Breach or two-night silence, your watchman gets a push with one-tap call or text. They show up before the fall, not after.",
+    title: "Breach or silence — your watchman is pinged",
+    body: "A breach, or a day that closes Silent, sends your watchman one alert with one-tap call or text. Silent days count as Fallen.",
     why: "Why it matters: the worst nights are usually the silent ones. Silence has to mean something.",
     render: MockWatchmanPing,
   },
@@ -491,8 +469,8 @@ const SCENES: Scene[] = [
     id: "watchman-view",
     step: 9,
     role: "watchman",
-    title: "Watchman sees the week, not your soul",
-    body: "Seven dots — Held, Breach, Silent, Sabbath. Your breach notes if you wrote them.",
+    title: "One Watch page — who needs you, who's walking well",
+    body: "Assignments sort into Needs you, Walking well, and Resting. Alert history collapses into short events, three at a time — never an endless list.",
     why: "Why it matters: the watchman role finally has a screen. Equipped to help, not guess.",
     render: MockPartnerView,
   },
