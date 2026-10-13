@@ -132,7 +132,7 @@ export async function markMissedCheckins() {
 
   // Bundled push buckets, filled during the sweep and flushed at the end.
   const ownerSilent = new Map<string, string[]>();                       // ownerId -> path titles
-  type WatchPending = { notificationIds: string[]; phone: string | null; owners: Map<string, string[]> };
+  type WatchPending = { notificationIds: string[]; phone: string | null; owners: Map<string, { name: string; titles: string[] }> };
   const watchQueue = new Map<string, WatchPending>();                    // watchmanId -> pending
 
   for (const lane of activeLanes) {
@@ -200,9 +200,9 @@ export async function markMissedCheckins() {
 
       const pending: WatchPending = watchQueue.get(w.watchman_id) ?? { notificationIds: [], phone: w.phone, owners: new Map() };
       if (notif) pending.notificationIds.push(notif.notification_id);
-      const titles = pending.owners.get(who) ?? [];
-      titles.push(lane.title);
-      pending.owners.set(who, titles);
+      const entry = pending.owners.get(lane.user_id) ?? { name: who, titles: [] };
+      entry.titles.push(lane.title);
+      pending.owners.set(lane.user_id, entry);
       watchQueue.set(w.watchman_id, pending);
     }
   }
