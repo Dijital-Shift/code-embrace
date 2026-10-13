@@ -61,7 +61,7 @@ export function PathHistoryCalendar({ checkins, words, startDate, today, renderW
           );
         } }}
       />
-      <div className="mt-4 flex flex-wrap gap-x-3 gap-y-2 text-[0.65rem] text-muted-foreground">
+      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-2 text-[0.65rem] text-muted-foreground">
         {[["completed", "Held"], ["breached", "Breach"], ["missed", "Silent"], ["skipped", "Sabbath"]].map(([status, label]) => (
           <span key={status} className="flex items-center gap-1.5"><span className={`history-${status} history-swatch h-2 w-2 rounded-sm`} />{label}</span>
         ))}

@@ -257,7 +257,7 @@ function LaneDetail() {
       <LineageTimeline checkins={checkins} words={data?.encouragements ?? []}
         startDate={data?.historyStartDate ?? lane.created_at.slice(0, 10)}
         today={data?.historyToday ?? lane.created_at.slice(0, 10)}
-        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} />} />
+        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} defaultOpen />} />
 
       {(data?.encouragements ?? []).length > 0 && (
         <div className="mt-6">
@@ -378,14 +378,16 @@ function EncouragementCard({
   isNew,
   faded,
   onSeen,
+  defaultOpen = false,
 }: {
   enc: any;
   isNew: boolean;
   faded: boolean;
   onSeen: (id: string) => void;
+  defaultOpen?: boolean;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   useEffect(() => {
     const el = ref.current;

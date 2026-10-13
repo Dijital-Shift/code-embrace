@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { statusColor, statusLabel } from "@/lib/status";
 import { PathHistoryCalendar, type HistoryWord } from "@/components/PathHistoryCalendar";
 import { Button } from "@/components/ui/button";
