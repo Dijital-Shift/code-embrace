@@ -66,7 +66,7 @@ function Pill({ label, tone = "muted" }: { label: string; tone?: Tone }) {
 /* ---------------- Mock screens (mirror the real app) ---------------- */
 
 function MockPathLibrary() {
-  const cats = ["Devotion", "Purity", "Speech", "Mind", "Stewardship", "Body"];
+  const cats = ["Devotion", "Body", "Purity", "Substances", "Speech", "Mind", "Stewardship", "Heart & Action"];
   const items: { title: string; type: "avoid" | "complete"; verse: string }[] = [
     { title: "Pray three times a day", type: "complete", verse: "Daniel 6:10" },
     { title: "Fast", type: "complete", verse: "Matthew 6:17-18" },
@@ -80,7 +80,7 @@ function MockPathLibrary() {
         <div className="text-[10px] text-[#b8b0a4]">Send a verse to at least one person every day. Edit, pause, or remove anytime.</div>
       </div>
       <div className="text-sm font-semibold text-white">Path Library</div>
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="grid grid-cols-4 gap-1.5">
         {cats.map((c, i) => (
           <div key={c} className={cn("rounded-md border px-2 py-1.5 text-center text-[10px] font-semibold", i === 0 ? "border-[#c9a84c] text-[#c9a84c] bg-[#1a1408]" : "border-[#2a2518] text-[#b8b0a4] bg-[#161210]")}>{c}</div>
         ))}
@@ -396,7 +396,7 @@ const SCENES: Scene[] = [
     step: 1,
     role: "user",
     title: "Start walking on day one",
-    body: "Every new member starts with Send Scripture already active — keep it, edit it, or remove it. Then pick more from six categories, each path scripture-backed and labeled Avoid or Complete.",
+    body: "Every new member starts with Send Scripture already active — keep it, edit it, or remove it. Then pick more from eight categories, each path scripture-backed and labeled Avoid or Complete.",
     why: "Why it matters: vague accountability fails. A named path with a verse behind it is something you can actually walk.",
     render: MockPathLibrary,
   },
