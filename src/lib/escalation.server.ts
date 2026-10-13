@@ -200,7 +200,7 @@ export async function markMissedCheckins() {
 
       const pending: WatchPending = watchQueue.get(w.watchman_id) ?? { notificationIds: [], phone: w.phone, owners: new Map() };
       if (notif) pending.notificationIds.push(notif.notification_id);
-      const entry = pending.owners.get(lane.user_id) ?? { name: who, titles: [] };
+      const entry = pending.owners.get(lane.user_id) ?? { name: who, titles: [] as string[] };
       entry.titles.push(lane.title);
       pending.owners.set(lane.user_id, entry);
       watchQueue.set(w.watchman_id, pending);
