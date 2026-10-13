@@ -222,17 +222,17 @@ export async function markMissedCheckins() {
 
   for (const [watchmanId, pending] of watchQueue) {
     const owners = [...pending.owners.entries()];
-    const pathCount = owners.reduce((n, [, t]) => n + t.length, 0);
+    const pathCount = owners.reduce((n, [, o]) => n + o.titles.length, 0);
     let title: string;
     let body: string;
     if (owners.length === 1 && pathCount === 1) {
-      const [who, titles] = owners[0]!;
-      title = `Silence — ${titles[0]}`;
-      body = `${who} has gone silent on "${titles[0]}" two days running. ${reachOutLine(genderMap.get(who))}`;
+      const [ownerId, o] = owners[0]!;
+      title = `Silence — ${o.titles[0]}`;
+      body = `${o.name} has gone silent on "${o.titles[0]}" two days running. ${reachOutLine(genderMap.get(ownerId))}`;
     } else if (owners.length === 1) {
-      const [who, titles] = owners[0]!;
-      title = `Silence — ${who}`;
-      body = `${who} has gone silent on ${titles.length} paths, two days running. ${reachOutLine(genderMap.get(who))}`;
+      const [ownerId, o] = owners[0]!;
+      title = `Silence — ${o.name}`;
+      body = `${o.name} has gone silent on ${o.titles.length} paths, two days running. ${reachOutLine(genderMap.get(ownerId))}`;
     } else {
       title = 'Silence — your watch';
       body = `${owners.length} people you watch have gone silent, two days running. Reach out to them.`;
