@@ -120,6 +120,7 @@ function LaneDetail() {
 
   const [pending, setPending] = useState<null | "paused" | "archived" | "delete">(null);
   const [reason, setReason] = useState("");
+  const [showAllWords, setShowAllWords] = useState(false);
 
   const setStatus = useMutation({
     mutationFn: (v: { status: "active" | "paused" | "archived"; reason?: string }) =>
@@ -150,7 +151,6 @@ function LaneDetail() {
   const type = TYPE_PILL[isAvoid ? "avoid" : "complete"];
   const status = STATUS_META[lane.status] ?? STATUS_META.paused;
   const scriptures = (lane.support_scripture ?? []).filter(Boolean);
-  const [showAllWords, setShowAllWords] = useState(false);
   const hasDetails =
     Boolean(lane.notes) ||
     Boolean(lane.ends_at) ||
