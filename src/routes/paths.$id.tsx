@@ -161,7 +161,15 @@ function LaneDetail() {
 
   return (
     <div>
-      <div className="mb-7">
+      <div
+        className="sticky z-30 -mx-5 px-5 py-2.5 mb-5 border-b border-[#2a2518]/60"
+        style={{
+          top: "calc(48px + env(safe-area-inset-top, 0px))",
+          background: "rgba(10,8,0,0.92)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }}
+      >
         <Link
           to="/paths"
           className="inline-flex items-center gap-1 text-[0.68rem] uppercase tracking-[0.18em] font-semibold text-[#8a8276] no-underline transition-colors hover:text-[#c9a84c]"
@@ -181,7 +189,9 @@ function LaneDetail() {
           </svg>
           Paths
         </Link>
+      </div>
 
+      <div className="mb-7">
         <div className="flex items-center gap-2 flex-wrap mt-5">
           <Pill label={isAvoid ? "Avoid" : "Complete"} bg={type.bg} fg={type.fg} border={type.border} />
           <Pill label={lane.status} bg="#12100a" fg={status.fg} border={status.border} dot={status.dot} />
@@ -247,7 +257,7 @@ function LaneDetail() {
       <LineageTimeline checkins={checkins} words={data?.encouragements ?? []}
         startDate={data?.historyStartDate ?? lane.created_at.slice(0, 10)}
         today={data?.historyToday ?? lane.created_at.slice(0, 10)}
-        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} />} />
+        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} defaultOpen />} />
 
       {(data?.encouragements ?? []).length > 0 && (
         <div className="mt-6">
@@ -368,14 +378,16 @@ function EncouragementCard({
   isNew,
   faded,
   onSeen,
+  defaultOpen = false,
 }: {
   enc: any;
   isNew: boolean;
   faded: boolean;
   onSeen: (id: string) => void;
+  defaultOpen?: boolean;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   useEffect(() => {
     const el = ref.current;

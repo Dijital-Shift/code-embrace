@@ -25,7 +25,7 @@ export async function requireAccess(
 
 export async function getAccessState(supabase: SupabaseClient<any>, userId: string) {
   const [{ data: profile }, ok, { data: sub }] = await Promise.all([
-    supabase.from('profiles').select('trial_ends_at').eq('user_id', userId).maybeSingle(),
+    supabase.from('profiles').select('trial_ends_at, deletion_requested_at').eq('user_id', userId).maybeSingle(),
     hasAccess(supabase, userId),
     supabase
       .from('subscriptions')
@@ -48,6 +48,7 @@ export async function getAccessState(supabase: SupabaseClient<any>, userId: stri
 
   return {
     hasAccess: ok,
+    deletionRequestedAt: (profile as any)?.deletion_requested_at ?? null,
     trialEndsAt,
     trialActive,
     daysLeft,

@@ -436,6 +436,8 @@ export type Database = {
         Row: {
           bedtime: string
           created_at: string
+          deletion_reason: string | null
+          deletion_requested_at: string | null
           dismissed_watchman_prompt: boolean
           email: string
           first_name: string | null
@@ -452,6 +454,8 @@ export type Database = {
         Insert: {
           bedtime?: string
           created_at?: string
+          deletion_reason?: string | null
+          deletion_requested_at?: string | null
           dismissed_watchman_prompt?: boolean
           email: string
           first_name?: string | null
@@ -468,6 +472,8 @@ export type Database = {
         Update: {
           bedtime?: string
           created_at?: string
+          deletion_reason?: string | null
+          deletion_requested_at?: string | null
           dismissed_watchman_prompt?: boolean
           email?: string
           first_name?: string | null

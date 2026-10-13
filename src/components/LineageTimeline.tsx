@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { statusColor, statusLabel } from "@/lib/status";
 import { PathHistoryCalendar, type HistoryWord } from "@/components/PathHistoryCalendar";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,21 @@ export function LineageTimeline({ checkins, words, startDate, today, renderWord 
   const days = [...checkins].slice(0, 14).reverse();
   const [sel, setSel] = useState<string | null>(null);
   const [full, setFull] = useState(false);
+  const fullRef = useRef<HTMLDivElement | null>(null);
   const picked = days.find((d) => d.checkin_date === sel);
+
+  const toggleFull = () => {
+    setFull((v) => {
+      const next = !v;
+      if (next) {
+        // Bring the whole calendar into view once it has rendered.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => fullRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+        });
+      }
+      return next;
+    });
+  };
 
   return (
     <div>
@@ -71,11 +85,13 @@ export function LineageTimeline({ checkins, words, startDate, today, renderWord 
         )}
       </div>
       )}
-      <Button type="button" variant="link" onClick={() => setFull((v) => !v)} aria-expanded={full} className="mt-2 px-0 text-xs text-primary font-semibold">
+      <Button type="button" variant="link" onClick={toggleFull} aria-expanded={full} className="mt-2 px-0 text-xs text-primary font-semibold">
         {full ? "Hide full history" : "Show full history"}
       </Button>
       {full && (
-        <PathHistoryCalendar checkins={checkins} words={words} startDate={startDate} today={today} renderWord={renderWord} />
+        <div ref={fullRef} className="scroll-mt-24">
+          <PathHistoryCalendar checkins={checkins} words={words} startDate={startDate} today={today} renderWord={renderWord} />
+        </div>
       )}
     </div>
   );

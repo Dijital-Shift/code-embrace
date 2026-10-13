@@ -3,6 +3,7 @@ import { sendSms, SMS_BREACH, SMS_SILENCE } from './sms.server';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
+import { reachOutLine } from './sibling';
 
 /**
  * Owners whose free month has ended without a plan are "resting": no silence
@@ -120,9 +121,10 @@ export async function markMissedCheckins() {
   // Pull user timezones.
   const userIds = Array.from(new Set(activeLanes.map((l: any) => l.user_id)));
   const { data: profs } = await supabaseAdmin.from('profiles')
-    .select('user_id, timezone, email, first_name').in('user_id', userIds);
+    .select('user_id, timezone, email, first_name, gender').in('user_id', userIds);
   const tzMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.timezone || 'America/Chicago']));
   const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name || p.email]));
+  const genderMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.gender ?? null]));
   const withAccess = await accessibleOwners(userIds as string[]);
 
   let processed = 0;
@@ -130,7 +132,7 @@ export async function markMissedCheckins() {
 
   // Bundled push buckets, filled during the sweep and flushed at the end.
   const ownerSilent = new Map<string, string[]>();                       // ownerId -> path titles
-  type WatchPending = { notificationIds: string[]; phone: string | null; owners: Map<string, string[]> };
+  type WatchPending = { notificationIds: string[]; phone: string | null; owners: Map<string, { name: string; titles: string[] }> };
   const watchQueue = new Map<string, WatchPending>();                    // watchmanId -> pending
 
   for (const lane of activeLanes) {
@@ -181,7 +183,7 @@ export async function markMissedCheckins() {
     if (!priorMiss) continue; // day 1 — user only
 
     const who = nameMap.get(lane.user_id) ?? 'Your partner';
-    const body = `${who} has gone silent on "${lane.title}" two days running. Reach out.`;
+    const body = `${who} has gone silent on "${lane.title}" two days running. ${reachOutLine(genderMap.get(lane.user_id))}`;
 
     for (const w of watchmen) {
       if (!w.watchman_id) continue;
@@ -198,9 +200,9 @@ export async function markMissedCheckins() {
 
       const pending: WatchPending = watchQueue.get(w.watchman_id) ?? { notificationIds: [], phone: w.phone, owners: new Map() };
       if (notif) pending.notificationIds.push(notif.notification_id);
-      const titles = pending.owners.get(who) ?? [];
-      titles.push(lane.title);
-      pending.owners.set(who, titles);
+      const entry = pending.owners.get(lane.user_id) ?? { name: who, titles: [] as string[] };
+      entry.titles.push(lane.title);
+      pending.owners.set(lane.user_id, entry);
       watchQueue.set(w.watchman_id, pending);
     }
   }
@@ -220,20 +222,20 @@ export async function markMissedCheckins() {
 
   for (const [watchmanId, pending] of watchQueue) {
     const owners = [...pending.owners.entries()];
-    const pathCount = owners.reduce((n, [, t]) => n + t.length, 0);
+    const pathCount = owners.reduce((n, [, o]) => n + o.titles.length, 0);
     let title: string;
     let body: string;
     if (owners.length === 1 && pathCount === 1) {
-      const [who, titles] = owners[0]!;
-      title = `Silence — ${titles[0]}`;
-      body = `${who} has gone silent on "${titles[0]}" two days running. Reach out.`;
+      const [ownerId, o] = owners[0]!;
+      title = `Silence — ${o.titles[0]}`;
+      body = `${o.name} has gone silent on "${o.titles[0]}" two days running. ${reachOutLine(genderMap.get(ownerId))}`;
     } else if (owners.length === 1) {
-      const [who, titles] = owners[0]!;
-      title = `Silence — ${who}`;
-      body = `${who} has gone silent on ${titles.length} paths, two days running. Reach out.`;
+      const [ownerId, o] = owners[0]!;
+      title = `Silence — ${o.name}`;
+      body = `${o.name} has gone silent on ${o.titles.length} paths, two days running. ${reachOutLine(genderMap.get(ownerId))}`;
     } else {
       title = 'Silence — your watch';
-      body = `${owners.length} people you watch have gone silent, two days running. Reach out.`;
+      body = `${owners.length} people you watch have gone silent, two days running. Reach out to them.`;
     }
 
     const sent = await sendPushToUser(watchmanId, { title, body, url: '/partner' });

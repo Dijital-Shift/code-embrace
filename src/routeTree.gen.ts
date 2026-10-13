@@ -42,6 +42,7 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicHooksPurgeDeletionsRouteImport } from './routes/api/public/hooks/purge-deletions'
 import { Route as ApiPublicHooksMissedCheckinsRouteImport } from './routes/api/public/hooks/missed-checkins'
 import { Route as ApiPublicHooksBedtimeReminderRouteImport } from './routes/api/public/hooks/bedtime-reminder'
 
@@ -212,6 +213,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksPurgeDeletionsRoute =
+  ApiPublicHooksPurgeDeletionsRouteImport.update({
+    id: '/api/public/hooks/purge-deletions',
+    path: '/api/public/hooks/purge-deletions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMissedCheckinsRoute =
   ApiPublicHooksMissedCheckinsRouteImport.update({
     id: '/api/public/hooks/missed-checkins',
@@ -257,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
+  '/api/public/hooks/purge-deletions': typeof ApiPublicHooksPurgeDeletionsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -294,6 +302,7 @@ export interface FileRoutesByTo {
   '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
+  '/api/public/hooks/purge-deletions': typeof ApiPublicHooksPurgeDeletionsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -332,6 +341,7 @@ export interface FileRoutesById {
   '/paths/edit/$id': typeof PathsEditIdRoute
   '/api/public/hooks/bedtime-reminder': typeof ApiPublicHooksBedtimeReminderRoute
   '/api/public/hooks/missed-checkins': typeof ApiPublicHooksMissedCheckinsRoute
+  '/api/public/hooks/purge-deletions': typeof ApiPublicHooksPurgeDeletionsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/missed-checkins'
+    | '/api/public/hooks/purge-deletions'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/missed-checkins'
+    | '/api/public/hooks/purge-deletions'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -445,6 +457,7 @@ export interface FileRouteTypes {
     | '/paths/edit/$id'
     | '/api/public/hooks/bedtime-reminder'
     | '/api/public/hooks/missed-checkins'
+    | '/api/public/hooks/purge-deletions'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -482,6 +495,7 @@ export interface RootRouteChildren {
   PathsEditIdRoute: typeof PathsEditIdRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
   ApiPublicHooksMissedCheckinsRoute: typeof ApiPublicHooksMissedCheckinsRoute
+  ApiPublicHooksPurgeDeletionsRoute: typeof ApiPublicHooksPurgeDeletionsRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -721,6 +735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/purge-deletions': {
+      id: '/api/public/hooks/purge-deletions'
+      path: '/api/public/hooks/purge-deletions'
+      fullPath: '/api/public/hooks/purge-deletions'
+      preLoaderRoute: typeof ApiPublicHooksPurgeDeletionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/missed-checkins': {
       id: '/api/public/hooks/missed-checkins'
       path: '/api/public/hooks/missed-checkins'
@@ -781,6 +802,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathsEditIdRoute: PathsEditIdRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
   ApiPublicHooksMissedCheckinsRoute: ApiPublicHooksMissedCheckinsRoute,
+  ApiPublicHooksPurgeDeletionsRoute: ApiPublicHooksPurgeDeletionsRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
