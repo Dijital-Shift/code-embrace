@@ -246,7 +246,7 @@ export function AccessGate({ children, action }: { children: React.ReactNode; ac
 }
 
 /** Settings → Plan: always-available upgrade, regardless of trial day. */
-export function PlanSection() {
+export function PlanSection({ showReceipts }: { showReceipts?: boolean } = {}) {
   const { data } = useAccessState();
   const portalFn = useServerFn(createPortalSession);
   const [busy, setBusy] = useState(false);
@@ -289,6 +289,14 @@ export function PlanSection() {
               {busy ? "Opening…" : "Manage billing"}
             </button>
           </>
+        )}
+        {showReceipts && data.isLifetime && (
+          <button type="button" disabled={busy} onClick={manage} className="mt-3 w-full text-xs text-[#c9a84c] underline bg-transparent border-0 py-1">
+            {busy ? "Opening…" : "Receipts & purchase details"}
+          </button>
+        )}
+        {showReceipts && data.planLockedIn && !data.isLifetime && (
+          <p className="text-[0.7rem] text-[#8f887c] mt-2 text-center">Manage billing shows your receipts, card, and cancel option.</p>
         )}
         {err && <p className="text-xs text-red-400 mt-2">{err}</p>}
       </div>

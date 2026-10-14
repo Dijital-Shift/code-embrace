@@ -1,3 +1,4 @@
+import { useRevealOnOpen } from "@/hooks/useRevealOnOpen";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -235,6 +236,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
+  const missRef = useRevealOnOpen<HTMLDivElement>(open, true);
 
   const isAvoid = lane.lane_type === "avoid";
   const yesLabel = isAvoid ? "Held" : "Did it";
@@ -342,7 +344,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
 
 
       {open && (
-        <div className="mt-2.5">
+        <div ref={missRef} className="mt-2.5">
           <textarea
             rows={2} required minLength={5} value={explanation} onChange={(e) => setExplanation(e.target.value)}
             placeholder="What happened? Be honest."
