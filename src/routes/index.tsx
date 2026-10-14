@@ -169,12 +169,12 @@ function SilenceRule() {
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#a8a094] mb-4">The Mechanic</p>
-          <p className="text-[#bdb8ae] text-[0.95rem] sm:text-base leading-relaxed max-w-2xl mx-auto mb-5">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#c2af80] mb-4">The Mechanic</p>
+          <p className="text-[#d6d0c4] text-[0.95rem] sm:text-base leading-relaxed max-w-2xl mx-auto mb-5">
             <span className="italic" style={{ color: GOLD }}>Protocol:</span> an established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here. The Silence Rule below is the procedure — three thresholds, the same every night. Kingdom Protocol takes its name from this. Kingdom, because it's never behavior for its own sake — it's staying fit for the kingdom you already say you belong to.
           </p>
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">The Silence Rule</h2>
-          <p className="text-[#bdb8ae] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#f3e6c4] mb-4">The Silence Rule</h2>
+          <p className="text-[#d6d0c4] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
           <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
@@ -182,11 +182,11 @@ function SilenceRule() {
           <Threshold n="03" title="Watchman responds" body="They reach out — a call, a text, a verse, a meet-up. The loop closes with a watchman, not a banner." tone="alert" />
         </div>
 
-        <div className="mt-10 rounded-2xl border border-[#1a1610] bg-[#0a0800] p-8 sm:p-12 text-center">
-          <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: GOLD }}>
+        <div className="mt-10 kp-card-glow p-8 sm:p-12 text-center">
+          <p className="italic text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: "#e0c070" }}>
             "I have set watchmen upon thy walls, O Jerusalem, which shall never hold their peace day nor night… keep not silence."
           </p>
-          <p className="mt-5 text-white text-[0.7rem] tracking-[0.18em] uppercase">Isaiah 62:6 · KJV</p>
+          <p className="mt-5 text-[#f3e6c4] text-[0.7rem] tracking-[0.18em] uppercase">Isaiah 62:6 · KJV</p>
         </div>
       </div>
     </section>
@@ -195,13 +195,13 @@ function SilenceRule() {
 
 
 function Threshold({ n, title, body, tone }: { n: string; title: string; body: string; tone: "muted" | "warn" | "alert" }) {
-  const color = tone === "muted" ? "#666" : tone === "warn" ? GOLD : "#e8804a";
+  const color = tone === "muted" ? "#a8957a" : tone === "warn" ? "#e5af38" : "#f08a50";
   return (
-    <div className="h-full rounded-2xl border border-[#1f1b12] bg-[#0f0c05] px-4 pt-10 pb-4 sm:px-6 sm:pt-14 sm:pb-6 relative overflow-hidden flex flex-col items-center text-center">
-      <span className="absolute top-2 right-3 text-2xl sm:text-5xl font-extrabold opacity-25" style={{ color }}>{n}</span>
-      
-      <h3 className="text-sm sm:text-xl font-bold text-white mb-1.5 sm:mb-2 leading-tight">{title}</h3>
-      <p className="text-xs sm:text-sm text-[#bdb8ae] leading-relaxed">{body}</p>
+    <div className="h-full kp-card px-4 pt-10 pb-4 sm:px-6 sm:pt-14 sm:pb-6 relative overflow-hidden flex flex-col items-center text-center">
+      <span className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+      <span className="absolute top-2 right-3 text-2xl sm:text-5xl font-extrabold opacity-60" style={{ color, textShadow: `0 0 18px ${color}55` }}>{n}</span>
+      <h3 className="text-sm sm:text-xl font-bold text-[#f3e6c4] mb-1.5 sm:mb-2 leading-tight">{title}</h3>
+      <p className="text-xs sm:text-sm text-[#d6d0c4] leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -277,60 +277,64 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 sm:gap-5">
+        <div className="grid grid-cols-3 gap-2 sm:gap-5 items-stretch pt-3">
           {/* Free trial */}
-          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#b8b0a4]">30 days</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">Free trial</h3>
-            <p className="text-[#a8a094] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
+          <div className="kp-card p-3 sm:p-7 flex flex-col text-center items-center">
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#c2af80]">30 days</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-[#f3e6c4] mb-1 leading-tight">Free trial</h3>
+            <p className="text-[#c9c4ba] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#e0dacd] flex-1 w-full">
               {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting"].map((f) => (
-                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#8a7a52" }} /><span>{f}</span></li>
               ))}
             </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm">
+            <Link to="/login" className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/50 bg-[#0a0800]/60 text-[#e5c56a] font-semibold text-[0.7rem] sm:text-sm">
               Start free
             </Link>
           </div>
 
           {/* Monthly */}
-          <div className="rounded-xl sm:rounded-2xl border border-[#1f1b12] bg-[#0a0800] p-3 sm:p-7 flex flex-col text-center items-center">
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#b8b0a4]">After trial</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#b8b0a4]">/mo</span></h3>
-            <p className="text-[#a8a094] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
+          <div className="kp-card p-3 sm:p-7 flex flex-col text-center items-center">
+            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#c2af80]">After trial</p>
+            <h3 className="text-base sm:text-2xl font-extrabold text-[#f3e6c4] mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#c2af80]">/mo</span></h3>
+            <p className="text-[#c9c4ba] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
+            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#e0dacd] flex-1 w-full">
               {["All trial features", "Cancel anytime", "Price-locked"].map((f) => (
-                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#888" }} /><span>{f}</span></li>
+                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#8a7a52" }} /><span>{f}</span></li>
               ))}
             </ul>
             <CheckoutCTA
               priceId="kp_premium_monthly"
               loggedOutLabel="Start free"
               loggedInLabel="Subscribe"
-              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.7rem] sm:text-sm"
+              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/50 bg-[#0a0800]/60 text-[#e5c56a] font-semibold text-[0.7rem] sm:text-sm"
             />
           </div>
 
           {/* Lifetime */}
-          <div className="lifetime-card rounded-xl sm:rounded-2xl border-2 border-[#c9a84c]/60 p-3 sm:p-7 flex flex-col items-center text-center relative overflow-hidden">
-            <span className="relative z-10 -mt-4 sm:-mt-5 mb-1 sm:mb-2 px-2 sm:px-3 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap" style={{ background: GOLD, color: "#000" }}>Best</span>
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2" style={{ color: GOLD }}>Forever</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-white mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#b8b0a4]"> once</span></h3>
-            <p className="text-[#c2af80] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#c9c4ba] flex-1 w-full">
-              {["Everything, always", "No renewals", "Long obedience"].map((f) => (
-                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} /><span>{f}</span></li>
-              ))}
-            </ul>
-            <CheckoutCTA
-              priceId="kp_lifetime_once"
-              loggedOutLabel="Lifetime"
-              loggedInLabel="Buy lifetime"
-              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#c9a84c] text-black font-bold text-[0.7rem] sm:text-sm"
-              style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
-            />
+          <div className="relative">
+            <span className="absolute left-1/2 -translate-x-1/2 -top-2.5 sm:-top-3 z-20 px-2.5 sm:px-3.5 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase font-bold rounded-full whitespace-nowrap kp-lifetime-btn text-[#0a0800]">Best</span>
+            <div className="kp-upgrade h-full">
+              <div className="kp-upgrade-inner h-full !px-3 sm:!px-7 !py-4 sm:!py-7 flex flex-col items-center text-center">
+                <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 mt-1" style={{ color: "#e5af38" }}>Forever</p>
+                <h3 className="text-base sm:text-2xl font-extrabold text-[#f3e6c4] mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#c2af80]"> once</span></h3>
+                <p className="text-[#e0c98a] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
+                <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#e0dacd] flex-1 w-full">
+                  {["Everything, always", "No renewals", "Long obedience"].map((f) => (
+                    <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD, boxShadow: `0 0 6px ${GOLD}` }} /><span>{f}</span></li>
+                  ))}
+                </ul>
+                <CheckoutCTA
+                  priceId="kp_lifetime_once"
+                  loggedOutLabel="Lifetime"
+                  loggedInLabel="Buy lifetime"
+                  className="kp-lifetime-btn mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl text-[#0a0800] font-extrabold tracking-wide text-[0.7rem] sm:text-sm"
+                />
+              </div>
+            </div>
           </div>
         </div>
+
 
         <p className="mt-8 text-center text-xs text-[#a8a094] tracking-wider">Watchmen are always free. They walk with you, not with a bill.</p>
       </div>
@@ -474,7 +478,7 @@ function FAQ() {
     {
       q: "Why pay at all?",
       intro:
-        "Not to buy accountability \u2014 that was never for sale, and this doesn't pretend to sell it. The subscription pays for what keeps the system honest: no ads bidding for your attention, no data sold to fund it, a watchtower that answers to you instead of an advertiser. What happens between you and your watchman isn't the product.",
+        "Because by day thirty you've built something worth keeping. A daily rhythm of honesty. Paths you walk with intention. Watchmen standing on the wall around your life. That isn't a trial you finish \u2014 it's infrastructure for the rest of your walk. The subscription keeps it standing: the check-ins that hold your rhythm, the history that shows how far you've come, and the alerts that reach your watchman the moment you go quiet. Accountability was never for sale. What you're keeping is the wall you built with it.",
       verses: [
         {
           text: "For the scripture saith\u2026 The labourer is worthy of his reward.",
