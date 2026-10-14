@@ -70,7 +70,7 @@ function AdminPage() {
           <div key={u.user_id} className="flex items-center gap-3 p-3 rounded-md" style={{ background: "#0d0d0d", border: "1px solid #1a1a1a" }}>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm truncate">{u.email}</p>
-              <p className="text-[0.7rem] text-[#9e968a]">{u.phone || "no phone"} · {u.timezone}</p>
+              <p className="text-[0.7rem] text-[#9e968a]">{u.timezone}</p>
             </div>
             <span className="w-2 h-2 rounded-full" style={{ background: u.status === "active" ? "#4ade80" : "#f87171" }} />
             <button
