@@ -645,7 +645,14 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null; avatar_url: string | null }>();
     if (userIds.length) {
       const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url').in('user_id', userIds);
-      for (const p of (ps ?? []) as any[]) ownerEmails.set(p.user_id, { email: p.email, phone: p.phone, first_name: p.first_name, avatar_url: p.avatar_url ?? null });
+      // Phone numbers go only to a Watchman holding an active seat on an active Path of that member.
+      const { data: seatRows } = await supabaseAdmin.from('path_watchmen')
+        .select('path_id').eq('watchman_id', userId).eq('status', 'active');
+      const seatSet = new Set((seatRows ?? []).map((r: any) => r.path_id));
+      const phoneOwners = new Set((lanes ?? [])
+        .filter((l: any) => l.status === 'active' && seatSet.has(l.lane_id) && l.user_id !== userId)
+        .map((l: any) => l.user_id));
+      for (const p of (ps ?? []) as any[]) ownerEmails.set(p.user_id, { email: p.email, phone: phoneOwners.has(p.user_id) ? p.phone : null, first_name: p.first_name, avatar_url: p.avatar_url ?? null });
     }
     // Owners whose free month lapsed are resting — the watchman sees a quiet
     // label, never anything about money.
@@ -826,7 +833,7 @@ export const getAdminUsers = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
     const { data } = await supabaseAdmin.from('profiles')
-      .select('user_id, email, phone, status, created_at, last_active, timezone')
+      .select('user_id, email, status, created_at, last_active, timezone')
       .order('created_at', { ascending: false });
     return { users: data ?? [] };
   });

@@ -33,17 +33,20 @@ export const getMyReferral = createServerFn({ method: 'GET' })
       if (!code) return { error: 'Could not create referral code.' };
     }
 
-    const { count: invited } = await supabaseAdmin
-      .from('referrals')
-      .select('id', { count: 'exact', head: true })
+    // Invited = people who actually signed up with this link (never the code row itself).
+    const { data: claims } = await supabaseAdmin
+      .from('referral_claims')
+      .select('referred_user_id')
       .eq('referrer_id', userId);
-    const { count: walking } = await supabaseAdmin
-      .from('referrals')
-      .select('id', { count: 'exact', head: true })
-      .eq('referrer_id', userId)
-      .not('referred_user_id', 'is', null);
-
-    return { code, invited: invited ?? 0, walking: walking ?? 0 };
+    const ids = (claims ?? []).map((c) => c.referred_user_id);
+    let walking = 0;
+    if (ids.length) {
+      const { data: active } = await supabaseAdmin
+        .from('lanes').select('user_id').in('user_id', ids).eq('status', 'active');
+      walking = new Set((active ?? []).map((l) => l.user_id)).size;
+    }
+    const invited = ids.length;
+    return { code, invited, walking };
   });
 
 export const claimReferral = createServerFn({ method: 'POST' })
@@ -52,18 +55,17 @@ export const claimReferral = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { userId } = context;
     const code = data.code.trim().toLowerCase();
-    // Only claim if currently unclaimed and not self-referral.
+    // One link, unlimited friends; each person can only be claimed once.
     const { data: ref } = await supabaseAdmin
       .from('referrals')
-      .select('id, referrer_id, referred_user_id')
+      .select('referrer_id')
       .eq('code', code)
       .maybeSingle();
     if (!ref) return { ok: false, reason: 'not_found' as const };
     if (ref.referrer_id === userId) return { ok: false, reason: 'self' as const };
-    if (ref.referred_user_id) return { ok: false, reason: 'already' as const };
-    await supabaseAdmin
-      .from('referrals')
-      .update({ referred_user_id: userId, claimed_at: new Date().toISOString() })
-      .eq('id', ref.id);
+    const { error } = await supabaseAdmin
+      .from('referral_claims')
+      .insert({ referrer_id: ref.referrer_id, referred_user_id: userId, code });
+    if (error) return { ok: false, reason: 'already' as const };
     return { ok: true };
   });
