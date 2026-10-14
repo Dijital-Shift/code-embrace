@@ -187,3 +187,13 @@ html.kp-splash body { overflow: hidden; }
     0 0 110px rgba(197,168,92,0.05);
 }
 .pricing-check { box-shadow: 0 0 12px rgba(197,168,92,0.17); }
+
+.kp-subpage-bar {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(10, 8, 0, 0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #2a2518;
+}
+@media (max-width: 600px) {
+  .kp-subpage-bar { top: calc(45px + env(safe-area-inset-top)); margin-top: -1.25rem; }
+}
