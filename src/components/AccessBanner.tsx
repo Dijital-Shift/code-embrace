@@ -140,13 +140,6 @@ export function AccessBanner() {
 
   // Already paid — quiet confirmation, no countdown.
   if (data.planLockedIn) {
-    if (data.isLifetime) {
-      return (
-        <div className="mb-5 px-4 py-3 rounded-xl border border-[#3a2f12]" style={{ background: "#141004" }}>
-          <p className="text-xs" style={{ color: GOLD }}>Lifetime — you're set.</p>
-        </div>
-      );
-    }
     if (data.trialActive && data.firstChargeAt) {
       return (
         <div className="mb-5 px-4 py-3 rounded-xl border border-[#3a2f12]" style={{ background: "#141004" }}>

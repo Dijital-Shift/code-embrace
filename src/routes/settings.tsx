@@ -219,6 +219,13 @@ function Settings() {
       <div className="mt-10">
         <p className={sectionLabel}>More</p>
         <div className="kp-card overflow-hidden divide-y divide-[#c9a84c]/10">
+          <Link to="/billing" className="flex items-center justify-between px-4 py-3.5 no-underline">
+            <span>
+              <span className="block text-sm text-[#ded8cc] font-medium">Billing</span>
+              <span className="block text-[0.7rem] text-[#8f887c]">View your plan, manage your subscription, see receipts.</span>
+            </span>
+            <span className="text-[#c9a84c]">›</span>
+          </Link>
           <button type="button" onClick={() => setFeedbackOpen(true)} className="w-full flex items-center justify-between px-4 py-3.5 text-left bg-transparent border-0">
             <span>
               <span className="block text-sm text-[#ded8cc] font-medium">Send feedback</span>
