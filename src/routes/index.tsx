@@ -110,7 +110,7 @@ function HeroMock() {
       <div className="relative rounded-2xl border border-[#2a2518] bg-[#100d05] p-5 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#c2af80]">Today · 9:00 PM</span>
-          <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#c9a84c]">Window open</span>
+          <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[#c9a84c]">Check-in open</span>
         </div>
         <div className="space-y-3">
           <MockRow title="Meditate on Scripture" status="held" />
@@ -119,7 +119,7 @@ function HeroMock() {
         </div>
         <div className="mt-5 pt-4 border-t border-[#1f1b12] flex items-center justify-between">
           <span className="text-xs text-[#b8b0a4]">1 silent path</span>
-          <span className="text-xs font-semibold" style={{ color: GOLD }}>Watchmen pinged in 2h</span>
+          <span className="text-xs font-semibold" style={{ color: GOLD }}>Nudge tonight · Watchman after 2 days</span>
         </div>
       </div>
     </div>
