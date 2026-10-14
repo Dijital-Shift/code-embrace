@@ -139,11 +139,20 @@ export function WatchmanPushPrompt() {
         <div className="mb-3 rounded-lg border border-[#2a2000] p-3">
           <p className="text-[0.65rem] uppercase tracking-wider text-[#a8a094] font-semibold mb-1.5">Step 1 · Install</p>
           {platform === "ios" && (
-            <p className="text-xs text-[#ded8cc] leading-relaxed">
-              In Safari, tap <span className="text-[#c9a84c] font-semibold">Share</span> →{" "}
-              <span className="text-[#c9a84c] font-semibold">Add to Home Screen</span>, then open Kingdom Protocol
-              from your home screen.
-            </p>
+            <ol className="text-xs text-[#ded8cc] leading-relaxed list-decimal list-inside space-y-1.5">
+              <li>
+                Make sure you're in <span className="text-[#c9a84c] font-semibold">Safari</span> (tap the Safari
+                compass icon if you're inside another app's preview).
+              </li>
+              <li>
+                Tap the <span className="text-[#c9a84c] font-semibold">Share</span> button — the square with an
+                arrow pointing up, at the bottom of the screen.
+              </li>
+              <li>
+                Scroll down and tap <span className="text-[#c9a84c] font-semibold">Add to Home Screen</span>, then
+                open Kingdom Protocol from your home screen icon.
+              </li>
+            </ol>
           )}
           {platform === "android" && (
             <>
