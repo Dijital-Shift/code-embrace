@@ -285,49 +285,81 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 items-stretch max-w-3xl mx-auto pt-4">
-          {/* Monthly with free trial */}
-          <div className="relative">
-            <span className="absolute left-1/2 -translate-x-1/2 -top-3 z-20 px-3.5 py-1 text-[0.6rem] tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap border border-[#c9a84c]/60 bg-[#0a0800] text-[#e5c56a]">30 days free · No card</span>
-            <div className="kp-card h-full p-6 sm:p-8 pt-8 flex flex-col">
-              <p className="text-[0.65rem] tracking-[0.22em] uppercase font-bold mb-3 text-[#c2af80] text-center">Monthly</p>
-              <h3 className="text-4xl font-extrabold text-[#f3e6c4] text-center leading-none mb-2">$4.99<span className="text-base font-bold text-[#c2af80]"> /mo</span></h3>
-              <p className="text-[#c9c4ba] text-sm text-center mb-6">Starts after your free month. Cancel anytime.</p>
-              <ul className="space-y-3 text-sm text-[#e0dacd] flex-1">
-                {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting", "Price-locked"].map((f) => (
-                  <li key={f} className="flex items-start gap-3"><CheckMark color="#c2af80" /><span>{f}</span></li>
-                ))}
-              </ul>
-              <CheckoutCTA
-                priceId="kp_premium_monthly"
-                loggedOutLabel="Start free"
-                loggedInLabel="Subscribe"
-                className="mt-8 w-full inline-block text-center px-5 py-3.5 rounded-xl border border-[#c9a84c]/50 bg-[#0a0800]/60 text-[#e5c56a] font-semibold text-sm"
-              />
+        <div className="grid grid-cols-2 gap-3 sm:gap-7 items-stretch max-w-[1120px] mx-auto pt-8">
+          {/* Monthly Walk */}
+          <div className="pricing-card relative flex h-full flex-col rounded-[20px] sm:rounded-[28px] border border-[#8a7035] px-3 pb-4 pt-12 sm:px-9 sm:pb-8 sm:pt-20">
+            <div className="absolute left-1/2 top-2.5 sm:top-4 w-max max-w-[95%] -translate-x-1/2 rounded-full border border-[#d7b95f] bg-[#080705] px-3 py-1.5 sm:px-6 sm:py-3 text-center text-[8px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.2em] text-[#f1d37b] whitespace-nowrap">
+              30 DAYS FREE · NO CARD
             </div>
+            <h3 className="pricing-display text-center text-[26px] sm:text-[52px] font-medium leading-tight text-[#f3ead9]">
+              Monthly Walk
+            </h3>
+            <div className="mx-auto mt-3 sm:mt-5 h-[2px] w-8 sm:w-12 bg-[#e4c45e]" />
+            <div className="mt-3 sm:mt-5 flex items-baseline justify-center gap-1 sm:gap-2">
+              <span className="pricing-display text-[44px] sm:text-[100px] leading-none text-[#f5ecda]">$4.99</span>
+              <span className="pricing-display text-[15px] sm:text-[27px] text-[#bca77a]">/ month</span>
+            </div>
+            <p className="mt-2 sm:mt-4 min-h-[36px] sm:min-h-[48px] text-center text-[11px] sm:text-[14px] leading-relaxed text-[#d6d1c9]">
+              Billed after 30 days. Cancel anytime.
+            </p>
+            <div className="mt-4 sm:mt-7 h-px w-full bg-[#6b5933]/60" />
+            <div className="mt-4 sm:mt-8 flex flex-1 flex-col gap-3 sm:gap-6">
+              {monthlyFeatures.map((feature) => (
+                <div key={feature} className="flex items-start gap-2 sm:gap-4">
+                  <div className="pricing-check flex h-5 w-5 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border border-[#b79542] bg-[#171309]">
+                    <Check size={12} strokeWidth={3} className="text-[#f2d16c] sm:hidden" />
+                    <Check size={18} strokeWidth={3} className="text-[#f2d16c] hidden sm:block" />
+                  </div>
+                  <span className="pt-0.5 sm:pt-1 text-[11px] sm:text-[15px] leading-relaxed text-[#e6e2dc]">
+                    {feature}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <CheckoutCTA
+              priceId="kp_premium_monthly"
+              loggedOutLabel="Start Free (30 Days)"
+              loggedInLabel="Start Free (30 Days)"
+              className="mt-6 sm:mt-12 flex min-h-[52px] sm:min-h-[70px] w-full items-center justify-center gap-2 sm:gap-4 rounded-[12px] sm:rounded-[15px] border border-[#e4c45e] bg-[#080705] px-2 sm:px-4 text-[12px] sm:text-[16px] font-semibold text-[#f1d16e] transition-all duration-200 hover:bg-[#171309] hover:shadow-[0_0_22px_rgba(197,168,92,0.18)]"
+            />
           </div>
 
-          {/* Lifetime */}
-          <div className="relative">
-            <span className="absolute left-1/2 -translate-x-1/2 -top-3 z-20 px-3.5 py-1 text-[0.6rem] tracking-[0.22em] uppercase font-bold rounded-full whitespace-nowrap kp-lifetime-btn text-[#0a0800]">Best · One time</span>
-            <div className="kp-upgrade h-full">
-              <div className="kp-upgrade-inner h-full !p-6 sm:!p-8 !pt-8 flex flex-col">
-                <p className="text-[0.65rem] tracking-[0.22em] uppercase font-bold mb-3 text-center" style={{ color: "#e5af38" }}>Lifetime</p>
-                <h3 className="text-4xl font-extrabold text-[#f3e6c4] text-center leading-none mb-2">$99<span className="text-base font-bold text-[#c2af80]"> once</span></h3>
-                <p className="text-[#e0c98a] text-sm text-center mb-6">Walk it forever.</p>
-                <ul className="space-y-3 text-sm text-[#e0dacd] flex-1">
-                  {["Everything, always", "No renewals", "Long obedience"].map((f) => (
-                    <li key={f} className="flex items-start gap-3"><CheckMark color={GOLD} glow /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <CheckoutCTA
-                  priceId="kp_lifetime_once"
-                  loggedOutLabel="Lifetime"
-                  loggedInLabel="Buy lifetime"
-                  className="kp-lifetime-btn mt-8 w-full inline-block text-center px-5 py-3.5 rounded-xl text-[#0a0800] font-extrabold tracking-wide text-sm"
-                />
-              </div>
+          {/* Lifetime Walk */}
+          <div className="pricing-card pricing-lifetime-glow relative flex h-full flex-col rounded-[20px] sm:rounded-[28px] border-[1.5px] border-[#f0d579] px-3 pb-4 pt-12 sm:px-9 sm:pb-8 sm:pt-20">
+            <div className="pricing-gold-button absolute left-1/2 top-0 w-max max-w-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full px-3 py-1.5 sm:px-7 sm:py-4 text-center text-[8px] sm:text-xs font-bold tracking-[0.12em] sm:tracking-[0.17em] text-[#100d05] shadow-[0_5px_25px_rgba(218,175,65,0.2)] whitespace-nowrap">
+              BEST VALUE · ONE TIME
             </div>
+            <h3 className="pricing-display text-center text-[26px] sm:text-[52px] font-medium leading-tight text-[#f3ead9]">
+              Lifetime Walk
+            </h3>
+            <div className="mx-auto mt-3 sm:mt-5 h-[2px] w-8 sm:w-12 bg-[#e4c45e]" />
+            <div className="mt-3 sm:mt-5 flex items-baseline justify-center gap-1 sm:gap-2">
+              <span className="pricing-display text-[44px] sm:text-[100px] leading-none text-[#f5ecda]">$99</span>
+              <span className="pricing-display text-[15px] sm:text-[27px] text-[#bca77a]">once</span>
+            </div>
+            <p className="mt-2 sm:mt-4 min-h-[36px] sm:min-h-[48px] text-center text-[11px] sm:text-[14px] leading-relaxed text-[#d6d1c9]">
+              Pay once. Walk forever.
+            </p>
+            <div className="mt-4 sm:mt-7 h-px w-full bg-[#6b5933]/60" />
+            <div className="mt-4 sm:mt-8 flex flex-1 flex-col gap-3 sm:gap-6">
+              {lifetimeFeatures.map((feature) => (
+                <div key={feature} className="flex items-start gap-2 sm:gap-4">
+                  <div className="pricing-check flex h-5 w-5 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border border-[#b79542] bg-[#171309]">
+                    <Check size={12} strokeWidth={3} className="text-[#f2d16c] sm:hidden" />
+                    <Check size={18} strokeWidth={3} className="text-[#f2d16c] hidden sm:block" />
+                  </div>
+                  <span className="pt-0.5 sm:pt-1 text-[11px] sm:text-[15px] leading-relaxed text-[#e6e2dc]">
+                    {feature}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <CheckoutCTA
+              priceId="kp_lifetime_once"
+              loggedOutLabel="Claim Lifetime Walk"
+              loggedInLabel="Claim Lifetime Walk"
+              className="pricing-gold-button mt-6 sm:mt-12 flex min-h-[52px] sm:min-h-[70px] w-full items-center justify-center gap-2 sm:gap-4 rounded-[12px] sm:rounded-[15px] px-2 sm:px-4 text-[12px] sm:text-[16px] font-bold text-[#100d05] shadow-[0_0_25px_rgba(197,168,92,0.2)] transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_35px_rgba(197,168,92,0.35)]"
+            />
           </div>
         </div>
 
