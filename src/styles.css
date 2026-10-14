@@ -163,3 +163,21 @@ html.kp-splash body { overflow: hidden; }
 }
 .kp-crop img { -webkit-user-drag: none; }
 .kp-crop .reactEasyCrop_Container { touch-action: none; }
+
+/* Pricing cards (landing) */
+.pricing-display { font-family: 'Cormorant Garamond', Georgia, serif; }
+.pricing-card {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(197,168,92,0.065), transparent 60%),
+    linear-gradient(145deg, #171511 0%, #0b0906 65%, #080705 100%);
+}
+.pricing-gold-button {
+  background: linear-gradient(115deg, #f8dc80 0%, #e9c45e 48%, #c59b38 100%);
+}
+.pricing-lifetime-glow {
+  box-shadow:
+    0 0 18px rgba(197,168,92,0.2),
+    0 0 65px rgba(197,168,92,0.12),
+    0 0 110px rgba(197,168,92,0.05);
+}
+.pricing-check { box-shadow: 0 0 12px rgba(197,168,92,0.17); }
