@@ -8,7 +8,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getSettings, updateProfile, reactivateLane, deleteArchivedLane } from "@/lib/api.functions";
-import { requestAccountDeletion, cancelAccountDeletion } from "@/lib/deletion.functions";
+import { requestAccountDeletion, cancelAccountDeletion, deleteAccountNow } from "@/lib/deletion.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";

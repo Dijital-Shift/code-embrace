@@ -15,3 +15,11 @@ export const cancelAccountDeletion = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     return cancelDeletion(context.userId);
   });
+
+export const deleteAccountNow = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ confirm: z.literal('confirm') }))
+  .handler(async ({ context }) => {
+    const { deleteNow } = await import('./deletion.server');
+    return deleteNow(context.userId);
+  });
