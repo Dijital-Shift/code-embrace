@@ -190,16 +190,6 @@ function Settings() {
         </button>
       </form>
 
-      <div className="mt-10">
-        <p className={sectionLabel}>Plan</p>
-        <Link to="/billing" className="kp-card flex items-center justify-between px-4 py-3.5 no-underline">
-          <span>
-            <span className="block text-sm text-[#ded8cc] font-medium">Billing</span>
-            <span className="block text-[0.7rem] text-[#8f887c]">View your plan, manage your subscription, see receipts.</span>
-          </span>
-          <span className="text-[#c9a84c]">›</span>
-        </Link>
-      </div>
 
       {ref && "code" in ref && (
         <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />

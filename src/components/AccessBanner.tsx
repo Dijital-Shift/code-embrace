@@ -180,6 +180,26 @@ export function AccessBanner() {
   return null;
 }
 
+/** Small gold mark beside the greeting — lifetime members, and nothing else. */
+export function LifetimeBadge() {
+  const { data } = useAccessState();
+  if (!data?.isLifetime) return null;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-[3px] text-[0.55rem] font-bold uppercase tracking-[0.22em]"
+      style={{
+        borderColor: "rgba(201,168,76,0.35)",
+        background: "linear-gradient(180deg, rgba(201,168,76,0.14), rgba(201,168,76,0.03))",
+        color: GOLD,
+      }}
+      title="Lifetime member"
+    >
+      <span className="w-1 h-1 rounded-full" style={{ background: GOLD }} />
+      Lifetime
+    </span>
+  );
+}
+
 /** Once-a-day reminder in the last five days of the free month. */
 export function TrialEndingModal() {
   const { data } = useAccessState();
