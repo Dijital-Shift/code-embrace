@@ -73,3 +73,37 @@ export const TIMEZONE_OPTIONS: { value: string; label: string }[] = [
   { value: 'America/Anchorage', label: 'Alaska — UTC−9/−8 (DST)' },
   { value: 'Pacific/Honolulu', label: 'Hawaii — UTC−10 (no DST)' },
 ];
+
+/** Grouped manual picker. Auto (device) is the default; this is the override list. */
+export const TIMEZONE_GROUPS: { group: string; options: { value: string; label: string }[] }[] = [
+  { group: 'United States', options: TIMEZONE_OPTIONS },
+  { group: 'Canada', options: [
+    { value: 'America/St_Johns', label: 'Newfoundland' },
+    { value: 'America/Halifax', label: 'Atlantic — Halifax' },
+    { value: 'America/Toronto', label: 'Eastern — Toronto' },
+    { value: 'America/Winnipeg', label: 'Central — Winnipeg' },
+    { value: 'America/Regina', label: 'Saskatchewan' },
+    { value: 'America/Edmonton', label: 'Mountain — Edmonton' },
+    { value: 'America/Vancouver', label: 'Pacific — Vancouver' },
+  ] },
+  { group: 'UK & Ireland', options: [
+    { value: 'Europe/London', label: 'United Kingdom — London' },
+    { value: 'Europe/Dublin', label: 'Ireland — Dublin' },
+  ] },
+  { group: 'Australia', options: [
+    { value: 'Australia/Perth', label: 'Western — Perth' },
+    { value: 'Australia/Adelaide', label: 'Central — Adelaide' },
+    { value: 'Australia/Darwin', label: 'Northern — Darwin' },
+    { value: 'Australia/Brisbane', label: 'Queensland — Brisbane' },
+    { value: 'Australia/Sydney', label: 'Eastern — Sydney / Melbourne' },
+  ] },
+  { group: 'New Zealand', options: [{ value: 'Pacific/Auckland', label: 'New Zealand — Auckland' }] },
+  { group: 'Africa & Asia', options: [
+    { value: 'Africa/Johannesburg', label: 'South Africa' },
+    { value: 'Africa/Lagos', label: 'Nigeria' },
+    { value: 'Africa/Nairobi', label: 'Kenya' },
+    { value: 'Asia/Kolkata', label: 'India' },
+    { value: 'Asia/Singapore', label: 'Singapore' },
+    { value: 'Asia/Manila', label: 'Philippines' },
+  ] },
+];
