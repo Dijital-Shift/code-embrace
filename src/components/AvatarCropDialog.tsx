@@ -44,12 +44,13 @@ export function AvatarCropDialog({ image, onCancel, onSave }: {
 
   return (
     <Dialog open onOpenChange={(open) => { if (!open && !busy) onCancel(); }}>
-      <DialogContent className="w-[calc(100%-2rem)] max-w-sm rounded-lg border-primary/40 max-h-[90svh] overflow-y-auto"
+      <DialogContent className="kp-crop select-none w-[calc(100%-2rem)] max-w-sm rounded-lg border-primary/40 max-h-[90svh] overflow-y-auto"
         onEscapeKeyDown={(event) => { if (busy) event.preventDefault(); }}
-        onPointerDownOutside={(event) => { if (busy) event.preventDefault(); }}>
-        <DialogTitle className="text-primary">Frame your photo</DialogTitle>
+        onPointerDownOutside={(event) => event.preventDefault()}
+        onInteractOutside={(event) => event.preventDefault()}>
+        <DialogTitle className="text-primary select-none">Frame your photo</DialogTitle>
         <DialogDescription className="sr-only">Profile photo crop</DialogDescription>
-        <div className="relative aspect-square w-full overflow-hidden rounded-md bg-card">
+        <div className="relative aspect-square w-full overflow-hidden rounded-md bg-card touch-none">
           <Cropper image={image} crop={crop} zoom={zoom} aspect={1} cropShape="round" showGrid={false}
             onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={(_, pixels) => setArea(pixels)} />
         </div>

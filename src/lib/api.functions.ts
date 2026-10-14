@@ -38,6 +38,7 @@ export const saveOnboarding = createServerFn({ method: 'POST' })
     first_name: z.string().min(1).max(50),
     last_name: z.string().min(1).max(50),
     gender: z.enum(['male', 'female']).nullable().optional(),
+    phone: z.string().min(7).max(30).refine((v) => { const d = v.replace(/\D/g, ''); return d.length >= 8 && d.length <= 15; }, 'Enter a valid phone number'),
   }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;

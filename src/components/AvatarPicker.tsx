@@ -47,7 +47,6 @@ export function AvatarPicker({ initial, name, onSaved }: { initial: string | nul
               className="p-0 text-xs text-muted-foreground cursor-pointer">Remove</Button>
           )}
         </div>
-        <span className="text-[0.7rem] text-muted-foreground">Optional. Your Watchmen will see it.</span>
         {err && <span className="text-[0.7rem] text-history-breach">{err}</span>}
       </div>
       <input ref={input} type="file" accept="image/*" className="hidden"

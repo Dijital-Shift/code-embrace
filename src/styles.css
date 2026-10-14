@@ -154,3 +154,12 @@ html.kp-splash body { overflow: hidden; }
 @media (max-width: 600px) {
   .kp-cat-sticky { top: calc(50px + env(safe-area-inset-top, 0px)); }
 }
+
+/* Crop dialog: block iOS selection pins / callout while dragging */
+.kp-crop, .kp-crop * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.kp-crop img { -webkit-user-drag: none; }
+.kp-crop .reactEasyCrop_Container { touch-action: none; }
