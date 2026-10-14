@@ -22,6 +22,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as BillingRouteImport } from './routes/billing'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PathsIndexRouteImport } from './routes/paths.index'
@@ -110,6 +111,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const CheckinRoute = CheckinRouteImport.update({
   id: '/checkin',
   path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -241,6 +247,7 @@ const ApiPublicHooksBedtimeReminderRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
@@ -280,6 +287,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
@@ -361,6 +370,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/billing'
     | '/checkin'
     | '/dashboard'
     | '/demo'
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/billing'
     | '/checkin'
     | '/dashboard'
     | '/demo'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/billing'
     | '/checkin'
     | '/dashboard'
     | '/demo'
@@ -479,6 +491,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  BillingRoute: typeof BillingRoute
   CheckinRoute: typeof CheckinRoute
   DashboardRoute: typeof DashboardRoute
   DemoRoute: typeof DemoRoute
@@ -606,6 +619,13 @@ declare module '@tanstack/react-router' {
       path: '/checkin'
       fullPath: '/checkin'
       preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -794,6 +814,7 @@ const InviteTokenRouteWithChildren = InviteTokenRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  BillingRoute: BillingRoute,
   CheckinRoute: CheckinRoute,
   DashboardRoute: DashboardRoute,
   DemoRoute: DemoRoute,
