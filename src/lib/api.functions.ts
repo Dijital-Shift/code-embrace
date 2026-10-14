@@ -621,10 +621,10 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const relByPath = new Map((mySeats ?? []).map((s: any) => [s.path_id, s.relationship]));
 
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
-    const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null }>();
+    const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null; avatar_url: string | null }>();
     if (userIds.length) {
-      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name').in('user_id', userIds);
-      for (const p of ps ?? []) ownerEmails.set(p.user_id, { email: p.email, phone: p.phone, first_name: p.first_name });
+      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url').in('user_id', userIds);
+      for (const p of (ps ?? []) as any[]) ownerEmails.set(p.user_id, { email: p.email, phone: p.phone, first_name: p.first_name, avatar_url: p.avatar_url ?? null });
     }
     // Owners whose free month lapsed are resting — the watchman sees a quiet
     // label, never anything about money.
