@@ -449,6 +449,7 @@ export type Database = {
           reminder_utc_hour: number | null
           status: string
           timezone: string
+          timezone_auto: boolean
           trial_ends_at: string | null
           user_id: string
         }
@@ -468,6 +469,7 @@ export type Database = {
           reminder_utc_hour?: number | null
           status?: string
           timezone?: string
+          timezone_auto?: boolean
           trial_ends_at?: string | null
           user_id: string
         }
@@ -487,6 +489,7 @@ export type Database = {
           reminder_utc_hour?: number | null
           status?: string
           timezone?: string
+          timezone_auto?: boolean
           trial_ends_at?: string | null
           user_id?: string
         }

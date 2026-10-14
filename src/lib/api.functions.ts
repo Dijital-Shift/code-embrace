@@ -55,21 +55,41 @@ export const updateProfile = createServerFn({ method: 'POST' })
       phone: z.string().max(30).optional().nullable(),
       bedtime: z.string(),
       timezone: z.string(),
+      timezone_auto: z.boolean().optional(),
       gender: z.enum(['male', 'female']).optional().nullable(),
     }),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const reminder_utc_hour = reminderUtcHour(data.bedtime, data.timezone);
-    const baseUpdate = {
+    const baseUpdate: any = {
       first_name: data.first_name || null, last_name: data.last_name || null,
       phone: data.phone || null, bedtime: data.bedtime, timezone: data.timezone, reminder_utc_hour,
     };
+    if (typeof data.timezone_auto === 'boolean') baseUpdate.timezone_auto = data.timezone_auto;
     const update = data.gender ? { ...baseUpdate, gender: data.gender } : baseUpdate;
     const { error } = await supabase.from('profiles').update(update).eq('user_id', userId);
     if (error) return { error: error.message };
     invalidateUserTimezone(userId);
     return { success: true };
+  });
+
+/** Background sync: if the user is on Auto, adopt the device's timezone. */
+export const syncDeviceTimezone = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ timezone: z.string().min(1).max(64) }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    try { new Intl.DateTimeFormat('en-US', { timeZone: data.timezone }); } catch { return { changed: false }; }
+    const { data: p } = await supabase.from('profiles').select('timezone, timezone_auto, bedtime').eq('user_id', userId).maybeSingle();
+    if (!p || p.timezone_auto === false || p.timezone === data.timezone) return { changed: false };
+    const bedtime = String(p.bedtime ?? '22:00').slice(0, 5);
+    const { error } = await supabase.from('profiles')
+      .update({ timezone: data.timezone, reminder_utc_hour: reminderUtcHour(bedtime, data.timezone) })
+      .eq('user_id', userId);
+    if (error) return { changed: false };
+    invalidateUserTimezone(userId);
+    return { changed: true };
   });
 
 /** Optional profile photo, stored as a small pre-resized JPEG data URL. */
@@ -760,7 +780,7 @@ export const getSettings = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from('profiles')
-      .select('email, first_name, last_name, phone, timezone, bedtime, gender, deletion_requested_at, deletion_reason, avatar_url').eq('user_id', userId).single();
+      .select('email, first_name, last_name, phone, timezone, timezone_auto, bedtime, gender, deletion_requested_at, deletion_reason, avatar_url').eq('user_id', userId).single();
     const { data: archived } = await supabase.from('lanes')
       .select('lane_id, title, created_at').eq('user_id', userId).eq('status', 'archived').order('created_at', { ascending: false });
     return { profile: profile ?? null, archivedLanes: archived ?? [] };

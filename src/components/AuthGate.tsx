@@ -3,7 +3,7 @@ import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { linkPendingLanes } from "@/lib/api.functions";
+import { linkPendingLanes, syncDeviceTimezone } from "@/lib/api.functions";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -59,6 +59,22 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
         }
       })
       .catch(() => {});
+  }, [user?.id]);
+
+  // Keep the user's clock on their device's timezone (unless they chose one manually).
+  const syncTz = useServerFn(syncDeviceTimezone);
+  useEffect(() => {
+    if (!user) return;
+    const run = () => {
+      try {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (timezone) syncTz({ data: { timezone } }).catch(() => {});
+      } catch {}
+    };
+    run();
+    const onVis = () => { if (document.visibilityState === "visible") run(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
   }, [user?.id]);
 
   if (!user) {

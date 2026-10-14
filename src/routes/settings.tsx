@@ -15,7 +15,7 @@ import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
-import { TIMEZONE_OPTIONS } from "@/lib/localday";
+import { TIMEZONE_GROUPS } from "@/lib/localday";
 
 
 export const Route = createFileRoute("/settings")({
@@ -45,13 +45,18 @@ function Settings() {
   const [phone, setPhone] = useState("");
   const [bedtime, setBedtime] = useState("22:00");
   const [tz, setTz] = useState("America/Chicago");
+  const [tzAuto, setTzAuto] = useState(true);
+  const [deviceTz, setDeviceTz] = useState<string | null>(null);
+  useEffect(() => {
+    try { setDeviceTz(Intl.DateTimeFormat().resolvedOptions().timeZone || null); } catch {}
+  }, []);
   const [gender, setGender] = useState<"male" | "female" | "">("");
   const [showGender, setShowGender] = useState(false);
   const [saved, setSaved] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const m = useMutation({
-    mutationFn: () => update({ data: { first_name: first, last_name: last, phone, bedtime, timezone: tz, gender: gender || null } }),
+    mutationFn: () => update({ data: { first_name: first, last_name: last, phone, bedtime, timezone: tzAuto && deviceTz ? deviceTz : tz, timezone_auto: tzAuto, gender: gender || null } }),
     onSuccess: (r: any) => { if (r?.error) setErr(r.error); else { setSaved(true); refetch(); } },
   });
 
@@ -62,6 +67,7 @@ function Settings() {
       setPhone(data.profile.phone ?? "");
       setBedtime((data.profile.bedtime ?? "22:00:00").slice(0, 5));
       setTz(data.profile.timezone ?? "America/Chicago");
+      setTzAuto((data.profile as any).timezone_auto !== false);
       setGender(((data.profile as any).gender ?? "") as "male" | "female" | "");
     }
   }, [data]);
@@ -157,8 +163,19 @@ function Settings() {
           </div>
           <div className="flex flex-col gap-1.5 min-w-0">
             <label className={label}>Timezone</label>
-            <select value={tz} onChange={(e) => setTz(e.target.value)} className={inputCls}>
-              {TIMEZONE_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            <select value={tzAuto ? "auto" : tz} onChange={(e) => {
+              if (e.target.value === "auto") { setTzAuto(true); if (deviceTz) setTz(deviceTz); }
+              else { setTzAuto(false); setTz(e.target.value); }
+            }} className={inputCls}>
+              <option value="auto">Auto{deviceTz ? ` — ${deviceTz.replace(/_/g, " ")}` : ""}</option>
+              {TIMEZONE_GROUPS.map((g) => (
+                <optgroup key={g.group} label={g.group}>
+                  {g.options.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </optgroup>
+              ))}
+              {!tzAuto && !TIMEZONE_GROUPS.some((g) => g.options.some((o) => o.value === tz)) && (
+                <option value={tz}>{tz.replace(/_/g, " ")}</option>
+              )}
             </select>
           </div>
         </div>
