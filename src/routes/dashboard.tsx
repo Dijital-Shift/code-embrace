@@ -5,7 +5,7 @@ import { getDashboard } from "@/lib/api.functions";
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { CallToWallCard } from "@/components/CallToWallCard";
-import { AccessBanner } from "@/components/AccessBanner";
+import { AccessBanner, LifetimeBadge } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
 import { WatchmanWordsModal, type Word } from "@/components/WatchmanWordsModal";
@@ -61,7 +61,10 @@ function Dashboard() {
         <p className="text-xs text-[#9e968a] uppercase tracking-wider mb-1">
           {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
         </p>
-        <h2 className="text-3xl tracking-wide text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>{greeting}</h2>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-3xl tracking-wide text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>{greeting}</h2>
+          <LifetimeBadge />
+        </div>
       </div>
 
       <AccessBanner />
