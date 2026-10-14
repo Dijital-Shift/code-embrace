@@ -219,12 +219,20 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
         type="button" onClick={() => setOpen((v) => !v)}
         className="w-full flex justify-between items-center gap-3 text-left px-4 py-3"
       >
-        <div className="min-w-0">
-          <p className="font-semibold text-sm truncate">{lane.title}</p>
-          <p className="text-xs text-[#948d80] truncate">
-            {rel && <span className="text-[#c9a84c] font-semibold">{rel} · </span>}
-            {lane.owner?.first_name || lane.owner?.email}
-          </p>
+        <div className="min-w-0 flex items-center gap-3">
+          {lane.owner?.avatar_url && (
+            <img
+              src={lane.owner.avatar_url} alt=""
+              className="w-9 h-9 rounded-full object-cover shrink-0 border border-[#c9a84c]/40"
+            />
+          )}
+          <div className="min-w-0">
+            <p className="font-semibold text-sm truncate">{lane.title}</p>
+            <p className="text-xs text-[#948d80] truncate">
+              {rel && <span className="text-[#c9a84c] font-semibold">{rel} · </span>}
+              {lane.owner?.first_name || lane.owner?.email}
+            </p>
+          </div>
         </div>
         <div className="text-right shrink-0">
           <p className="text-xs font-semibold" style={{ color: lane.resting ? "#948d80" : todayCol }}>
