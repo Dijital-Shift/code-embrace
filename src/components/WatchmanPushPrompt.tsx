@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { getVapidPublicKey } from "@/lib/push.functions";
@@ -26,53 +26,68 @@ function detectPlatform(): Platform {
   return "desktop";
 }
 
+type Perm = "granted" | "default" | "denied" | "unsupported";
+
+async function authHeader(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession();
+  return { Authorization: `Bearer ${data.session?.access_token ?? ""}` };
+}
+
+const gold = "text-[#c9a84c] font-semibold";
+const btn = "px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold disabled:opacity-40";
+
 /**
- * Persistent (non-dismissible) prompt for watchmen. Reappears every session
- * until the app is installed AND push is actually subscribed.
+ * Watchman alert status panel. Checks install, permission, device
+ * registration, and offers a test alert. Collapses to one line once all pass.
  */
 export function WatchmanPushPrompt() {
   const vapidFn = useServerFn(getVapidPublicKey);
   const [ready, setReady] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [pushOn, setPushOn] = useState(false);
+  const [perm, setPerm] = useState<Perm>("default");
+  const [registered, setRegistered] = useState(false);
   const [platform, setPlatform] = useState<Platform>("desktop");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [testMsg, setTestMsg] = useState<string | null>(null);
+  const [testSent, setTestSent] = useState(false);
+  const [open, setOpen] = useState(false);
   const [deferred, setDeferred] = useState<any>(null);
 
+  const check = useCallback(async () => {
+    const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+    const p: Perm = supported ? (Notification.permission as Perm) : "unsupported";
+    setPerm(p);
+    let reg = false;
+    try {
+      if (supported && p === "granted") {
+        const r = await navigator.serviceWorker.getRegistration();
+        const sub = await r?.pushManager.getSubscription();
+        if (sub) {
+          const res = await fetch(`/api/push/test?endpoint=${encodeURIComponent(sub.endpoint)}`, {
+            headers: await authHeader(),
+          });
+          reg = res.ok ? Boolean((await res.json()).registered) : true;
+        }
+      }
+    } catch {
+      reg = false;
+    }
+    setRegistered(reg);
+    setReady(true);
+  }, []);
+
   useEffect(() => {
-    let cancelled = false;
     setPlatform(detectPlatform());
     setInstalled(isStandalone());
-
     const onPrompt = (e: Event) => {
       e.preventDefault();
       setDeferred(e);
     };
     window.addEventListener("beforeinstallprompt", onPrompt);
-
-    (async () => {
-      let on = false;
-      try {
-        if ("serviceWorker" in navigator && "PushManager" in window && Notification.permission === "granted") {
-          const reg = await navigator.serviceWorker.getRegistration();
-          const sub = await reg?.pushManager.getSubscription();
-          on = Boolean(sub);
-        }
-      } catch {
-        on = false;
-      }
-      if (!cancelled) {
-        setPushOn(on);
-        setReady(true);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      window.removeEventListener("beforeinstallprompt", onPrompt);
-    };
-  }, []);
+    void check();
+    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+  }, [check]);
 
   async function enablePush() {
     setBusy(true);
@@ -83,33 +98,57 @@ export function WatchmanPushPrompt() {
       }
       const { key } = await vapidFn();
       if (!key) throw new Error("Alerts aren't configured yet. Try again shortly.");
-
       const reg = await navigator.serviceWorker.register("/sw.js");
       await navigator.serviceWorker.ready;
-
-      const perm = await Notification.requestPermission();
-      if (perm !== "granted") throw new Error("Alerts were blocked. Enable notifications in your browser settings.");
-
+      const p = await Notification.requestPermission();
+      setPerm(p as Perm);
+      if (p !== "granted") throw new Error("Alerts were blocked. Follow the steps below to allow them.");
       const sub =
         (await reg.pushManager.getSubscription()) ??
         (await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: b64ToUint8(key) as BufferSource,
         }));
-
-      const { data } = await supabase.auth.getSession();
       const res = await fetch("/api/push/subscribe", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${data.session?.access_token ?? ""}`,
-        },
+        headers: { "Content-Type": "application/json", ...(await authHeader()) },
         body: JSON.stringify(sub.toJSON()),
       });
-      if (!res.ok) throw new Error("Couldn't register for alerts. Try again.");
-      setPushOn(true);
+      if (!res.ok) throw new Error("Couldn't register this device. Try again.");
+      setRegistered(true);
     } catch (e: any) {
       setErr(e?.message ?? "Something went wrong.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function sendTest() {
+    setBusy(true);
+    setTestMsg(null);
+    try {
+      const r = await navigator.serviceWorker.getRegistration();
+      const sub = await r?.pushManager.getSubscription();
+      if (!sub) {
+        setRegistered(false);
+        throw new Error("This device isn't registered. Tap Reconnect this device.");
+      }
+      const res = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(await authHeader()) },
+        body: JSON.stringify({ endpoint: sub.endpoint }),
+      });
+      const { result } = await res.json().catch(() => ({ result: "failed" }));
+      if (result === "sent") {
+        setTestSent(true);
+        setTestMsg("Test sent. It should arrive within a few seconds.");
+      } else if (result === "rate_limited") setTestMsg("One test per minute. Try again shortly.");
+      else if (result === "not_registered") {
+        setRegistered(false);
+        setTestMsg("This device isn't registered. Tap Reconnect this device.");
+      } else setTestMsg("The test didn't go through. Tap Reconnect this device, then try again.");
+    } catch (e: any) {
+      setTestMsg(e?.message ?? "Something went wrong.");
     } finally {
       setBusy(false);
     }
@@ -124,79 +163,107 @@ export function WatchmanPushPrompt() {
   }
 
   if (!ready) return null;
-  if (installed && pushOn) return null;
+  const allGood = installed && perm === "granted" && registered;
+  const expanded = !allGood || open;
+
+  const Row = ({ ok, label, children }: { ok: boolean; label: string; children?: React.ReactNode }) => (
+    <div className="rounded-lg border border-[#2a2000] p-3">
+      <p className="text-xs font-semibold flex items-center gap-2">
+        <span className={ok ? "text-[#4ade80]" : "text-[#c9a84c]"}>{ok ? "✓" : "!"}</span>
+        <span className="text-[#ded8cc]">{label}</span>
+      </p>
+      {!ok && children && <div className="mt-2 text-xs text-[#ded8cc] leading-relaxed">{children}</div>}
+    </div>
+  );
+
+  if (!expanded) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="mb-6 w-full flex items-center justify-between rounded-xl border border-[#2a2000] px-4 py-3 text-left"
+      >
+        <span className="text-xs text-[#ded8cc]">
+          <span className="text-[#4ade80] mr-2">●</span>Alerts on · this device
+        </span>
+        <span className="text-[0.65rem] text-[#c9a84c] uppercase tracking-wider">Status ›</span>
+      </button>
+    );
+  }
 
   return (
     <div className="mb-6 rounded-xl border border-[#c9a84c]/60 p-5" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-      <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Set the watch</p>
-      <p className="font-semibold text-sm mb-1">You're standing watch for someone.</p>
+      <div className="flex justify-between items-start mb-1">
+        <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold">Alert status</p>
+        {allGood && (
+          <button onClick={() => setOpen(false)} className="text-[0.65rem] text-[#a8a094]">Hide</button>
+        )}
+      </div>
+      <p className="font-semibold text-sm mb-1">{allGood ? "You're on watch." : "You're standing watch for someone."}</p>
       <p className="text-xs text-[#c2af80] leading-relaxed mb-3">
-        Alerts only fire when they breach or go silent two days running. If this app isn't installed with
-        notifications on, you won't hear it — and neither will they.
+        Alerts only fire when they breach or go silent two days running. If this device can't receive them, you
+        won't hear it — and neither will they.
       </p>
 
-      {!installed && (
-        <div className="mb-3 rounded-lg border border-[#2a2000] p-3">
-          <p className="text-[0.65rem] uppercase tracking-wider text-[#a8a094] font-semibold mb-1.5">Step 1 · Install</p>
+      <div className="space-y-2">
+        <Row ok={installed} label={installed ? "App installed" : "App not installed"}>
           {platform === "ios" && (
-            <ol className="text-xs text-[#ded8cc] leading-relaxed list-decimal list-inside space-y-1.5">
-              <li>
-                Make sure you're in <span className="text-[#c9a84c] font-semibold">Safari</span> (tap the Safari
-                compass icon if you're inside another app's preview).
-              </li>
-              <li>
-                Tap the <span className="text-[#c9a84c] font-semibold">Share</span> button — the square with an
-                arrow pointing up, at the bottom of the screen.
-              </li>
-              <li>
-                Scroll down and tap <span className="text-[#c9a84c] font-semibold">Add to Home Screen</span>, then
-                open Kingdom Protocol from your home screen icon.
-              </li>
+            <ol className="list-decimal list-inside space-y-1.5">
+              <li>Make sure you're in <span className={gold}>Safari</span> (tap the Safari compass icon if you're inside another app's preview).</li>
+              <li>Tap the <span className={gold}>Share</span> button — the square with an arrow pointing up, at the bottom of the screen.</li>
+              <li>Scroll down and tap <span className={gold}>Add to Home Screen</span>, then open Kingdom Protocol from your home screen icon.</li>
             </ol>
           )}
           {platform === "android" && (
-            <>
-              <p className="text-xs text-[#ded8cc] leading-relaxed mb-2">
-                In Chrome, tap the <span className="text-[#c9a84c] font-semibold">⋮</span> menu →{" "}
-                <span className="text-[#c9a84c] font-semibold">Add to Home screen</span>.
-              </p>
-              {deferred && (
-                <button onClick={install} className="px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">
-                  Install app
-                </button>
-              )}
-            </>
+            <p className="mb-2">In Chrome, tap the <span className={gold}>⋮</span> menu → <span className={gold}>Add to Home screen</span>.</p>
           )}
           {platform === "desktop" && (
+            <p className="mb-2">Use the install icon in your browser's address bar to install Kingdom Protocol.</p>
+          )}
+          {platform !== "ios" && deferred && <button onClick={install} className={btn}>Install app</button>}
+        </Row>
+
+        <Row
+          ok={perm === "granted"}
+          label={
+            perm === "granted" ? "Notifications allowed" : perm === "denied" ? "Notifications blocked" :
+            perm === "unsupported" ? "This browser can't receive alerts" : "Notifications not turned on"
+          }
+        >
+          {perm === "default" && <button onClick={enablePush} disabled={busy} className={btn}>{busy ? "Enabling…" : "Enable alerts"}</button>}
+          {perm === "unsupported" && (
+            <p>{platform === "ios" ? "Install the app from Safari (above), then open it from your home screen." : "Open this page in Chrome, Edge, or Safari."}</p>
+          )}
+          {perm === "denied" && (
             <>
-              <p className="text-xs text-[#ded8cc] leading-relaxed mb-2">
-                Use the install icon in your browser's address bar to install Kingdom Protocol.
-              </p>
-              {deferred && (
-                <button onClick={install} className="px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold">
-                  Install app
-                </button>
-              )}
+              {platform === "ios" && <p>Open the iPhone <span className={gold}>Settings</span> app → <span className={gold}>Notifications</span> → <span className={gold}>Kingdom Protocol</span> → turn on <span className={gold}>Allow Notifications</span>. Then come back here.</p>}
+              {platform === "android" && <p>Long-press the Kingdom Protocol icon → <span className={gold}>App info</span> → <span className={gold}>Notifications</span> → turn <span className={gold}>On</span>. Then come back here.</p>}
+              {platform === "desktop" && <p>Click the <span className={gold}>padlock</span> next to the web address → <span className={gold}>Notifications</span> → <span className={gold}>Allow</span>, then reload this page.</p>}
+              <button onClick={() => void check()} className="mt-2 text-[#c9a84c] underline">I've changed it — check again</button>
             </>
           )}
-        </div>
-      )}
+        </Row>
 
-      {!pushOn && (
-        <div className="rounded-lg border border-[#2a2000] p-3">
-          <p className="text-[0.65rem] uppercase tracking-wider text-[#a8a094] font-semibold mb-1.5">
-            {installed ? "Turn on alerts" : "Step 2 · Turn on alerts"}
-          </p>
-          <button
-            onClick={enablePush}
-            disabled={busy}
-            className="px-5 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold disabled:opacity-40"
-          >
-            {busy ? "Enabling…" : "Enable alerts"}
-          </button>
-          {err && <p className="text-xs text-[#f87171] mt-2">{err}</p>}
-        </div>
-      )}
+        {perm === "granted" && (
+          <Row ok={registered} label={registered ? "This device registered" : "This device isn't registered"}>
+            <button onClick={enablePush} disabled={busy} className={btn}>{busy ? "Connecting…" : "Reconnect this device"}</button>
+          </Row>
+        )}
+
+        {perm === "granted" && registered && (
+          <div className="rounded-lg border border-[#2a2000] p-3">
+            <p className="text-xs font-semibold text-[#ded8cc] mb-2">Test alert</p>
+            <button onClick={sendTest} disabled={busy} className={btn}>{busy ? "Sending…" : "Send test alert"}</button>
+            {testMsg && <p className="text-xs text-[#c2af80] mt-2">{testMsg}</p>}
+            {testSent && (
+              <p className="text-[0.7rem] text-[#8f887c] mt-2 leading-relaxed">
+                Nothing showed up? Check that Focus / Do Not Disturb is off, and that Kingdom Protocol isn't set to
+                deliver quietly in your notification settings.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+      {err && <p className="text-xs text-[#f87171] mt-2">{err}</p>}
     </div>
   );
 }
