@@ -8,7 +8,7 @@ import { AccessGate } from "@/components/AccessBanner";
 import { getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
-import { ScriptureFields } from "@/components/ScriptureFields";
+import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
 
 type LaneNewSearch = { template?: string };
 
