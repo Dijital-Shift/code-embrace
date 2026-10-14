@@ -62,7 +62,7 @@ export const updateProfile = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const reminder_utc_hour = reminderUtcHour(data.bedtime, data.timezone);
-    const baseUpdate: Record<string, unknown> = {
+    const baseUpdate: any = {
       first_name: data.first_name || null, last_name: data.last_name || null,
       phone: data.phone || null, bedtime: data.bedtime, timezone: data.timezone, reminder_utc_hour,
     };
