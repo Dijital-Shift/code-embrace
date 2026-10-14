@@ -158,8 +158,7 @@ function LaneDetail() {
   const scriptures = (lane.support_scripture ?? []).filter(Boolean);
   const hasDetails =
     Boolean(lane.notes) ||
-    Boolean(lane.ends_at) ||
-    /^send scripture/i.test(lane.title ?? "");
+    Boolean(lane.ends_at);
 
 
   
@@ -198,7 +197,7 @@ function LaneDetail() {
 
       <div className="mb-7">
         <div className="flex items-center gap-2 flex-wrap mt-5">
-          <Pill label={isAvoid ? "Avoid" : "Complete"} bg={type.bg} fg={type.fg} border={type.border} />
+          <Pill label={isAvoid ? "Flee" : "Pursue"} bg={type.bg} fg={type.fg} border={type.border} />
           <Pill label={lane.status} bg="#12100a" fg={status.fg} border={status.border} dot={status.dot} />
         </div>
 
@@ -207,6 +206,12 @@ function LaneDetail() {
         </h1>
         {lane.description && (
           <p className="text-xs sm:text-sm text-[#b8b0a4] leading-relaxed mt-2">{lane.description}</p>
+        )}
+        {/^send scripture/i.test(lane.title ?? "") && (
+          <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 mt-3 py-2 text-sm font-semibold text-primary no-underline">
+            SendScripture.xyz <span aria-hidden="true">↗</span>
+          </a>
         )}
         {scriptures.length > 0 && (
           <div className="mt-4 flex flex-col gap-2 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
@@ -294,12 +299,6 @@ function LaneDetail() {
       {hasDetails && (
         <div className="kp-card mt-6 p-4">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Notes & details</p>
-          {/^send scripture/i.test(lane.title ?? "") && (
-            <p className="text-xs text-[#a8a094] mt-2">
-              Easy way to do this:{" "}
-              <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
-            </p>
-          )}
           {lane.notes && (
             <div className="mt-2 pl-3 border-l-2 border-[#c9a84c]/60">
               <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>

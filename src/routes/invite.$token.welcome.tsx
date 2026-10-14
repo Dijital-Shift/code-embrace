@@ -7,7 +7,14 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/invite/$token/welcome")({
-  head: () => ({ meta: [{ title: "You're a Watchman — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "You're a Watchman — Kingdom Protocol" },
+    { name: "description", content: "Begin watching a Kingdom Protocol Path." },
+    { property: "og:title", content: "You're a Watchman — Kingdom Protocol" },
+    { property: "og:description", content: "Begin watching a Kingdom Protocol Path." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: Welcome,
 });
 

@@ -8,6 +8,10 @@ export const Route = createFileRoute("/paths/library")({
   head: () => ({
     meta: [
       { title: "Path Library — Kingdom Protocol" },
+      { property: "og:title", content: "Path Library — Kingdom Protocol" },
+      { property: "og:description", content: "Scripture-backed Pursue and Flee Paths for your daily walk." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:
@@ -33,7 +37,7 @@ function Library() {
       </div>
       <p className="text-sm text-[#b8b0a4] mb-8 max-w-xl">
         Concrete habits and behaviors drawn straight from Scripture. Pick a path to walk —
-        avoid what He warns against, complete what He calls you to.
+        flee what He warns against, pursue what He calls you to.
       </p>
 
       <PathCategoryAccordion

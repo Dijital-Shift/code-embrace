@@ -20,7 +20,14 @@ async function loadCheckin(call: () => Promise<any>) {
 }
 
 export const Route = createFileRoute("/checkin")({
-  head: () => ({ meta: [{ title: "Check-In — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Check-In — Kingdom Protocol" },
+    { name: "description", content: "Record today’s accountability on your Kingdom Protocol Paths." },
+    { property: "og:title", content: "Check-In — Kingdom Protocol" },
+    { property: "og:description", content: "Record today’s accountability on your Kingdom Protocol Paths." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => {
     if (typeof window === "undefined") return;
     void context.queryClient.prefetchQuery({ queryKey: ["checkin"], queryFn: () => loadCheckin(() => getCheckinPage()) }).catch(() => {});

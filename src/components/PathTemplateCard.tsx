@@ -23,7 +23,7 @@ export function PathTemplateCard({
           className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border"
           style={{ background: chipBg, color: chipFg, borderColor: chipBorder }}
         >
-          {isAvoid ? "Avoid" : "Complete"}
+          {isAvoid ? "Flee" : "Pursue"}
         </span>
       </div>
       <p className="text-xs text-[#b8b0a4] mb-3 leading-relaxed">{template.description}</p>

@@ -19,7 +19,14 @@ import { TIMEZONE_OPTIONS } from "@/lib/localday";
 
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({ meta: [{ title: "Settings — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Settings — Kingdom Protocol" },
+    { name: "description", content: "Manage your Kingdom Protocol profile, alerts, and account." },
+    { property: "og:title", content: "Settings — Kingdom Protocol" },
+    { property: "og:description", content: "Manage your Kingdom Protocol profile, alerts, and account." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => {
     if (typeof window === "undefined") return;
     void context.queryClient.prefetchQuery({ queryKey: ["settings"], queryFn: () => getSettings() }).catch(() => {});

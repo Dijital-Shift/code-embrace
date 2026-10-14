@@ -4,6 +4,14 @@ export const Route = createFileRoute("/checkout/return")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({
     session_id: typeof search.session_id === "string" ? search.session_id : undefined,
   }),
+  head: () => ({ meta: [
+    { title: "Payment return — Kingdom Protocol" },
+    { name: "description", content: "Return to your Kingdom Protocol walk after checkout." },
+    { property: "og:title", content: "Payment return — Kingdom Protocol" },
+    { property: "og:description", content: "Return to your walk after checkout." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: CheckoutReturn,
 });
 

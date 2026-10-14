@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -7,7 +7,14 @@ import { claimReferral } from "@/lib/referrals.functions";
 import { setUpdateBlocked } from "@/lib/registerServiceWorker";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Sign in — Kingdom Protocol" },
+    { name: "description", content: "Sign in or start your Kingdom Protocol walk with a six-digit email code." },
+    { property: "og:title", content: "Sign in — Kingdom Protocol" },
+    { property: "og:description", content: "Sign in or start your accountability walk." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: Login,
 });
 
@@ -23,6 +30,36 @@ function Login() {
   const [busy, setBusy] = useState(false);
   const [verified, setVerified] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [draftReady, setDraftReady] = useState(false);
+  const verifying = useRef(false);
+
+  // Only adjust when the keyboard actually obscures the focused field.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const align = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const field = document.activeElement;
+        if (!(field instanceof HTMLInputElement)) return;
+        const viewport = window.visualViewport;
+        const top = viewport?.offsetTop ?? 0;
+        const bottom = top + (viewport?.height ?? window.innerHeight);
+        const rect = field.getBoundingClientRect();
+        if (rect.top < top + 20 || rect.bottom > bottom - 24) {
+          window.scrollBy({ top: rect.top - top - Math.max(24, ((bottom - top) - rect.height) / 2), behavior: "instant" });
+        }
+      }, 160);
+    };
+    document.addEventListener("focusin", align);
+    window.visualViewport?.addEventListener("resize", align);
+    window.visualViewport?.addEventListener("scroll", align);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("focusin", align);
+      window.visualViewport?.removeEventListener("resize", align);
+      window.visualViewport?.removeEventListener("scroll", align);
+    };
+  }, []);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -40,13 +77,15 @@ function Login() {
         if (d.step === "code" && Date.now() - (d.at || 0) < 60 * 60 * 1000) setStep("code");
       }
     } catch {}
+    setDraftReady(true);
   }, []);
   useEffect(() => {
+    if (!draftReady) return;
     try {
       if (verified) sessionStorage.removeItem("kp_login_draft");
       else sessionStorage.setItem("kp_login_draft", JSON.stringify({ email, step, at: Date.now() }));
     } catch {}
-  }, [email, step, verified]);
+  }, [email, step, verified, draftReady]);
 
   // Never let an app update reload the page while someone is signing in.
   useEffect(() => {
@@ -97,14 +136,16 @@ function Login() {
     await requestCode(false);
   }
 
-  async function verify(e: React.FormEvent) {
-    e.preventDefault();
+  async function verify(code = token) {
+    if (verifying.current || busy || verified || !/^\d{6}$/.test(code)) return;
+    verifying.current = true;
     setErr(null);
     setNote(null);
     setBusy(true);
+    try {
     const { data, error } = await supabase.auth.verifyOtp({
       email: email.trim().toLowerCase(),
-      token: token.trim(),
+      token: code,
       type: "email",
     });
     if (error || !data.user || !data.session) {
@@ -140,11 +181,17 @@ function Login() {
     setTimeout(() => {
       navigate({ to: "/dashboard", replace: true });
     }, 350);
+    } catch {
+      setErr("Network problem — the code wasn't checked. Check your connection and try again.");
+    } finally {
+      verifying.current = false;
+      setBusy(false);
+    }
   }
 
 
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center px-6" style={{ background: "#0a0800" }}>
+    <main className="kp-login min-h-[100svh] flex items-start sm:items-center justify-center px-6 py-8 sm:py-12 bg-background">
       <div className="w-full max-w-sm flex flex-col items-center">
         <img src="/kingdom-protocol-logo.png" alt="Kingdom Protocol" className="w-40 block" style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.3))" }} />
         {step === "email" && (
@@ -211,11 +258,15 @@ function Login() {
             <form onSubmit={sendOtp} className="w-full flex flex-col gap-3">
               <input
                 type="email"
+                aria-label="Email"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
                 required
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none"
+                className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-base scroll-my-8"
               />
               {err && <p className="text-red-400 text-xs">{err}</p>}
               <button disabled={busy} className="py-3 bg-[#161210] border border-[#222] text-white rounded-md font-semibold">
@@ -224,9 +275,10 @@ function Login() {
             </form>
           </>
         ) : (
-          <form onSubmit={verify} className="w-full flex flex-col gap-3">
+          <form onSubmit={(event) => { event.preventDefault(); void verify(); }} className="w-full flex flex-col gap-3">
             <input
               type="text"
+              aria-label="Sign-in code"
               required
               autoFocus
               minLength={6}
@@ -236,9 +288,13 @@ function Login() {
               pattern="\d{6}"
               placeholder="Enter code"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              onChange={(e) => {
+                const code = e.target.value.replace(/\D/g, "").slice(0, 6);
+                setToken(code);
+                if (code.length === 6) void verify(code);
+              }}
 
-              className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
+              className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center text-xl scroll-my-8"
             />
             <p className="text-[0.7rem] text-[#9e968a] text-center">
               The code expires in 1 hour and can only be used once.
@@ -260,7 +316,7 @@ function Login() {
             >
               {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
             </button>
-            <button type="button" onClick={() => setStep("email")} className="text-[#9e968a] text-xs">
+            <button type="button" disabled={busy || verified} onClick={() => setStep("email")} className="text-[#9e968a] text-xs">
               Use a different email
             </button>
 

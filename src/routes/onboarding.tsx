@@ -5,7 +5,14 @@ import { saveOnboarding } from "@/lib/api.functions";
 import { AuthGate } from "@/components/AuthGate";
 
 export const Route = createFileRoute("/onboarding")({
-  head: () => ({ meta: [{ title: "Welcome — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Welcome — Kingdom Protocol" },
+    { name: "description", content: "Set up your profile and begin your Kingdom Protocol walk." },
+    { property: "og:title", content: "Welcome — Kingdom Protocol" },
+    { property: "og:description", content: "Set up your profile and begin your Kingdom Protocol walk." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => <AuthGate><Onboarding /></AuthGate>,
 });
 
