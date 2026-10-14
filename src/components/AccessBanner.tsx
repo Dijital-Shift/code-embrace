@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAccess } from "@/lib/access.functions";
 import { useAuth } from "@/lib/auth";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { createPortalSession } from "@/utils/payments.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 const GOLD = "#c9a84c";
 
@@ -241,4 +243,81 @@ export function AccessGate({ children, action }: { children: React.ReactNode; ac
   if (isLoading || !data) return <>{children}</>;
   if (data.hasAccess) return <>{children}</>;
   return <AccessBanner />;
+}
+
+/** Settings → Plan: always-available upgrade, regardless of trial day. */
+export function PlanSection() {
+  const { data } = useAccessState();
+  const portalFn = useServerFn(createPortalSession);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  if (!data) return null;
+
+  async function manage() {
+    setErr(null); setBusy(true);
+    try {
+      const r = await portalFn({ data: { returnUrl: window.location.href, environment: getStripeEnvironment() } });
+      if ("error" in r) throw new Error(r.error);
+      window.open(r.url, "_blank");
+    } catch (e: any) {
+      setErr(e?.message ?? "Couldn't open billing.");
+    } finally { setBusy(false); }
+  }
+
+  let title = "";
+  let sub = "";
+  if (data.isLifetime) { title = "Lifetime"; sub = "You're set for life. Nothing more to pay."; }
+  else if (data.planLockedIn) {
+    title = "Monthly · $4.99";
+    sub = data.firstChargeAt ? `Next payment ${formatDay(data.firstChargeAt)}.` : "Active.";
+  } else if (data.trialActive) {
+    title = "Free month";
+    sub = `${data.daysLeft} day${data.daysLeft === 1 ? "" : "s"} left. Lock in now — monthly keeps every free day left; first charge waits until your free month ends.`;
+  } else { title = "Resting"; sub = "Your record is intact. Pick a plan to resume."; }
+
+  return (
+    <div className="mt-10">
+      <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-[0.18em] font-semibold mb-3 px-1">Plan</p>
+      <div className="kp-card p-5">
+        <p className="text-base font-semibold" style={{ color: GOLD }}>{title}</p>
+        <p className="text-xs text-[#a8a094] mt-1 leading-relaxed">{sub}</p>
+        {!data.isLifetime && !data.planLockedIn && <PlanButtons premium deferToTrialEnd={data.trialActive} />}
+        {data.planLockedIn && !data.isLifetime && (
+          <>
+            <PlanButtonsLifetimeOnly />
+            <button type="button" disabled={busy} onClick={manage} className="mt-3 w-full text-xs text-[#c9a84c] underline bg-transparent border-0 py-1">
+              {busy ? "Opening…" : "Manage billing"}
+            </button>
+          </>
+        )}
+        {err && <p className="text-xs text-red-400 mt-2">{err}</p>}
+      </div>
+    </div>
+  );
+}
+
+function PlanButtonsLifetimeOnly() {
+  const { user } = useAuth();
+  const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => openCheckout({ priceId: "kp_lifetime_once", customerEmail: user?.email, userId: user?.id, returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}` })}
+        className="kp-lifetime-btn mt-4 w-full rounded-xl px-5 py-3.5 text-[#0a0800] font-bold text-sm"
+      >
+        Upgrade to Lifetime · $99
+      </button>
+      {isOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
+          <div className="w-full max-w-2xl mt-8 bg-white rounded-2xl overflow-hidden">
+            <div className="flex justify-end p-2">
+              <button type="button" onClick={closeCheckout} className="text-gray-600 hover:text-black px-3 py-1 text-sm font-medium">Close</button>
+            </div>
+            {checkoutElement}
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

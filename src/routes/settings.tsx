@@ -17,6 +17,7 @@ import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { formatPhone } from "@/lib/phone";
 import { TIMEZONE_GROUPS } from "@/lib/localday";
+import { PlanSection } from "@/components/AccessBanner";
 
 
 export const Route = createFileRoute("/settings")({
@@ -188,6 +189,8 @@ function Settings() {
           {m.isPending ? "Saving…" : "Save changes"}
         </button>
       </form>
+
+      <PlanSection />
 
       {ref && "code" in ref && (
         <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
