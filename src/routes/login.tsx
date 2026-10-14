@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { claimReferral } from "@/lib/referrals.functions";
+import { setUpdateBlocked } from "@/lib/registerServiceWorker";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Kingdom Protocol" }] }),
@@ -28,6 +29,31 @@ function Login() {
     const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [cooldown]);
+
+  // Restore an in-progress sign-in (e.g. after switching to the mail app).
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("kp_login_draft");
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d.email) setEmail(d.email);
+        if (d.step === "code" && Date.now() - (d.at || 0) < 60 * 60 * 1000) setStep("code");
+      }
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try {
+      if (verified) sessionStorage.removeItem("kp_login_draft");
+      else sessionStorage.setItem("kp_login_draft", JSON.stringify({ email, step, at: Date.now() }));
+    } catch {}
+  }, [email, step, verified]);
+
+  // Never let an app update reload the page while someone is signing in.
+  useEffect(() => {
+    const active = !verified && (step === "code" || email.length > 0);
+    setUpdateBlocked("login", active);
+    return () => setUpdateBlocked("login", false);
+  }, [email, step, verified]);
 
   async function tryClaim() {
     try {

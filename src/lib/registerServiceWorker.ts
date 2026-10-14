@@ -114,11 +114,14 @@ const scheduleSilentApply = () => {
   if (typeof window === "undefined") return;
   if (!updateAvailable) return;
   if (document.visibilityState !== "hidden") return;
+  // Never swap builds mid-sign-in or mid-form, even in the background.
+  if (blockReasons.size > 0) return;
   cancelPendingHiddenApply();
   applyAppUpdate({ silent: true });
   hiddenApplyTimer = window.setTimeout(() => {
     hiddenApplyTimer = undefined;
     if (document.visibilityState !== "hidden") return;
+    if (blockReasons.size > 0) return;
     applyAppUpdate({ silent: true });
   }, HIDDEN_SETTLE_MS);
 };
