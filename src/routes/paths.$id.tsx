@@ -158,6 +158,8 @@ function LaneDetail() {
   const type = TYPE_PILL[isAvoid ? "avoid" : "complete"];
   const status = STATUS_META[lane.status] ?? STATUS_META.paused;
   const scriptures = (lane.support_scripture ?? []).filter(Boolean);
+  // A path whose end date has passed is a finished race, not a set-aside one.
+  const finished = !!lane.ends_at && lane.ends_at < new Date().toLocaleDateString("en-CA");
   const hasDetails =
     Boolean(lane.notes) ||
     Boolean(lane.ends_at);
@@ -200,8 +202,16 @@ function LaneDetail() {
       <div className="mb-7">
         <div className="flex items-center gap-2 flex-wrap mt-5">
           <Pill label={isAvoid ? "Flee" : "Pursue"} bg={type.bg} fg={type.fg} border={type.border} />
-          <Pill label={lane.status} bg="#12100a" fg={status.fg} border={status.border} dot={status.dot} />
+          {finished
+            ? <Pill label="✦ Completed" bg="#1c1608" fg="#e5c66a" border="#c9a84c" />
+            : <Pill label={lane.status} bg="#12100a" fg={status.fg} border={status.border} dot={status.dot} />}
         </div>
+        {finished && (
+          <div className="mt-4 p-4 rounded-xl border border-[#c9a84c]/50" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[#c9a84c] font-semibold mb-1">Race finished · {lane.ends_at}</p>
+            <p className="text-sm text-[#e8dfc4] leading-relaxed">"I have fought a good fight, I have finished my course, I have kept the faith." — 2 Timothy 4:7</p>
+          </div>
+        )}
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug mt-3">
           {lane.title}
