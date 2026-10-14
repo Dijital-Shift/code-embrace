@@ -60,7 +60,7 @@ function Pill({
 }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] leading-none border"
+      className="inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] leading-none border"
       style={{ background: bg, color: fg, borderColor: border }}
     >
       {dot && <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: dot }} />}
@@ -176,7 +176,7 @@ function LaneDetail() {
       >
         <Link
           to="/paths"
-          className="inline-flex items-center gap-1 text-[0.68rem] uppercase tracking-[0.18em] font-semibold text-[#8a8276] no-underline transition-colors hover:text-[#c9a84c]"
+          className="inline-flex items-center gap-1 text-[0.8rem] uppercase tracking-[0.18em] font-semibold text-[#8a8276] no-underline transition-colors hover:text-[#c9a84c]"
         >
           <svg
             width="13"
@@ -239,20 +239,20 @@ function LaneDetail() {
         <div className="grid grid-cols-2 divide-x divide-[#2a2518]">
           <div className="text-center">
             <div className="text-5xl font-extrabold text-[#4ade80] leading-none" style={{ textShadow: "0 0 24px #4ade8040" }}>{data?.standing ?? 0}</div>
-            <div className="text-[0.62rem] uppercase tracking-[0.2em] text-[#4ade80] mt-2">Days Standing</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-[#4ade80] mt-2">Days Standing</div>
           </div>
           <div className="text-center">
             <div className="text-5xl font-extrabold text-[#f87171] leading-none" style={{ textShadow: "0 0 24px #f8717140" }}>{data?.fallen ?? 0}</div>
-            <div className="text-[0.62rem] uppercase tracking-[0.2em] text-[#f87171] mt-2">Days Fallen</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-[#f87171] mt-2">Days Fallen</div>
           </div>
         </div>
         {(data?.fallen ?? 0) > 0 && (
-          <p className="text-center text-[0.7rem] text-[#a8a094] mt-3">
+          <p className="text-center text-[0.8rem] text-[#a8a094] mt-3">
             {data?.breached ?? 0} breach{(data?.breached ?? 0) === 1 ? "" : "es"} · {data?.missed ?? 0} silent
           </p>
         )}
         {lane.created_at && (
-          <p className="text-center text-[0.68rem] text-[#8a8276] mt-2">
+          <p className="text-center text-[0.8rem] text-[#8a8276] mt-2">
             Since {new Date(lane.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {(data?.standing ?? 0) + (data?.fallen ?? 0)} days walked
           </p>
         )}
@@ -260,11 +260,11 @@ function LaneDetail() {
           <p className="text-xs italic text-[#c9a84c]/90 leading-relaxed">
             “For a just man falleth seven times, and riseth up again.”
           </p>
-          <p className="text-[0.6rem] uppercase tracking-[0.16em] text-[#8a8276] mt-1.5">Proverbs 24:16 (KJV)</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-[#8a8276] mt-1.5">Proverbs 24:16 (KJV)</p>
         </div>
       </div>
 
-      <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Last 14 Days</p>
+      <p className="text-xs text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Last 14 Days</p>
       <LineageTimeline checkins={checkins} words={data?.encouragements ?? []}
         startDate={data?.historyStartDate ?? lane.created_at.slice(0, 10)}
         today={data?.historyToday ?? lane.created_at.slice(0, 10)}
@@ -272,7 +272,7 @@ function LaneDetail() {
 
       {(data?.encouragements ?? []).length > 0 && (
         <div className="mt-6">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Encouragements received</p>
+          <p className="text-xs text-[#a8a094] uppercase tracking-wider font-semibold mb-2">Encouragements received</p>
           <div className="flex flex-col gap-1.5">
             {(data?.encouragements ?? []).slice(0, showAllWords ? undefined : 5).map((e: any) => (
               <EncouragementCard
@@ -288,7 +288,7 @@ function LaneDetail() {
             <button
               type="button"
               onClick={() => setShowAllWords((v) => !v)}
-              className="mt-2 bg-transparent border-0 p-0 text-[0.72rem] font-semibold text-[#c9a84c] cursor-pointer"
+              className="mt-2 bg-transparent border-0 p-0 text-[0.8rem] font-semibold text-[#c9a84c] cursor-pointer"
             >
               {showAllWords ? "Show fewer" : `Show earlier (${(data?.encouragements ?? []).length - 5})`}
             </button>
@@ -298,10 +298,10 @@ function LaneDetail() {
 
       {hasDetails && (
         <div className="kp-card mt-6 p-4">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Notes & details</p>
+          <p className="text-xs text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Notes & details</p>
           {lane.notes && (
             <div className="mt-2 pl-3 border-l-2 border-[#c9a84c]/60">
-              <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
+              <p className="text-xs uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
               <p className="text-sm text-[#e8dfc4] whitespace-pre-wrap">{lane.notes}</p>
             </div>
           )}
@@ -330,14 +330,33 @@ function LaneDetail() {
         {canDelete && (
           <button
             disabled={del.isPending}
-            onClick={() => { setErr(null); del.mutate(); }}
+            onClick={() => { setErr(null); setPending("delete"); }}
             className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]"
             style={{ background: "#1a0a0a" }}
           >{del.isPending ? "Deleting…" : "Delete"}</button>
         )}
       </div>
 
-      {pending && (
+      {pending === "delete" && (
+        <div className="mt-4 p-5 rounded-xl border border-[#5a1f1f]" style={{ background: "#1a0a0a" }}>
+          <p className="text-base font-semibold text-[#f3e6c4]">Delete this Path?</p>
+          <p className="text-sm text-[#c2af80] leading-relaxed mt-1.5">
+            This permanently removes “{lane.title}”, its notes, and its walk history. This cannot be undone.
+          </p>
+          <div className="flex gap-2 mt-4">
+            <button
+              disabled={del.isPending}
+              onClick={() => del.mutate()}
+              className="px-4 py-2.5 rounded-md text-sm font-bold bg-[#b91c1c] text-white"
+            >{del.isPending ? "Deleting…" : "Delete Path"}</button>
+            <button onClick={() => setPending(null)} className="px-4 py-2.5 rounded-md text-sm font-semibold border border-[#2a2518] text-[#ded8cc] bg-transparent">Keep Path</button>
+          </div>
+        </div>
+      )}
+      <div className="hidden">
+      </div>
+
+      {pending && pending !== "delete" && (
         <div
           key={pending}
           ref={(el) => {
@@ -365,7 +384,7 @@ function LaneDetail() {
             <button
               disabled={reason.trim().length < 5 || setStatus.isPending}
               onClick={() => {
-                if (pending !== "delete") setStatus.mutate({ status: pending, reason: reason.trim() });
+                setStatus.mutate({ status: pending, reason: reason.trim() });
               }}
               className="px-4 py-2 rounded-md text-xs font-bold"
               style={{ background: reason.trim().length >= 5 ? "#c9a84c" : "#2a2518", color: reason.trim().length >= 5 ? "#0a0800" : "#7d7668" }}
@@ -440,7 +459,7 @@ function EncouragementCard({
             {open ? enc.from_name : enc.body}
           </span>
         </div>
-        <span className="text-[0.65rem] text-[#a8a094] shrink-0">
+        <span className="text-xs text-[#a8a094] shrink-0">
           {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
         </span>
       </button>
@@ -448,10 +467,10 @@ function EncouragementCard({
       {open && (
         <div className="px-3 pb-3">
           {enc.context && (
-            <p className="text-[0.65rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
+            <p className="text-xs uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">{enc.context}</p>
           )}
           <p className="text-sm text-[#e8dfc4] leading-relaxed whitespace-pre-wrap">{enc.body}</p>
-          <p className="text-[0.7rem] text-[#a8a094] mt-1.5">
+          <p className="text-[0.8rem] text-[#a8a094] mt-1.5">
             {enc.from_name} ·{" "}
             {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
           </p>
@@ -559,7 +578,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
   return (
     <div className="kp-card mt-6 p-5">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold">Watchmen</p>
+        <p className="text-xs text-[#a8a094] uppercase tracking-wider font-semibold">Watchmen</p>
         <span className="text-xs text-[#a8a094]">{slotCount}/2</span>
       </div>
 
@@ -584,7 +603,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs text-[#c9a84c]">Invite pending · expires in {hoursLeft(inv.expires_at)}</p>
-              <button onClick={() => revoke(inv.invite_id)} className="text-[0.65rem] text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
+              <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
             <div className="flex items-center gap-2">
               <input readOnly value={inviteText(url)} className="flex-1 px-2 py-1.5 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
@@ -622,7 +641,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
       )}
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
-      <p className="text-[0.7rem] text-[#9e968a] mt-3 leading-relaxed">
+      <p className="text-[0.8rem] text-[#9e968a] mt-3 leading-relaxed">
         Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. Links expire in 48 hours.
       </p>
     </div>
@@ -652,7 +671,7 @@ function StatusHelp({ kind }: { kind: "paused" | "archived" }) {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={`What does ${kind === "paused" ? "pause" : "archive"} do?`}
-          className="!min-h-0 w-5 h-5 rounded-full border text-[0.65rem] font-bold leading-none flex items-center justify-center"
+          className="!min-h-0 w-5 h-5 rounded-full border text-xs font-bold leading-none flex items-center justify-center"
           style={{ borderColor: open ? "#c9a84c" : "#5a4a22", color: open ? "#0a0800" : "#c9a84c", background: open ? "#c9a84c" : "transparent" }}
         >
           ?

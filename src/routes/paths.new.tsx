@@ -8,7 +8,7 @@ import { AccessGate } from "@/components/AccessBanner";
 import { getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
-import { ScriptureFields } from "@/components/ScriptureFields";
+import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
 
 type LaneNewSearch = { template?: string };
 
@@ -171,21 +171,26 @@ function NewLane() {
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ded8cc]">Path Type</label>
             <div className="flex gap-3">
-              {(["avoid", "complete"] as const).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setLaneType(t)}
-                  className="flex-1 flex flex-col gap-1 p-3.5 rounded-md text-left"
-                  style={{ border: `1px solid ${laneType === t ? "#fff" : "#222"}`, background: laneType === t ? "#1e1a10" : "#161210", color: laneType === t ? "#fff" : "#666" }}
-                >
-                  <strong>{t === "avoid" ? "Flee" : "Pursue"}</strong>
-                  <span className="text-[0.72rem] font-normal text-[#9e968a]">
-                    {t === "avoid" ? "Something you don't want to do" : "Something you want to do"}
-                  </span>
-                </button>
-              ))}
+              {(["avoid", "complete"] as const).map((t) => {
+                const locked = !!tpl && laneType !== t;
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    disabled={!!tpl}
+                    onClick={() => setLaneType(t)}
+                    className="flex-1 flex flex-col gap-1 p-3.5 rounded-md text-left disabled:cursor-not-allowed"
+                    style={{ border: `1px solid ${laneType === t ? "#fff" : "#222"}`, background: laneType === t ? "#1e1a10" : "#161210", color: laneType === t ? "#fff" : "#666", opacity: locked ? 0.4 : 1 }}
+                  >
+                    <strong>{t === "avoid" ? "Flee" : "Pursue"}</strong>
+                    <span className="text-[0.8rem] font-normal text-[#9e968a]">
+                      {t === "avoid" ? "Something you don't want to do" : "Something you want to do"}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
+            {tpl && <p className="text-[0.8rem] text-[#9e968a]">Set by the library path. To choose your own, clear the template.</p>}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -196,37 +201,23 @@ function NewLane() {
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ded8cc]">Description <span className="text-[#948d80]">(optional)</span></label>
-            <textarea maxLength={300} rows={2} value={description} onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add context or rules..." className={inputCls + " resize-none"} />
+            <AutoTextarea maxLength={300} value={description} onChange={setDescription} placeholder="Add context or rules..." />
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ded8cc]">
               Notes <span className="text-[#948d80]">(optional — your watchman will see these)</span>
             </label>
-            <textarea
-              maxLength={500}
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. 'No fried foods', 'Ends Friday 6pm', 'Liquids only'"
-              className={inputCls + " resize-none"}
-            />
-            <p className="text-[0.7rem] text-[#9e968a]">Honest context helps your watchman walk this with you, not guess at it.</p>
+            <AutoTextarea maxLength={500} value={notes} onChange={setNotes} placeholder="e.g. 'No fried foods', 'Ends Friday 6pm', 'Liquids only'" />
+            <p className="text-[0.8rem] text-[#9e968a]">Honest context helps your watchman walk this with you, not guess at it.</p>
           </div>
 
           <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
-            <input
-              type="date"
-              value={endsAt}
-              min={new Date().toISOString().split("T")[0]}
-              onChange={(e) => setEndsAt(e.target.value)}
-              className={inputCls}
-            />
-            <p className="text-[0.7rem] text-[#9e968a]">Leave empty for ongoing. Set a date for a fast or any path with a finish line.</p>
+            <DateField value={endsAt} onChange={setEndsAt} min={new Date().toISOString().split("T")[0]} />
+            <p className="text-[0.8rem] text-[#9e968a]">Leave empty for ongoing. Set a date for a fast or any path with a finish line.</p>
           </div>
 
 

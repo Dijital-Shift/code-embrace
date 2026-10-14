@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getLane, updateLane } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
-import { ScriptureFields } from "@/components/ScriptureFields";
+import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
 
 export const Route = createFileRoute("/paths/edit/$id")({
   head: () => ({ meta: [
@@ -49,7 +49,7 @@ function EditPath() {
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   if (!data?.lane) return <p>Not found.</p>;
 
-  const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full";
+  const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full text-base";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,16 +83,16 @@ function EditPath() {
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Description <span className="text-[#948d80]">(optional)</span></label>
-          <textarea maxLength={300} rows={2} value={description} onChange={(e) => setDescription(e.target.value)} className={inputCls + " resize-none"} />
+          <AutoTextarea maxLength={300} value={description} onChange={setDescription} />
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Notes <span className="text-[#948d80]">(your watchman sees these)</span></label>
-          <textarea maxLength={500} rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} className={inputCls + " resize-none"} />
+          <AutoTextarea maxLength={500} value={notes} onChange={setNotes} />
         </div>
         <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
-          <input type="date" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} className={inputCls} />
+          <DateField value={endsAt} onChange={setEndsAt} />
         </div>
         {err && <p className="text-red-400 text-sm">{err}</p>}
         <button disabled={busy} className="py-3.5 bg-white text-black rounded-md font-semibold">{busy ? "Saving…" : "Save changes"}</button>
