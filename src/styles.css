@@ -148,6 +148,9 @@ html.kp-splash body { overflow: hidden; }
 }
 
 .kp-cat-sticky { position: sticky; top: 0; }
+.kp-login { overflow-anchor: none; }
+.kp-login input { font-size: 16px; }
+.reactEasyCrop_CropArea { border-color: var(--color-primary) !important; }
 @media (max-width: 600px) {
   .kp-cat-sticky { top: calc(50px + env(safe-area-inset-top, 0px)); }
 }

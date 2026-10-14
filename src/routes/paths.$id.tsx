@@ -159,7 +159,7 @@ function LaneDetail() {
   const hasDetails =
     Boolean(lane.notes) ||
     Boolean(lane.ends_at) ||
-    /^send scripture/i.test(lane.title ?? "");
+    false;
 
 
   
@@ -207,6 +207,12 @@ function LaneDetail() {
         </h1>
         {lane.description && (
           <p className="text-xs sm:text-sm text-[#b8b0a4] leading-relaxed mt-2">{lane.description}</p>
+        )}
+        {/^send scripture/i.test(lane.title ?? "") && (
+          <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 mt-3 py-2 text-sm font-semibold text-primary no-underline">
+            SendScripture.xyz <span aria-hidden="true">↗</span>
+          </a>
         )}
         {scriptures.length > 0 && (
           <div className="mt-4 flex flex-col gap-2 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
