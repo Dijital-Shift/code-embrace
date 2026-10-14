@@ -384,7 +384,7 @@ function LaneDetail() {
             <button
               disabled={reason.trim().length < 5 || setStatus.isPending}
               onClick={() => {
-                if (pending !== "delete") setStatus.mutate({ status: pending, reason: reason.trim() });
+                setStatus.mutate({ status: pending, reason: reason.trim() });
               }}
               className="px-4 py-2 rounded-md text-xs font-bold"
               style={{ background: reason.trim().length >= 5 ? "#c9a84c" : "#2a2518", color: reason.trim().length >= 5 ? "#0a0800" : "#7d7668" }}
