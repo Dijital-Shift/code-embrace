@@ -93,7 +93,7 @@ function EditPath() {
           <DateField value={endsAt} onChange={setEndsAt} />
         </div>
         {err && <p className="text-red-400 text-sm">{err}</p>}
-        <button disabled={busy} className="py-3.5 bg-white text-black rounded-md font-semibold">{busy ? "Saving…" : "Save changes"}</button>
+        <button disabled={busy} className="pricing-gold-button py-3.5 rounded-md font-semibold disabled:opacity-60">{busy ? "Saving…" : "Save changes"}</button>
       </form>
     </div>
   );
