@@ -9,6 +9,7 @@ import { getPathTemplate } from "@/lib/path-templates";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
 import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
+import { SubpageHeader } from "@/components/SubpageHeader";
 
 type LaneNewSearch = { template?: string };
 
@@ -70,7 +71,7 @@ function NewLane() {
   }, [templateId]);
 
   function clearTemplate() {
-    navigate({ to: "/paths/new", search: {} });
+    navigate({ to: "/paths/new", search: {}, replace: true });
     setTitle("");
     setDescription("");
     setNotes("");
@@ -80,7 +81,7 @@ function NewLane() {
 
 
   function pickTemplate(id: string) {
-    navigate({ to: "/paths/new", search: { template: id } });
+    navigate({ to: "/paths/new", search: { template: id }, replace: true });
     setTab("custom");
   }
 
@@ -116,10 +117,7 @@ function NewLane() {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-6">
-        <Link to="/paths" className="text-[#9e968a] text-sm">←</Link>
-        <h2 className="text-xl font-bold">New Path</h2>
-      </div>
+      <SubpageHeader title="New Path" link={{ to: "/paths" }} />
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 p-1 rounded-lg border border-[#222] bg-[#0d0a06] w-fit">
