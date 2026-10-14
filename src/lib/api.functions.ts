@@ -780,7 +780,7 @@ export const getSettings = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from('profiles')
-      .select('email, first_name, last_name, phone, timezone, bedtime, gender, deletion_requested_at, deletion_reason, avatar_url').eq('user_id', userId).single();
+      .select('email, first_name, last_name, phone, timezone, timezone_auto, bedtime, gender, deletion_requested_at, deletion_reason, avatar_url').eq('user_id', userId).single();
     const { data: archived } = await supabase.from('lanes')
       .select('lane_id, title, created_at').eq('user_id', userId).eq('status', 'archived').order('created_at', { ascending: false });
     return { profile: profile ?? null, archivedLanes: archived ?? [] };
