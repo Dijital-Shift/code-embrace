@@ -213,6 +213,11 @@ function LaneDetail() {
             SendScripture.xyz <span aria-hidden="true">↗</span>
           </a>
         )}
+        {/^send scripture/i.test(lane.title ?? "") && (
+          <p className="mt-1.5 text-xs text-[#948d80] leading-relaxed max-w-md">
+            Tip: open SendScripture in your browser and install it to your home screen, so every send is tracked on your account.
+          </p>
+        )}
         {scriptures.length > 0 && (
           <div className="mt-4 flex flex-col gap-2 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
             {scriptures.map((s, i) => (

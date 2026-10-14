@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { Check } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Wordmark } from "@/components/Wordmark";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
@@ -272,6 +273,20 @@ function CheckMark({ color, glow }: { color: string; glow?: boolean }) {
     </svg>
   );
 }
+
+const monthlyFeatures = [
+  "All 10 active Paths & Scripture",
+  "Dedicated Watchman pairing",
+  "One-tap breach call & text",
+  "48-hour silence rule protection",
+];
+
+const lifetimeFeatures = [
+  "Everything in Monthly Walk",
+  "Lifetime access to all active Paths",
+  "No recurring payments. Ever.",
+  "All future platform improvements included",
+];
 
 function Pricing() {
   return (
