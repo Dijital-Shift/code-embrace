@@ -434,7 +434,8 @@ function DeleteAccountSection({ requestedAt, onChanged }: { requestedAt: string 
 }
 
 /** One archived path with its two ways out: back onto the walk, or gone for good. */
-function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: string; created_at: string }; onChanged: () => void }) {
+function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: string; created_at: string; ends_at?: string | null }; onChanged: () => void }) {
+  const finished = !!lane.ends_at && lane.ends_at < new Date().toLocaleDateString("en-CA");
   const reactivate = useServerFn(reactivateLane);
   const remove = useServerFn(deleteArchivedLane);
   const [busy, setBusy] = useState(false);
@@ -456,8 +457,10 @@ function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: stri
     <div className="kp-card px-4 py-3">
       <div className="flex justify-between items-center gap-3">
         <div className="min-w-0">
-          <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
-          <span className="text-[0.7rem] text-[#948d80]">Archived · started {new Date(lane.created_at).toLocaleDateString()}</span>
+          <span className="text-sm text-[#ded8cc] block truncate">{finished && <span className="text-[#c9a84c] mr-1" aria-hidden="true">✦</span>}{lane.title}</span>
+          {finished
+            ? <span className="text-[0.7rem] text-[#c9a84c] font-semibold">Completed · finished {lane.ends_at}</span>
+            : <span className="text-[0.7rem] text-[#948d80]">Archived · started {new Date(lane.created_at).toLocaleDateString()}</span>}
         </div>
         <div className="flex gap-2 shrink-0">
           <button
