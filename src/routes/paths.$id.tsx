@@ -198,7 +198,7 @@ function LaneDetail() {
 
       <div className="mb-7">
         <div className="flex items-center gap-2 flex-wrap mt-5">
-          <Pill label={isAvoid ? "Avoid" : "Complete"} bg={type.bg} fg={type.fg} border={type.border} />
+          <Pill label={isAvoid ? "Flee" : "Pursue"} bg={type.bg} fg={type.fg} border={type.border} />
           <Pill label={lane.status} bg="#12100a" fg={status.fg} border={status.border} dot={status.dot} />
         </div>
 

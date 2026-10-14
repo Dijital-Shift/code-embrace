@@ -24,6 +24,10 @@ export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
       { title: "Kingdom Protocol demo — user and watchman, side by side" },
+      { property: "og:title", content: "Kingdom Protocol demo — user and watchman, side by side" },
+      { property: "og:description", content: "Follow a scripture-backed accountability walk with a real Watchman." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:
@@ -90,7 +94,7 @@ function MockPathLibrary() {
           <div key={p.title} className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
             <div className="flex items-start justify-between gap-2">
               <div className="text-[12px] font-semibold leading-snug text-white">{p.title}</div>
-              <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider" style={{ background: "#102a14", color: "#4ade80" }}>Complete</span>
+              <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider" style={{ background: "#102a14", color: "#4ade80" }}>Pursue</span>
             </div>
             <div className="mt-1 text-[10px] italic text-[#9a8b5c]">— {p.verse} (KJV)</div>
           </div>
@@ -106,10 +110,10 @@ function MockOnboard() {
       <div className="text-sm font-semibold text-white">New Path</div>
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-md border border-white bg-[#1e1a10] px-2.5 py-2 text-center">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-white">Complete</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-white">Pursue</div>
         </div>
         <div className="rounded-md border border-[#222] bg-[#161210] px-2.5 py-2 text-center">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-[#9e968a]">Avoid</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-[#9e968a]">Flee</div>
         </div>
       </div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] px-3 py-2">
@@ -189,7 +193,7 @@ function MockCheckin() {
         <span className="ml-auto"><Pill label="Today" tone="primary" /></span>
       </div>
 
-      <div className="text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Complete</div>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Pursue</div>
       <div className="flex items-center gap-3 rounded-xl border border-[#166534] px-3 py-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4ade80] text-[10px] font-bold text-black">✓</span>
         <span className="flex-1 text-sm text-[#4ade80]">Send Scripture</span>
@@ -201,7 +205,7 @@ function MockCheckin() {
         <span className="text-[10px] text-[#c9a84c]">Sabbath</span>
       </div>
 
-      <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Avoid</div>
+      <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Flee</div>
       <div className="rounded-xl border border-[#2a2518] bg-[#161210] p-3">
         <div className="mb-2 text-sm font-semibold text-white">No lustful looking</div>
         <div className="mb-2 text-[11px] text-[#a8a094]">Did you avoid this today?</div>
@@ -338,7 +342,7 @@ function MockEncourage() {
 function MockStreak() {
   return (
     <div className="space-y-3">
-      <div className="flex gap-1.5"><Pill label="Complete" tone="primary" /><Pill label="Active" /></div>
+      <div className="flex gap-1.5"><Pill label="Pursue" tone="primary" /><Pill label="Active" /></div>
       <div className="text-base font-bold text-white">Fast</div>
       <div className="text-[11px] text-[#b8b0a4]">No fried foods. Liquids only after 6pm.</div>
       <div className="rounded-md border border-[#2a2518] bg-[#161210] p-2.5">
@@ -396,7 +400,7 @@ const SCENES: Scene[] = [
     step: 1,
     role: "user",
     title: "Start walking on day one",
-    body: "Every new member starts with Send Scripture already active — keep it, edit it, or remove it. Then pick more from eight categories, each path scripture-backed and labeled Avoid or Complete.",
+    body: "Every new member starts with Send Scripture already active — keep it, edit it, or remove it. Then pick more from eight categories, each path scripture-backed and labeled Flee or Pursue.",
     why: "Why it matters: vague accountability fails. A named path with a verse behind it is something you can actually walk.",
     render: MockPathLibrary,
   },
@@ -434,7 +438,7 @@ const SCENES: Scene[] = [
     step: 5,
     role: "user",
     title: "Check in — today, or catch up yesterday",
-    body: "Complete paths tap to hold. Avoid paths choose Held or Breach. Missed last night? Yesterday's row is right there. Tapped the wrong one? Undo sits inline for 30 minutes.",
+    body: "Pursue paths tap to hold. Flee paths choose Held or Breach. Missed last night? Yesterday's row is right there. Tapped the wrong one? Undo sits inline for 30 minutes.",
     why: "Why it matters: most paths don't fall to one big choice. They fall to small unspoken nights.",
     render: MockCheckin,
   },

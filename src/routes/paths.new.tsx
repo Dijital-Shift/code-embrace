@@ -16,7 +16,14 @@ export const Route = createFileRoute("/paths/new")({
   validateSearch: (search: Record<string, unknown>): LaneNewSearch => ({
     template: typeof search.template === "string" ? search.template : undefined,
   }),
-  head: () => ({ meta: [{ title: "New Path — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "New Path — Kingdom Protocol" },
+    { name: "description", content: "Create a scripture-backed Pursue or Flee Path." },
+    { property: "og:title", content: "New Path — Kingdom Protocol" },
+    { property: "og:description", content: "Create a scripture-backed Pursue or Flee Path." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => <AppLayout><AccessGate action="Creating a new path"><NewLane /></AccessGate></AppLayout>,
 });
 
@@ -172,7 +179,7 @@ function NewLane() {
                   className="flex-1 flex flex-col gap-1 p-3.5 rounded-md text-left"
                   style={{ border: `1px solid ${laneType === t ? "#fff" : "#222"}`, background: laneType === t ? "#1e1a10" : "#161210", color: laneType === t ? "#fff" : "#666" }}
                 >
-                  <strong>{t === "avoid" ? "Avoid" : "Complete"}</strong>
+                  <strong>{t === "avoid" ? "Flee" : "Pursue"}</strong>
                   <span className="text-[0.72rem] font-normal text-[#9e968a]">
                     {t === "avoid" ? "Something you don't want to do" : "Something you want to do"}
                   </span>

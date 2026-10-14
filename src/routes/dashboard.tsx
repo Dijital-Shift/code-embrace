@@ -14,7 +14,14 @@ import { StarterWalkCard } from "@/components/StarterWalkCard";
 
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Dashboard — Kingdom Protocol" },
+    { name: "description", content: "Your daily walk, active Paths, and words from your Watchmen." },
+    { property: "og:title", content: "Dashboard — Kingdom Protocol" },
+    { property: "og:description", content: "Your daily walk, active Paths, and words from your Watchmen." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => {
     if (typeof window === "undefined") return;
     void context.queryClient.prefetchQuery({ queryKey: ["dashboard"], queryFn: () => getDashboard() }).catch(() => {});
@@ -27,6 +34,7 @@ function Dashboard() {
   const refFn = useServerFn(getMyReferral);
   const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fn() });
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
+  const [starterVisible, setStarterVisible] = useState(false);
   const [openLane, setOpenLane] = useState<string | null>(null);
   // Snapshot the words when opened so the modal survives the refetch that clears them.
   const [openWords, setOpenWords] = useState<Word[]>([]);
@@ -93,6 +101,13 @@ function Dashboard() {
         <DayProgressBar statuses={lanes.map((l) => statusByLane.get(l.lane_id) ?? "pending")} />
       )}
 
+      {(() => {
+        const starter = lanes.find((l) => l.title === "Send Scripture");
+        return starter ? <StarterWalkCard laneId={starter.lane_id} onVisibilityChange={setStarterVisible} /> : null;
+      })()}
+
+
+      {!starterVisible && (<>
       {pendingCount > 0 ? (
         <div className="p-5 kp-card-glow">
           <div className="flex justify-between items-center gap-3">
@@ -114,11 +129,7 @@ function Dashboard() {
           <Link to="/paths/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
         </div>
       )}
-
-      {(() => {
-        const starter = lanes.find((l) => l.title === "Send Scripture");
-        return starter ? <StarterWalkCard laneId={starter.lane_id} /> : null;
-      })()}
+      </>)}
 
       <div className="mt-8">
         <div className="flex items-center gap-3 mb-3">
@@ -155,7 +166,7 @@ function Dashboard() {
                       <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={isAvoid
                         ? { background: "#201008", color: "#e0a075", borderColor: "rgba(224,160,117,0.35)" }
                         : { background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>
-                        {isAvoid ? "Avoid" : "Complete"}
+                        {isAvoid ? "Flee" : "Pursue"}
                       </span>
                       {unread > 0 && (
                         <button
@@ -182,6 +193,30 @@ function Dashboard() {
           </div>
         )}
       </div>
+
+      {starterVisible && (<div className="mt-6">
+      {pendingCount > 0 ? (
+        <div className="p-5 kp-card-glow">
+          <div className="flex justify-between items-center gap-3">
+            <div className="min-w-0">
+              <p className="font-semibold mb-1">{pendingCount} still open tonight</p>
+              <p className="text-[#b8b0a4] text-sm">Check in before your bedtime window closes.</p>
+            </div>
+            <Link to="/checkin" className="shrink-0 whitespace-nowrap px-4 py-2 kp-lifetime-btn text-black rounded-lg font-bold text-sm">Check In</Link>
+          </div>
+        </div>
+      ) : lanes.length > 0 ? (
+        <div className="p-5 kp-card">
+          <p className="text-[#4ade80] font-semibold">All clear.</p>
+          <p className="text-[#9e968a] text-xs">Every path checked in. Stay aligned.</p>
+        </div>
+      ) : (
+        <div className="p-5 kp-card">
+          <p className="text-[#b8b0a4] text-sm mb-4">No active paths yet.</p>
+          <Link to="/paths/new" className="inline-block px-4 py-2 bg-white text-black rounded-md font-semibold text-sm">Create your first path</Link>
+        </div>
+      )}
+      </div>)}
 
       {ref && "code" in ref && (
         <CallToWallCard className="mt-8" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />

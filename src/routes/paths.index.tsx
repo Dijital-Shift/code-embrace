@@ -6,7 +6,14 @@ import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPips } from "@/components/DashboardPieces";
 
 export const Route = createFileRoute("/paths/")({
-  head: () => ({ meta: [{ title: "Paths — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Paths — Kingdom Protocol" },
+    { name: "description", content: "Review your active and resting accountability Paths." },
+    { property: "og:title", content: "Paths — Kingdom Protocol" },
+    { property: "og:description", content: "Review your active and resting accountability Paths." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => {
     if (typeof window === "undefined") return;
     void context.queryClient.prefetchQuery({ queryKey: ["lanes"], queryFn: () => listMyLanes() });
@@ -52,7 +59,7 @@ function Lanes() {
                       <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={lane.lane_type === "avoid"
                         ? { background: "#201008", color: "#e0a075", borderColor: "rgba(224,160,117,0.35)" }
                         : { background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>
-                        {lane.lane_type === "avoid" ? "Avoid" : "Complete"}
+                        {lane.lane_type === "avoid" ? "Flee" : "Pursue"}
                       </span>
                       {((lane as any).unread_encouragements ?? 0) > 0 && (
                         <span className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0" style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}>New</span>
