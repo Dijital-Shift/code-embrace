@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { saveOnboarding } from "@/lib/api.functions";
 import { AuthGate } from "@/components/AuthGate";
+import { formatPhone, isValidPhone } from "@/lib/phone";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({ meta: [
@@ -22,13 +23,15 @@ function Onboarding() {
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
   const [gender, setGender] = useState<"male" | "female" | "">("");
+  const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isValidPhone(phone)) { setErr("Enter your full phone number."); return; }
     setBusy(true); setErr(null);
-    const r: any = await fn({ data: { first_name: first.trim(), last_name: last.trim(), gender: gender || null } });
+    const r: any = await fn({ data: { first_name: first.trim(), last_name: last.trim(), gender: gender || null, phone: phone.trim() } });
     setBusy(false);
     if (r?.error) setErr(r.error);
     else navigate({ to: "/dashboard" });
@@ -45,6 +48,11 @@ function Onboarding() {
           <div className="flex gap-3">
             <input required maxLength={50} value={first} onChange={(e) => setFirst(e.target.value)} placeholder="First name" className={inputCls} />
             <input required maxLength={50} value={last} onChange={(e) => setLast(e.target.value)} placeholder="Last name" className={inputCls} />
+          </div>
+          <div className="flex flex-col gap-1.5 text-left">
+            <input required type="tel" inputMode="tel" autoComplete="tel" value={phone}
+              onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="(555) 123-4567" className={inputCls} />
+            <p className="text-xs text-[#a8a094]">Your Watchman will call or text you when you breach or go silent. Kept strictly between the two of you.</p>
           </div>
           <div className="flex flex-col gap-2 text-left">
             <label className="text-xs uppercase tracking-wider text-[#b8b0a4] font-semibold">Male or Female</label>
