@@ -15,6 +15,13 @@
       "when": 1791897810260,
       "tag": "0001_avatar_and_send_scripture_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791955582587,
+      "tag": "0002_timezone_auto",
+      "breakpoints": true
     }
   ]
 }
