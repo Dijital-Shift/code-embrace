@@ -15,7 +15,7 @@ import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
-import { TIMEZONE_OPTIONS } from "@/lib/localday";
+import { TIMEZONE_GROUPS } from "@/lib/localday";
 
 
 export const Route = createFileRoute("/settings")({
