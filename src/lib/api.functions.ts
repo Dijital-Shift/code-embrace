@@ -37,7 +37,7 @@ export const saveOnboarding = createServerFn({ method: 'POST' })
   .inputValidator(z.object({
     first_name: z.string().min(1).max(50),
     last_name: z.string().min(1).max(50),
-    gender: z.enum(['male', 'female']),
+    gender: z.enum(['male', 'female']).nullable().optional(),
   }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;

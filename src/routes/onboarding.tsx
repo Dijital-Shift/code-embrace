@@ -20,9 +20,8 @@ function Onboarding() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!gender) { setErr("Please select male or female."); return; }
     setBusy(true); setErr(null);
-    const r: any = await fn({ data: { first_name: first.trim(), last_name: last.trim(), gender } });
+    const r: any = await fn({ data: { first_name: first.trim(), last_name: last.trim(), gender: gender || null } });
     setBusy(false);
     if (r?.error) setErr(r.error);
     else navigate({ to: "/dashboard" });
@@ -47,7 +46,7 @@ function Onboarding() {
                 <button
                   key={g}
                   type="button"
-                  onClick={() => setGender(g)}
+                  onClick={() => setGender(gender === g ? "" : g)}
                   className="py-3 rounded-md border text-sm font-semibold capitalize"
                   style={{
                     background: gender === g ? "#c9a84c" : "#111",
@@ -59,7 +58,6 @@ function Onboarding() {
                 </button>
               ))}
             </div>
-            <p className="text-[0.7rem] text-[#9e968a] leading-relaxed">This is how the Father made you. We use it for pastoral fit, not for public display.</p>
           </div>
           {err && <p className="text-red-400 text-xs">{err}</p>}
           <button disabled={busy} className="py-3.5 bg-white text-black rounded-md font-semibold">

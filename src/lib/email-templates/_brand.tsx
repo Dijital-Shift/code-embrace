@@ -196,10 +196,10 @@ export function Shell({
           <Section style={headerBand}>
             <Img
               src={LOGO_URL}
-              width="64"
-              height="64"
+              width="104"
+              height="104"
               alt="Kingdom Protocol"
-              style={logo}
+              style={{ ...logo, width: '104px', height: '104px', border: '0', outline: 'none' }}
             />
             <Heading as="h2" style={wordmark}>
               Kingdom Protocol
