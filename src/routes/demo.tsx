@@ -174,7 +174,7 @@ function MockPartnerInvite() {
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Path</div>
         <div className="text-sm text-white">Fast · ends Dec 20</div>
         <div className="mt-2 text-[11px] text-[#b8b0a4]">Your role</div>
-        <div className="text-sm text-[#c9a84c]">Watchman — pinged on a Breach or a Silent day. Silence means they're walking well.</div>
+        <div className="text-sm text-[#c9a84c]">Watchman — pinged on a Breach, or after two Silent days running. Quiet means they're walking well.</div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <button className="rounded-md border border-[#2a2518] py-2 text-xs font-semibold text-[#b8b0a4]">Decline</button>
@@ -464,8 +464,8 @@ const SCENES: Scene[] = [
     id: "ping",
     step: 8,
     role: "watchman",
-    title: "Breach or silence — your watchman is pinged",
-    body: "A breach, or a day that closes Silent, sends your watchman one alert with one-tap call or text. Silent days count as Fallen.",
+    title: "Breach or two silent days — your watchman is pinged",
+    body: "A breach pings your watchman right away. Silence is different: day one is your private nudge. Only after two days pass Silent is your watchman alerted, with one-tap call or text. Silent days count as Fallen.",
     why: "Why it matters: the worst nights are usually the silent ones. Silence has to mean something.",
     render: MockWatchmanPing,
   },
@@ -530,7 +530,7 @@ function Demo() {
             One path. <span className="text-[#c9a84c]">Two people.</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-[#c8c0b4] md:text-lg">
-            Twelve scenes following one believer's path and the watchman who walks it with them. Every screen below is what you'll actually see in the app.
+            Twelve scenes following one believer's path and the watchman who walks it with them. Every screen below is what you'll actually see in the app once you've created an account.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-2 text-xs">
             {(["user", "watchman"] as Role[]).map((r) => {

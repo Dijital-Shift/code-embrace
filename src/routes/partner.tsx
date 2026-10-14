@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { fetchPathScripture } from "@/lib/scripture.functions";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
@@ -277,14 +278,14 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
             </div>
           )}
           {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
-          <EncourageBox laneId={lane.lane_id} send={sendFn} alert={lane.latestAlert ?? null} onSent={onSent} />
+          <EncourageBox laneId={lane.lane_id} title={lane.title} phone={needsContact ? phone : null} send={sendFn} alert={lane.latestAlert ?? null} onSent={onSent} />
         </div>
       )}
     </div>
   );
 }
 
-function EncourageBox({ laneId, send, onSent, alert }: { laneId: string; send: any; onSent: () => void; alert?: { checkin_id: string; label: string } | null }) {
+function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: string; title: string; phone?: string | null; send: any; onSent: () => void; alert?: { checkin_id: string; label: string } | null }) {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
@@ -292,6 +293,29 @@ function EncourageBox({ laneId, send, onSent, alert }: { laneId: string; send: a
   const [linked, setLinked] = useState(true);
 
   const attach = !!alert && linked;
+  const fetchFn = useServerFn(fetchPathScripture);
+  const [verses, setVerses] = useState<string[]>([]);
+  const [vBusy, setVBusy] = useState(false);
+  const [picked, setPicked] = useState<string | null>(null);
+
+  async function findVerses() {
+    setVBusy(true); setErr(null);
+    const q = [title, alert?.label, body.trim()].filter(Boolean).join(". ").slice(0, 400);
+    const r = await fetchFn({ data: { text: q } }).catch(() => ({ verses: [], error: "Send Scripture couldn't be reached." }));
+    setVBusy(false);
+    if (r.error) { setErr(r.error); return; }
+    const fit = r.verses.filter((v: string) => v.length <= 240).slice(0, 3);
+    if (!fit.length) setErr("No short verses found. Try typing a line first.");
+    setVerses(fit);
+  }
+
+  function pick(v: string) {
+    const own = picked ? body.replace(picked, "").trim() : body.trim();
+    const next = (v + (own ? "\n\n" + own : "")).slice(0, 280);
+    setPicked(v); setBody(next);
+  }
+
+  const smsHref = phone ? `sms:${phone}${/iPhone|iPad|Mac/.test(typeof navigator !== "undefined" ? navigator.userAgent : "") ? "&" : "?"}body=${encodeURIComponent(body.trim())}` : null;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -322,10 +346,28 @@ function EncourageBox({ laneId, send, onSent, alert }: { laneId: string; send: a
         className="w-full px-3 py-2 text-base bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
       />
 
-      <div className="flex justify-between items-center mt-2">
+      <button type="button" onClick={findVerses} disabled={vBusy} className="mt-2 text-xs px-3 py-1.5 rounded border border-[#c9a84c]/50 text-[#c9a84c] font-semibold disabled:opacity-60" style={{ background: "#1a1508" }}>
+        {vBusy ? "Finding verses…" : "✦ Find a verse for this moment"}
+      </button>
+      {verses.length > 0 && (
+        <div className="mt-2 flex flex-col gap-1.5">
+          {verses.map((v) => (
+            <button type="button" key={v} onClick={() => pick(v)} className={`text-left text-[0.8rem] leading-snug px-3 py-2 rounded border ${picked === v ? "border-[#c9a84c] text-white" : "border-[#2a2518] text-[#c8c0b4]"}`} style={{ background: "#0a0800" }}>
+              {v}
+            </button>
+          ))}
+          <p className="text-[0.65rem] text-[#948d80]">Tap one to place it. Tapping another swaps it. Your own words stay.</p>
+        </div>
+      )}
+
+      <div className="flex justify-between items-center mt-2 gap-2">
         <span className="text-[0.65rem] text-[#948d80]">{body.length}/280</span>
+        <span className="flex-1" />
+        {smsHref && body.trim() && (
+          <a href={smsHref} className="text-xs px-3 py-1.5 rounded font-semibold text-white border border-[#222]" style={{ background: "#1a1a1a" }}>Text it</a>
+        )}
         <button disabled={busy || !body.trim()} className="text-xs px-4 py-1.5 bg-[#c9a84c] text-black rounded font-semibold disabled:opacity-40">
-          {busy ? "Sending…" : sent ? "Sent" : "Send"}
+          {busy ? "Sending…" : sent ? "Sent" : "Send in app"}
         </button>
       </div>
       {err && <p className="text-red-400 text-[0.7rem] mt-1">{err}</p>}
