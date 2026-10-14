@@ -8,7 +8,14 @@ import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Admin — Kingdom Protocol" },
+    { name: "description", content: "Manage Kingdom Protocol members and feedback." },
+    { property: "og:title", content: "Admin — Kingdom Protocol" },
+    { property: "og:description", content: "Manage Kingdom Protocol members and feedback." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => <AppLayout><AdminPage /></AppLayout>,
 });
 

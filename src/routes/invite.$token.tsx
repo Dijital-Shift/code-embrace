@@ -8,7 +8,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
 export const Route = createFileRoute("/invite/$token")({
-  head: () => ({ meta: [{ title: "You've been invited — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "You've been invited — Kingdom Protocol" },
+    { name: "description", content: "Review your invitation to watch a Kingdom Protocol Path." },
+    { property: "og:title", content: "You've been invited — Kingdom Protocol" },
+    { property: "og:description", content: "Review your invitation to watch a Kingdom Protocol Path." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: InvitePage,
 });
 

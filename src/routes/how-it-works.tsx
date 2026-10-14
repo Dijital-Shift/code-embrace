@@ -2,7 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Wordmark } from "@/components/Wordmark";
 
 export const Route = createFileRoute("/how-it-works")({
-  head: () => ({ meta: [{ title: "How it works — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "How it works — Kingdom Protocol" },
+    { name: "description", content: "Daily accountability, honest check-ins, and real Watchmen." },
+    { property: "og:title", content: "How it works — Kingdom Protocol" },
+    { property: "og:description", content: "Daily accountability, honest check-ins, and real Watchmen." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: HowItWorks,
 });
 

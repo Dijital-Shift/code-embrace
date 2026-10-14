@@ -7,7 +7,14 @@ import { AppLayout } from "@/components/AppLayout";
 import { ScriptureFields } from "@/components/ScriptureFields";
 
 export const Route = createFileRoute("/paths/edit/$id")({
-  head: () => ({ meta: [{ title: "Edit Path — Kingdom Protocol" }] }),
+  head: () => ({ meta: [
+    { title: "Edit Path — Kingdom Protocol" },
+    { name: "description", content: "Update your Path details and supporting Scripture." },
+    { property: "og:title", content: "Edit Path — Kingdom Protocol" },
+    { property: "og:description", content: "Update your Path details and supporting Scripture." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => <AppLayout><EditPath /></AppLayout>,
 });
 
