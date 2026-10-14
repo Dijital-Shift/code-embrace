@@ -265,6 +265,14 @@ function CheckoutCTA({
   );
 }
 
+function CheckMark({ color, glow }: { color: string; glow?: boolean }) {
+  return (
+    <svg viewBox="0 0 20 20" className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" style={glow ? { filter: `drop-shadow(0 0 4px ${color})` } : undefined} aria-hidden>
+      <path d="M4 10.5l4 4 8-9" />
+    </svg>
+  );
+}
+
 function Pricing() {
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
@@ -277,63 +285,52 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 sm:gap-5 items-stretch pt-3">
-          {/* Free trial */}
-          <div className="kp-card p-3 sm:p-7 flex flex-col text-center items-center">
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#c2af80]">30 days</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-[#f3e6c4] mb-1 leading-tight">Free trial</h3>
-            <p className="text-[#c9c4ba] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Full access. No card.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#e0dacd] flex-1 w-full">
-              {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting"].map((f) => (
-                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#8a7a52" }} /><span>{f}</span></li>
-              ))}
-            </ul>
-            <Link to="/login" className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/50 bg-[#0a0800]/60 text-[#e5c56a] font-semibold text-[0.7rem] sm:text-sm">
-              Start free
-            </Link>
-          </div>
-
-          {/* Monthly */}
-          <div className="kp-card p-3 sm:p-7 flex flex-col text-center items-center">
-            <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 text-[#c2af80]">After trial</p>
-            <h3 className="text-base sm:text-2xl font-extrabold text-[#f3e6c4] mb-1 leading-tight">$4.99<span className="text-[0.7rem] sm:text-base font-bold text-[#c2af80]">/mo</span></h3>
-            <p className="text-[#c9c4ba] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Cancel anytime.</p>
-            <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#e0dacd] flex-1 w-full">
-              {["All trial features", "Cancel anytime", "Price-locked"].map((f) => (
-                <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: "#8a7a52" }} /><span>{f}</span></li>
-              ))}
-            </ul>
-            <CheckoutCTA
-              priceId="kp_premium_monthly"
-              loggedOutLabel="Start free"
-              loggedInLabel="Subscribe"
-              className="mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-[#c9a84c]/50 bg-[#0a0800]/60 text-[#e5c56a] font-semibold text-[0.7rem] sm:text-sm"
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 items-stretch max-w-3xl mx-auto pt-4">
+          {/* Monthly with free trial */}
+          <div className="relative">
+            <span className="absolute left-1/2 -translate-x-1/2 -top-3 z-20 px-3.5 py-1 text-[0.6rem] tracking-[0.2em] uppercase font-bold rounded-full whitespace-nowrap border border-[#c9a84c]/60 bg-[#0a0800] text-[#e5c56a]">30 days free · No card</span>
+            <div className="kp-card h-full p-6 sm:p-8 pt-8 flex flex-col">
+              <p className="text-[0.65rem] tracking-[0.22em] uppercase font-bold mb-3 text-[#c2af80] text-center">Monthly</p>
+              <h3 className="text-4xl font-extrabold text-[#f3e6c4] text-center leading-none mb-2">$4.99<span className="text-base font-bold text-[#c2af80]"> /mo</span></h3>
+              <p className="text-[#c9c4ba] text-sm text-center mb-6">Starts after your free month. Cancel anytime.</p>
+              <ul className="space-y-3 text-sm text-[#e0dacd] flex-1">
+                {["Every path", "Watchman pairing", "Daily check-ins", "Breach reporting", "Price-locked"].map((f) => (
+                  <li key={f} className="flex items-start gap-3"><CheckMark color="#c2af80" /><span>{f}</span></li>
+                ))}
+              </ul>
+              <CheckoutCTA
+                priceId="kp_premium_monthly"
+                loggedOutLabel="Start free"
+                loggedInLabel="Subscribe"
+                className="mt-8 w-full inline-block text-center px-5 py-3.5 rounded-xl border border-[#c9a84c]/50 bg-[#0a0800]/60 text-[#e5c56a] font-semibold text-sm"
+              />
+            </div>
           </div>
 
           {/* Lifetime */}
           <div className="relative">
-            <span className="absolute left-1/2 -translate-x-1/2 -top-2.5 sm:-top-3 z-20 px-2.5 sm:px-3.5 py-0.5 sm:py-1 text-[0.5rem] sm:text-[0.6rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase font-bold rounded-full whitespace-nowrap kp-lifetime-btn text-[#0a0800]">Best</span>
+            <span className="absolute left-1/2 -translate-x-1/2 -top-3 z-20 px-3.5 py-1 text-[0.6rem] tracking-[0.22em] uppercase font-bold rounded-full whitespace-nowrap kp-lifetime-btn text-[#0a0800]">Best · One time</span>
             <div className="kp-upgrade h-full">
-              <div className="kp-upgrade-inner h-full !px-3 sm:!px-7 !py-4 sm:!py-7 flex flex-col items-center text-center">
-                <p className="text-[0.5rem] sm:text-[0.6rem] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mb-1 sm:mb-2 mt-1" style={{ color: "#e5af38" }}>Forever</p>
-                <h3 className="text-base sm:text-2xl font-extrabold text-[#f3e6c4] mb-1 leading-tight">$99<span className="text-[0.7rem] sm:text-base font-bold text-[#c2af80]"> once</span></h3>
-                <p className="text-[#e0c98a] text-[0.65rem] sm:text-sm mb-3 sm:mb-5 leading-snug">Walk it forever.</p>
-                <ul className="space-y-1 sm:space-y-2 text-[0.7rem] sm:text-sm text-[#e0dacd] flex-1 w-full">
+              <div className="kp-upgrade-inner h-full !p-6 sm:!p-8 !pt-8 flex flex-col">
+                <p className="text-[0.65rem] tracking-[0.22em] uppercase font-bold mb-3 text-center" style={{ color: "#e5af38" }}>Lifetime</p>
+                <h3 className="text-4xl font-extrabold text-[#f3e6c4] text-center leading-none mb-2">$99<span className="text-base font-bold text-[#c2af80]"> once</span></h3>
+                <p className="text-[#e0c98a] text-sm text-center mb-6">Walk it forever.</p>
+                <ul className="space-y-3 text-sm text-[#e0dacd] flex-1">
                   {["Everything, always", "No renewals", "Long obedience"].map((f) => (
-                    <li key={f} className="flex items-start justify-center gap-1.5 sm:gap-2"><span className="mt-1 sm:mt-1.5 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD, boxShadow: `0 0 6px ${GOLD}` }} /><span>{f}</span></li>
+                    <li key={f} className="flex items-start gap-3"><CheckMark color={GOLD} glow /><span>{f}</span></li>
                   ))}
                 </ul>
                 <CheckoutCTA
                   priceId="kp_lifetime_once"
                   loggedOutLabel="Lifetime"
                   loggedInLabel="Buy lifetime"
-                  className="kp-lifetime-btn mt-4 sm:mt-6 w-full inline-block text-center px-2 sm:px-5 py-2 sm:py-3.5 rounded-lg sm:rounded-xl text-[#0a0800] font-extrabold tracking-wide text-[0.7rem] sm:text-sm"
+                  className="kp-lifetime-btn mt-8 w-full inline-block text-center px-5 py-3.5 rounded-xl text-[#0a0800] font-extrabold tracking-wide text-sm"
                 />
               </div>
             </div>
           </div>
         </div>
+
 
 
         <p className="mt-8 text-center text-xs text-[#c2af80] tracking-wider">Watchmen are always free. They walk with you, not with a bill.</p>
