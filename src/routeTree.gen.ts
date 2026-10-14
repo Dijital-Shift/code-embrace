@@ -36,6 +36,7 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as PathsEditIdRouteImport } from './routes/paths.edit.$id'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as InviteTokenWelcomeRouteImport } from './routes/invite.$token.welcome'
+import { Route as ApiPushTestRouteImport } from './routes/api/push/test'
 import { Route as ApiPushSubscribeRouteImport } from './routes/api/push/subscribe'
 import { Route as ApiPublicBuildIdRouteImport } from './routes/api/public/build-id'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -181,6 +182,11 @@ const InviteTokenWelcomeRoute = InviteTokenWelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => InviteTokenRoute,
 } as any)
+const ApiPushTestRoute = ApiPushTestRouteImport.update({
+  id: '/api/push/test',
+  path: '/api/push/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPushSubscribeRoute = ApiPushSubscribeRouteImport.update({
   id: '/api/push/subscribe',
   path: '/api/push/subscribe',
@@ -259,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/paths/': typeof PathsIndexRoute
   '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/push/test': typeof ApiPushTestRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/paths/edit/$id': typeof PathsEditIdRoute
@@ -297,6 +304,7 @@ export interface FileRoutesByTo {
   '/paths': typeof PathsIndexRoute
   '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/push/test': typeof ApiPushTestRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/paths/edit/$id': typeof PathsEditIdRoute
@@ -336,6 +344,7 @@ export interface FileRoutesById {
   '/paths/': typeof PathsIndexRoute
   '/api/public/build-id': typeof ApiPublicBuildIdRoute
   '/api/push/subscribe': typeof ApiPushSubscribeRoute
+  '/api/push/test': typeof ApiPushTestRoute
   '/invite/$token/welcome': typeof InviteTokenWelcomeRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/paths/edit/$id': typeof PathsEditIdRoute
@@ -376,6 +385,7 @@ export interface FileRouteTypes {
     | '/paths/'
     | '/api/public/build-id'
     | '/api/push/subscribe'
+    | '/api/push/test'
     | '/invite/$token/welcome'
     | '/lovable/email/events'
     | '/paths/edit/$id'
@@ -414,6 +424,7 @@ export interface FileRouteTypes {
     | '/paths'
     | '/api/public/build-id'
     | '/api/push/subscribe'
+    | '/api/push/test'
     | '/invite/$token/welcome'
     | '/lovable/email/events'
     | '/paths/edit/$id'
@@ -452,6 +463,7 @@ export interface FileRouteTypes {
     | '/paths/'
     | '/api/public/build-id'
     | '/api/push/subscribe'
+    | '/api/push/test'
     | '/invite/$token/welcome'
     | '/lovable/email/events'
     | '/paths/edit/$id'
@@ -491,6 +503,7 @@ export interface RootRouteChildren {
   PathsIndexRoute: typeof PathsIndexRoute
   ApiPublicBuildIdRoute: typeof ApiPublicBuildIdRoute
   ApiPushSubscribeRoute: typeof ApiPushSubscribeRoute
+  ApiPushTestRoute: typeof ApiPushTestRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   PathsEditIdRoute: typeof PathsEditIdRoute
   ApiPublicHooksBedtimeReminderRoute: typeof ApiPublicHooksBedtimeReminderRoute
@@ -693,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InviteTokenWelcomeRouteImport
       parentRoute: typeof InviteTokenRoute
     }
+    '/api/push/test': {
+      id: '/api/push/test'
+      path: '/api/push/test'
+      fullPath: '/api/push/test'
+      preLoaderRoute: typeof ApiPushTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/push/subscribe': {
       id: '/api/push/subscribe'
       path: '/api/push/subscribe'
@@ -798,6 +818,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathsIndexRoute: PathsIndexRoute,
   ApiPublicBuildIdRoute: ApiPublicBuildIdRoute,
   ApiPushSubscribeRoute: ApiPushSubscribeRoute,
+  ApiPushTestRoute: ApiPushTestRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
   PathsEditIdRoute: PathsEditIdRoute,
   ApiPublicHooksBedtimeReminderRoute: ApiPublicHooksBedtimeReminderRoute,
