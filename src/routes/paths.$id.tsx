@@ -12,6 +12,7 @@ import {
   removeWatchman,
 } from "@/lib/invites.functions";
 import { Avatar } from "@/components/AvatarPicker";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AppLayout } from "@/components/AppLayout";
 // status helpers used by timeline
 import { toast } from "sonner";
@@ -209,15 +210,22 @@ function LaneDetail() {
           <p className="text-xs sm:text-sm text-[#b8b0a4] leading-relaxed mt-2">{lane.description}</p>
         )}
         {/^send scripture/i.test(lane.title ?? "") && (
-          <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 mt-3 py-2 text-sm font-semibold text-primary no-underline">
-            SendScripture.xyz <span aria-hidden="true">↗</span>
-          </a>
-        )}
-        {/^send scripture/i.test(lane.title ?? "") && (
-          <p className="mt-1.5 text-xs text-[#948d80] leading-relaxed max-w-md">
-            Tip: open SendScripture in your browser and install it to your home screen, so every send is tracked on your account.
-          </p>
+          <div className="flex items-center gap-2 mt-3">
+            <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 py-2 text-sm font-semibold text-primary underline underline-offset-2">
+              SendScripture.xyz <span aria-hidden="true">↗</span>
+            </a>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button type="button" aria-label="Keep your sends tracked"
+                  className="w-6 h-6 rounded-full border border-[#c9a84c]/60 text-[#c9a84c] text-xs font-bold italic bg-transparent leading-none">i</button>
+              </PopoverTrigger>
+              <PopoverContent className="w-72 bg-[#14110a] border-[#c9a84c]/40 text-[#ded8cc]">
+                <p className="text-sm font-semibold text-[#c9a84c] mb-1">Keep your sends tracked</p>
+                <p className="text-xs leading-relaxed">Sign in or create a free account at SendScripture.xyz once. Your browser remembers your session so every verse you send from Kingdom Protocol counts toward your history.</p>
+              </PopoverContent>
+            </Popover>
+          </div>
         )}
         {scriptures.length > 0 && (
           <div className="mt-4 flex flex-col gap-2 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">

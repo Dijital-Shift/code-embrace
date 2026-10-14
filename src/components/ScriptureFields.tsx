@@ -102,7 +102,7 @@ export function ScriptureFields({
       </button>
       <p className="text-[0.8rem] text-[#9e968a]">
         {msg ?? (full ? "Clear a slot to fetch another verse." : "Fills empty slots with KJV verses that fit your path.")} Verses via{" "}
-        <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer" className="text-[#c9a84c] no-underline">SendScripture.xyz</a>
+        <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer" className="text-[#c9a84c] font-semibold underline underline-offset-2 decoration-[#c9a84c]/50 whitespace-nowrap">SendScripture.xyz <span aria-hidden="true">↗</span></a>
       </p>
     </div>
   );
