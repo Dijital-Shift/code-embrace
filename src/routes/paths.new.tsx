@@ -226,7 +226,7 @@ function NewLane() {
 
           {err && <p className="text-red-400 text-sm">{err}</p>}
 
-          <button disabled={busy} className="pricing-gold-button py-3.5 rounded-md font-semibold disabled:opacity-60">
+          <button disabled={busy} className="pricing-gold-button text-[#0a0800] py-3.5 rounded-md font-semibold disabled:opacity-60">
             {busy ? "Creating…" : "Create Path"}
           </button>
         </form>
