@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getLane, updateLane } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
+import { SubpageHeader } from "@/components/SubpageHeader";
 
 export const Route = createFileRoute("/paths/edit/$id")({
   head: () => ({ meta: [
@@ -71,10 +72,7 @@ function EditPath() {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-6">
-        <Link to="/paths/$id" params={{ id }} search={{ newlyCreated: false } as any} className="text-[#a8a094] text-sm">←</Link>
-        <h2 className="text-xl font-bold">Edit Path</h2>
-      </div>
+      <SubpageHeader title="Edit Path" link={{ to: "/paths/$id", params: { id }, search: { newlyCreated: false } }} />
 
       <form onSubmit={submit} className="flex flex-col gap-6 max-w-md">
         <div className="flex flex-col gap-2">
@@ -95,7 +93,7 @@ function EditPath() {
           <DateField value={endsAt} onChange={setEndsAt} />
         </div>
         {err && <p className="text-red-400 text-sm">{err}</p>}
-        <button disabled={busy} className="py-3.5 bg-white text-black rounded-md font-semibold">{busy ? "Saving…" : "Save changes"}</button>
+        <button disabled={busy} className="pricing-gold-button text-[#0a0800] py-3.5 rounded-md font-semibold disabled:opacity-60">{busy ? "Saving…" : "Save changes"}</button>
       </form>
     </div>
   );

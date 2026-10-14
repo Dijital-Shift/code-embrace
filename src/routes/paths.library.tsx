@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppLayout } from "@/components/AppLayout";
 import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
+import { SubpageHeader } from "@/components/SubpageHeader";
 
 
 export const Route = createFileRoute("/paths/library")({
@@ -29,12 +30,7 @@ export const Route = createFileRoute("/paths/library")({
 function Library() {
   return (
     <div>
-      <div className="flex items-center gap-3 mb-2">
-        <Link to="/paths" className="text-[#a8a094]">
-          ←
-        </Link>
-        <h2 className="text-xl font-bold">Path Library</h2>
-      </div>
+      <SubpageHeader title="Path Library" link={{ to: "/paths" }} />
       <p className="text-sm text-[#b8b0a4] mb-8 max-w-xl">
         Concrete habits and behaviors drawn straight from Scripture. Pick a path to walk —
         flee what He warns against, pursue what He calls you to.

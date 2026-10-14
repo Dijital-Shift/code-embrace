@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppLayout } from "@/components/AppLayout";
 import { PlanSection } from "@/components/AccessBanner";
+import { SubpageHeader } from "@/components/SubpageHeader";
 
 export const Route = createFileRoute("/billing")({
   head: () => ({ meta: [
@@ -17,11 +18,8 @@ export const Route = createFileRoute("/billing")({
 function Billing() {
   return (
     <div className="max-w-md mx-auto w-full">
-      <div className="flex items-center gap-3 mb-1">
-        <Link to="/settings" className="text-[#a8a094]">←</Link>
-        <h2 className="text-2xl text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>Billing</h2>
-      </div>
-      <p className="text-[#a8a094] text-xs">Your plan, your subscription, and your receipts.</p>
+      <SubpageHeader title="Billing" link={{ to: "/settings" }} />
+      <p className="text-[#a8a094] text-xs -mt-3">Your plan, your subscription, and your receipts.</p>
       <PlanSection showReceipts />
       <p className="text-[0.7rem] text-[#8f887c] leading-relaxed mt-6 px-1">
         Upgrading from monthly to Lifetime ends your monthly plan right away — no further $4.99 charges.
