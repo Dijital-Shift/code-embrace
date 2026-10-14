@@ -32,7 +32,7 @@ async function cancelActiveMonthlySubs(userId: string, env: StripeEnv) {
   for (const row of rows as Array<{ stripe_subscription_id: string; price_id: string; status: string }>) {
     if (row.price_id === "kp_premium_monthly" && ["active", "trialing", "past_due"].includes(row.status)) {
       try {
-        await stripe.subscriptions.update(row.stripe_subscription_id, { cancel_at_period_end: true });
+        await stripe.subscriptions.cancel(row.stripe_subscription_id);
       } catch (e) {
         console.error("Failed to cancel monthly sub", row.stripe_subscription_id, e);
       }

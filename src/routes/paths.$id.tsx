@@ -1,3 +1,4 @@
+import { useRevealOnOpen } from "@/hooks/useRevealOnOpen";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LineageTimeline } from "@/components/LineageTimeline";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -666,6 +667,7 @@ const STATUS_HELP = {
 
 function StatusHelp({ kind }: { kind: "paused" | "archived" }) {
   const [open, setOpen] = useState(false);
+  const helpRef = useRevealOnOpen<HTMLParagraphElement>(open);
   const h = STATUS_HELP[kind];
   return (
     <div className="mb-1">
@@ -683,7 +685,7 @@ function StatusHelp({ kind }: { kind: "paused" | "archived" }) {
         </button>
       </div>
       {open && (
-        <p className="mt-2 mb-2 text-xs leading-relaxed text-[#e0d4b0] pl-3 border-l-2 border-[#c9a84c]/60">{h.body}</p>
+        <p ref={helpRef} className="mt-2 mb-2 text-xs leading-relaxed text-[#e0d4b0] pl-3 border-l-2 border-[#c9a84c]/60">{h.body}</p>
       )}
     </div>
   );

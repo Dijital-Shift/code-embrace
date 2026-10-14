@@ -17,7 +17,7 @@ import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { formatPhone } from "@/lib/phone";
 import { TIMEZONE_GROUPS } from "@/lib/localday";
-import { PlanSection } from "@/components/AccessBanner";
+import { useRevealOnOpen } from "@/hooks/useRevealOnOpen";
 
 
 export const Route = createFileRoute("/settings")({
@@ -190,7 +190,16 @@ function Settings() {
         </button>
       </form>
 
-      <PlanSection />
+      <div className="mt-10">
+        <p className={sectionLabel}>Plan</p>
+        <Link to="/billing" className="kp-card flex items-center justify-between px-4 py-3.5 no-underline">
+          <span>
+            <span className="block text-sm text-[#ded8cc] font-medium">Billing</span>
+            <span className="block text-[0.7rem] text-[#8f887c]">View your plan, manage your subscription, see receipts.</span>
+          </span>
+          <span className="text-[#c9a84c]">›</span>
+        </Link>
+      </div>
 
       {ref && "code" in ref && (
         <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
@@ -307,6 +316,7 @@ function DeleteAccountSection({ requestedAt, onChanged }: { requestedAt: string 
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const boxRef = useRevealOnOpen<HTMLDivElement>(open);
 
   async function run(fn: () => Promise<any>) {
     if (busy) return;
@@ -350,7 +360,7 @@ function DeleteAccountSection({ requestedAt, onChanged }: { requestedAt: string 
           <span className="text-[#f87171]">›</span>
         </button>
         {open && (
-          <div className="px-4 pb-4 pt-1 border-t border-[#2a2518]">
+          <div ref={boxRef} className="px-4 pb-4 pt-1 border-t border-[#2a2518] scroll-mt-24">
             <ul className="text-[0.7rem] text-[#9e968a] leading-relaxed list-disc pl-4 my-3 flex flex-col gap-1">
               <li>Every active watchman receives your reason before anything is deleted.</li>
               <li>Your account is held for 14 days — sign in anytime to cancel with one tap.</li>
@@ -391,6 +401,7 @@ function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: stri
   const remove = useServerFn(deleteArchivedLane);
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const confirmRef = useRevealOnOpen<HTMLDivElement>(confirming);
   const [err, setErr] = useState<string | null>(null);
 
   async function run(fn: () => Promise<any>) {
@@ -427,7 +438,7 @@ function ArchivedRow({ lane, onChanged }: { lane: { lane_id: string; title: stri
       </div>
 
       {confirming && (
-        <div className="mt-2.5 pt-2.5 border-t border-[#2a2518]">
+        <div ref={confirmRef} className="mt-2.5 pt-2.5 border-t border-[#2a2518]">
           <p className="text-xs text-[#f87171] mb-2">
             Delete "{lane.title}" permanently? Every check-in, alert and encouragement on it goes with it. This cannot be undone.
           </p>
