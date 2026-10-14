@@ -32,7 +32,7 @@ export function StarterWalkCard({ laneId, onVisibilityChange }: { laneId: string
       </p>
       <div className="flex items-center gap-4 mt-3">
         <Button asChild variant="link" className="px-0 text-xs">
-          <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer">SendScripture.xyz ↗</a>
+          <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer" className="kp-ext-link">SendScripture.xyz <span aria-hidden="true">↗</span><span className="sr-only"> — opens an external site in a new tab</span></a>
         </Button>
         <Link to="/paths/$id" params={{ id: laneId }} search={{ newlyCreated: false }} onClick={dismiss}
           className="px-3 py-1.5 rounded text-xs font-bold no-underline"

@@ -54,6 +54,12 @@ input:focus, textarea:focus, select:focus {
   border-color: #444 !important;
   box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.15);
 }
+/* Keyboard focus for external SendScripture links: a crisp gold ring that reads on obsidian. */
+.kp-ext-link:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 button, nav a { user-select: none; -webkit-user-select: none; }
 
 .nav-desktop-bar {

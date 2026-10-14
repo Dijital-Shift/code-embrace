@@ -212,13 +212,14 @@ function LaneDetail() {
         {/^send scripture/i.test(lane.title ?? "") && (
           <div className="flex items-center gap-2 mt-3">
             <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 py-2 text-sm font-semibold text-primary underline underline-offset-2">
+              className="kp-ext-link inline-flex items-center gap-1 py-2 text-sm font-semibold text-primary underline underline-offset-2">
               SendScripture.xyz <span aria-hidden="true">↗</span>
+              <span className="sr-only"> — opens an external site in a new tab</span>
             </a>
             <Popover>
               <PopoverTrigger asChild>
                 <button type="button" aria-label="Keep your sends tracked"
-                  className="w-6 h-6 rounded-full border border-[#c9a84c]/60 text-[#c9a84c] text-xs font-bold italic bg-transparent leading-none">i</button>
+                  className="kp-ext-link w-6 h-6 rounded-full border border-[#c9a84c]/60 text-[#c9a84c] text-xs font-bold italic bg-transparent leading-none">i</button>
               </PopoverTrigger>
               <PopoverContent className="w-72 bg-[#14110a] border-[#c9a84c]/40 text-[#ded8cc]">
                 <p className="text-sm font-semibold text-[#c9a84c] mb-1">Keep your sends tracked</p>
