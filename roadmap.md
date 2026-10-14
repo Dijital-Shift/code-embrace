@@ -1,10 +1,12 @@
 # Tasks
-- [ ] Apply Pursue/Flee labels consistently without changing stored Path types.
-- [ ] Place Starter Walk and active Paths above Check-In while the starter prompt is visible.
-- [ ] Add visible SendScripture links to Starter Walk and Path header.
-- [ ] Automatically verify six-digit sign-in codes and improve keyboard visibility.
-- [ ] Add circular photo drag/zoom framing before save.
-- [ ] Check email logo background and verify the updated flows.
+- [x] Apply Pursue/Flee labels consistently without changing stored Path types.
+- [x] Place Starter Walk and active Paths above Check-In while the starter prompt is visible.
+- [x] Add visible SendScripture links to Starter Walk and Path header; installed-app opening is OS-dependent.
+- [x] Automatically verify six-digit sign-in codes and improve keyboard visibility; one automatic request and error/retry checked.
+- [x] Add circular photo drag/zoom framing before save; confirmed 256px JPEG output in browser.
+- [x] Inspect email artwork: gold transparent logo on an explicitly black header; no email style change needed.
+- [ ] Verify authenticated dashboard ordering and profile-photo save/readback — blocked until the user signs into the preview.
+- [ ] Verify real phone keyboard and delivered email appearance — requires the user's phone/email client; desktop emulation cannot confirm either.
 - [x] Keep the 14-day strip and replace full history with a monthly calendar, including breach notes and Watchman words.
 - [x] Verify history navigation and saved day details signed in on desktop and phone widths; no overflow or runtime errors.
 - [x] Paths list cards match dashboard cards.

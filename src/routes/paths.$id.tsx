@@ -158,8 +158,7 @@ function LaneDetail() {
   const scriptures = (lane.support_scripture ?? []).filter(Boolean);
   const hasDetails =
     Boolean(lane.notes) ||
-    Boolean(lane.ends_at) ||
-    false;
+    Boolean(lane.ends_at);
 
 
   
@@ -300,12 +299,6 @@ function LaneDetail() {
       {hasDetails && (
         <div className="kp-card mt-6 p-4">
           <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider font-semibold mb-3">Notes & details</p>
-          {/^send scripture/i.test(lane.title ?? "") && (
-            <p className="text-xs text-[#a8a094] mt-2">
-              Easy way to do this:{" "}
-              <a href="https://sendscripture.xyz" target="_blank" rel="noreferrer" className="text-[#c9a84c] font-semibold no-underline">SendScripture.xyz</a>
-            </p>
-          )}
           {lane.notes && (
             <div className="mt-2 pl-3 border-l-2 border-[#c9a84c]/60">
               <p className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] font-semibold mb-1">Notes</p>
