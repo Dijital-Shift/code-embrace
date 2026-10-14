@@ -15,6 +15,7 @@ import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
+import { formatPhone } from "@/lib/phone";
 import { TIMEZONE_GROUPS } from "@/lib/localday";
 
 
@@ -64,7 +65,7 @@ function Settings() {
     if (data?.profile) {
       setFirst(data.profile.first_name ?? "");
       setLast(data.profile.last_name ?? "");
-      setPhone(data.profile.phone ?? "");
+      setPhone(formatPhone(data.profile.phone ?? ""));
       setBedtime((data.profile.bedtime ?? "22:00:00").slice(0, 5));
       setTz(data.profile.timezone ?? "America/Chicago");
       setTzAuto((data.profile as any).timezone_auto !== false);
@@ -135,8 +136,8 @@ function Settings() {
         </div>
         <div className="flex flex-col gap-1.5">
           <label className={label}>Phone</label>
-          <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 000 0000" className={inputCls} />
-          <p className={hint}>Shared with watchmen only when you breach or go silent.</p>
+          <input required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="(555) 123-4567" className={inputCls} />
+          <p className={hint}>Your Watchman will call or text you when you breach or go silent. Kept strictly between the two of you.</p>
         </div>
 
         <div className="flex flex-col gap-1.5">
