@@ -99,3 +99,15 @@ export async function purgeExpiredDeletions() {
   }
   return { purged };
 }
+
+/** Skip the hold: permanently delete one account that is already pending deletion. */
+export async function deleteNow(userId: string) {
+  const { data: p } = await supabaseAdmin
+    .from('profiles').select('deletion_requested_at').eq('user_id', userId).maybeSingle();
+  if (!p?.deletion_requested_at) return { error: 'Request deletion first.' };
+  await supabaseAdmin.from('lanes').update({ partner_id: null }).eq('partner_id', userId);
+  await supabaseAdmin.from('path_watchmen').delete().eq('watchman_id', userId);
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+  if (error) { console.error('[deletion] immediate delete failed', error.message); return { error: 'Could not delete the account. Try again.' }; }
+  return { success: true };
+}
