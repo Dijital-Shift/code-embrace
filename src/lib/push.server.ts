@@ -183,6 +183,21 @@ async function sendOne(sub: { endpoint: string; p256dh: string; auth: string }, 
   }
 }
 
+export async function sendPushToEndpoint(
+  userId: string,
+  endpoint: string,
+  payload: { title: string; body: string; url?: string },
+): Promise<'sent' | 'not_registered' | 'failed'> {
+  const { data: sub } = await supabaseAdmin
+    .from('push_subscriptions')
+    .select('endpoint, p256dh, auth')
+    .eq('user_id', userId)
+    .eq('endpoint', endpoint)
+    .maybeSingle();
+  if (!sub) return 'not_registered';
+  return (await sendOne(sub, JSON.stringify(payload))) ? 'sent' : 'failed';
+}
+
 export async function sendPushToUser(
   userId: string,
   payload: { title: string; body: string; url?: string },

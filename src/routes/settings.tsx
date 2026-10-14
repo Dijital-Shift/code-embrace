@@ -196,6 +196,13 @@ function Settings() {
             </span>
             <span className="text-[#c9a84c]">›</span>
           </a>
+          <Link to="/partner" className="flex items-center justify-between px-4 py-3.5 no-underline">
+            <span>
+              <span className="block text-sm text-[#ded8cc] font-medium">Watchman alerts</span>
+              <span className="block text-[0.7rem] text-[#8f887c]">Check alerts on this device and send a test.</span>
+            </span>
+            <span className="text-[#c9a84c]">›</span>
+          </Link>
           {([
             ["/terms", "Terms of Service", "The rules of the walk."],
             ["/privacy", "Privacy Policy", "What we keep and why."],
