@@ -66,7 +66,7 @@ function Partner() {
 
       <div className="mb-8">
         <div className="flex justify-between items-start">
-          <h2 className="text-xl font-bold mb-1">Your Assignments</h2>
+          <div><p className="text-[0.65rem] uppercase tracking-[0.28em] text-[#c2af80] mb-2">The Watch</p><h2 className="text-3xl tracking-wide text-[#f3e6c4] mb-2" style={{ fontFamily: "Cinzel, serif" }}>Your Assignments</h2></div>
         </div>
         <p className="text-[#a8a094] text-sm">You'll only be pinged when something goes wrong. Silence means they're aligned.</p>
         {lanes.length > 0 && (
@@ -102,7 +102,7 @@ function Partner() {
 
       {needsYou.length > 0 && (
         <section className="mb-10">
-          <p className="text-[0.65rem] text-[#f87171] uppercase tracking-wider mb-3 font-semibold">Needs you ({needsYou.length})</p>
+          <p className="text-[0.65rem] text-[#f87171] uppercase tracking-[0.22em] mb-3 font-semibold pb-2 border-b border-[#f87171]/20">Needs you ({needsYou.length})</p>
           <div className="flex flex-col gap-3">
             {needsYou.map((lane) => (
               <AssignmentCard
@@ -116,7 +116,7 @@ function Partner() {
 
       {quiet.length > 0 && (
         <section className="mb-10">
-          <p className="text-[0.65rem] text-[#4ade80] uppercase tracking-wider mb-3 font-semibold">Quiet — walking well ({quiet.length})</p>
+          <p className="text-[0.65rem] text-[#c9a84c] uppercase tracking-[0.22em] mb-3 font-semibold pb-2 border-b border-[#c9a84c]/20">Quiet — walking well ({quiet.length})</p>
           <div className="flex flex-col gap-1.5">
             {quiet.map((lane) => (
               <AssignmentCard
@@ -130,7 +130,7 @@ function Partner() {
 
       {resting.length > 0 && (
         <section className="mb-10">
-          <p className="text-[0.65rem] text-[#948d80] uppercase tracking-wider mb-1 font-semibold">Resting ({resting.length})</p>
+          <p className="text-[0.65rem] text-[#948d80] uppercase tracking-[0.22em] mb-2 font-semibold pb-2 border-b border-[#2a2418]">Resting ({resting.length})</p>
           <p className="text-[0.7rem] text-[#7d776c] mb-3">Their account is paused for now. No alerts until they pick it back up.</p>
           <div className="flex flex-col gap-1.5">
             {resting.map((lane) => (
@@ -221,7 +221,7 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
   const rel = lane.partner_relationship as string | null | undefined;
 
   return (
-    <div className="rounded-lg border border-[#1a1a1a]" style={{ background: "#0d0d0d" }}>
+    <div className="rounded-xl border border-[#2a2418] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]" style={{ background: "linear-gradient(135deg, #14100a 0%, #0a0800 100%)" }}>
       <button
         type="button" onClick={() => setOpen((v) => !v)}
         className="w-full flex justify-between items-center gap-3 text-left px-4 py-3"
