@@ -530,6 +530,30 @@ export type Database = {
           },
         ]
       }
+      referral_claims: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          referred_user_id: string
+          referrer_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          referred_user_id: string
+          referrer_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          referred_user_id?: string
+          referrer_id?: string
+        }
+        Relationships: []
+      }
       referrals: {
         Row: {
           claimed_at: string | null
