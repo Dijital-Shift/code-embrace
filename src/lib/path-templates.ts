@@ -89,6 +89,26 @@ export const PATH_TEMPLATES: PathTemplate[] = [
       "Let every man be swift to hear, slow to speak, slow to wrath. — James 1:19 (KJV)",
     ],
   },
+  {
+    id: "confess-your-faults",
+    category: "Devotion",
+    title: "Confess your faults one to another",
+    description: "Don't carry it alone. Confess openly, and pray one for another.",
+    lane_type: "complete",
+    support_scripture: [
+      "Confess your faults one to another, and pray one for another, that ye may be healed. The effectual fervent prayer of a righteous man availeth much. — James 5:16 (KJV)",
+    ],
+  },
+  {
+    id: "give-thanks-in-everything",
+    category: "Devotion",
+    title: "Give thanks in everything",
+    description: "Thank God in every thing — this is his will toward you in Christ Jesus.",
+    lane_type: "complete",
+    support_scripture: [
+      "In every thing give thanks: for this is the will of God in Christ Jesus concerning you. — 1 Thessalonians 5:18 (KJV)",
+    ],
+  },
 
   // ── Body ───────────────────────────────────────────────────
   {
@@ -147,6 +167,17 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     support_scripture: [
       "Whosoever looketh on a woman to lust after her hath committed adultery with her already in his heart. — Matthew 5:28 (KJV)",
       "I made a covenant with mine eyes; why then should I think upon a maid? — Job 31:1 (KJV)",
+    ],
+  },
+  {
+    id: "modesty-in-dress-and-demeanor",
+    category: "Purity",
+    title: "Modesty in dress and demeanor",
+    description: "Adorn the hidden man of the heart, not outward costly array.",
+    lane_type: "avoid",
+    support_scripture: [
+      "In like manner also, that women adorn themselves in modest apparel, with shamefacedness and sobriety; not with broided hair, or gold, or pearls, or costly array… — 1 Timothy 2:9-10 (KJV)",
+      "Whose adorning let it not be that outward adorning of plaiting the hair, and of wearing of gold, or of putting on of apparel; but let it be the hidden man of the heart… even the ornament of a meek and quiet spirit. — 1 Peter 3:3-4 (KJV)",
     ],
   },
 
@@ -288,6 +319,17 @@ export const PATH_TEMPLATES: PathTemplate[] = [
       "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. — Philippians 4:6 (KJV)",
     ],
   },
+  {
+    id: "no-murmuring",
+    category: "Mind",
+    title: "No murmuring or complaining",
+    description: "Do all things without murmurings and disputings.",
+    lane_type: "avoid",
+    support_scripture: [
+      "Do all things without murmurings and disputings. — Philippians 2:14 (KJV)",
+      "Neither murmur ye, as some of them also murmured, and were destroyed of the destroyer. — 1 Corinthians 10:10 (KJV)",
+    ],
+  },
 
   // ── Stewardship ────────────────────────────────────────────
   {
@@ -311,6 +353,9 @@ export const PATH_TEMPLATES: PathTemplate[] = [
       "Let your conversation be without covetousness; and be content with such things as ye have: for he hath said, I will never leave thee, nor forsake thee. — Hebrews 13:5 (KJV)",
       "But godliness with contentment is great gain. For we brought nothing into this world, and it is certain we can carry nothing out. — 1 Timothy 6:6-7 (KJV)",
       "Better is little with the fear of the LORD than great treasure and trouble therewith. — Proverbs 15:16 (KJV)",
+      "Let us not be desirous of vain glory, provoking one another, envying one another. — Galatians 5:26 (KJV)",
+      "But if ye have bitter envying and strife in your hearts, glory not, and lie not against the truth. This wisdom descendeth not from above, but is earthly, sensual, devilish. — James 3:14-16 (KJV)",
+      "Envy and wrath shorten the life, and carefulness bringeth age before the time. — Sirach 30:24 (KJV)",
     ],
   },
 
@@ -357,6 +402,30 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     support_scripture: [
       "And whatsoever ye do, do it heartily, as to the Lord, and not unto men. — Colossians 3:23 (KJV)",
       "Go to the ant, thou sluggard; consider her ways, and be wise. — Proverbs 6:6 (KJV)",
+    ],
+  },
+  {
+    id: "walk-in-humility",
+    category: "Heart & Action",
+    title: "Walk in humility",
+    description: "Esteem others better than yourselves. God resisteth the proud, but giveth grace to the humble.",
+    lane_type: "complete",
+    support_scripture: [
+      "Let nothing be done through strife or vainglory; but in lowliness of mind let each esteem other better than themselves. — Philippians 2:3 (KJV)",
+      "But he giveth more grace. Wherefore he saith, God resisteth the proud, but giveth grace unto the humble. — James 4:6 (KJV)",
+      "Yea, all of you be subject one to another, and be clothed with humility: for God resisteth the proud, and giveth grace to the humble. Humble yourselves therefore under the mighty hand of God, that he may exalt you in due time. — 1 Peter 5:5-6 (KJV)",
+    ],
+  },
+  {
+    id: "bless-someone-today",
+    category: "Heart & Action",
+    title: "Bless someone today",
+    description: "Render blessing instead of evil. Bless, and curse not.",
+    lane_type: "complete",
+    support_scripture: [
+      "But I say unto you, Love your enemies, bless them that curse you, do good to them that hate you, and pray for them which despitefully use you, and persecute you. — Matthew 5:44 (KJV)",
+      "Bless them which persecute you: bless, and curse not. — Romans 12:14 (KJV)",
+      "Not rendering evil for evil, or railing for railing: but contrariwise blessing; knowing that ye are thereunto called, that ye should inherit a blessing. — 1 Peter 3:9 (KJV)",
     ],
   },
 ];
