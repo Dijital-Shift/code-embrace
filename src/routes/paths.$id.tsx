@@ -330,14 +330,33 @@ function LaneDetail() {
         {canDelete && (
           <button
             disabled={del.isPending}
-            onClick={() => { setErr(null); del.mutate(); }}
+            onClick={() => { setErr(null); setPending("delete"); }}
             className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]"
             style={{ background: "#1a0a0a" }}
           >{del.isPending ? "Deleting…" : "Delete"}</button>
         )}
       </div>
 
-      {pending && (
+      {pending === "delete" && (
+        <div className="mt-4 p-5 rounded-xl border border-[#5a1f1f]" style={{ background: "#1a0a0a" }}>
+          <p className="text-base font-semibold text-[#f3e6c4]">Delete this Path?</p>
+          <p className="text-sm text-[#c2af80] leading-relaxed mt-1.5">
+            This permanently removes “{lane.title}”, its notes, and its walk history. This cannot be undone.
+          </p>
+          <div className="flex gap-2 mt-4">
+            <button
+              disabled={del.isPending}
+              onClick={() => del.mutate()}
+              className="px-4 py-2.5 rounded-md text-sm font-bold bg-[#b91c1c] text-white"
+            >{del.isPending ? "Deleting…" : "Delete Path"}</button>
+            <button onClick={() => setPending(null)} className="px-4 py-2.5 rounded-md text-sm font-semibold border border-[#2a2518] text-[#ded8cc] bg-transparent">Keep Path</button>
+          </div>
+        </div>
+      )}
+      <div className="hidden">
+      </div>
+
+      {pending && pending !== "delete" && (
         <div
           key={pending}
           ref={(el) => {
