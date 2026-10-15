@@ -6,6 +6,7 @@ import { Wordmark } from "@/components/Wordmark";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/lib/auth";
+import { useAccessState } from "@/components/AccessBanner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -223,6 +224,8 @@ function CheckoutCTA({
 }) {
   const { user, loading } = useAuth();
   const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
+  const { data: access } = useAccessState();
+  const trialActive = !!access?.trialActive;
 
   if (loading || !user) {
     return (
@@ -231,6 +234,9 @@ function CheckoutCTA({
       </Link>
     );
   }
+  // Only promise "free" when the member's 30-day trial is genuinely running;
+  // the server defers the first charge to the trial end in that case.
+  const label = trialActive ? loggedInLabel : loggedInLabel.replace(/Start Free \(30 Days\)/, "Subscribe");
   return (
     <>
       <button
@@ -239,12 +245,13 @@ function CheckoutCTA({
           priceId,
           customerEmail: user.email,
           userId: user.id,
+          deferToTrialEnd: trialActive,
           returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
         })}
         className={className}
         style={style}
       >
-        {loggedInLabel}
+        {label}
       </button>
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
