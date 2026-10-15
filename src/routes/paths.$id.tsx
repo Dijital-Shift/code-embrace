@@ -515,10 +515,10 @@ function EncouragementCard({
 
 type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
 
-// The invite link is long and has no spaces, so it sits in a read-only box that
-// grows to exactly the text it holds — nothing is cut off at the edge, and what
-// you see is precisely what Copy puts on your clipboard.
-function InviteLinkBox({ url }: { url: string }) {
+// The invitation reads as a sentence — who is asking, and the link — and the
+// read-only box grows to exactly the text it holds — nothing is cut off at the
+// edge, and what you see is precisely what Copy puts on your clipboard.
+function InviteLinkBox({ text }: { text: string }) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -532,15 +532,15 @@ function InviteLinkBox({ url }: { url: string }) {
     document.fonts?.ready.then(size).catch(() => {});
     window.addEventListener("resize", size);
     return () => window.removeEventListener("resize", size);
-  }, [url]);
+  }, [text]);
 
   return (
     <textarea
       ref={ref}
       readOnly
       rows={2}
-      value={url}
-      aria-label="Watchman invite link"
+      value={text}
+      aria-label="Watchman invite message and link"
       onFocus={(e) => e.currentTarget.select()}
       className="min-w-0 flex-1 resize-none rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[0.8rem] leading-snug text-[#e8dfc4] outline-none"
       style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
@@ -595,15 +595,23 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
   }
 
   async function copy(token: string) {
-    const url = `${window.location.origin}/invite/${token}`;
+    // Copy carries the whole invitation — the sentence and the link — so what
+    // is pasted into Messages is exactly what the box shows.
+    const message = inviteMessage(token);
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(message);
       setCopied(token);
-      toast.success("Invite link copied");
+      toast.success("Invite copied");
       setTimeout(() => setCopied((c) => (c === token ? null : c)), 2500);
     } catch {
       toast.error("Couldn't copy — select the text and copy it manually.");
     }
+  }
+
+  function inviteMessage(token: string) {
+    const url = `${window.location.origin}/invite/${token}`;
+    const who = ownerName || "Someone";
+    return `${who} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   }
 
   async function revoke(inviteId: string) {
@@ -666,7 +674,6 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
 
 
       {activePending.map((inv: any) => {
-        const url = `${window.location.origin}/invite/${inv.token}`;
         return (
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
@@ -680,7 +687,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
               <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
             <div className="flex items-start gap-2">
-              <InviteLinkBox url={url} />
+              <InviteLinkBox text={inviteMessage(inv.token)} />
               <button onClick={() => copy(inv.token)} className="shrink-0 text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
             </div>
           </div>
