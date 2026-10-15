@@ -674,7 +674,6 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
 
 
       {activePending.map((inv: any) => {
-        const url = `${window.location.origin}/invite/${inv.token}`;
         return (
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
@@ -688,7 +687,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
               <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
             <div className="flex items-start gap-2">
-              <InviteLinkBox url={url} />
+              <InviteLinkBox text={inviteMessage(inv.token)} />
               <button onClick={() => copy(inv.token)} className="shrink-0 text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
             </div>
           </div>
