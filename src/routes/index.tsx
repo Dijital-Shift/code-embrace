@@ -6,6 +6,7 @@ import { Wordmark } from "@/components/Wordmark";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/lib/auth";
+import { useAccessState } from "@/components/AccessBanner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
