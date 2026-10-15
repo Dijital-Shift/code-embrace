@@ -223,6 +223,8 @@ function CheckoutCTA({
 }) {
   const { user, loading } = useAuth();
   const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
+  const { data: access } = useAccessState();
+  const trialActive = !!access?.trialActive;
 
   if (loading || !user) {
     return (
@@ -231,6 +233,9 @@ function CheckoutCTA({
       </Link>
     );
   }
+  // Only promise "free" when the member's 30-day trial is genuinely running;
+  // the server defers the first charge to the trial end in that case.
+  const label = trialActive ? loggedInLabel : loggedInLabel.replace(/Start Free \(30 Days\)/, "Subscribe");
   return (
     <>
       <button
@@ -239,6 +244,7 @@ function CheckoutCTA({
           priceId,
           customerEmail: user.email,
           userId: user.id,
+          deferToTrialEnd: trialActive,
           returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
         })}
         className={className}
