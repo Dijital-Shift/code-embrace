@@ -518,36 +518,6 @@ type WatchmanSlot = { id: string; name: string; email: string; relationship: str
 // The invitation reads as a sentence — who is asking, and the link — and the
 // read-only box grows to exactly the text it holds — nothing is cut off at the
 // edge, and what you see is precisely what Copy puts on your clipboard.
-function InviteLinkBox({ text }: { text: string }) {
-  const ref = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-    const size = () => {
-      const el = ref.current;
-      if (!el) return;
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight + 2}px`;
-    };
-    size();
-    document.fonts?.ready.then(size).catch(() => {});
-    window.addEventListener("resize", size);
-    return () => window.removeEventListener("resize", size);
-  }, [text]);
-
-  return (
-    <textarea
-      ref={ref}
-      readOnly
-      rows={2}
-      value={text}
-      aria-label="Watchman invite message and link"
-      onFocus={(e) => e.currentTarget.select()}
-      className="min-w-0 flex-1 resize-none rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[0.8rem] leading-snug text-[#e8dfc4] outline-none"
-      style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
-    />
-  );
-}
-
 function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
