@@ -8,6 +8,7 @@ import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/li
 import { Check, X, Lock } from "lucide-react";
 
 import { AppLayout } from "@/components/AppLayout";
+import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 
@@ -84,6 +85,7 @@ function CheckIn() {
     };
   }, []);
   const { data: access } = useAccessState();
+  const [tab, setTab] = useState<null | "yesterday" | "today" | "logged">(null);
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   if (access && !access.hasAccess) {
@@ -168,6 +170,8 @@ function CheckIn() {
 
       <AccessBanner />
 
+      <div className="mb-4"><WatchmanPushPrompt variant="owner" /></div>
+
       {(!online || data?.offline || queuedRows.length > 0) && (
         <div className="px-3 py-2.5 rounded-lg border border-[#5a4a1a] mb-4 text-xs" style={{ background: "#1a1408", color: "#e5af38" }}>
           {!online || data?.offline
@@ -183,40 +187,78 @@ function CheckIn() {
         </div>
       )}
 
-      {late.length > 0 && (
-        <section className="mb-6">
-          <p className="text-[0.65rem] text-[#f59e0b] uppercase tracking-wider mb-2 font-semibold">
-            {graceOpen ? "Yesterday — Submit Before 10AM" : "Yesterday — Went Silent"}
-          </p>
-          <div className="flex flex-col gap-1.5">
-            {late.map((l) => <PathRow key={`y-${l.lane_id}`} lane={l} isLate day="yesterday" date={yesterday} />)}
-          </div>
-        </section>
-      )}
+      {(() => {
+        const tabs = [
+          { key: "yesterday" as const, label: "Yesterday", count: late.length, warn: true },
+          { key: "today" as const, label: "Today", count: pending.length, warn: false },
+          { key: "logged" as const, label: "Logged", count: done.length + undoableYesterday.length, warn: false },
+        ];
+        const fallback = late.length ? "yesterday" : pending.length ? "today" : "logged";
+        const active = tab && tabs.find((t) => t.key === tab) ? tab : fallback;
+        return (
+          <>
+            <div className="sticky z-20 -mx-1 px-1 py-2 mb-3" style={{ top: "calc(44px + env(safe-area-inset-top))", background: "#0a0800" }}>
+              <div role="tablist" aria-label="Check-in groups" className="grid grid-cols-3 gap-1 p-1 rounded-xl border border-[#2a2518]" style={{ background: "#120e06" }}>
+                {tabs.map((t) => {
+                  const on = active === t.key;
+                  return (
+                    <button
+                      key={t.key} type="button" role="tab" aria-selected={on}
+                      onClick={() => setTab(t.key)}
+                      className="flex items-center justify-center gap-1.5 py-2 rounded-lg text-[0.72rem] font-semibold uppercase tracking-wider transition-colors"
+                      style={{ background: on ? "#c9a84c" : "transparent", color: on ? "#0a0800" : "#b8b0a4" }}
+                    >
+                      {t.label}
+                      <span
+                        className="min-w-[1.25rem] h-5 px-1 rounded-full text-[0.65rem] flex items-center justify-center"
+                        style={{
+                          background: on ? "#0a0800" : t.count && t.warn ? "#3a2606" : "#1f1a10",
+                          color: on ? "#f3d27a" : t.count && t.warn ? "#f59e0b" : "#9e968a",
+                        }}
+                      >{t.count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-      {pending.length > 0 && (
-        <section className="mb-6">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Today</p>
-          <div className="flex flex-col gap-1.5">
-            {pending.map((l) => <PathRow key={l.lane_id} lane={l} date={today} />)}
-          </div>
-        </section>
-      )}
+            {active === "yesterday" && (
+              <section>
+                <p className="text-[0.7rem] text-[#f59e0b] mb-2">
+                  {late.length === 0 ? "Nothing owed from yesterday." : graceOpen ? "Answer before 10 AM, or it counts as silent." : "Went silent — still yours to answer honestly."}
+                </p>
+                <div className="flex flex-col gap-2">
+                  {late.map((l) => <PathRow key={`y-${l.lane_id}`} lane={l} isLate day="yesterday" date={yesterday} />)}
+                </div>
+              </section>
+            )}
 
-      {(done.length > 0 || undoableYesterday.length > 0) && (
-        <section className="mb-6">
-          <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-2 font-semibold">Logged</p>
-          <div className="flex flex-col gap-1.5">
-            {undoableYesterday.map((l) => (
-              <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" day="yesterday" date={yesterday} />
-            ))}
-            {done.map((l) => {
-              const c = todayMap.get(l.lane_id)!;
-              return <LoggedRow key={l.lane_id} lane={l} checkin={c as any} date={today} />;
-            })}
-          </div>
-        </section>
-      )}
+            {active === "today" && (
+              <section>
+                {pending.length === 0 && <p className="text-[0.75rem] text-[#9e968a]">Every Path is answered for today.</p>}
+                <div className="flex flex-col gap-2">
+                  {pending.map((l) => <PathRow key={l.lane_id} lane={l} date={today} />)}
+                </div>
+              </section>
+            )}
+
+            {active === "logged" && (
+              <section>
+                {done.length + undoableYesterday.length === 0 && <p className="text-[0.75rem] text-[#9e968a]">Nothing logged yet today.</p>}
+                <div className="flex flex-col gap-2">
+                  {undoableYesterday.map((l) => (
+                    <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" day="yesterday" date={yesterday} />
+                  ))}
+                  {done.map((l) => {
+                    const c = todayMap.get(l.lane_id)!;
+                    return <LoggedRow key={l.lane_id} lane={l} checkin={c as any} date={today} />;
+                  })}
+                </div>
+              </section>
+            )}
+          </>
+        );
+      })()}
     </div>
   );
 }
@@ -312,13 +354,21 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   }
 
   return (
-    <div className="px-3 py-2.5 rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+    <div className="px-3.5 py-3 rounded-xl border border-[#2a2518]" style={{ background: "linear-gradient(180deg, #19140b 0%, #120e07 100%)", boxShadow: "inset 0 1px 0 rgba(201,168,76,0.06)" }}>
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           {isLate && <span className="text-[0.6rem] text-[#f59e0b] font-semibold uppercase tracking-wider block">Yesterday</span>}
-          <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
+          <span className="text-[0.95rem] font-medium text-[#e8dfc4] block truncate">{lane.title}</span>
         </div>
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex gap-2 flex-shrink-0 items-center">
+          <button
+            type="button" disabled={busy || open}
+            aria-label="Skip — Sabbath"
+            title="Sabbath — no check-in today"
+            onClick={doSkip}
+            className="h-8 px-2.5 rounded-full text-[0.62rem] font-semibold uppercase tracking-wider disabled:opacity-40"
+            style={{ border: "1px solid #3a3020", color: "#c9a84c", background: "transparent" }}
+          >Sabbath</button>
           <button
             type="button" disabled={busy}
             aria-label={yesLabel}
@@ -365,9 +415,6 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
 
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
-      {!open && (
-        <button type="button" onClick={doSkip} className="text-[#6b5a1f] text-[0.68rem] underline mt-1.5">Skip — Sabbath</button>
-      )}
     </div>
   );
 }

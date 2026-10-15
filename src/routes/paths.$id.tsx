@@ -518,36 +518,6 @@ type WatchmanSlot = { id: string; name: string; email: string; relationship: str
 // The invitation reads as a sentence — who is asking, and the link — and the
 // read-only box grows to exactly the text it holds — nothing is cut off at the
 // edge, and what you see is precisely what Copy puts on your clipboard.
-function InviteLinkBox({ text }: { text: string }) {
-  const ref = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-    const size = () => {
-      const el = ref.current;
-      if (!el) return;
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight + 2}px`;
-    };
-    size();
-    document.fonts?.ready.then(size).catch(() => {});
-    window.addEventListener("resize", size);
-    return () => window.removeEventListener("resize", size);
-  }, [text]);
-
-  return (
-    <textarea
-      ref={ref}
-      readOnly
-      rows={2}
-      value={text}
-      aria-label="Watchman invite message and link"
-      onFocus={(e) => e.currentTarget.select()}
-      className="min-w-0 flex-1 resize-none rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[0.8rem] leading-snug text-[#e8dfc4] outline-none"
-      style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
-    />
-  );
-}
-
 function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
@@ -686,9 +656,12 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
               />
               <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
-            <div className="flex items-start gap-2">
-              <InviteLinkBox text={inviteMessage(inv.token)} />
-              <button onClick={() => copy(inv.token)} className="shrink-0 text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[0.78rem] text-[#e8dfc4] leading-snug">{(ownerName || "Someone")} is inviting you to be their watchman.</p>
+                <p className="text-[0.68rem] text-[#8a8276] truncate mt-0.5">{`${typeof window !== "undefined" ? window.location.origin : "https://kingdomprotocol.app"}/invite/${inv.token}`}</p>
+              </div>
+              <button onClick={() => copy(inv.token)} aria-label="Copy invitation message and link" className="shrink-0 text-xs px-3 py-2 bg-[#c9a84c] text-black rounded-md font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
             </div>
           </div>
         );
