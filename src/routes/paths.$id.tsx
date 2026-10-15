@@ -595,15 +595,23 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
   }
 
   async function copy(token: string) {
-    const url = `${window.location.origin}/invite/${token}`;
+    // Copy carries the whole invitation — the sentence and the link — so what
+    // is pasted into Messages is exactly what the box shows.
+    const message = inviteMessage(token);
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(message);
       setCopied(token);
-      toast.success("Invite link copied");
+      toast.success("Invite copied");
       setTimeout(() => setCopied((c) => (c === token ? null : c)), 2500);
     } catch {
       toast.error("Couldn't copy — select the text and copy it manually.");
     }
+  }
+
+  function inviteMessage(token: string) {
+    const url = `${window.location.origin}/invite/${token}`;
+    const who = ownerName || "Someone";
+    return `${who} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   }
 
   async function revoke(inviteId: string) {
