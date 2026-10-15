@@ -365,7 +365,12 @@ function LaneDetail() {
       </div>
 
       {pending === "delete" && (
-        <div className="mt-4 p-5 rounded-xl border border-[#5a1f1f]" style={{ background: "#1a0a0a" }}>
+        <div
+          ref={(el) => {
+            if (!el) return;
+            requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "center" }));
+          }}
+          className="mt-4 p-5 rounded-xl border border-[#5a1f1f] scroll-mt-24" style={{ background: "#1a0a0a" }}>
           <p className="text-base font-semibold text-[#f3e6c4]">Delete this Path?</p>
           <p className="text-sm text-[#c2af80] leading-relaxed mt-1.5">
             This permanently removes “{lane.title}”, its notes, and its walk history. This cannot be undone.
