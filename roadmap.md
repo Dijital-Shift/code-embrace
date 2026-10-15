@@ -16,3 +16,4 @@
 - [x] Encouragements capped at 5 with "Show earlier".
 - [x] Optional profile photo (Settings upload, shown on Watchman encouragements).
 - [x] Send Scripture Path auto-added for all new members.
+- [x] Path page invite cards: pending chip with live countdown, Copy and Cancel; expired links stay visible with one-tap reissue or dismissal. Verified signed in on a real Path.

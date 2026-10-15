@@ -528,15 +528,25 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
     queryFn: () => listFn({ data: { laneId } }),
   });
 
+  const now = Date.now();
+  const isExpired = (i: any) => new Date(i.expires_at).getTime() <= now;
   const activePending = invites.filter(
-    (i: any) => i.status === "pending" && new Date(i.expires_at) > new Date(),
+    (i: any) => i.status === "pending" && !isExpired(i),
   );
+  // An expired link stays visible until it is reissued or dismissed — a slot
+  // that silently reverts to "empty" looks like the invite was never sent.
+  const expiredInvites = invites
+    .filter((i: any) => i.status === "pending" && isExpired(i))
+    .slice(0, 2);
 
-  async function generate() {
+  async function generate(revokeFirst?: string) {
     setErr(null);
     setBusy(true);
+    // Reissuing retires the dead token first so the panel never piles up links.
+    if (revokeFirst) await revokeFn({ data: { inviteId: revokeFirst } });
     const r = await createFn({ data: { laneId } });
     setBusy(false);
+    qc.invalidateQueries({ queryKey: ["invites", laneId] });
     if ("error" in r && r.error) {
       if ((r as any).code === "CAP_REACHED") {
         setErr("This path already has two Watchmen (active or pending). Remove one before inviting another.");
@@ -544,9 +554,6 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
         setErr(r.error);
       }
       return;
-    }
-    if ("token" in r && r.token) {
-      qc.invalidateQueries({ queryKey: ["invites", laneId] });
     }
   }
 
@@ -595,7 +602,9 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
 
   const slotCount = watchmen.length + activePending.length;
   const atCap = slotCount >= 2;
-  const emptySlots = Math.max(0, 2 - slotCount);
+  // An expired link still holds its row on screen, so it doesn't also print a
+  // blank "empty slot" beneath it.
+  const emptySlots = Math.max(0, 2 - (slotCount + expiredInvites.length));
 
   return (
     <div className="kp-card mt-6 p-5">
@@ -624,7 +633,13 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
         return (
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs text-[#c9a84c]">Invite pending · expires in {hoursLeft(inv.expires_at)}</p>
+              <Pill
+                label={`Invite pending · ${hoursLeft(inv.expires_at)}`}
+                bg="#241a06"
+                fg="#e5c66a"
+                border="rgba(201,168,76,0.38)"
+                dot="#c9a84c"
+              />
               <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
             <div className="flex items-center gap-2">
@@ -635,6 +650,28 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
         );
       })}
 
+      {expiredInvites.map((inv: any) => (
+        <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#14110a" }}>
+          <div className="flex items-center justify-between gap-2">
+            <Pill label="Invite expired" bg="#12100a" fg="#8a8276" border="#2a2518" dot="#6b6459" />
+            <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Dismiss</button>
+          </div>
+          <p className="text-xs text-[#9e968a] leading-relaxed">
+            Nobody accepted in time. The old link no longer works — send a fresh one.
+          </p>
+          {!atCap && (
+            <button
+              type="button"
+              onClick={() => generate(inv.invite_id)}
+              disabled={busy}
+              className="self-start px-3 py-1.5 rounded-md text-xs font-semibold border border-[#c9a84c]/60 text-[#e5c66a] bg-transparent disabled:opacity-60"
+            >
+              {busy ? "Generating…" : "Send new invite"}
+            </button>
+          )}
+        </div>
+      ))}
+
       {Array.from({ length: emptySlots }).map((_, i) => (
         <div key={`empty-${i}`} className="p-3 rounded border border-dashed border-[#2a2518] mb-3 text-center">
           <p className="text-xs text-[#7d766b]">Empty slot — no Watchman yet</p>
@@ -644,7 +681,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
 
 
       <button
-        onClick={generate}
+        onClick={() => generate()}
         disabled={busy || atCap}
         className="w-full py-3 rounded-md text-sm font-semibold"
         style={{
