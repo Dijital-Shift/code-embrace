@@ -511,7 +511,6 @@ function EncouragementCard({
 type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
 
 function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
-  const inviteText = (url: string) => `${ownerName || "Someone"} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
   const listFn = useServerFn(listLaneInvites);
@@ -560,9 +559,9 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
   async function copy(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     try {
-      await navigator.clipboard.writeText(inviteText(url));
+      await navigator.clipboard.writeText(url);
       setCopied(token);
-      toast.success("Invite text copied");
+      toast.success("Invite link copied");
       setTimeout(() => setCopied((c) => (c === token ? null : c)), 2500);
     } catch {
       toast.error("Couldn't copy — select the text and copy it manually.");
@@ -642,9 +641,22 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
               />
               <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
-            <div className="flex items-center gap-2">
-              <input readOnly value={inviteText(url)} className="flex-1 px-2 py-1.5 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
-              <button onClick={() => copy(inv.token)} className="text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
+            <div className="flex items-start gap-2">
+              <textarea
+                readOnly
+                rows={2}
+                value={url}
+                aria-label="Watchman invite link"
+                onFocus={(e) => e.currentTarget.select()}
+                ref={(el) => {
+                  if (!el) return;
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
+                }}
+                className="min-w-0 flex-1 resize-none rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[0.8rem] leading-snug text-[#e8dfc4] outline-none"
+                style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
+              />
+              <button onClick={() => copy(inv.token)} className="shrink-0 text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
             </div>
           </div>
         );
