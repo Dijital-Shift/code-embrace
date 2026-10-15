@@ -282,3 +282,42 @@ export async function sendBedtimeReminders() {
   }
   return { sent };
 }
+
+/**
+ * One consolidated 9 AM local reminder — never one per Path. Only for members
+ * who still owe today's or yesterday's check-in on an active Path.
+ * Runs on the same hourly hook as the bedtime reminder.
+ */
+export async function sendMorningReminders() {
+  const now = new Date();
+  const { data: profiles } = await supabaseAdmin.from('profiles')
+    .select('user_id, timezone').eq('status', 'active');
+  const due = (profiles ?? []).filter((p: any) => localParts(now, p.timezone || DEFAULT_TZ).hour === 9);
+  if (!due.length) return { morningSent: 0 };
+  const access = await accessibleOwners(due.map((p: any) => p.user_id));
+  let morningSent = 0;
+  for (const p of due) {
+    if (!access.has(p.user_id)) continue;
+    const today = localDate((p as any).timezone || DEFAULT_TZ, now);
+    const yesterday = prevDay(today);
+    const { data: lanes } = await supabaseAdmin.from('lanes')
+      .select('lane_id, created_at').eq('user_id', p.user_id).eq('status', 'active');
+    if (!lanes?.length) continue;
+    const { data: cs } = await supabaseAdmin.from('checkins')
+      .select('lane_id, checkin_date').eq('user_id', p.user_id).in('checkin_date', [today, yesterday]);
+    const got = new Set((cs ?? []).map((c: any) => `${c.lane_id}|${c.checkin_date}`));
+    const owesYesterday = lanes.some((l: any) =>
+      localParts(new Date(l.created_at), (p as any).timezone || DEFAULT_TZ).date <= yesterday && !got.has(`${l.lane_id}|${yesterday}`));
+    const owesToday = lanes.some((l: any) => !got.has(`${l.lane_id}|${today}`));
+    if (!owesYesterday && !owesToday) continue;
+    await sendPushToUser(p.user_id, {
+      title: 'Kingdom Protocol',
+      body: owesYesterday
+        ? "Yesterday's check-in closes at 10 AM. Answer before it counts as silent."
+        : "Your Paths are waiting for today's check-in.",
+      url: '/checkin',
+    });
+    morningSent++;
+  }
+  return { morningSent };
+}
