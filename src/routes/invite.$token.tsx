@@ -153,6 +153,16 @@ function InvitePage() {
         and a ping if two days pass with no check-in at all. Nothing else — no daily noise.
         You'll see the path in your app, and you reach out when one of those pings lands.
       </p>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3">The Watchman's role</p>
+        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
+          <li><span className="text-[#c9a84c]">◆</span> Stand watch over one Path — you see its Standing and Fallen days.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Get pinged on a breach, or after two silent days. Nothing else.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Reach out — call, text, or send a word of Scripture.</li>
+        </ul>
+        <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
+        <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1">Ezekiel 33:7 (KJV)</p>
+      </div>
       <Link to="/demo" className="inline-block text-xs text-[#c9a84c] underline mb-6">
         How does this work?
       </Link>
@@ -162,7 +172,7 @@ function InvitePage() {
           <button
             onClick={accept}
             disabled={accepting}
-            className="w-full py-3.5 bg-white text-black rounded-md font-semibold mb-3"
+            className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold mb-3"
           >
             {accepting ? "Accepting…" : `Accept — Watch ${ownerName.split(" ")[0]}'s path`}
           </button>
@@ -175,7 +185,7 @@ function InvitePage() {
               <p className="text-xs text-[#a8a094] mb-1">Sign in to accept — takes 10 seconds.</p>
               <button
                 onClick={signInWithGoogle}
-                className="w-full py-3.5 bg-white text-black rounded-md font-semibold flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold flex items-center justify-center gap-2"
               >
                 <GoogleIcon /> Continue with Google
               </button>
@@ -198,9 +208,9 @@ function InvitePage() {
                 placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none"
+                className="px-4 py-3 bg-[#161210] border border-[#2a2518] rounded-md text-white outline-none"
               />
-              <button disabled={busy} className="py-3 bg-white text-black rounded-md font-semibold">
+              <button disabled={busy} className="py-3 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold">
                 {busy ? "Sending…" : "Send code"}
               </button>
               <button type="button" onClick={() => setAuthStep("choose")} className="text-xs text-[#9e968a]">
@@ -221,9 +231,9 @@ function InvitePage() {
                 placeholder="Enter code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
+                className="px-4 py-3 bg-[#161210] border border-[#2a2518] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
               />
-              <button disabled={busy} className="py-3 bg-white text-black rounded-md font-semibold">
+              <button disabled={busy} className="py-3 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold">
                 {busy ? "Verifying…" : "Verify & continue"}
               </button>
               {err && <p className="text-red-400 text-xs">{err}</p>}

@@ -170,13 +170,7 @@ function LaneDetail() {
   return (
     <div>
       <div
-        className="sticky z-30 -mx-5 px-5 py-2.5 mb-5 border-b border-[#2a2518]/60"
-        style={{
-          top: "calc(48px + env(safe-area-inset-top, 0px))",
-          background: "rgba(10,8,0,0.92)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-        }}
+        className="kp-subpage-bar -mx-5 px-5 py-2.5 mb-5"
       >
         <Link
           to="/paths"
@@ -239,10 +233,18 @@ function LaneDetail() {
           </div>
         )}
         {scriptures.length > 0 && (
-          <div className="mt-4 flex flex-col gap-2 border-l-2 border-[#c9a84c]/50 pl-3.5 py-1">
-            {scriptures.map((s, i) => (
-              <p key={i} className="text-xs italic text-[#c9a84c]/90 leading-relaxed">“{s}”</p>
-            ))}
+          <div className="mt-4 flex flex-col gap-3">
+            {scriptures.map((s, i) => {
+              const cut = s.lastIndexOf(" — ");
+              const body = (cut > 0 ? s.slice(0, cut) : s).replace(/^[“"]|[”"]$/g, "");
+              const ref = cut > 0 ? s.slice(cut + 3).replace(/[”"]$/, "") : null;
+              return (
+                <div key={i} className="border-l-2 border-[#c9a84c]/60 pl-3.5 py-1">
+                  {ref && <p className="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-[#f3d27a] mb-1">{ref}</p>}
+                  <p className="text-sm italic text-[#e8dfc4] leading-relaxed">“{body}”</p>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
