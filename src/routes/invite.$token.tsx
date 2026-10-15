@@ -8,13 +8,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
 export const Route = createFileRoute("/invite/$token")({
-  head: () => ({ meta: [
+  head: ({ params }) => ({ meta: [
     { title: "You've been invited — Kingdom Protocol" },
-    { name: "description", content: "Review your invitation to watch a Kingdom Protocol Path." },
-    { property: "og:title", content: "You've been invited — Kingdom Protocol" },
-    { property: "og:description", content: "Review your invitation to watch a Kingdom Protocol Path." },
+    { name: "description", content: "You've been asked to stand watch. Watching is free forever." },
+    { property: "og:title", content: "You've been invited to stand watch." },
+    { property: "og:description", content: "Watching a brother is free forever. No subscription, no payment required." },
     { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary" },
+    { property: "og:url", content: `https://kingdomprotocol.app/invite/${params.token}` },
+    { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+    { property: "og:image:secure_url", content: "https://kingdomprotocol.app/og-card.jpg" },
+    { property: "og:image:type", content: "image/jpeg" },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    { property: "og:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
   ] }),
   component: InvitePage,
 });
@@ -162,6 +170,10 @@ function InvitePage() {
         </ul>
         <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
         <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1">Ezekiel 33:7 (KJV)</p>
+      </div>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/40 text-center" style={{ background: "#161210" }}>
+        <p className="text-sm font-semibold text-[#f3d27a]">Watching is free forever.</p>
+        <p className="text-xs text-[#c8c0b4] mt-1 leading-relaxed">No subscription, no payment required. Just create an account. You'd only pay if you later start a Path of your own, after its 30-day free trial.</p>
       </div>
       <Link to="/demo" className="inline-block text-xs text-[#c9a84c] underline mb-6">
         How does this work?
