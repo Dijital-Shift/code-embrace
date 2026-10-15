@@ -51,8 +51,12 @@ function Onboarding() {
           </div>
           <div className="flex flex-col gap-1.5 text-left">
             <input required type="tel" inputMode="tel" autoComplete="tel" value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="(555) 123-4567" className={inputCls} />
-            <p className="text-xs text-[#a8a094]">Your Watchman will call or text you when you breach or go silent. Kept strictly between the two of you.</p>
+              onChange={(e) => { setPhone(formatPhone(e.target.value)); setErr(null); }} placeholder="(555) 123-4567" aria-invalid={!!phone && !isValidPhone(phone)} className={inputCls} style={phone && !isValidPhone(phone) ? { borderColor: "#e0a040" } : undefined} />
+            {phone && !isValidPhone(phone) ? (
+              <p className="text-xs text-[#e0a040] font-semibold" role="alert">Incomplete number — {phone.trim().startsWith("+") ? "enter the full international number" : `${10 - Math.min(10, phone.replace(/\D/g, "").length)} digit(s) missing`}.</p>
+            ) : (
+              <p className="text-xs text-[#a8a094]">Your Watchman will call or text you when you breach or go silent. Kept strictly between the two of you.</p>
+            )}
           </div>
           <div className="flex flex-col gap-2 text-left">
             <label className="text-xs uppercase tracking-wider text-[#b8b0a4] font-semibold">Male or Female</label>

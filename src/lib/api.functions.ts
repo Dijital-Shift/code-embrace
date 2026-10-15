@@ -53,7 +53,7 @@ export const updateProfile = createServerFn({ method: 'POST' })
     z.object({
       first_name: z.string().max(50).optional().nullable(),
       last_name: z.string().max(50).optional().nullable(),
-      phone: z.string().max(30).optional().nullable(),
+      phone: z.string().max(30).refine((v) => { const t = v.trim(); const d = t.replace(/\D/g, ''); return t.startsWith('+') ? d.length >= 8 && d.length <= 15 : d.length === 10 || (d.length === 11 && d.startsWith('1')); }, 'Enter your full phone number'),
       bedtime: z.string(),
       timezone: z.string(),
       timezone_auto: z.boolean().optional(),
