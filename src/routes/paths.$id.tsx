@@ -544,13 +544,6 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
       return;
     }
     if ("token" in r && r.token) {
-      const url = `${window.location.origin}/invite/${r.token}`;
-      try {
-        await navigator.clipboard.writeText(inviteText(url));
-        setCopied(url);
-      } catch {
-        setCopied(url);
-      }
       qc.invalidateQueries({ queryKey: ["invites", laneId] });
     }
   }
@@ -559,14 +552,16 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
     const url = `${window.location.origin}/invite/${token}`;
     try {
       await navigator.clipboard.writeText(inviteText(url));
-      setCopied(url);
+      setCopied(token);
       toast.success("Invite text copied");
+      setTimeout(() => setCopied((c) => (c === token ? null : c)), 2500);
     } catch {
-      setCopied(url);
+      toast.error("Couldn't copy — select the text and copy it manually.");
     }
   }
 
   async function revoke(inviteId: string) {
+    setCopied(null);
     await revokeFn({ data: { inviteId } });
     toast.success("Invite canceled");
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
@@ -632,7 +627,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
             </div>
             <div className="flex items-center gap-2">
               <input readOnly value={inviteText(url)} className="flex-1 px-2 py-1.5 text-base bg-[#0a0800] border border-[#222] rounded text-white outline-none" />
-              <button onClick={() => copy(inv.token)} className="text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold">Copy</button>
+              <button onClick={() => copy(inv.token)} className="text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
             </div>
           </div>
         );
@@ -659,11 +654,6 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
         {busy ? "Generating…" : atCap ? "2 watchmen — at the limit" : slotCount === 0 ? "+ Invite Watchman" : "+ Invite second Watchman"}
       </button>
 
-      {copied && (
-        <p className="text-xs text-[#4ade80] mt-3">
-          Link copied. Paste it to your Watchman (text, DM, anywhere).
-        </p>
-      )}
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
       <p className="text-[0.8rem] text-[#9e968a] mt-3 leading-relaxed">
