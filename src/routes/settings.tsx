@@ -15,7 +15,7 @@ import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
-import { formatPhone } from "@/lib/phone";
+import { formatPhone, isValidPhone } from "@/lib/phone";
 import { TIMEZONE_GROUPS } from "@/lib/localday";
 import { useRevealOnOpen } from "@/hooks/useRevealOnOpen";
 
@@ -113,7 +113,7 @@ function Settings() {
       <p className="text-[#a8a094] text-xs mb-8">Your profile, your day, and your invite.</p>
 
       <p className={sectionLabel}>Profile</p>
-      <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); m.mutate(); }} className="kp-card p-5 flex flex-col gap-5">
+      <form onSubmit={(e) => { e.preventDefault(); setErr(null); setSaved(false); if (!isValidPhone(phone)) { setErr("Enter your full phone number — your Watchman can't reach you otherwise."); document.getElementById("kp-phone")?.focus(); return; } m.mutate(); }} className="kp-card p-5 flex flex-col gap-5">
         {data?.profile && (
           <AvatarPicker
             initial={(data.profile as any).avatar_url ?? null}
@@ -137,8 +137,12 @@ function Settings() {
         </div>
         <div className="flex flex-col gap-1.5">
           <label className={label}>Phone</label>
-          <input required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="(555) 123-4567" className={inputCls} />
-          <p className={hint}>Your Watchman will call or text you when you breach or go silent. Kept strictly between the two of you.</p>
+          <input id="kp-phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => { setPhone(formatPhone(e.target.value)); setErr(null); }} placeholder="(555) 123-4567" aria-invalid={!!phone && !isValidPhone(phone)} className={inputCls} style={phone && !isValidPhone(phone) ? { borderColor: "#e0a040" } : undefined} />
+          {phone && !isValidPhone(phone) ? (
+            <p className="text-[0.7rem] text-[#e0a040] font-semibold" role="alert">Incomplete number — {phone.trim().startsWith("+") ? "enter the full international number" : `${10 - Math.min(10, phone.replace(/\D/g, "").replace(/^1(?=\d{10})/, "").length)} digit(s) missing`}.</p>
+          ) : (
+            <p className={hint}>Your Watchman will call or text you when you breach or go silent. Kept strictly between the two of you.</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1.5">
