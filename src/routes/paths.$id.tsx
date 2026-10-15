@@ -515,10 +515,10 @@ function EncouragementCard({
 
 type WatchmanSlot = { id: string; name: string; email: string; relationship: string | null };
 
-// The invite link is long and has no spaces, so it sits in a read-only box that
-// grows to exactly the text it holds — nothing is cut off at the edge, and what
-// you see is precisely what Copy puts on your clipboard.
-function InviteLinkBox({ url }: { url: string }) {
+// The invitation reads as a sentence — who is asking, and the link — and the
+// read-only box grows to exactly the text it holds — nothing is cut off at the
+// edge, and what you see is precisely what Copy puts on your clipboard.
+function InviteLinkBox({ text }: { text: string }) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -532,15 +532,15 @@ function InviteLinkBox({ url }: { url: string }) {
     document.fonts?.ready.then(size).catch(() => {});
     window.addEventListener("resize", size);
     return () => window.removeEventListener("resize", size);
-  }, [url]);
+  }, [text]);
 
   return (
     <textarea
       ref={ref}
       readOnly
       rows={2}
-      value={url}
-      aria-label="Watchman invite link"
+      value={text}
+      aria-label="Watchman invite message and link"
       onFocus={(e) => e.currentTarget.select()}
       className="min-w-0 flex-1 resize-none rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[0.8rem] leading-snug text-[#e8dfc4] outline-none"
       style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
