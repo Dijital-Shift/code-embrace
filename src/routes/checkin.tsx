@@ -8,6 +8,7 @@ import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/li
 import { Check, X, Lock } from "lucide-react";
 
 import { AppLayout } from "@/components/AppLayout";
+import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
 
@@ -168,6 +169,8 @@ function CheckIn() {
       <p className="text-[#a8a094] text-xs mb-6">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
 
       <AccessBanner />
+
+      <div className="mb-4"><WatchmanPushPrompt variant="owner" /></div>
 
       {(!online || data?.offline || queuedRows.length > 0) && (
         <div className="px-3 py-2.5 rounded-lg border border-[#5a4a1a] mb-4 text-xs" style={{ background: "#1a1408", color: "#e5af38" }}>

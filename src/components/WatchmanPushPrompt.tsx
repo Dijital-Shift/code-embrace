@@ -40,7 +40,7 @@ const btn = "px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold disa
  * Watchman alert status panel. Checks install, permission, device
  * registration, and offers a test alert. Collapses to one line once all pass.
  */
-export function WatchmanPushPrompt() {
+export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchman" | "owner" } = {}) {
   const vapidFn = useServerFn(getVapidPublicKey);
   const [ready, setReady] = useState(false);
   const [installed, setInstalled] = useState(false);
@@ -198,10 +198,11 @@ export function WatchmanPushPrompt() {
           <button onClick={() => setOpen(false)} className="text-[0.65rem] text-[#a8a094]">Hide</button>
         )}
       </div>
-      <p className="font-semibold text-sm mb-1">{allGood ? "You're on watch." : "You're standing watch for someone."}</p>
+      <p className="font-semibold text-sm mb-1">{variant === "owner" ? (allGood ? "Reminders are on." : "Turn on your reminders.") : allGood ? "You're on watch." : "You're standing watch for someone."}</p>
       <p className="text-xs text-[#c2af80] leading-relaxed mb-3">
-        Alerts only fire when they breach or go silent two days running. If this device can't receive them, you
-        won't hear it — and neither will they.
+        {variant === "owner"
+          ? "One nudge at 9 AM if a check-in is still open, and one an hour before bedtime. Without this, nothing reaches your phone."
+          : "Alerts only fire when they breach or go silent two days running. If this device can't receive them, you won't hear it — and neither will they."}
       </p>
 
       <div className="space-y-2">
