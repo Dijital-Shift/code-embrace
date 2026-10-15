@@ -18,3 +18,4 @@
 - [x] Send Scripture Path auto-added for all new members.
 - [x] Path page invite cards: pending chip with live countdown, Copy and Cancel; expired links stay visible with one-tap reissue or dismissal. Verified signed in on a real Path.
 - [x] Invite box no longer clips: shows the full invitation sentence ("[Name] is inviting you to be their watchman…") wrapped, and Copy puts that exact text on the clipboard. Verified signed in on a real Path.
+- [x] Path list and dashboard cards: no Watchman shown once — faint empty seat rings replace the duplicate uppercase label. Verified signed in on both pages.

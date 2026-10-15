@@ -26,10 +26,16 @@ export function DayProgressBar({ statuses }: { statuses: string[] }) {
   );
 }
 
-/** Filled dot = active Watchman, outlined = invite pending. */
+/** Filled dot = active Watchman, outlined = invite pending, faint ring = empty seat. */
 export function WatchmanPips({ active, pending }: { active: number; pending: number }) {
   if (active + pending === 0) {
-    return <span className="text-[0.6rem] text-[#c9a84c]/80 uppercase tracking-wider">No Watchman</span>;
+    return (
+      <span className="flex items-center gap-1" aria-label="No Watchman yet">
+        {[0, 1].map((i) => (
+          <span key={`e${i}`} className="w-2 h-2 rounded-full border border-[#c9a84c]/25" />
+        ))}
+      </span>
+    );
   }
   return (
     <span className="flex items-center gap-1" aria-label={`${active} watchman active, ${pending} pending`}>
