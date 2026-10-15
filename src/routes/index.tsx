@@ -250,7 +250,7 @@ function CheckoutCTA({
         className={className}
         style={style}
       >
-        {loggedInLabel}
+        {label}
       </button>
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
