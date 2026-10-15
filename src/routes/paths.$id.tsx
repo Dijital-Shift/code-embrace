@@ -686,9 +686,12 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
               />
               <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
             </div>
-            <div className="flex items-start gap-2">
-              <InviteLinkBox text={inviteMessage(inv.token)} />
-              <button onClick={() => copy(inv.token)} className="shrink-0 text-xs px-3 py-1.5 bg-[#c9a84c] text-black rounded font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[0.78rem] text-[#e8dfc4] leading-snug">{(ownerName || "Someone")} is inviting you to be their watchman.</p>
+                <p className="text-[0.68rem] text-[#8a8276] truncate mt-0.5">{`${typeof window !== "undefined" ? window.location.origin : "https://kingdomprotocol.app"}/invite/${inv.token}`}</p>
+              </div>
+              <button onClick={() => copy(inv.token)} aria-label="Copy invitation message and link" className="shrink-0 text-xs px-3 py-2 bg-[#c9a84c] text-black rounded-md font-semibold min-w-[4.5rem]">{copied === inv.token ? "Copied ✓" : "Copy"}</button>
             </div>
           </div>
         );
