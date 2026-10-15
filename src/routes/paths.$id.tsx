@@ -651,7 +651,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
                 ref={(el) => {
                   if (!el) return;
                   el.style.height = "auto";
-                  el.style.height = `${el.scrollHeight}px`;
+                  el.style.height = `${el.scrollHeight + 2}px`;
                 }}
                 className="min-w-0 flex-1 resize-none rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[0.8rem] leading-snug text-[#e8dfc4] outline-none"
                 style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
