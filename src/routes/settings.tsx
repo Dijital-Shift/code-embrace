@@ -162,10 +162,10 @@ function Settings() {
 
         <div className="h-px bg-[#c9a84c]/15" />
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5 min-w-0">
             <label className={label}>Bedtime</label>
-            <input type="time" required value={bedtime} onChange={(e) => setBedtime(e.target.value)} className={inputCls} />
+            <input type="time" required value={bedtime} onChange={(e) => setBedtime(e.target.value)} className={inputCls + " appearance-none block"} style={{ WebkitAppearance: "none", minHeight: "3rem", textAlign: "left" }} />
           </div>
           <div className="flex flex-col gap-1.5 min-w-0">
             <label className={label}>Timezone</label>
