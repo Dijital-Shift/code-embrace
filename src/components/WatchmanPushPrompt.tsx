@@ -103,12 +103,14 @@ export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchm
       const p = await Notification.requestPermission();
       setPerm(p as Perm);
       if (p !== "granted") throw new Error("Alerts were blocked. Follow the steps below to allow them.");
-      const sub =
-        (await reg.pushManager.getSubscription()) ??
-        (await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: b64ToUint8(key) as BufferSource,
-        }));
+      // Clear any stale subscription first — an orphaned endpoint makes the
+      // browser's push service reject the new one ("push service error").
+      const existing = await reg.pushManager.getSubscription();
+      if (existing) await existing.unsubscribe().catch(() => {});
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: b64ToUint8(key) as BufferSource,
+      });
       const res = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...(await authHeader()) },
@@ -117,7 +119,16 @@ export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchm
       if (!res.ok) throw new Error("Couldn't register this device. Try again.");
       setRegistered(true);
     } catch (e: any) {
-      setErr(e?.message ?? "Something went wrong.");
+      const msg = String(e?.message ?? "");
+      if (/push service error|Registration failed/i.test(msg)) {
+        setErr(
+          platform === "desktop"
+            ? "Your computer's notification service didn't answer. Turn off any VPN or ad-blocker, check that notifications for this app are allowed in System Settings, then tap Reconnect this device."
+            : "Your device's notification service didn't answer. Turn off any VPN, then tap Reconnect this device.",
+        );
+      } else {
+        setErr(msg || "Something went wrong.");
+      }
     } finally {
       setBusy(false);
     }
