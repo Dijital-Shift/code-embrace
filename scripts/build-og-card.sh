@@ -14,12 +14,12 @@ GLOW="#5a3f0e"   # sampled from the icon artwork itself
 FONT_SERIF="${FONT_SERIF:-/tmp/ogfonts/Cinzel.ttf}"
 FONT_SANS="${FONT_SANS:-/tmp/ogfonts/WorkSans-Regular.ttf}"
 FONT_ITAL="${FONT_ITAL:-/tmp/ogfonts/WorkSans-Italic.ttf}"
-FONT_TAG="${FONT_TAG:-/tmp/ogfonts/CormorantGaramond-SemiBoldItalic.ttf}"
+FONT_TAG="${FONT_TAG:-/tmp/ogfonts/CormorantGaramond-BoldItalic.ttf}"
 
 COL_X=560         # left edge of the right column
 COL_W=570         # width of the right column
 TAGLINE="Accountability with a watchman."
-TAG_SIZE=48
+TAG_SIZE=50
 WM_SIZE=49
 
 TMP="$(mktemp -d)"
@@ -63,8 +63,8 @@ magick "$TMP/base.png" "$TMP/glow.png" -compose screen -composite \
 magick "$TMP/baseglow.png" \
   -font "$FONT_SERIF" -pointsize $WM_SIZE -fill "$GOLD_MARK" -kerning 4 \
   -annotate +${COL_X}+155 "KINGDOM PROTOCOL" \
-  -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#ffffff" -kerning 0 \
-  -annotate +${TAG_OFFSET}+235 "$TAGLINE" \
+  -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#ffffff" -stroke "#ffffff" -strokewidth 0.8 -kerning 0 \
+  -annotate +${TAG_OFFSET}+235 "$TAGLINE" -stroke none \
   "$TMP/withtext.png"
 
 # Thin gold rule between the wordmark and the tagline, spanning the wordmark width.
