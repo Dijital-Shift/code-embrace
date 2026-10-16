@@ -110,7 +110,9 @@ function InvitePage() {
     // Once verified, AuthProvider flips user; useEffect-style branch below handles next step.
   }
 
-  if (isLoading || loading) {
+  // Only the invite lookup can block the whole card. Auth resolves on the
+  // client and is handled inside the action section, so the card paints fast.
+  if (isLoading) {
     return (
       <Shell>
         <div className="flex flex-col items-center justify-center py-12 text-center">
