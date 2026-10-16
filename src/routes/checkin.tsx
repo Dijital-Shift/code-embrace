@@ -361,14 +361,16 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
           <span className="text-[0.95rem] font-medium text-[#e8dfc4] block truncate">{lane.title}</span>
         </div>
         <div className="flex gap-2 flex-shrink-0 items-center">
-          <button
-            type="button" disabled={busy || open}
-            aria-label="Skip — Sabbath"
-            title="Sabbath — no check-in today"
-            onClick={doSkip}
-            className="h-8 px-2.5 rounded-full text-[0.62rem] font-semibold uppercase tracking-wider disabled:opacity-40"
-            style={{ border: "1px solid #3a3020", color: "#c9a84c", background: "transparent" }}
-          >Sabbath</button>
+          {!isAvoid && (
+            <button
+              type="button" disabled={busy || open}
+              aria-label="Skip — Sabbath"
+              title="Sabbath — no check-in today"
+              onClick={doSkip}
+              className="h-8 px-2.5 rounded-full text-[0.62rem] font-semibold uppercase tracking-wider disabled:opacity-40"
+              style={{ border: "1px solid #3a3020", color: "#c9a84c", background: "transparent" }}
+            >Sabbath</button>
+          )}
           <button
             type="button" disabled={busy}
             aria-label={yesLabel}

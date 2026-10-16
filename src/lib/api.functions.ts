@@ -602,9 +602,11 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
-    const { data: lane } = await supabase.from('lanes').select('lane_id, title')
+    const { data: lane } = await supabase.from('lanes').select('lane_id, title, lane_type')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found.' };
+    // Flee Paths never rest — there is no Sabbath from fleeing sin.
+    if (lane.lane_type === 'avoid') return { error: 'A Flee Path has no Sabbath — every day counts.' };
     const { today, yesterday } = await userDay(supabase, userId);
     // The page says which day it is skipping; default to today. Writing the
     // right date is what makes the 30-minute Undo find the row afterwards.
