@@ -111,7 +111,14 @@ function InvitePage() {
   }
 
   if (isLoading || loading) {
-    return <Shell><p className="text-[#9e968a] text-sm">Loading invite…</p></Shell>;
+    return (
+      <Shell>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="w-8 h-8 rounded-full border-2 border-[#c9a84c]/25 border-t-[#c9a84c] animate-spin" />
+          <p className="text-[#9e968a] text-sm mt-5">Loading invite…</p>
+        </div>
+      </Shell>
+    );
   }
 
   if (!preview || !preview.found) {
@@ -175,7 +182,7 @@ function InvitePage() {
           {ownerName.split(" ")[0]} {(preview as any).isAvoid
             ? "is fighting to break a stronghold and refuses to fight it in the dark."
             : "is committed to building a disciplined walk and refuses to walk it alone."}{" "}
-          They chose you personally because they trust you to keep them honest before God.
+          They chose you personally to keep them honest before the Most High God.
         </p>
       </div>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
@@ -221,7 +228,7 @@ function InvitePage() {
         <div className="flex flex-col gap-3">
           {authStep === "choose" && (
             <>
-              <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — takes 10 seconds.</p>
+              <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — it's free.</p>
               <button
                 onClick={signInWithGoogle}
                 className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold flex items-center justify-center gap-2"
