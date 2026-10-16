@@ -593,17 +593,22 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
 
-  async function remove(w: WatchmanSlot) {
-    const reason = window.prompt(
-      `Removing ${w.name} is not silent — they'll be told. Why are you removing them?`,
-    );
-    if (reason === null) return;
-    if (reason.trim().length < 3) {
-      toast.error("A reason is required to remove a Watchman.");
-      return;
-    }
-    const r: any = await removeFn({ data: { laneId, watchmanRowId: w.id, reason: reason.trim() } });
+  const [removing, setRemoving] = useState<WatchmanSlot | null>(null);
+  const [removeReason, setRemoveReason] = useState("");
+  const [removeBusy, setRemoveBusy] = useState(false);
+
+  function remove(w: WatchmanSlot) {
+    setRemoveReason("");
+    setRemoving(w);
+  }
+
+  async function confirmRemove() {
+    if (!removing || removeBusy || removeReason.trim().length < 3) return;
+    setRemoveBusy(true);
+    const r: any = await removeFn({ data: { laneId, watchmanRowId: removing.id, reason: removeReason.trim() } });
+    setRemoveBusy(false);
     if (r?.error) { toast.error(r.error); return; }
+    setRemoving(null);
     toast.success("Watchman removed — they've been notified.");
     qc.invalidateQueries({ queryKey: ["lane", laneId] });
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
@@ -717,6 +722,66 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
       <p className="text-[0.8rem] text-[#9e968a] mt-3 leading-relaxed">
         Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. Links expire in 48 hours.
       </p>
+
+      {removing && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+          style={{ background: "rgba(0,0,0,0.78)" }}
+          onClick={() => !removeBusy && setRemoving(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="remove-watchman-title"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6"
+            style={{ background: "#100d05", border: "1px solid #2a2518", boxShadow: "0 20px 60px rgba(0,0,0,0.6)" }}
+          >
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h3 id="remove-watchman-title" className="text-lg font-bold text-white">Remove {removing.name}?</h3>
+              <button type="button" onClick={() => !removeBusy && setRemoving(null)} className="text-[#948d80] text-lg leading-none px-1" style={{ minHeight: 0 }} aria-label="Close">×</button>
+            </div>
+            <p className="text-sm text-[#b8b0a4] leading-relaxed mb-4">
+              This is not silent. <span className="text-[#e8dfc4]">{removing.name}</span> will be told they've been removed from this Path. Share why, honestly.
+            </p>
+            <label htmlFor="remove-reason" className="block text-xs uppercase tracking-wider font-semibold text-[#c9a84c] mb-2">Reason</label>
+            <textarea
+              id="remove-reason"
+              autoFocus
+              rows={3}
+              maxLength={500}
+              value={removeReason}
+              onChange={(e) => setRemoveReason(e.target.value)}
+              placeholder="e.g. We agreed to step back for a season."
+              className="w-full rounded-lg p-3 text-[16px] text-white placeholder:text-[#6b6459] outline-none focus:border-[#c9a84c] resize-none"
+              style={{ background: "#1a1612", border: "1px solid #2a2518" }}
+            />
+            <p className="text-[0.7rem] text-[#8a8276] mt-1.5">
+              {removeReason.trim().length < 3 ? "A short reason is required." : "They'll see this reason."}
+            </p>
+            <div className="flex gap-2 mt-5">
+              <button
+                type="button"
+                onClick={() => setRemoving(null)}
+                disabled={removeBusy}
+                className="flex-1 py-3 rounded-md text-sm font-semibold text-[#ded8cc] border border-[#2a2518]"
+                style={{ background: "#1a1612" }}
+              >
+                Keep Watchman
+              </button>
+              <button
+                type="button"
+                onClick={confirmRemove}
+                disabled={removeBusy || removeReason.trim().length < 3}
+                className="flex-1 py-3 rounded-md text-sm font-semibold text-[#f87171] border border-[#5a2020] disabled:opacity-40"
+                style={{ background: "#1a0a0a" }}
+              >
+                {removeBusy ? "Removing…" : "Remove"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
