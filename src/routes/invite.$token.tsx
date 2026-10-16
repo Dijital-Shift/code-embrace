@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getInvitePreview, acceptLaneInvite } from "@/lib/invites.functions";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +50,9 @@ function InvitePage() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
+  const verifyingRef = useRef(false);
+  const autoAcceptRef = useRef(false);
+  const acceptingRef = useRef(false);
 
   const { data: preview, isLoading } = useQuery({
     queryKey: ["invite-preview", token],
@@ -60,9 +63,12 @@ function InvitePage() {
   });
 
   async function accept() {
+    if (acceptingRef.current) return;
+    acceptingRef.current = true;
     setAccepting(true);
     setErr(null);
-    const r: any = await acceptFn({ data: { token } });
+    const r: any = await acceptFn({ data: { token } }).catch(() => ({ error: "Couldn't accept. Try again." }));
+    acceptingRef.current = false;
     setAccepting(false);
     if (r?.alreadyWatchman) {
       navigate({ to: "/partner" });
@@ -96,22 +102,40 @@ function InvitePage() {
     else setAuthStep("code");
   }
 
-  async function verifyOtp(e: React.FormEvent) {
-    e.preventDefault();
+  async function runVerify(value: string) {
+    if (verifyingRef.current) return;
+    verifyingRef.current = true;
     setBusy(true);
     setErr(null);
     const { error } = await supabase.auth.verifyOtp({
       email: email.trim().toLowerCase(),
-      token: code.trim(),
+      token: value.trim(),
       type: "email",
     });
     setBusy(false);
-    if (error) setErr("Invalid or expired code.");
-    // Once verified, AuthProvider flips user; useEffect-style branch below handles next step.
+    verifyingRef.current = false;
+    if (error) {
+      setErr("Invalid or expired code.");
+      return;
+    }
+    // Signed in just for this invite — accept right away, no extra tap.
+    (document.activeElement as HTMLElement | null)?.blur?.();
+    autoAcceptRef.current = true;
   }
 
-  // Only the invite lookup can block the whole card. Auth resolves on the
-  // client and is handled inside the action section, so the card paints fast.
+  function verifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    runVerify(code);
+  }
+
+  useEffect(() => {
+    if (user && autoAcceptRef.current && !accepting) {
+      autoAcceptRef.current = false;
+      accept();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   if (isLoading) {
     return (
       <Shell>
@@ -125,41 +149,42 @@ function InvitePage() {
 
   if (!preview || !preview.found) {
     return (
-      <Shell>
-        <h1 className="text-xl font-bold mb-2">Invite not found</h1>
-        <p className="text-sm text-[#b8b0a4] mb-6">This link is invalid. Ask whoever sent it to send a fresh one.</p>
-        <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
-      </Shell>
+      <StatusCard
+        eyebrow="Link not recognized"
+        title="Invite Not Found"
+        body="This link is invalid. Ask whoever sent it to send you a fresh one."
+      />
     );
   }
 
   if (preview.status === "accepted") {
     return (
-      <Shell>
-        <h1 className="text-xl font-bold mb-2">Already used</h1>
-        <p className="text-sm text-[#b8b0a4] mb-6">This invite has already been accepted.</p>
-        <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
-      </Shell>
+      <StatusCard
+        eyebrow="On the wall"
+        title="Already Standing"
+        body="This invite has already been accepted. If it was you, your watch is waiting."
+        action={user ? { to: "/partner", label: "Go to The Watch" } : { to: "/login", label: "Sign in to The Watch" }}
+      />
     );
   }
 
   if (preview.status === "revoked") {
     return (
-      <Shell>
-        <h1 className="text-xl font-bold mb-2">Invite cancelled</h1>
-        <p className="text-sm text-[#b8b0a4] mb-6">The person who sent this cancelled the invite.</p>
-        <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
-      </Shell>
+      <StatusCard
+        eyebrow="Invite closed"
+        title="Invite Cancelled"
+        body={`${preview.ownerFirstName ?? "The sender"} cancelled this invite. If that was a mistake, ask them for a fresh link.`}
+      />
     );
   }
 
   if (preview.expired) {
     return (
-      <Shell>
-        <h1 className="text-xl font-bold mb-2">Invite expired</h1>
-        <p className="text-sm text-[#b8b0a4] mb-6">Ask {preview.ownerFirstName ?? "the sender"} to send a fresh link.</p>
-        <Link to="/" className="text-xs text-[#c9a84c]">← Home</Link>
-      </Shell>
+      <StatusCard
+        eyebrow="Link timed out"
+        title="Invite Expired"
+        body={`Invites last 48 hours. Ask ${preview.ownerFirstName ?? "the sender"} to send a fresh link — it takes them one tap.`}
+      />
     );
   }
 
