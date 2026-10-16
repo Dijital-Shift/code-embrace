@@ -120,7 +120,12 @@ export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchm
       setRegistered(true);
     } catch (e: any) {
       const msg = String(e?.message ?? "");
-      if (/push service error|Registration failed/i.test(msg)) {
+      const isBrave = await ((navigator as any).brave?.isBrave?.() ?? Promise.resolve(false)).catch(() => false);
+      if (/push service error|Registration failed/i.test(msg) && isBrave) {
+        setErr(
+          "Brave blocks alerts by default. Open Brave Settings → Privacy and security, turn on \"Use Google services for push messaging\", restart Brave, then tap Reconnect this device.",
+        );
+      } else if (/push service error|Registration failed/i.test(msg)) {
         setErr(
           platform === "desktop"
             ? "Your computer's notification service didn't answer. Turn off any VPN or ad-blocker, check that notifications for this app are allowed in System Settings, then tap Reconnect this device."
