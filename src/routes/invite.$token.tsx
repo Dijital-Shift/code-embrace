@@ -226,6 +226,12 @@ function InvitePage() {
           </button>
           {err && <p className="text-red-400 text-xs">{err}</p>}
         </>
+      ) : loading ? (
+        // Auth is still resolving (server render + first hydration beat) —
+        // hold the slot quietly instead of flashing the sign-in buttons.
+        <div className="flex justify-center py-4">
+          <div className="w-6 h-6 rounded-full border-2 border-[#c9a84c]/25 border-t-[#c9a84c] animate-spin" />
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {authStep === "choose" && (
