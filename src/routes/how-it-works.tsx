@@ -25,7 +25,18 @@ function HowItWorks() {
       <div className="max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <Wordmark size="sm" />
-          <Link to="/" className="text-[#9e968a] text-sm">← Back</Link>
+          <Link
+            to="/"
+            onClick={(e) => {
+              if (window.history.length > 1) {
+                e.preventDefault();
+                window.history.back();
+              }
+            }}
+            className="text-[#9e968a] text-sm"
+          >
+            ← Back
+          </Link>
         </div>
         <div className="text-center my-10">
           <img src="/kingdom-protocol-logo.png" alt="" className="w-28 mx-auto" />
