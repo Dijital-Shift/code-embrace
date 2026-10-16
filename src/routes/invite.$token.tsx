@@ -210,7 +210,7 @@ function InvitePage() {
         <p className="text-xs text-[#c8c0b4] mt-1 leading-relaxed">No subscription, no payment required. Just create an account. You'd only pay if you later start a Path of your own, after its 30-day free trial.</p>
       </div>
       <div className="text-center mb-6">
-        <Link to="/how-it-works" className="inline-block text-xs text-[#c9a84c] underline">
+        <Link to="/demo" search={{ invite: token, name: ownerName }} className="inline-block text-xs text-[#c9a84c] underline">
           How does this work?
         </Link>
       </div>

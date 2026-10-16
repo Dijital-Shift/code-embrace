@@ -35,6 +35,10 @@ export const Route = createFileRoute("/demo")({
       },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { invite?: string; name?: string } => ({
+    invite: typeof s.invite === "string" && s.invite ? s.invite.slice(0, 200) : undefined,
+    name: typeof s.name === "string" && s.name ? s.name.slice(0, 60) : undefined,
+  }),
   component: Demo,
 });
 
@@ -511,15 +515,28 @@ const SCENES: Scene[] = [
 /* ---------------- Page ---------------- */
 
 function Demo() {
+  const { invite, name } = Route.useSearch();
+  const first = (name || "your brother").split(" ")[0];
   return (
     <div className="min-h-screen text-white" style={{ background: "#0a0800" }}>
       <header className="sticky top-0 z-30 border-b border-[#2a2518]/60 backdrop-blur" style={{ background: "rgba(10,8,0,0.8)" }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <Wordmark size="sm" />
+          {invite ? (
+            <Link to="/invite/$token" params={{ token: invite }} className="inline-flex items-center gap-2 rounded-md bg-[#c9a84c] px-3 py-1.5 text-xs font-bold text-black">
+              <ArrowLeft className="h-4 w-4" /> Return to invite
+            </Link>
+          ) : (
           <Link to="/" className="inline-flex items-center gap-2 rounded-md border border-[#2a2518] px-3 py-1.5 text-xs font-semibold text-[#c9a84c]">
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
+          )}
         </div>
+        {invite && (
+          <div className="border-t border-[#c9a84c]/25 bg-[#c9a84c]/10 px-6 py-2 text-center text-xs text-[#e8dfc4]">
+            Viewing the demo for <span className="font-semibold text-[#f3d27a]">{first}</span>'s Watchman invite
+          </div>
+        )}
       </header>
 
       <section className="border-b border-[#2a2518]/60 relative overflow-hidden">
@@ -592,6 +609,20 @@ function Demo() {
 
         <div className="border-t border-[#2a2518] pt-10 text-center">
           <Footprints className="mx-auto h-10 w-10 text-[#c9a84c]" />
+          {invite ? (
+            <>
+              <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">Ready to stand watch with {first}?</h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm text-[#c8c0b4]">
+                You've seen how simple it is. No daily homework, free forever.
+              </p>
+              <div className="mt-6 flex justify-center">
+                <Link to="/invite/$token" params={{ token: invite }} className="inline-flex items-center gap-2 rounded-md bg-[#c9a84c] px-6 py-3.5 text-base font-bold text-black">
+                  Accept — Stand Watch with {first} <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
           <h2 className="mt-6 text-2xl font-bold tracking-tight md:text-3xl">Ready to walk it out?</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-[#c8c0b4]">
             Pick your path. Pick your watchman. Show up tonight.
@@ -604,6 +635,8 @@ function Demo() {
               Get started <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
+            </>
+          )}
           <div className="mx-auto mt-10 max-w-xl rounded-xl border border-[#c9a84c]/25 bg-[#0f0c05] p-6">
             <p className="italic text-[#c9a84c] text-sm sm:text-base leading-relaxed">
               "Iron sharpeneth iron; so a man sharpeneth the countenance of his friend."
