@@ -22,7 +22,7 @@ function Billing() {
       <p className="text-[#a8a094] text-xs -mt-3">Your plan, your subscription, and your receipts.</p>
       <PlanSection showReceipts />
       <p className="text-[0.7rem] text-[#8f887c] leading-relaxed mt-6 px-1">
-        Upgrading from monthly to Lifetime ends your monthly plan right away — no further $4.99 charges.
+        Upgrading from monthly to Lifetime ends your monthly plan right away — no further $7.99 charges.
         Refunds follow our <Link to="/refund" className="text-[#c9a84c] underline">Refund Policy</Link>.
       </p>
     </div>

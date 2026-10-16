@@ -68,7 +68,7 @@ function TermsPage() {
       <LegalSection title="7. Payments, Subscriptions & Refunds">
         <p>
           New accounts receive 30 days of full access at no charge. After that, continued use requires the Monthly
-          plan ($4.99/month) or a one-time Lifetime purchase ($99). Payments, renewals, tax, cancellations, and
+          plan ($7.99/month) or a one-time Lifetime purchase ($99). Payments, renewals, tax, cancellations, and
           refunds are processed by Stripe; card details are held by Stripe, not by us. See our{" "}
           <Link to="/refund" className="underline hover:text-[#c9a84c]">Refund Policy</Link>.
         </p>

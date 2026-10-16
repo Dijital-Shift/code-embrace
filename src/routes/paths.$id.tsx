@@ -341,7 +341,7 @@ function LaneDetail() {
       )}
 
 
-      <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} />
+      <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} isAvoid={isAvoid} />
 
       <div className="mt-8 flex gap-2 flex-wrap">
         {lane.status !== "active" && (
@@ -518,7 +518,7 @@ type WatchmanSlot = { id: string; name: string; email: string; relationship: str
 // The invitation reads as a sentence — who is asking, and the link — and the
 // read-only box grows to exactly the text it holds — nothing is cut off at the
 // edge, and what you see is precisely what Copy puts on your clipboard.
-function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string }) {
+function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { laneId: string; watchmen: WatchmanSlot[]; ownerName?: string | null; pathTitle?: string; isAvoid?: boolean }) {
   const qc = useQueryClient();
   const createFn = useServerFn(createLaneInvite);
   const listFn = useServerFn(listLaneInvites);
@@ -581,7 +581,9 @@ function WatchmenPanel({ laneId, watchmen, ownerName }: { laneId: string; watchm
   function inviteMessage(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     const who = ownerName || "Someone";
-    return `${who} is inviting you to be their watchman on Kingdom Protocol — ${url}`;
+    const p = pathTitle ? ` on "${pathTitle}"` : "";
+    const aim = isAvoid ? `is fighting to break a stronghold${p} and refuses to do it alone` : `is committed to building a disciplined walk${p} and refuses to do it alone`;
+    return `${who} ${aim}. They picked you to hold the line as their Watchman. No daily homework, free forever, takes under 5 minutes a week. Will you stand with them? ${url}`;
   }
 
   async function revoke(inviteId: string) {

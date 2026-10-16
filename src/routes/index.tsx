@@ -318,7 +318,7 @@ function Pricing() {
             </h3>
             <div className="mx-auto mt-3 sm:mt-5 h-[2px] w-8 sm:w-12 bg-[#e4c45e]" />
             <div className="mt-3 sm:mt-5 flex items-baseline justify-center gap-1 sm:gap-2">
-              <span className="pricing-display text-[44px] sm:text-[100px] leading-none text-[#f5ecda]">$4.99</span>
+              <span className="pricing-display text-[44px] sm:text-[100px] leading-none text-[#f5ecda]">$7.99</span>
               <span className="pricing-display text-[15px] sm:text-[27px] text-[#bca77a]">/ month</span>
             </div>
             <p className="mt-2 sm:mt-4 min-h-[36px] sm:min-h-[48px] text-center text-[11px] sm:text-[14px] leading-relaxed text-[#d6d1c9]">
@@ -524,7 +524,7 @@ function FAQ() {
     },
     {
       q: "Is it really free?",
-      a: "Free for 30 days when you sign up \u2014 no card. After that it's $4.99/month or $99 once for lifetime. Watchmen never pay.",
+      a: "Free for 30 days when you sign up \u2014 no card. After that it's $7.99/month or $99 once for lifetime. Watchmen never pay.",
     },
     {
       q: "Why pay at all?",
