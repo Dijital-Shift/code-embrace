@@ -24,6 +24,15 @@ export const Route = createFileRoute("/invite/$token")({
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
   ] }),
+  // Fetch the invite on the server so the card is already rendered when the
+  // page paints — no "Loading invite…" flash on the phone.
+  loader: async ({ params }) => {
+    try {
+      return { preview: await getInvitePreview({ data: { token: params.token } }) };
+    } catch {
+      return { preview: null };
+    }
+  },
   component: InvitePage,
 });
 
@@ -33,6 +42,7 @@ function InvitePage() {
   const { user, loading } = useAuth();
   const previewFn = useServerFn(getInvitePreview);
   const acceptFn = useServerFn(acceptLaneInvite);
+  const loaderData = Route.useLoaderData() as { preview?: Awaited<ReturnType<typeof getInvitePreview>> | null };
 
   const [accepting, setAccepting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -44,6 +54,9 @@ function InvitePage() {
   const { data: preview, isLoading } = useQuery({
     queryKey: ["invite-preview", token],
     queryFn: () => previewFn({ data: { token } }),
+    // The loader already fetched this server-side; reuse it and skip the
+    // client refetch so the card never flashes a loading state.
+    initialData: loaderData?.preview ?? undefined,
   });
 
   async function accept() {
@@ -97,8 +110,17 @@ function InvitePage() {
     // Once verified, AuthProvider flips user; useEffect-style branch below handles next step.
   }
 
-  if (isLoading || loading) {
-    return <Shell><p className="text-[#9e968a] text-sm">Loading invite…</p></Shell>;
+  // Only the invite lookup can block the whole card. Auth resolves on the
+  // client and is handled inside the action section, so the card paints fast.
+  if (isLoading) {
+    return (
+      <Shell>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="w-8 h-8 rounded-full border-2 border-[#c9a84c]/25 border-t-[#c9a84c] animate-spin" />
+          <p className="text-[#9e968a] text-sm mt-5">Loading invite…</p>
+        </div>
+      </Shell>
+    );
   }
 
   if (!preview || !preview.found) {
@@ -162,7 +184,7 @@ function InvitePage() {
           {ownerName.split(" ")[0]} {(preview as any).isAvoid
             ? "is fighting to break a stronghold and refuses to fight it in the dark."
             : "is committed to building a disciplined walk and refuses to walk it alone."}{" "}
-          They chose you personally because they trust you to keep them honest before God.
+          They chose you personally to keep them honest before the Most High God.
         </p>
       </div>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
@@ -204,11 +226,17 @@ function InvitePage() {
           </button>
           {err && <p className="text-red-400 text-xs">{err}</p>}
         </>
+      ) : loading ? (
+        // Auth is still resolving (server render + first hydration beat) —
+        // hold the slot quietly instead of flashing the sign-in buttons.
+        <div className="flex justify-center py-4">
+          <div className="w-6 h-6 rounded-full border-2 border-[#c9a84c]/25 border-t-[#c9a84c] animate-spin" />
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {authStep === "choose" && (
             <>
-              <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — takes 10 seconds.</p>
+              <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — it's free.</p>
               <button
                 onClick={signInWithGoogle}
                 className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold flex items-center justify-center gap-2"
