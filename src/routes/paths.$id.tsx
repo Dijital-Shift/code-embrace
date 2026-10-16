@@ -757,7 +757,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
               style={{ background: "#1a1612", border: "1px solid #2a2518" }}
             />
             <p className="text-[0.7rem] text-[#8a8276] mt-1.5">
-              {removeReason.trim().length < 3 ? "A short reason is required." : "Ready when you are."}
+              {removeReason.trim().length < 3 ? "A short reason is required." : "They'll see this reason."}
             </p>
             <div className="flex gap-2 mt-5">
               <button
