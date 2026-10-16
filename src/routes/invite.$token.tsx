@@ -24,6 +24,15 @@ export const Route = createFileRoute("/invite/$token")({
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
   ] }),
+  // Fetch the invite on the server so the card is already rendered when the
+  // page paints — no "Loading invite…" flash on the phone.
+  loader: async ({ params }) => {
+    try {
+      return { preview: await getInvitePreview({ data: { token: params.token } }) };
+    } catch {
+      return { preview: null };
+    }
+  },
   component: InvitePage,
 });
 
@@ -33,6 +42,7 @@ function InvitePage() {
   const { user, loading } = useAuth();
   const previewFn = useServerFn(getInvitePreview);
   const acceptFn = useServerFn(acceptLaneInvite);
+  const loaderData = Route.useLoaderData() as { preview?: Awaited<ReturnType<typeof getInvitePreview>> | null };
 
   const [accepting, setAccepting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -44,6 +54,9 @@ function InvitePage() {
   const { data: preview, isLoading } = useQuery({
     queryKey: ["invite-preview", token],
     queryFn: () => previewFn({ data: { token } }),
+    // The loader already fetched this server-side; reuse it and skip the
+    // client refetch so the card never flashes a loading state.
+    initialData: loaderData?.preview ?? undefined,
   });
 
   async function accept() {
