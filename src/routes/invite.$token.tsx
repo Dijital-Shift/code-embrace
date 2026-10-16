@@ -156,28 +156,25 @@ function InvitePage() {
           <p className="text-xs text-[#b8b0a4] mt-1.5 leading-relaxed">{preview.laneDescription}</p>
         )}
       </div>
-      <p className="text-sm text-[#c8c0b4] mb-6 leading-relaxed">
-        Here's what it costs you: a ping when {ownerName.split(" ")[0]} logs a breach on this path,
-        and a ping if two days pass with no check-in at all. Nothing else — no daily noise.
-        You'll see the path in your app, and you reach out when one of those pings lands.
-      </p>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3">The Watchman's role</p>
+        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The Watchman's Role</p>
         <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
-          <li><span className="text-[#c9a84c]">◆</span> Stand watch over one Path — you see its Standing and Fallen days.</li>
-          <li><span className="text-[#c9a84c]">◆</span> Get pinged on a breach, or after two silent days. Nothing else.</li>
-          <li><span className="text-[#c9a84c]">◆</span> Reach out — call, text, or send a word of Scripture.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Stand watch over one Path — see its Standing and Fallen days in your app.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Get pinged only on a breach, or after two silent days. No daily noise.</li>
+          <li><span className="text-[#c9a84c]">◆</span> When a ping lands, reach out — call, text, or send a word of Scripture.</li>
         </ul>
-        <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
-        <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1">Ezekiel 33:7 (KJV)</p>
+        <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4 text-center">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
+        <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1 text-right">Ezekiel 33:7 (KJV)</p>
       </div>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/40 text-center" style={{ background: "#161210" }}>
         <p className="text-sm font-semibold text-[#f3d27a]">Watching is free forever.</p>
         <p className="text-xs text-[#c8c0b4] mt-1 leading-relaxed">No subscription, no payment required. Just create an account. You'd only pay if you later start a Path of your own, after its 30-day free trial.</p>
       </div>
-      <Link to="/demo" className="inline-block text-xs text-[#c9a84c] underline mb-6">
-        How does this work?
-      </Link>
+      <div className="text-center mb-6">
+        <Link to="/how-it-works" className="inline-block text-xs text-[#c9a84c] underline">
+          How does this work?
+        </Link>
+      </div>
 
       {user ? (
         <>
@@ -194,7 +191,7 @@ function InvitePage() {
         <div className="flex flex-col gap-3">
           {authStep === "choose" && (
             <>
-              <p className="text-xs text-[#a8a094] mb-1">Sign in to accept — takes 10 seconds.</p>
+              <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — takes 10 seconds.</p>
               <button
                 onClick={signInWithGoogle}
                 className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold flex items-center justify-center gap-2"

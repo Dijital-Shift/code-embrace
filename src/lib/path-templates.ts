@@ -22,7 +22,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "meditate-scripture",
     category: "Devotion",
-    title: "Meditate on Scripture daily",
+    title: "Meditate on Scripture Daily",
     description: "Read and meditate on the Word day and night.",
     lane_type: "complete",
     support_scripture: [
@@ -33,7 +33,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "pray-three-times-daily",
     category: "Devotion",
-    title: "Pray three times a day",
+    title: "Pray Three Times a Day",
     description: "Evening, morning, and noon — kneel and pray.",
     lane_type: "complete",
     support_scripture: [
@@ -80,7 +80,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "keep-silence",
     category: "Devotion",
-    title: "Keep silence — be still, slow to speak",
+    title: "Keep Silence — Be Still, Slow to Speak",
     description: "Hold your tongue. Be still and know He is God.",
     lane_type: "complete",
     support_scripture: [
@@ -92,7 +92,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "confess-your-faults",
     category: "Devotion",
-    title: "Confess your faults one to another",
+    title: "Confess Your Faults One to Another",
     description: "Don't carry it alone. Confess openly, and pray one for another.",
     lane_type: "complete",
     support_scripture: [
@@ -102,7 +102,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "give-thanks-in-everything",
     category: "Devotion",
-    title: "Give thanks in everything",
+    title: "Give Thanks in Everything",
     description: "Thank God in every thing — this is his will toward you in Christ Jesus.",
     lane_type: "complete",
     support_scripture: [
@@ -114,7 +114,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "exercise-daily",
     category: "Body",
-    title: "Strengthen the body daily",
+    title: "Strengthen the Body Daily",
     description: "Lift up the hands which hang down. Glorify God in your body.",
     lane_type: "complete",
     support_scripture: [
@@ -125,7 +125,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-gluttony",
     category: "Body",
-    title: "Eat with self-control (no gluttony)",
+    title: "Eat with Self-Control (No Gluttony)",
     description: "Put a knife to thy throat if thou be a man given to appetite.",
     lane_type: "avoid",
     support_scripture: [
@@ -136,7 +136,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "guard-sleep",
     category: "Body",
-    title: "Rise early — guard sleep",
+    title: "Rise Early — Guard Sleep",
     description: "Rise a great while before day to pray. Love not sloth.",
     lane_type: "complete",
     support_scripture: [
@@ -149,7 +149,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-fornication",
     category: "Purity",
-    title: "No fornication — flee youthful lusts",
+    title: "No Fornication — Flee Youthful Lusts",
     description: "Flee fornication. Possess your vessel in sanctification.",
     lane_type: "avoid",
     support_scripture: [
@@ -161,7 +161,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-lustful-looking",
     category: "Purity",
-    title: "No pornography / lustful looking",
+    title: "No Pornography / Lustful Looking",
     description: "Make a covenant with thine eyes.",
     lane_type: "avoid",
     support_scripture: [
@@ -172,7 +172,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "modesty-in-dress-and-demeanor",
     category: "Purity",
-    title: "Modesty in dress and demeanor",
+    title: "Modesty in Dress and Demeanor",
     description: "Adorn the hidden man of the heart, not outward costly array.",
     lane_type: "avoid",
     support_scripture: [
@@ -185,7 +185,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-drunkenness",
     category: "Substances",
-    title: "No drunkenness",
+    title: "No Drunkenness",
     description: "Be not drunk with wine — be filled with the Spirit.",
     lane_type: "avoid",
     support_scripture: [
@@ -196,7 +196,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-drugs-sorcery",
     category: "Substances",
-    title: "No drugs / sorcery (pharmakeia)",
+    title: "No Drugs / Sorcery (Pharmakeia)",
     description: "Walk in the Spirit, not the works of the flesh.",
     lane_type: "avoid",
     support_scripture: [
@@ -207,7 +207,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-cannabis",
     category: "Substances",
-    title: "No cannabis",
+    title: "No Cannabis",
     description: "Stay sober-minded and vigilant. Keep a clear head — no smoking, vaping, or edibles.",
     lane_type: "avoid",
     support_scripture: [
@@ -218,7 +218,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-smoking",
     category: "Substances",
-    title: "No smoking or vaping",
+    title: "No Smoking or Vaping",
     description: "Your body is the temple of God — keep it holy.",
     lane_type: "avoid",
     support_scripture: [
@@ -231,7 +231,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-lying",
     category: "Speech",
-    title: "No lying",
+    title: "No Lying",
     description: "Put away lying. Speak every man truth with his neighbour.",
     lane_type: "avoid",
     support_scripture: [
@@ -242,7 +242,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-corrupt-speech",
     category: "Speech",
-    title: "No cursing / corrupt speech",
+    title: "No Cursing / Corrupt Speech",
     description: "Let no corrupt communication proceed out of your mouth.",
     lane_type: "avoid",
     support_scripture: [
@@ -253,7 +253,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-gossip",
     category: "Speech",
-    title: "No gossip / talebearing",
+    title: "No Gossip / Talebearing",
     description: "A talebearer revealeth secrets. Don't go up and down as one.",
     lane_type: "avoid",
     support_scripture: [
@@ -264,7 +264,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "speak-life",
     category: "Speech",
-    title: "Speak life — encourage daily",
+    title: "Speak Life — Encourage Daily",
     description: "Death and life are in the power of the tongue. Use it to build up.",
     lane_type: "complete",
     support_scripture: [
@@ -276,7 +276,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-foolish-jesting",
     category: "Speech",
-    title: "No foolish talking or jesting",
+    title: "No Foolish Talking or Jesting",
     description: "Put away coarse jesting and biting words that wound.",
     lane_type: "avoid",
     support_scripture: [
@@ -289,7 +289,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-negative-self-talk",
     category: "Mind",
-    title: "No negative self-talk",
+    title: "No Negative Self-Talk",
     description: "Refuse to speak death over yourself. Think on what is true.",
     lane_type: "avoid",
     support_scripture: [
@@ -300,7 +300,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "rule-your-spirit",
     category: "Mind",
-    title: "Rule your spirit (no unchecked anger)",
+    title: "Rule Your Spirit (No Unchecked Anger)",
     description: "Be slow to wrath. He that ruleth his spirit is better than the mighty.",
     lane_type: "avoid",
     support_scripture: [
@@ -311,7 +311,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "cast-your-care",
     category: "Mind",
-    title: "Cast your care — no dwelling in worry",
+    title: "Cast Your Care — No Dwelling in Worry",
     description: "Bring the care to God instead of turning it over all day.",
     lane_type: "avoid",
     support_scripture: [
@@ -322,7 +322,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-murmuring",
     category: "Mind",
-    title: "No murmuring or complaining",
+    title: "No Murmuring or Complaining",
     description: "Do all things without murmurings and disputings.",
     lane_type: "avoid",
     support_scripture: [
@@ -335,7 +335,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-unplanned-spending",
     category: "Stewardship",
-    title: "No unplanned spending",
+    title: "No Unplanned Spending",
     description: "Know the state of thy flocks. Spend on purpose, not on impulse.",
     lane_type: "avoid",
     support_scripture: [
@@ -346,7 +346,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "contentment",
     category: "Stewardship",
-    title: "Contentment (no covetousness)",
+    title: "Contentment (No Covetousness)",
     description: "Be content with such things as ye have. Refuse envy, greed, and murmuring over what you do not have.",
     lane_type: "avoid",
     support_scripture: [
@@ -363,7 +363,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "forgive-quickly",
     category: "Heart & Action",
-    title: "Forgive quickly — no sundown anger",
+    title: "Forgive Quickly — No Sundown Anger",
     description: "Let not the sun go down upon your wrath.",
     lane_type: "complete",
     support_scripture: [
@@ -374,7 +374,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "serve-the-afflicted",
     category: "Heart & Action",
-    title: "Serve / visit the afflicted",
+    title: "Serve / Visit the Afflicted",
     description: "Pure religion: visit the fatherless and widows in their affliction.",
     lane_type: "complete",
     support_scripture: [
@@ -385,7 +385,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "honor-parents",
     category: "Heart & Action",
-    title: "Honor parents — tell them you love them",
+    title: "Honor Parents — Tell Them You Love Them",
     description: "Honor thy father and mother. Speak love to them often.",
     lane_type: "complete",
     support_scripture: [
@@ -396,7 +396,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "work-as-unto-the-lord",
     category: "Heart & Action",
-    title: "Work as unto the Lord (no slothfulness)",
+    title: "Work as unto the Lord (No Slothfulness)",
     description: "Whatsoever ye do, do it heartily, as to the Lord.",
     lane_type: "complete",
     support_scripture: [
@@ -407,7 +407,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "walk-in-humility",
     category: "Heart & Action",
-    title: "Walk in humility",
+    title: "Walk in Humility",
     description: "Esteem others better than yourselves. God resisteth the proud, but giveth grace to the humble.",
     lane_type: "complete",
     support_scripture: [
@@ -419,7 +419,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "bless-someone-today",
     category: "Heart & Action",
-    title: "Bless someone today",
+    title: "Bless Someone Today",
     description: "Render blessing instead of evil. Bless, and curse not.",
     lane_type: "complete",
     support_scripture: [
