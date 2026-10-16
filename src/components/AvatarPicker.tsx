@@ -22,6 +22,7 @@ export function AvatarPicker({ initial, name, onSaved }: { initial: string | nul
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [cropImage, setCropImage] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
   async function commit(next: string | null) {
     setBusy(true); setErr(null);
@@ -42,9 +43,18 @@ export function AvatarPicker({ initial, name, onSaved }: { initial: string | nul
             className="p-0 text-xs font-semibold cursor-pointer">
             {busy ? "Saving…" : src ? "Change photo" : "Add photo"}
           </Button>
-          {src && !busy && (
-            <Button variant="ghost" type="button" onClick={() => commit(null)}
+          {src && !busy && !confirmRemove && (
+            <Button variant="ghost" type="button" onClick={() => setConfirmRemove(true)}
               className="p-0 text-xs text-muted-foreground cursor-pointer">Remove</Button>
+          )}
+          {src && !busy && confirmRemove && (
+            <span className="flex items-center gap-2 text-xs">
+              <span className="text-muted-foreground">Remove photo?</span>
+              <Button variant="ghost" type="button" onClick={() => { setConfirmRemove(false); void commit(null); }}
+                className="p-0 text-xs font-semibold text-history-breach cursor-pointer">Yes, remove</Button>
+              <Button variant="ghost" type="button" onClick={() => setConfirmRemove(false)}
+                className="p-0 text-xs text-muted-foreground cursor-pointer">Keep</Button>
+            </span>
           )}
         </div>
         {err && <span className="text-[0.7rem] text-history-breach">{err}</span>}
