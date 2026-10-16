@@ -1,0 +1,1 @@
+UPDATE public.lanes SET title = 'No Cannabis' WHERE title = 'No cannabis';
