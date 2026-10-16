@@ -19,7 +19,8 @@ FONT_TAG="${FONT_TAG:-/tmp/ogfonts/CormorantGaramond-SemiBoldItalic.ttf}"
 COL_X=560         # left edge of the right column
 COL_W=570         # width of the right column
 TAGLINE="Accountability with a watchman."
-TAG_SIZE=44
+TAG_SIZE=48
+WM_SIZE=52
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -43,7 +44,7 @@ magick -size 1200x630 "xc:$BG" \
   "$TMP/base.png"
 
 # Measure the wordmark so the rule spans its full width.
-WORDMARK_W=$(magick -font "$FONT_SERIF" -pointsize 46 -kerning 4 label:"KINGDOM PROTOCOL" -format "%w" info:)
+WORDMARK_W=$(magick -font "$FONT_SERIF" -pointsize $WM_SIZE -kerning 4 label:"KINGDOM PROTOCOL" -format "%w" info:)
 # Measure the tagline so it can be centered under the wordmark.
 TAG_W=$(magick -font "$FONT_TAG" -pointsize $TAG_SIZE label:"$TAGLINE" -format "%w" info:)
 TAG_OFFSET=$((COL_X + (WORDMARK_W - TAG_W) / 2))
@@ -51,8 +52,8 @@ TAG_OFFSET=$((COL_X + (WORDMARK_W - TAG_W) / 2))
 # Wordmark glow: soft warm halo rendered behind the crisp wordmark so the type
 # reads as lit-from-within, matching the icon artwork next to it.
 magick -size 1200x630 xc:none \
-  -font "$FONT_SERIF" -pointsize 46 -fill "$GLOW" -kerning 4 \
-  -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
+  -font "$FONT_SERIF" -pointsize $WM_SIZE -fill "$GLOW" -kerning 4 \
+  -annotate +${COL_X}+155 "KINGDOM PROTOCOL" \
   -blur 0x9 "$TMP/glow.png"
 
 magick "$TMP/base.png" "$TMP/glow.png" -compose screen -composite \
@@ -60,31 +61,31 @@ magick "$TMP/base.png" "$TMP/glow.png" -compose screen -composite \
 
 # Wordmark + tagline (tagline in Cormorant Garamond SemiBold Italic)
 magick "$TMP/baseglow.png" \
-  -font "$FONT_SERIF" -pointsize 46 -fill "$GOLD_MARK" -kerning 4 \
-  -annotate +${COL_X}+250 "KINGDOM PROTOCOL" \
+  -font "$FONT_SERIF" -pointsize $WM_SIZE -fill "$GOLD_MARK" -kerning 4 \
+  -annotate +${COL_X}+155 "KINGDOM PROTOCOL" \
   -font "$FONT_TAG" -pointsize $TAG_SIZE -fill "#ffffff" -kerning 0 \
-  -annotate +${TAG_OFFSET}+334 "$TAGLINE" \
+  -annotate +${TAG_OFFSET}+235 "$TAGLINE" \
   "$TMP/withtext.png"
 
 # Thin gold rule between the wordmark and the tagline, spanning the wordmark width.
 magick "$TMP/withtext.png" \
   \( -size ${WORDMARK_W}x1 "xc:$GOLD" -alpha set -channel A -evaluate set 30% +channel \) \
-  -gravity northwest -geometry +${COL_X}+280 -composite \
+  -gravity northwest -geometry +${COL_X}+185 -composite \
   "$TMP/withrule.png"
 
 # Verse block (wrapped), dimmed
-magick -background none -fill "#ded7c6" -font "$FONT_ITAL" -pointsize 28 \
+magick -background none -fill "#ded7c6" -font "$FONT_ITAL" -pointsize 34 \
   -size ${COL_W}x caption:"\"But if the watchman see the sword come, and blow not the trumpet... his blood will I require at the watchman's hand.\"" \
   "$TMP/verse.png"
 
 # Reference, right-aligned to the verse block's right edge.
-magick -background none -fill "$GOLD" -font "$FONT_SANS" -pointsize 22 -kerning 3 \
+magick -background none -fill "$GOLD" -font "$FONT_SANS" -pointsize 24 -kerning 3 \
   -size ${COL_W}x -gravity east caption:"EZEKIEL 33:6 · KJV" \
   "$TMP/ref.png"
 
 magick "$TMP/withrule.png" \
-  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+400 -composite \
-  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+578 -composite \
+  "$TMP/verse.png" -gravity northwest -geometry +${COL_X}+295 -composite \
+  "$TMP/ref.png" -gravity northwest -geometry +${COL_X}+483 -composite \
   "$OUT"
 
 # JPEG export — iMessage/WhatsApp/LinkedIn prefer a compact JPEG over a large PNG.

@@ -33,33 +33,8 @@ function Login() {
   const [draftReady, setDraftReady] = useState(false);
   const verifying = useRef(false);
 
-  // Only adjust when the keyboard actually obscures the focused field.
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const align = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        const field = document.activeElement;
-        if (!(field instanceof HTMLInputElement)) return;
-        const viewport = window.visualViewport;
-        const top = viewport?.offsetTop ?? 0;
-        const bottom = top + (viewport?.height ?? window.innerHeight);
-        const rect = field.getBoundingClientRect();
-        if (rect.top < top + 20 || rect.bottom > bottom - 24) {
-          window.scrollBy({ top: rect.top - top - Math.max(24, ((bottom - top) - rect.height) / 2), behavior: "instant" });
-        }
-      }, 160);
-    };
-    document.addEventListener("focusin", align);
-    window.visualViewport?.addEventListener("resize", align);
-    window.visualViewport?.addEventListener("scroll", align);
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener("focusin", align);
-      window.visualViewport?.removeEventListener("resize", align);
-      window.visualViewport?.removeEventListener("scroll", align);
-    };
-  }, []);
+  // iOS pans focused fields above the keyboard natively; manual scrolling here
+  // fought that pan and left ghosted double-painted frames on screen.
 
   useEffect(() => {
     if (cooldown <= 0) return;
