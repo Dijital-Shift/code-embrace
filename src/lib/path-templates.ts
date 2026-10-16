@@ -92,7 +92,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "confess-your-faults",
     category: "Devotion",
-    title: "Confess Your Faults one to Another",
+    title: "Confess Your Faults One to Another",
     description: "Don't carry it alone. Confess openly, and pray one for another.",
     lane_type: "complete",
     support_scripture: [
@@ -125,7 +125,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-gluttony",
     category: "Body",
-    title: "Eat with Self-control (No Gluttony)",
+    title: "Eat with Self-Control (No Gluttony)",
     description: "Put a knife to thy throat if thou be a man given to appetite.",
     lane_type: "avoid",
     support_scripture: [
@@ -289,7 +289,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "no-negative-self-talk",
     category: "Mind",
-    title: "No Negative Self-talk",
+    title: "No Negative Self-Talk",
     description: "Refuse to speak death over yourself. Think on what is true.",
     lane_type: "avoid",
     support_scripture: [
