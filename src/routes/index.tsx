@@ -348,7 +348,7 @@ function Pricing() {
 
           {/* Lifetime Walk */}
           <div className="pricing-card pricing-lifetime-glow relative flex h-full flex-col rounded-[20px] sm:rounded-[28px] border-[1.5px] border-[#f0d579] px-3 pb-4 pt-12 sm:px-9 sm:pb-8 sm:pt-20">
-            <div className="pricing-gold-button absolute left-1/2 top-0 w-max max-w-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full px-3 py-1.5 sm:px-7 sm:py-4 text-center text-[8px] sm:text-xs font-bold tracking-[0.12em] sm:tracking-[0.17em] text-[#100d05] shadow-[0_5px_25px_rgba(218,175,65,0.2)] whitespace-nowrap">
+            <div className="pricing-gold-button absolute left-1/2 top-2.5 sm:top-4 w-max max-w-[95%] -translate-x-1/2 rounded-full px-3 py-1.5 sm:px-6 sm:py-3 text-center text-[8px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.2em] text-[#100d05] shadow-[0_5px_25px_rgba(218,175,65,0.2)] whitespace-nowrap">
               BEST VALUE · ONE TIME
             </div>
             <h3 className="pricing-display text-center text-[26px] sm:text-[52px] font-medium leading-tight text-[#f3ead9]">
