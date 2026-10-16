@@ -156,6 +156,23 @@ function InvitePage() {
           <p className="text-xs text-[#b8b0a4] mt-1.5 leading-relaxed">{preview.laneDescription}</p>
         )}
       </div>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30 text-center" style={{ background: "#161210" }}>
+        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-2">Why you were chosen</p>
+        <p className="text-sm text-[#e8dfc4] leading-relaxed">
+          {ownerName.split(" ")[0]} {(preview as any).isAvoid
+            ? "is fighting to break a stronghold and refuses to fight it in the dark."
+            : "is committed to building a disciplined walk and refuses to walk it alone."}{" "}
+          They chose you personally because they trust you to keep them honest before God.
+        </p>
+      </div>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The commitment: under 5 minutes a week</p>
+        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
+          <li><span className="text-[#c9a84c]">◆</span> Zero daily homework. If they stay on the Path, your life isn't interrupted.</li>
+          <li><span className="text-[#c9a84c]">◆</span> When an alert lands, a 30-second text or a quick call is all it takes. You are the lifeline.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Free forever. No trial, no card.</li>
+        </ul>
+      </div>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
         <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The Watchman's Role</p>
         <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">

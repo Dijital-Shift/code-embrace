@@ -62,7 +62,7 @@ function PlanButtons({ compact, deferToTrialEnd, premium }: { compact?: boolean;
           >
             <span className="flex items-center justify-between gap-3">
               <span className="text-sm font-semibold">Monthly</span>
-              <span className="text-sm"><span className="font-bold text-[#c9a84c]">$4.99</span><span className="text-[#a49d8e]"> / month · cancel anytime</span></span>
+              <span className="text-sm"><span className="font-bold text-[#c9a84c]">$7.99</span><span className="text-[#a49d8e]"> / month · cancel anytime</span></span>
             </span>
           </button>
         </div>
@@ -73,7 +73,7 @@ function PlanButtons({ compact, deferToTrialEnd, premium }: { compact?: boolean;
           onClick={() => start("kp_premium_monthly")}
           className={`rounded-lg border border-[#c9a84c]/40 text-[#c9a84c] font-semibold ${compact ? "px-3 py-1.5 text-xs" : "px-4 py-2.5 text-sm"}`}
         >
-          $4.99 / month
+          $7.99 / month
         </button>
         <button
           type="button"
@@ -144,7 +144,7 @@ export function AccessBanner() {
       return (
         <div className="mb-5 px-4 py-3 rounded-xl border border-[#3a2f12]" style={{ background: "#141004" }}>
           <p className="text-xs" style={{ color: GOLD }}>
-            You're set. First payment {formatDay(data.firstChargeAt)}, $4.99/month.
+            You're set. First payment {formatDay(data.firstChargeAt)}, $7.99/month.
           </p>
         </div>
       );
@@ -281,7 +281,7 @@ export function PlanSection({ showReceipts }: { showReceipts?: boolean } = {}) {
   let sub = "";
   if (data.isLifetime) { title = "Lifetime"; sub = "You're set for life. Nothing more to pay."; }
   else if (data.planLockedIn) {
-    title = "Monthly · $4.99";
+    title = "Monthly · $7.99";
     sub = data.firstChargeAt ? `Next payment ${formatDay(data.firstChargeAt)}.` : "Active.";
   } else if (data.trialActive) {
     title = "Free month";

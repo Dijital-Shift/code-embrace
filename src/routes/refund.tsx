@@ -23,7 +23,7 @@ function RefundPage() {
 
       <LegalSection title="30-day money-back guarantee">
         <p>
-          We offer a <strong>30-day money-back guarantee</strong> on both the Monthly plan ($4.99/month)
+          We offer a <strong>30-day money-back guarantee</strong> on both the Monthly plan ($7.99/month)
           and the Lifetime purchase ($99). If you are not satisfied for any reason, you may receive a full
           refund within 30 days of the original charge.
         </p>
