@@ -20,7 +20,7 @@ COL_X=560         # left edge of the right column
 COL_W=570         # width of the right column
 TAGLINE="Accountability with a watchman."
 TAG_SIZE=48
-WM_SIZE=52
+WM_SIZE=49
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
