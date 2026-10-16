@@ -15,14 +15,14 @@ export const Route = createFileRoute("/invite/$token")({
     { property: "og:description", content: "Watching a brother is free forever. No subscription, no payment required." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: `https://kingdomprotocol.app/invite/${params.token}` },
-    { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg" },
-    { property: "og:image:secure_url", content: "https://kingdomprotocol.app/og-card.jpg" },
+    { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg?v=7" },
+    { property: "og:image:secure_url", content: "https://kingdomprotocol.app/og-card.jpg?v=7" },
     { property: "og:image:type", content: "image/jpeg" },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
     { property: "og:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
     { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg" },
+    { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg?v=7" },
   ] }),
   // Fetch the invite on the server so the card is already rendered when the
   // page paints — no "Loading invite…" flash on the phone.
