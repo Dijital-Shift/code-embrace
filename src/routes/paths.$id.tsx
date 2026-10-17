@@ -579,12 +579,12 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
     }
   }
 
+  // Short and personal; the link sits alone on its own line so Android
+  // message apps detect it cleanly and can show the preview card.
   function inviteMessage(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     const who = ownerName || "Someone";
-    const p = pathTitle ? ` on "${pathTitle}"` : "";
-    const aim = isAvoid ? `is fighting to break a stronghold${p} and refuses to do it alone` : `is committed to building a disciplined walk${p} and refuses to do it alone`;
-    return `${who} ${aim}. They picked you to hold the line as their Watchman. No daily homework, free forever, takes under 5 minutes a week. Will you stand with them? ${url}`;
+    return `${who} is inviting you to be their watchman on Kingdom Protocol:\n\n${url}`;
   }
 
   async function revoke(inviteId: string) {
