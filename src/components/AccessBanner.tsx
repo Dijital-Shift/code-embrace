@@ -270,6 +270,13 @@ export function PlanSection({ showReceipts }: { showReceipts?: boolean } = {}) {
   const [refundOpen, setRefundOpen] = useState(false);
   const [refunding, setRefunding] = useState(false);
   const [refundErr, setRefundErr] = useState<string | null>(null);
+  const [refundArmed, setRefundArmed] = useState(false);
+  useEffect(() => {
+    if (!refundArmed) return;
+    const t = setTimeout(() => setRefundArmed(false), 5000);
+    return () => clearTimeout(t);
+  }, [refundArmed]);
+  useEffect(() => { if (!refundOpen) setRefundArmed(false); }, [refundOpen]);
   if (!data) return null;
 
   async function manage() {
@@ -355,13 +362,22 @@ export function PlanSection({ showReceipts }: { showReceipts?: boolean } = {}) {
             {" "}It usually appears in 5–10 business days. Your account returns to resting — your Paths, history, and Watchman messages stay intact.
           </DialogDescription>
           {refundErr && <p className="text-xs text-red-400">{refundErr}</p>}
-          <div className="flex flex-col gap-2 mt-2">
-            <button type="button" disabled={refunding} onClick={confirmRefund} className="w-full rounded-xl py-3 text-sm font-bold text-[#0a0800] disabled:opacity-60" style={{ background: GOLD }}>
-              {refunding ? "Processing…" : "Yes, refund me"}
+          <div className="flex flex-col mt-3">
+            <button type="button" disabled={refunding} onClick={() => setRefundOpen(false)} className="w-full rounded-xl py-3 text-sm font-semibold text-[#ded8cc] bg-transparent border border-[#c9a84c]/30">
+              Keep my plan
             </button>
-            <button type="button" disabled={refunding} onClick={() => setRefundOpen(false)} className="w-full text-xs text-[#a8a094] bg-transparent border-0 py-2">
-              Never mind
+            <div className="h-8" aria-hidden="true" />
+            <button
+              type="button"
+              disabled={refunding}
+              onClick={() => { if (refundArmed) confirmRefund(); else setRefundArmed(true); }}
+              aria-live="polite"
+              className="w-full rounded-xl py-3 text-sm font-bold disabled:opacity-60 transition-colors"
+              style={refundArmed ? { background: "#b45309", color: "#fff7ed" } : { background: "transparent", color: GOLD, border: `1px solid ${GOLD}` }}
+            >
+              {refunding ? "Processing…" : refundArmed ? "Are you sure? Tap to confirm" : "Yes, refund me"}
             </button>
+            {refundArmed && !refunding && <p className="text-[0.65rem] text-[#8f887c] mt-2 text-center">Resets in 5 seconds if you don't confirm.</p>}
           </div>
         </DialogContent>
       </Dialog>
