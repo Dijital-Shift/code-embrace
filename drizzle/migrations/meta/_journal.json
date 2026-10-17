@@ -43,6 +43,13 @@
       "when": 1792205597719,
       "tag": "0005_watchman_closure_notices",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792205736155,
+      "tag": "0006_restrict_notice_acknowledgment",
+      "breakpoints": true
     }
   ]
 }
