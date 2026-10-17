@@ -244,7 +244,7 @@ function Settings() {
           {([
             ["/terms", "Terms of Service", "The rules of the walk."],
             ["/privacy", "Privacy Policy", "What we keep and why."],
-            ["/refund", "Refund Policy", "Handled through Stripe."],
+            ["/refund", "Refund Policy", "30-day guarantee. Request it in Billing."],
           ] as const).map(([to, title, sub]) => (
             <Link key={to} to={to} className="flex items-center justify-between px-4 py-3.5 no-underline">
               <span>

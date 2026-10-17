@@ -4,7 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAccess } from "@/lib/access.functions";
 import { useAuth } from "@/lib/auth";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { createPortalSession } from "@/utils/payments.functions";
+import { createPortalSession, requestRefund } from "@/utils/payments.functions";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { getStripeEnvironment } from "@/lib/stripe";
 
 const GOLD = "#c9a84c";
@@ -264,17 +266,39 @@ export function PlanSection({ showReceipts }: { showReceipts?: boolean } = {}) {
   const portalFn = useServerFn(createPortalSession);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const refundFn = useServerFn(requestRefund);
+  const [refundOpen, setRefundOpen] = useState(false);
+  const [refunding, setRefunding] = useState(false);
+  const [refundErr, setRefundErr] = useState<string | null>(null);
   if (!data) return null;
 
   async function manage() {
     setErr(null); setBusy(true);
+    // Open the tab synchronously on tap so Safari/iOS don't block it as a pop-up.
+    const tab = window.open("", "_blank");
     try {
       const r = await portalFn({ data: { returnUrl: window.location.href, environment: getStripeEnvironment() } });
       if ("error" in r) throw new Error(r.error);
-      window.open(r.url, "_blank");
+      if (tab && !tab.closed) tab.location.href = r.url;
+      else window.location.href = r.url;
     } catch (e: any) {
+      tab?.close();
       setErr(e?.message ?? "Couldn't open billing.");
     } finally { setBusy(false); }
+  }
+
+  async function confirmRefund() {
+    if (refunding) return;
+    setRefundErr(null); setRefunding(true);
+    try {
+      const r = await refundFn({ data: { environment: getStripeEnvironment() } });
+      if ("error" in r) throw new Error(r.error);
+      setRefundOpen(false);
+      toast.success("Refund issued", { description: r.message, duration: 8000 });
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (e: any) {
+      setRefundErr(e?.message ?? "Couldn't process the refund.");
+    } finally { setRefunding(false); }
   }
 
   let title = "";
@@ -312,7 +336,35 @@ export function PlanSection({ showReceipts }: { showReceipts?: boolean } = {}) {
           <p className="text-[0.7rem] text-[#8f887c] mt-2 text-center">Manage billing shows your receipts, card, and cancel option.</p>
         )}
         {err && <p className="text-xs text-red-400 mt-2">{err}</p>}
+        {showReceipts && data.planLockedIn && (
+          <div className="mt-5 pt-4 border-t border-[#c9a84c]/15">
+            <button type="button" onClick={() => { setRefundErr(null); setRefundOpen(true); }} className="w-full text-sm text-[#ded8cc] bg-transparent border border-[#c9a84c]/30 rounded-xl py-2.5">
+              Request a refund
+            </button>
+            <p className="text-[0.65rem] text-[#8f887c] mt-2 text-center">Within 30 days. Self-serve — no email needed.</p>
+          </div>
+        )}
       </div>
+      <Dialog open={refundOpen} onOpenChange={(o) => { if (!refunding) setRefundOpen(o); }}>
+        <DialogContent className="kp-removal-dialog max-w-sm">
+          <DialogTitle style={{ color: GOLD }}>Request a refund?</DialogTitle>
+          <DialogDescription className="text-sm text-[#a8a094] leading-relaxed">
+            {data.isLifetime
+              ? "We'll refund your $99 Lifetime purchase to your original payment method."
+              : "We'll refund your most recent $7.99 charge and cancel your monthly plan."}
+            {" "}It usually appears in 5–10 business days. Your account returns to resting — your Paths, history, and Watchman messages stay intact.
+          </DialogDescription>
+          {refundErr && <p className="text-xs text-red-400">{refundErr}</p>}
+          <div className="flex flex-col gap-2 mt-2">
+            <button type="button" disabled={refunding} onClick={confirmRefund} className="w-full rounded-xl py-3 text-sm font-bold text-[#0a0800] disabled:opacity-60" style={{ background: GOLD }}>
+              {refunding ? "Processing…" : "Yes, refund me"}
+            </button>
+            <button type="button" disabled={refunding} onClick={() => setRefundOpen(false)} className="w-full text-xs text-[#a8a094] bg-transparent border-0 py-2">
+              Never mind
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
