@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
-import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { removalReasonSchema } from './watchman-removal';
 
 // Generate URL-safe random token (~32 bytes → 43 base64url chars)
 function generateToken(): string {
@@ -21,6 +21,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     relationship: z.string().max(24).optional().nullable(),
   }))
   .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { supabase, userId } = context;
 
     const { data: lane } = await supabase
@@ -69,6 +70,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
 export const getInvitePreview = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ token: z.string().min(10).max(100) }))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: rows } = await supabaseAdmin.rpc('get_invite_preview', { _token: data.token });
     if (!rows || rows.length === 0) {
       return { found: false as const };
@@ -102,6 +104,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ token: z.string().min(10).max(100) }))
   .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { userId, claims } = context;
     const accepterEmail = ((claims as any)?.email || '').toLowerCase();
 
@@ -224,12 +227,12 @@ export const removeWatchman = createServerFn({ method: 'POST' })
   .inputValidator(z.object({
     laneId: z.string().uuid(),
     watchmanRowId: z.string().uuid(),
-    reason: z.string().min(3).max(500),
+    reason: removalReasonSchema,
   }))
   .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { supabase, userId } = context;
     const reason = data.reason.trim();
-    if (reason.length < 3) return { error: 'A reason is required to remove a Watchman.' };
 
     const { data: lane } = await supabase
       .from('lanes')
@@ -265,7 +268,7 @@ export const removeWatchman = createServerFn({ method: 'POST' })
     const when = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     const message = `${who} removed you from ${lane.title} on ${when}.`;
 
-    await supabaseAdmin.from('notifications').insert({
+    const { error: noticeError } = await supabaseAdmin.from('notifications').insert({
       lane_id: lane.lane_id,
       partner_id: removedId,
       type: 'watchman_removed',
@@ -274,6 +277,11 @@ export const removeWatchman = createServerFn({ method: 'POST' })
       message_content: `${message} Reason: ${reason}`,
       sent_at: new Date().toISOString(),
     });
+
+    if (noticeError) {
+      await supabaseAdmin.from('path_watchmen').update({ status: 'active' }).eq('id', row.id);
+      return { error: "Couldn't save the explanation. Please try again." };
+    }
 
     try {
       const { sendPushToUser } = await import('@/lib/push.server');

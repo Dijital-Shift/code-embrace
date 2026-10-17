@@ -3,8 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { fetchPathScripture } from "@/lib/scripture.functions";
-import { getPartnerView, sendEncouragement, dismissWatchmanPrompt } from "@/lib/api.functions";
+import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWatchmanRemoval } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 
 
@@ -28,6 +30,7 @@ function Partner() {
   const fn = useServerFn(getPartnerView);
   const sendFn = useServerFn(sendEncouragement);
   const dismissFn = useServerFn(dismissWatchmanPrompt);
+  const acknowledgeFn = useServerFn(acknowledgeWatchmanRemoval);
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["partner"], queryFn: () => fn() });
   
@@ -35,6 +38,12 @@ function Partner() {
   const dismissMut = useMutation({
     mutationFn: () => dismissFn(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["partner"] }),
+  });
+
+  const acknowledgeMut = useMutation({
+    mutationFn: (notificationId: string) => acknowledgeFn({ data: { notificationId } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["partner"] }),
+    onError: (e) => toast.error(e.message),
   });
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
@@ -63,6 +72,20 @@ function Partner() {
 
   return (
     <div>
+      {(data?.closureNotices ?? []).map((notice) => (
+        <article key={notice.notification_id} className="mb-6 rounded-lg border border-primary/40 bg-card p-5">
+          <p className="text-xs uppercase font-semibold text-primary mb-2">Watch ended</p>
+          <p className="text-sm text-foreground leading-relaxed break-words">{notice.message}</p>
+          {notice.reason && <div className="mt-4 border-l-2 border-primary/40 pl-3">
+            <p className="text-xs text-muted-foreground mb-1">Their reason</p>
+            <p className="text-sm text-foreground whitespace-pre-wrap break-words">{notice.reason}</p>
+          </div>}
+          <Button variant="outline" size="sm" className="mt-4" disabled={acknowledgeMut.isPending}
+            onClick={() => acknowledgeMut.mutate(notice.notification_id)}>
+            {acknowledgeMut.isPending && acknowledgeMut.variables === notice.notification_id ? 'Dismissing…' : 'Understood'}
+          </Button>
+        </article>
+      ))}
       <WatchmanPushPrompt />
 
       <div className="mb-8">

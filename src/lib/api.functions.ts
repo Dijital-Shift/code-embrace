@@ -9,6 +9,7 @@ import { userDay, invalidateUserTimezone } from './day.server';
 import { friendlyLaneError } from './lane-errors.server';
 import { localDate, localHour, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import { alertContextLabel } from './alert-context';
+import { removalNotice } from './watchman-removal';
 
 import {
   activeWatchmen,
@@ -686,7 +687,12 @@ export const getPartnerView = createServerFn({ method: 'GET' })
 
     const { data: notifications } = await supabase.from('notifications')
       .select('notification_id, type, status, message_content, sent_at, lane_id')
-      .eq('partner_id', userId).order('sent_at', { ascending: false }).limit(20);
+      .eq('partner_id', userId).in('type', ['missed_checkin', 'breach_report']).order('sent_at', { ascending: false }).limit(20);
+    const { data: closureRows, error: closureError } = await supabase.from('notifications')
+      .select('notification_id, message_content, sent_at, created_at')
+      .eq('partner_id', userId).eq('type', 'watchman_removed')
+      .is('acknowledged_at', null).order('created_at', { ascending: false });
+    if (closureError) throw new Error('Unable to load Watch ended notices. Please try again.');
     const { count: ownLaneCount } = await supabase.from('lanes').select('lane_id', { count: 'exact', head: true })
       .eq('user_id', userId).eq('status', 'active');
     const { count: myEncouragementCount } = await supabase.from('encouragements')
@@ -730,6 +736,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       })),
       todayCheckins: todayChks ?? [], history: history ?? [],
       notifications: alertHistory,
+      closureNotices: (closureRows ?? []).map((n) => ({ ...n, ...removalNotice(n.message_content) })),
       showNudge: (ownLaneCount ?? 0) === 0,
       myActiveLaneCount: ownLaneCount ?? 0,
       myEncouragementCount: myEncouragementCount ?? 0,
@@ -865,5 +872,18 @@ export const markEncouragementsRead = createServerFn({ method: 'POST' })
     await supabase.from('encouragements')
       .update({ read_at: new Date().toISOString() })
       .in('id', data.ids).eq('owner_id', userId).is('read_at', null);
+    return { success: true };
+  });
+
+// Acknowledgment changes only the caller's removal notice, not delivery state.
+export const acknowledgeWatchmanRemoval = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ notificationId: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from('notifications')
+      .update({ acknowledged_at: new Date().toISOString() })
+      .eq('notification_id', data.notificationId).eq('partner_id', context.userId)
+      .eq('type', 'watchman_removed').is('acknowledged_at', null);
+    if (error) throw new Error("Couldn't dismiss this notice. Please try again.");
     return { success: true };
   });
