@@ -45,7 +45,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "fast",
     category: "Devotion",
     title: "Fast",
-    description: "Set a fast unto the Lord — in secret, not to be seen of men. Note the type of fast and set an end date.",
+    description: "Keep a scheduled fast unto the Lord — a set window, sunrise to sunset, or a multi-day fast — in secret, not to be seen of men. Note the type of fast and set an end date.",
     lane_type: "complete",
     support_scripture: [
       "When thou fastest, anoint thine head, and wash thy face; that thou appear not unto men to fast. — Matthew 6:17-18 (KJV)",
@@ -69,8 +69,8 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "worship",
     category: "Devotion",
-    title: "Worship",
-    description: "Gather in worship and bow before the Lord.",
+    title: "Daily Praise & Worship",
+    description: "Set aside time each day to bow before the Lord, sing or speak His praise, and magnify Him — alone or with the assembly.",
     lane_type: "complete",
     support_scripture: [
       "O come, let us worship and bow down: let us kneel before the LORD our maker. — Psalm 95:6 (KJV)",
@@ -92,8 +92,8 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "confess-your-faults",
     category: "Devotion",
-    title: "Confess Your Faults One to Another",
-    description: "Don't carry it alone. Confess openly, and pray one for another.",
+    title: "Examine Your Heart — Confess Quickly",
+    description: "Examine your heart before God daily. If you stumbled or wronged someone, confess it to God and the one you wronged, and make it right without delay.",
     lane_type: "complete",
     support_scripture: [
       "Confess your faults one to another, and pray one for another, that ye may be healed. The effectual fervent prayer of a righteous man availeth much. — James 5:16 (KJV)",
@@ -115,7 +115,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "exercise-daily",
     category: "Body",
     title: "Strengthen the Body Daily",
-    description: "Lift up the hands which hang down. Glorify God in your body.",
+    description: "Train, exercise, or move with intention today — walk, lift, run, or stretch. Discipline the temple God gave you.",
     lane_type: "complete",
     support_scripture: [
       "Wherefore lift up the hands which hang down, and the feeble knees. — Hebrews 12:12 (KJV)",
@@ -126,7 +126,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-gluttony",
     category: "Body",
     title: "Eat with Self-Control (No Gluttony)",
-    description: "Put a knife to thy throat if thou be a man given to appetite.",
+    description: "No overeating, binge eating, or mindless snacking. Eat with discipline and gratitude, and stop before excess.",
     lane_type: "avoid",
     support_scripture: [
       "Put a knife to thy throat, if thou be a man given to appetite. — Proverbs 23:2 (KJV)",
@@ -150,7 +150,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-fornication",
     category: "Purity",
     title: "No Fornication — Flee Youthful Lusts",
-    description: "Flee fornication. Possess your vessel in sanctification.",
+    description: "No sexual immorality — no sex outside marriage and no impure physical intimacy. Keep your body holy.",
     lane_type: "avoid",
     support_scripture: [
       "Flee fornication. Every sin that a man doeth is without the body; but he that committeth fornication sinneth against his own body. — 1 Corinthians 6:18 (KJV)",
@@ -162,7 +162,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-lustful-looking",
     category: "Purity",
     title: "No Pornography / Lustful Looking",
-    description: "Make a covenant with thine eyes.",
+    description: "No pornography, explicit media, or lingering lustful looks. Keep a covenant with your eyes.",
     lane_type: "avoid",
     support_scripture: [
       "Whosoever looketh on a woman to lust after her hath committed adultery with her already in his heart. — Matthew 5:28 (KJV)",
@@ -172,8 +172,8 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "modesty-in-dress-and-demeanor",
     category: "Purity",
-    title: "Modesty in Dress and Demeanor",
-    description: "Adorn the hidden man of the heart, not outward costly array.",
+    title: "No Immodesty in Dress or Demeanor",
+    description: "No revealing clothing, flaunting, or showy attention-seeking. Adorn the hidden man of the heart, not outward costly array.",
     lane_type: "avoid",
     support_scripture: [
       "In like manner also, that women adorn themselves in modest apparel, with shamefacedness and sobriety; not with broided hair, or gold, or pearls, or costly array… — 1 Timothy 2:9-10 (KJV)",
@@ -186,7 +186,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-drunkenness",
     category: "Substances",
     title: "No Drunkenness",
-    description: "Be not drunk with wine — be filled with the Spirit.",
+    description: "No getting drunk, buzzed, or bingeing. Keep sober control of your mind, speech, and impulses.",
     lane_type: "avoid",
     support_scripture: [
       "Be not drunk with wine, wherein is excess; but be filled with the Spirit. — Ephesians 5:18 (KJV)",
@@ -197,7 +197,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-drugs-sorcery",
     category: "Substances",
     title: "No Drugs / Sorcery (Pharmakeia)",
-    description: "Walk in the Spirit, not the works of the flesh.",
+    description: "No illegal drugs, narcotics, misused or unprescribed pills, psychedelics, or any mind-altering substance. No chemical escape from a sober mind.",
     lane_type: "avoid",
     support_scripture: [
       "The works of the flesh are manifest, which are these… witchcraft… they which do such things shall not inherit the kingdom of God. — Galatians 5:19-21 (KJV)",
@@ -219,7 +219,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-smoking",
     category: "Substances",
     title: "No Smoking or Vaping",
-    description: "Your body is the temple of God — keep it holy.",
+    description: "No cigarettes, cigars, vapes, chew, or nicotine of any kind. Keep the temple clean.",
     lane_type: "avoid",
     support_scripture: [
       "If any man defile the temple of God, him shall God destroy; for the temple of God is holy, which temple ye are. — 1 Corinthians 3:16-17 (KJV)",
@@ -232,7 +232,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-lying",
     category: "Speech",
     title: "No Lying",
-    description: "Put away lying. Speak every man truth with his neighbour.",
+    description: "No lies, white lies, exaggerations, or deceiving by leaving things out. Speak truth in every dealing.",
     lane_type: "avoid",
     support_scripture: [
       "Wherefore putting away lying, speak every man truth with his neighbour. — Ephesians 4:25 (KJV)",
@@ -243,7 +243,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-corrupt-speech",
     category: "Speech",
     title: "No Cursing / Corrupt Speech",
-    description: "Let no corrupt communication proceed out of your mouth.",
+    description: "No profanity, crude or vulgar talk, slurs, or taking the Lord's name in vain. Let your words minister grace.",
     lane_type: "avoid",
     support_scripture: [
       "Let no corrupt communication proceed out of your mouth, but that which is good to the use of edifying. — Ephesians 4:29 (KJV)",
@@ -254,7 +254,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-gossip",
     category: "Speech",
     title: "No Gossip / Talebearing",
-    description: "A talebearer revealeth secrets. Don't go up and down as one.",
+    description: "No gossip, rumors, or discussing someone's private faults behind their back — in person, by text, or online.",
     lane_type: "avoid",
     support_scripture: [
       "A talebearer revealeth secrets: but he that is of a faithful spirit concealeth the matter. — Proverbs 11:13 (KJV)",
@@ -301,7 +301,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "rule-your-spirit",
     category: "Mind",
     title: "Rule Your Spirit (No Unchecked Anger)",
-    description: "Be slow to wrath. He that ruleth his spirit is better than the mighty.",
+    description: "No yelling, outbursts, slammed doors, road rage, or venting in wrath. Be slow to anger and keep command of your spirit.",
     lane_type: "avoid",
     support_scripture: [
       "He that is slow to anger is better than the mighty; and he that ruleth his spirit than he that taketh a city. — Proverbs 16:32 (KJV)",
@@ -336,7 +336,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "no-unplanned-spending",
     category: "Stewardship",
     title: "No Unplanned Spending",
-    description: "Know the state of thy flocks. Spend on purpose, not on impulse.",
+    description: "No impulse buys, emotional shopping, or spending outside your budget. Spend on purpose, not on impulse.",
     lane_type: "avoid",
     support_scripture: [
       "There is treasure to be desired and oil in the dwelling of the wise; but a foolish man spendeth it up. — Proverbs 21:20 (KJV)",
@@ -363,9 +363,9 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "forgive-quickly",
     category: "Heart & Action",
-    title: "Forgive Quickly — No Sundown Anger",
-    description: "Let not the sun go down upon your wrath.",
-    lane_type: "complete",
+    title: "No Grudges — No Sundown Anger",
+    description: "No grudges held, no offense left to simmer. Forgive and settle it before the sun goes down.",
+    lane_type: "avoid",
     support_scripture: [
       "Be ye angry, and sin not: let not the sun go down upon your wrath: neither give place to the devil. — Ephesians 4:26-27 (KJV)",
       "Be ye kind one to another, tenderhearted, forgiving one another, even as God for Christ's sake hath forgiven you. — Ephesians 4:32 (KJV)",
@@ -374,8 +374,8 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "serve-the-afflicted",
     category: "Heart & Action",
-    title: "Serve / Visit the Afflicted",
-    description: "Pure religion: visit the fatherless and widows in their affliction.",
+    title: "Daily Mercy for the Afflicted",
+    description: "Reach out to someone sick, lonely, grieving, or in need today — a call, a text, a meal, a gift, a prayer, or a visit.",
     lane_type: "complete",
     support_scripture: [
       "Pure religion and undefiled before God and the Father is this, To visit the fatherless and widows in their affliction… — James 1:27 (KJV)",
@@ -385,8 +385,8 @@ export const PATH_TEMPLATES: PathTemplate[] = [
   {
     id: "honor-parents",
     category: "Heart & Action",
-    title: "Honor Parents — Tell Them You Love Them",
-    description: "Honor thy father and mother. Speak love to them often.",
+    title: "Honor Your Father and Mother",
+    description: "Honor them today — reach out, speak love, or show respect. If they have passed or are absent, speak well of them and honor their memory.",
     lane_type: "complete",
     support_scripture: [
       "Honour thy father and thy mother: that thy days may be long upon the land which the LORD thy God giveth thee. — Exodus 20:12 (KJV)",
