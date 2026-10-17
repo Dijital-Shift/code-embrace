@@ -23,6 +23,9 @@ export const Route = createFileRoute("/invite/$token")({
     { property: "og:image:alt", content: "Kingdom Protocol — accountability with a watchman." },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "https://kingdomprotocol.app/og-card.jpg?v=7" },
+  ], links: [
+    // Older Android message apps look for this instead of og:image.
+    { rel: "image_src", href: "https://kingdomprotocol.app/og-card.jpg?v=7" },
   ] }),
   // Fetch the invite on the server so the card is already rendered when the
   // page paints — no "Loading invite…" flash on the phone.

@@ -185,6 +185,20 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       .update({ status: 'accepted', accepted_by: userId, accepted_at: new Date().toISOString() })
       .eq('invite_id', invite.invite_id);
 
+    // Tell the Path owner their Watchman is now standing watch.
+    try {
+      const { data: prof } = await supabaseAdmin
+        .from('profiles').select('first_name, last_name').eq('user_id', userId).maybeSingle();
+      const name = [prof?.first_name, prof?.last_name].filter(Boolean).join(' ').trim()
+        || accepterEmail.split('@')[0] || 'Your Watchman';
+      const { sendPushToUser } = await import('@/lib/push.server');
+      await sendPushToUser(invite.owner_id, {
+        title: 'Your Watchman accepted',
+        body: `${name} accepted your invite and is now standing watch on "${lane.title}".`,
+        url: `/paths/${lane.lane_id}`,
+      });
+    } catch {}
+
     return { success: true, laneId: invite.lane_id, laneTitle: lane.title };
   });
 
