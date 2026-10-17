@@ -143,3 +143,66 @@ export const createPortalSession = createServerFn({ method: "POST" })
       return { error: getStripeErrorMessage(error) };
     }
   });
+
+type RefundResult = { ok: true; message: string } | { error: string };
+
+export const requestRefund = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { environment: StripeEnv }) => {
+    if (data.environment !== "sandbox" && data.environment !== "live") throw new Error("Invalid environment");
+    return data;
+  })
+  .handler(async ({ data, context }): Promise<RefundResult> => {
+    const { supabase, userId } = context;
+    const { isWithinRefundWindow, REFUND_WINDOW_DAYS } = await import("@/lib/refund");
+    const { data: sub } = await supabase
+      .from("subscriptions")
+      .select("id, price_id, status, stripe_customer_id, stripe_subscription_id")
+      .eq("user_id", userId)
+      .eq("environment", data.environment)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const live = ["active", "trialing", "past_due"];
+    if (!sub || !live.includes(sub.status)) return { error: "No paid plan found on this account." };
+
+    try {
+      const stripe = createStripeClient(data.environment);
+      const isLifetime = sub.price_id === "kp_lifetime_once";
+      const charges = await stripe.charges.list({ customer: sub.stripe_customer_id, limit: 10 });
+      const charge = charges.data.find((c) => c.paid && c.status === "succeeded" && !c.refunded && c.amount_refunded === 0);
+
+      if (!charge) {
+        if (!isLifetime) {
+          return { error: "Nothing has been charged yet. Use Manage billing to cancel before your free month ends." };
+        }
+        return { error: "We couldn't find the charge to refund. Please send feedback and we'll handle it." };
+      }
+      if (!isWithinRefundWindow(charge.created * 1000)) {
+        return { error: `Your last charge is more than ${REFUND_WINDOW_DAYS} days old. Please send feedback and we'll help.` };
+      }
+
+      await stripe.refunds.create({
+        charge: charge.id,
+        reason: "requested_by_customer",
+        metadata: { userId, source: "self_serve_refund" },
+      });
+
+      if (!isLifetime) {
+        try { await stripe.subscriptions.cancel(sub.stripe_subscription_id); }
+        catch (e) { console.error("[refund] cancel after refund failed", e); }
+      }
+
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const nowIso = new Date().toISOString();
+      await supabaseAdmin
+        .from("subscriptions")
+        .update({ status: "canceled", current_period_end: nowIso, cancel_at_period_end: false, updated_at: nowIso })
+        .eq("id", sub.id)
+        .eq("user_id", userId);
+
+      return { ok: true, message: "It usually shows up in 5–10 business days." };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
