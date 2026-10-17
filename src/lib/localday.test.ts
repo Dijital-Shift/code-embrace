@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { tzOffsetHours, reminderUtcHour } from "./localday";
 
 const oct = new Date("2026-10-17T12:00:00Z");
