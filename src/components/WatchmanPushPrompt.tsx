@@ -40,7 +40,7 @@ const btn = "px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold disa
  * Watchman alert status panel. Checks install, permission, device
  * registration, and offers a test alert. Collapses to one line once all pass.
  */
-export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchman" | "owner" } = {}) {
+export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: { variant?: "watchman" | "owner"; onReadinessChange?: (ready: boolean) => void } = {}) {
   const vapidFn = useServerFn(getVapidPublicKey);
   const [ready, setReady] = useState(false);
   const [installed, setInstalled] = useState(false);
@@ -67,7 +67,7 @@ export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchm
           const res = await fetch(`/api/push/test?endpoint=${encodeURIComponent(sub.endpoint)}`, {
             headers: await authHeader(),
           });
-          reg = res.ok ? Boolean((await res.json()).registered) : true;
+          reg = res.ok && Boolean((await res.json()).registered);
         }
       }
     } catch {
@@ -85,8 +85,15 @@ export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchm
       setDeferred(e);
     };
     window.addEventListener("beforeinstallprompt", onPrompt);
+    const resume = () => { if (document.visibilityState === "visible") void check(); };
+    window.addEventListener("focus", resume);
+    document.addEventListener("visibilitychange", resume);
     void check();
-    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onPrompt);
+      window.removeEventListener("focus", resume);
+      document.removeEventListener("visibilitychange", resume);
+    };
   }, [check]);
 
   async function enablePush() {
@@ -178,7 +185,9 @@ export function WatchmanPushPrompt({ variant = "watchman" }: { variant?: "watchm
     setDeferred(null);
   }
 
-  if (!ready) return null;
+  const alertReady = perm === "granted" && registered && (platform !== "ios" || installed);
+  useEffect(() => { onReadinessChange?.(ready && alertReady); }, [ready, alertReady, onReadinessChange]);
+  if (!ready) return <p role="status" className="text-sm text-muted-foreground mb-6">Checking this device's alerts…</p>;
   const allGood = installed && perm === "granted" && registered;
   const expanded = !allGood || open;
 
