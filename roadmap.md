@@ -1,4 +1,10 @@
 # Tasks
+- [x] Strengthen Watchman removal reason and stabilize the confirmation dialog.
+- [x] Show durable Watch ended notices with acknowledgment in The Watch.
+- [x] Prioritize verified device-alert setup after accepting an invitation.
+- [x] Test removal rules and isolated dialog flow without changing existing assignments; four tests pass and mobile layout/error recovery checked.
+- [ ] Verify signed-in removal-to-notice acknowledgment and welcome setup — blocked because preview has no current user session and self sign-in could not be minted; requires user sign-in.
+- [ ] Verify actual device push delivery and iPhone keyboard behavior — requires a physical device, not desktop emulation.
 - [x] Apply Pursue/Flee labels consistently without changing stored Path types.
 - [x] Place Starter Walk and active Paths above Check-In while the starter prompt is visible.
 - [x] Add visible SendScripture links to Starter Walk and Path header; installed-app opening is OS-dependent.

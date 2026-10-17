@@ -1,4 +1,7 @@
 # Architecture rules
+- Watchman removal uses a shared client-safe reason validator and a focused Radix dialog with an in-flight guard; this keeps validation consistent and avoids keyboard-driven sheet motion.
+- Removal notices are read independently of active assignments and dismissed via recipient-scoped acknowledgment, never delivery status; former Watchmen retain closure context without regaining Path access.
+- Invite welcome reuses WatchmanPushPrompt's device registration checks rather than a separate subscription flow; permission alone does not establish alert readiness.
 - Path full history uses the shared Shadcn calendar, while the existing 14-day strip remains a compact summary; reuse the Path page's visible-note read tracking for calendar words.
 - Calendar words attach to their linked check-in date when available, otherwise to the sent date in the owner's timezone, so history aligns with the user's local accountability day.- Profile photos are stored as small resized JPEG data URLs on the profile row, because the workspace blocks public storage buckets.
 
