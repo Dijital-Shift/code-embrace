@@ -1,4 +1,8 @@
 # Tasks
+- [ ] Strengthen Watchman removal reason and stabilize the confirmation dialog.
+- [ ] Show durable Watch ended notices with acknowledgment in The Watch.
+- [ ] Prioritize verified device-alert setup after accepting an invitation.
+- [ ] Test removal rules and preview flows without changing existing assignments.
 - [x] Apply Pursue/Flee labels consistently without changing stored Path types.
 - [x] Place Starter Walk and active Paths above Check-In while the starter prompt is visible.
 - [x] Add visible SendScripture links to Starter Walk and Path header; installed-app opening is OS-dependent.
