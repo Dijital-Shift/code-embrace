@@ -1,0 +1,10 @@
+ALTER TABLE public.notifications ADD COLUMN IF NOT EXISTS acknowledged_at timestamptz;
+ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_type_check;
+ALTER TABLE public.notifications ADD CONSTRAINT notifications_type_check CHECK (type IN ('missed_checkin','breach_report','watchman_removed','account_deletion'));
+ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_channel_check;
+ALTER TABLE public.notifications ADD CONSTRAINT notifications_channel_check CHECK (channel IS NULL OR channel IN ('push','sms','in_app'));
+GRANT SELECT ON public.notifications TO authenticated;
+GRANT UPDATE (acknowledged_at) ON public.notifications TO authenticated;
+GRANT ALL ON public.notifications TO service_role;
+CREATE POLICY notifications_recipient_acknowledge ON public.notifications FOR UPDATE TO authenticated USING (partner_id = auth.uid() AND type = 'watchman_removed') WITH CHECK (partner_id = auth.uid() AND type = 'watchman_removed');
+CREATE INDEX IF NOT EXISTS notifications_unacknowledged_removals ON public.notifications (partner_id, created_at DESC) WHERE type = 'watchman_removed' AND acknowledged_at IS NULL;

@@ -328,6 +328,7 @@ export type Database = {
       }
       notifications: {
         Row: {
+          acknowledged_at: string | null
           channel: string | null
           checkin_id: string | null
           created_at: string
@@ -340,6 +341,7 @@ export type Database = {
           type: string
         }
         Insert: {
+          acknowledged_at?: string | null
           channel?: string | null
           checkin_id?: string | null
           created_at?: string
@@ -352,6 +354,7 @@ export type Database = {
           type: string
         }
         Update: {
+          acknowledged_at?: string | null
           channel?: string | null
           checkin_id?: string | null
           created_at?: string

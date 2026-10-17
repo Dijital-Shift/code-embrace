@@ -11,6 +11,15 @@
   --color-muted-foreground: oklch(0.55 0 0);
   --color-border: oklch(0.2 0.01 80);
   --color-card: oklch(0.1 0.01 80);
+  --color-destructive: oklch(0.71 0.16 22);
+  --color-destructive-foreground: oklch(0.08 0.01 80);
+  --color-secondary: oklch(0.18 0.01 80);
+  --color-secondary-foreground: oklch(0.88 0.02 80);
+  --color-input: oklch(0.25 0.02 80);
+  --color-ring: oklch(0.75 0.13 80);
+  --color-accent: oklch(0.22 0.02 80);
+  --color-accent-foreground: oklch(1 0 0);
+  --color-overlay: oklch(0 0 0 / 80%);
   --color-history-held: oklch(0.8 0.2 145);
   --color-history-breach: oklch(0.71 0.16 22);
   --color-history-silent: oklch(0.77 0.17 70);
@@ -18,6 +27,10 @@
 }
 
 .history-completed { color: var(--color-history-held); background: color-mix(in oklab, var(--color-history-held) 14%, transparent); }
+.kp-removal-dialog { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); overflow-anchor: none; }
+.kp-removal-dialog[data-state] { animation: none; }
+.kp-removal-dialog button:active { transform: none; }
+.kp-removal-dialog textarea:focus { border-color: var(--color-primary) !important; }
 .history-breached { color: var(--color-history-breach); background: color-mix(in oklab, var(--color-history-breach) 14%, transparent); }
 .history-missed { color: var(--color-history-silent); background: color-mix(in oklab, var(--color-history-silent) 14%, transparent); }
 .history-skipped { color: var(--color-history-sabbath); background: color-mix(in oklab, var(--color-history-sabbath) 14%, transparent); }
