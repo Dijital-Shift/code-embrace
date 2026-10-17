@@ -49,7 +49,8 @@ export function tzOffsetHours(tz: string, nowUtc: Date = new Date()): number {
   try {
     const utcH = parseInt(nowUtc.toLocaleString('en-US', { timeZone: 'UTC', hour12: false, hour: 'numeric' }), 10);
     const tzH = parseInt(nowUtc.toLocaleString('en-US', { timeZone: tz, hour12: false, hour: 'numeric' }), 10);
-    return ((tzH - utcH + 36) % 24) - ((tzH - utcH + 36) % 24 > 12 ? 24 : 0);
+    const d = (((tzH - utcH) % 24) + 24) % 24;
+    return d > 12 ? d - 24 : d;
   } catch {
     return 0;
   }
