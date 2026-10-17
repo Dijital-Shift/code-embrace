@@ -31,8 +31,9 @@ function RefundPage() {
 
       <LegalSection title="How refunds are handled">
         <p>
-          Refunds are handled entirely through Stripe. There is no email to send and no reply to wait on.
-          Refunds are returned to your original payment method and usually appear within 5–10 business
+          Sign in, open <strong>Settings → Billing</strong>, tap <strong>Request a refund</strong>, and confirm.
+          Your most recent charge is refunded automatically through Stripe — no email to send, no reply to
+          wait on. Refunds return to your original payment method and usually appear within 5–10 business
           days, depending on your bank or card issuer.
         </p>
       </LegalSection>
