@@ -11,6 +11,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 async function loadCheckin(call: () => Promise<any>) {
   try { const d = await call(); saveCheckinCache(d); return { ...d, offline: false }; }
@@ -85,7 +86,6 @@ function CheckIn() {
     };
   }, []);
   const { data: access } = useAccessState();
-  const [tab, setTab] = useState<null | "yesterday" | "today" | "logged">(null);
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   if (access && !access.hasAccess) {
@@ -187,78 +187,50 @@ function CheckIn() {
         </div>
       )}
 
-      {(() => {
-        const tabs = [
-          { key: "yesterday" as const, label: "Yesterday", count: late.length, warn: true },
-          { key: "today" as const, label: "Today", count: pending.length, warn: false },
-          { key: "logged" as const, label: "Logged", count: done.length + undoableYesterday.length, warn: false },
-        ];
-        const fallback = late.length ? "yesterday" : pending.length ? "today" : "logged";
-        const active = tab && tabs.find((t) => t.key === tab) ? tab : fallback;
-        return (
-          <>
-            <div className="sticky z-20 -mx-1 px-1 py-2 mb-3" style={{ top: "calc(44px + env(safe-area-inset-top))", background: "#0a0800" }}>
-              <div role="tablist" aria-label="Check-in groups" className="grid grid-cols-3 gap-1 p-1 rounded-xl border border-[#2a2518]" style={{ background: "#120e06" }}>
-                {tabs.map((t) => {
-                  const on = active === t.key;
-                  return (
-                    <button
-                      key={t.key} type="button" role="tab" aria-selected={on}
-                      onClick={() => setTab(t.key)}
-                      className="flex items-center justify-center gap-1.5 py-2 rounded-lg text-[0.72rem] font-semibold uppercase tracking-wider transition-colors"
-                      style={{ background: on ? "#c9a84c" : "transparent", color: on ? "#0a0800" : "#b8b0a4" }}
-                    >
-                      {t.label}
-                      <span
-                        className="min-w-[1.25rem] h-5 px-1 rounded-full text-[0.65rem] flex items-center justify-center"
-                        style={{
-                          background: on ? "#0a0800" : t.count && t.warn ? "#3a2606" : "#1f1a10",
-                          color: on ? "#f3d27a" : t.count && t.warn ? "#f59e0b" : "#9e968a",
-                        }}
-                      >{t.count}</span>
-                    </button>
-                  );
+      {late.length > 0 && (
+        <section aria-label="Yesterday's open Paths" className="mb-6">
+          <h3 className="text-xs font-semibold uppercase text-history-silent mb-2">Yesterday · {late.length} open</h3>
+          <p className="text-[0.7rem] text-history-silent mb-3">
+            {graceOpen ? "Answer before 10 AM, or it counts as silent." : "Went silent — still yours to answer honestly."}
+          </p>
+          <div className="flex flex-col gap-2">
+            {late.map((l) => <PathRow key={`y-${l.lane_id}`} lane={l} isLate day="yesterday" date={yesterday} />)}
+          </div>
+        </section>
+      )}
+      {pending.length > 0 && (
+        <section aria-label="Today's open Paths">
+          <h3 className="text-xs font-semibold uppercase text-stone mb-2">Open today · {pending.length}</h3>
+          <div className="flex flex-col gap-2">
+            {pending.map((l) => <PathRow key={l.lane_id} lane={l} date={today} />)}
+          </div>
+        </section>
+      )}
+      {(done.length > 0 || undoableYesterday.length > 0) && (
+        <Accordion type="single" collapsible className="mt-6">
+          <AccordionItem value="checked-in" className="border-t border-border border-b-0">
+            <AccordionTrigger className="text-stone hover:no-underline gap-3">
+              <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <Check size={16} className="text-history-held" aria-hidden="true" />
+                Checked in today · {done.length}
+                {undoableYesterday.length > 0 && <span className="text-xs">· Yesterday · {undoableYesterday.length}</span>}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2">
+                {undoableYesterday.map((l) => {
+                  const c = yesterdayMap.get(l.lane_id);
+                  return c ? <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={c} dayTag="Yesterday" day="yesterday" date={yesterday} /> : null;
+                })}
+                {done.map((l) => {
+                  const c = todayMap.get(l.lane_id);
+                  return c ? <LoggedRow key={l.lane_id} lane={l} checkin={c} date={today} /> : null;
                 })}
               </div>
-            </div>
-
-            {active === "yesterday" && (
-              <section>
-                <p className="text-[0.7rem] text-[#f59e0b] mb-2">
-                  {late.length === 0 ? "Nothing owed from yesterday." : graceOpen ? "Answer before 10 AM, or it counts as silent." : "Went silent — still yours to answer honestly."}
-                </p>
-                <div className="flex flex-col gap-2">
-                  {late.map((l) => <PathRow key={`y-${l.lane_id}`} lane={l} isLate day="yesterday" date={yesterday} />)}
-                </div>
-              </section>
-            )}
-
-            {active === "today" && (
-              <section>
-                {pending.length === 0 && <p className="text-[0.75rem] text-[#9e968a]">Every Path is answered for today.</p>}
-                <div className="flex flex-col gap-2">
-                  {pending.map((l) => <PathRow key={l.lane_id} lane={l} date={today} />)}
-                </div>
-              </section>
-            )}
-
-            {active === "logged" && (
-              <section>
-                {done.length + undoableYesterday.length === 0 && <p className="text-[0.75rem] text-[#9e968a]">Nothing logged yet today.</p>}
-                <div className="flex flex-col gap-2">
-                  {undoableYesterday.map((l) => (
-                    <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" day="yesterday" date={yesterday} />
-                  ))}
-                  {done.map((l) => {
-                    const c = todayMap.get(l.lane_id)!;
-                    return <LoggedRow key={l.lane_id} lane={l} checkin={c as any} date={today} />;
-                  })}
-                </div>
-              </section>
-            )}
-          </>
-        );
-      })()}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
     </div>
   );
 }

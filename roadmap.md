@@ -1,4 +1,7 @@
 # Tasks
+- [x] Show existing Lifetime/Monthly membership on the homepage without repeat-purchase prompts; four membership tests pass and signed-out mobile/desktop render checked.
+- [x] Replace Check-In tabs with open Paths and a collapsed checked-in drawer, preserving queued check-ins and Undo.
+- [ ] Verify these homepage and Check-In changes with the member's real signed-in account — blocked because self-session mint found no matching account; requires preview sign-in.
 - [x] Strengthen Watchman removal reason and stabilize the confirmation dialog.
 - [x] Show durable Watch ended notices with acknowledgment in The Watch.
 - [x] Prioritize verified device-alert setup after accepting an invitation.

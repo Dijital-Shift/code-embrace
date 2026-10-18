@@ -7,6 +7,8 @@ import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/lib/auth";
 import { useAccessState } from "@/components/AccessBanner";
+import { Button } from "@/components/ui/button";
+import { homepageMembership } from "@/lib/homepage-membership";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -70,6 +72,8 @@ function Header() {
 }
 
 function Hero() {
+  const { data: access } = useAccessState();
+  const membership = homepageMembership(access);
   return (
     <section className="relative px-5 sm:px-8 pt-10 sm:pt-14 pb-16 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] pointer-events-none -z-0"
@@ -84,6 +88,7 @@ function Hero() {
           <p className="mt-5 text-[#d6d0c4] text-base sm:text-lg leading-relaxed max-w-md">
             For the believer who refuses to walk alone. Daily check-ins, partnered with a watchman in agreement with you — before the silence becomes a fall.
           </p>
+          {membership && <p role="status" className="mt-5 flex items-center gap-2 text-sm font-semibold text-primary"><Check size={16} aria-hidden="true" />{membership === "lifetime" ? "Lifetime member · You're set for life." : "Monthly Walk · Your plan is active."}</p>}
           <div className="mt-8 flex gap-2">
             <AuthLink
               signedOutLabel="Start free"
@@ -224,22 +229,32 @@ function CheckoutCTA({
 }) {
   const { user, loading } = useAuth();
   const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
-  const { data: access } = useAccessState();
+  const { data: access, isFetching: accessFetching } = useAccessState();
   const trialActive = !!access?.trialActive;
+  const membership = homepageMembership(access);
 
-  if (loading || !user) {
+  if (loading || (user && !access)) {
+    return <Button disabled variant="ghost" className={className} style={style}>Checking membership…</Button>;
+  }
+  if (!user) {
     return (
       <Link to="/login" className={className} style={style}>
         {loggedOutLabel}
       </Link>
     );
   }
+  if (membership === "lifetime" || (membership === "monthly" && priceId === "kp_premium_monthly")) {
+    return <Button asChild variant="ghost" className={className} style={style}><Link to="/dashboard">{membership === "lifetime" ? "Continue your walk" : "Your current plan"}</Link></Button>;
+  }
+  if (!access && accessFetching) return null;
   // Only promise "free" when the member's 30-day trial is genuinely running;
   // the server defers the first charge to the trial end in that case.
-  const label = trialActive ? loggedInLabel : loggedInLabel.replace(/Start Free \(30 Days\)/, "Subscribe");
+  const label = membership === "monthly" && priceId === "kp_lifetime_once"
+    ? "Upgrade to Lifetime"
+    : trialActive ? loggedInLabel : loggedInLabel.replace(/Start Free \(30 Days\)/, "Subscribe");
   return (
     <>
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => openCheckout({
           priceId,
@@ -252,7 +267,7 @@ function CheckoutCTA({
         style={style}
       >
         {label}
-      </button>
+      </Button>
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 overflow-y-auto p-4 flex items-start justify-center">
           <div className="w-full max-w-2xl mt-8 bg-white rounded-2xl overflow-hidden">
@@ -296,6 +311,8 @@ const lifetimeFeatures = [
 ];
 
 function Pricing() {
+  const { data: access } = useAccessState();
+  const membership = homepageMembership(access);
   return (
     <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
       <div className="max-w-5xl mx-auto">
@@ -311,7 +328,7 @@ function Pricing() {
           {/* Monthly Walk */}
           <div className="pricing-card relative flex h-full flex-col rounded-[20px] sm:rounded-[28px] border border-[#8a7035] px-3 pb-4 pt-12 sm:px-9 sm:pb-8 sm:pt-20">
             <div className="absolute left-1/2 top-2.5 sm:top-4 w-max max-w-[95%] -translate-x-1/2 rounded-full border border-[#d7b95f] bg-[#080705] px-3 py-1.5 sm:px-6 sm:py-3 text-center text-[8px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.2em] text-[#f1d37b] whitespace-nowrap">
-              30 DAYS FREE · NO CARD
+              {membership === "monthly" ? "YOUR CURRENT PLAN" : membership === "lifetime" ? "INCLUDED IN LIFETIME" : "30 DAYS FREE · NO CARD"}
             </div>
             <h3 className="pricing-display text-center text-[26px] sm:text-[52px] font-medium leading-tight text-[#f3ead9]">
               Monthly Walk
@@ -322,7 +339,7 @@ function Pricing() {
               <span className="pricing-display text-[15px] sm:text-[27px] text-[#bca77a]">/ month</span>
             </div>
             <p className="mt-2 sm:mt-4 min-h-[36px] sm:min-h-[48px] text-center text-[11px] sm:text-[14px] leading-relaxed text-[#d6d1c9]">
-              Billed after 30 days. Cancel anytime.
+              {membership === "monthly" ? "Your monthly walk is active. Cancel anytime." : membership === "lifetime" ? "Covered by your Lifetime membership." : "Billed after 30 days. Cancel anytime."}
             </p>
             <div className="mt-4 sm:mt-7 h-px w-full bg-[#6b5933]/60" />
             <div className="mt-4 sm:mt-8 flex flex-1 flex-col gap-3 sm:gap-6">
@@ -349,7 +366,7 @@ function Pricing() {
           {/* Lifetime Walk */}
           <div className="pricing-card pricing-lifetime-glow relative flex h-full flex-col rounded-[20px] sm:rounded-[28px] border-[1.5px] border-[#f0d579] px-3 pb-4 pt-12 sm:px-9 sm:pb-8 sm:pt-20">
             <div className="pricing-gold-button absolute left-1/2 top-2.5 sm:top-4 w-max max-w-[95%] -translate-x-1/2 rounded-full px-3 py-1.5 sm:px-6 sm:py-3 text-center text-[8px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.2em] text-[#100d05] shadow-[0_5px_25px_rgba(218,175,65,0.2)] whitespace-nowrap">
-              BEST VALUE · ONE TIME
+              {membership === "lifetime" ? "YOUR CURRENT PLAN" : "BEST VALUE · ONE TIME"}
             </div>
             <h3 className="pricing-display text-center text-[26px] sm:text-[52px] font-medium leading-tight text-[#f3ead9]">
               Lifetime Walk
@@ -360,7 +377,7 @@ function Pricing() {
               <span className="pricing-display text-[15px] sm:text-[27px] text-[#bca77a]">once</span>
             </div>
             <p className="mt-2 sm:mt-4 min-h-[36px] sm:min-h-[48px] text-center text-[11px] sm:text-[14px] leading-relaxed text-[#d6d1c9]">
-              Pay once. Walk forever.
+              {membership === "lifetime" ? "You're set for life. Nothing more to pay." : "Pay once. Walk forever."}
             </p>
             <div className="mt-4 sm:mt-7 h-px w-full bg-[#6b5933]/60" />
             <div className="mt-4 sm:mt-8 flex flex-1 flex-col gap-3 sm:gap-6">
@@ -651,9 +668,7 @@ function ClosingCall() {
           </p>
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/login" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}>
-            Start free
-          </Link>
+          <AuthLink signedOutLabel="Start free" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }} />
           <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
             How it works
           </Link>
