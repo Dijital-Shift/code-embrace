@@ -93,8 +93,8 @@ function CheckIn() {
     return (
       <div>
         <div className="flex items-center gap-3 mb-6">
-          <Link to="/dashboard" className="text-[#a8a094]">←</Link>
-          <h2 className="text-xl font-bold">Check-In</h2>
+          <Link to="/dashboard" aria-label="Back" className="text-[#a8a094] hover:text-[#c9a84c] transition-colors">←</Link>
+          <h2 className="text-2xl tracking-wide text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>Check-In</h2>
         </div>
         <AccessBanner />
         {resting.length > 0 && (
@@ -163,8 +163,8 @@ function CheckIn() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-1">
-        <Link to="/dashboard" className="text-[#a8a094]">←</Link>
-        <h2 className="text-xl font-bold">Check-In</h2>
+        <Link to="/dashboard" aria-label="Back" className="text-[#a8a094] hover:text-[#c9a84c] transition-colors">←</Link>
+        <h2 className="text-2xl tracking-wide text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>Check-In</h2>
       </div>
       <p className="text-[#a8a094] text-xs mb-6">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
 

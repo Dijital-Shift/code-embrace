@@ -31,8 +31,8 @@ function Lanes() {
     <div>
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-3">
-          <Link to="/dashboard" className="text-[#a8a094]">←</Link>
-          <h2 className="text-xl font-bold">Paths</h2>
+          <Link to="/dashboard" aria-label="Back" className="text-[#a8a094] hover:text-[#c9a84c] transition-colors">←</Link>
+          <h2 className="text-2xl tracking-wide text-[#f3e6c4]" style={{ fontFamily: "Cinzel, serif" }}>Paths</h2>
         </div>
         <Link to="/paths/new" className="px-4 py-2 bg-[#c9a84c] text-black rounded-md font-bold text-xs">+ New Path</Link>
       </div>
