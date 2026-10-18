@@ -24,6 +24,8 @@
   --color-history-breach: oklch(0.71 0.16 22);
   --color-history-silent: oklch(0.77 0.17 70);
   --color-history-sabbath: oklch(0.75 0.13 80);
+  --color-parchment: #f3e6c4;
+  --color-stone: #a8a094;
 }
 
 .history-completed { color: var(--color-history-held); background: color-mix(in oklab, var(--color-history-held) 14%, transparent); }

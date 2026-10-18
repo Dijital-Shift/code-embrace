@@ -1,4 +1,6 @@
 # Tasks
+- [ ] Show existing Lifetime/Monthly membership on the homepage without repeat-purchase prompts.
+- [ ] Replace Check-In tabs with open Paths and a collapsed checked-in drawer; verify signed in.
 - [x] Strengthen Watchman removal reason and stabilize the confirmation dialog.
 - [x] Show durable Watch ended notices with acknowledgment in The Watch.
 - [x] Prioritize verified device-alert setup after accepting an invitation.
