@@ -175,7 +175,8 @@ function LaneDetail() {
       >
         <Link
           to="/paths"
-          className="inline-flex items-center gap-1 text-[0.8rem] uppercase tracking-[0.18em] font-semibold text-[#8a8276] no-underline transition-colors hover:text-[#c9a84c]"
+          className="inline-flex items-center gap-1 text-[0.85rem] uppercase tracking-[0.16em] text-[#f3e6c4] no-underline transition-colors hover:text-[#c9a84c]"
+          style={{ fontFamily: "Cinzel, serif" }}
         >
           <svg
             width="13"
