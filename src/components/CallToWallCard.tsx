@@ -52,7 +52,7 @@ export function CallToWallCard({ url, invited, walking, className = "" }: { url:
         <div className="mt-5 grid grid-cols-2 gap-2 text-center">
           <div className="rounded-lg border border-[#c9a84c]/20 py-2.5">
             <p className="text-xl font-bold text-[#e5af38]">{invited}</p>
-            <p className="text-[0.6rem] uppercase tracking-wider text-[#8f887c]">Invited</p>
+            <p className="text-[0.6rem] uppercase tracking-wider text-[#8f887c]">Joined</p>
           </div>
           <div className="rounded-lg border border-[#c9a84c]/20 py-2.5">
             <p className="text-xl font-bold text-[#e5af38]">{walking}</p>
