@@ -396,21 +396,31 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
 
 
       {open && (
-        <div ref={missRef} className="mt-2.5">
+        <div
+          ref={missRef}
+          className="mt-3 p-3 rounded-lg"
+          style={{ background: "linear-gradient(180deg, #2a0a0a 0%, #1a0606 100%)", border: "1px solid #7f1d1d", boxShadow: "0 0 18px rgba(220,38,38,0.18), inset 0 1px 0 rgba(248,113,113,0.12)" }}
+        >
+          <p className="text-[0.65rem] font-semibold uppercase tracking-wider mb-2" style={{ color: "#fca5a5" }}>
+            {isAvoid ? "Confess the breach" : "Tell the truth"}
+          </p>
           <textarea
-            rows={2} required minLength={5} value={explanation} onChange={(e) => setExplanation(e.target.value)}
+            rows={3} required minLength={5} value={explanation} onChange={(e) => setExplanation(e.target.value)}
             placeholder="What happened? Be honest."
-            className="w-full p-2.5 text-base rounded-md bg-[#0a0800] border border-[#2a2518] text-white outline-none resize-none"
+            className="w-full p-2.5 text-base rounded-md outline-none resize-none placeholder:text-[#a87878]"
+            style={{ background: "#120404", border: "1px solid #5a1a1a", color: "#fde8e8" }}
           />
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex items-center justify-between gap-3 mt-2.5">
+            <button type="button" onClick={() => { setOpen(false); setExplanation(""); }} className="text-[0.72rem] text-[#d4a5a5] underline underline-offset-2">Cancel</button>
             <button
               type="button"
               disabled={busy || explanation.trim().length < 5}
               onClick={() => send("breach")}
-              className="px-3 py-1.5 rounded-md text-xs font-bold"
-              style={{ background: explanation.trim().length >= 5 ? "#7f1d1d" : "#2a2518", color: explanation.trim().length >= 5 ? "#fff" : "#7d7668" }}
-            >{busy ? "Submitting…" : "Submit"}</button>
-            <button type="button" onClick={() => { setOpen(false); setExplanation(""); }} className="text-[0.7rem] text-[#a8a094] underline">Cancel</button>
+              className="px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-colors"
+              style={explanation.trim().length >= 5
+                ? { background: "#7f1d1d", color: "#fff", border: "1px solid #f87171" }
+                : { background: "#2a1212", color: "#8a5a5a", border: "1px solid #3a1a1a" }}
+            >{busy ? "Submitting…" : isAvoid ? "Submit Breach" : "Submit"}</button>
           </div>
         </div>
       )}
