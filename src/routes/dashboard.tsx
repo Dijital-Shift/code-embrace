@@ -10,6 +10,8 @@ import { statusColor, statusLabel } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
 import { WatchmanWordsModal, type Word } from "@/components/WatchmanWordsModal";
 import { useEffect, useState } from "react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Check } from "lucide-react";
 import { StarterWalkCard } from "@/components/StarterWalkCard";
 
 
@@ -54,6 +56,57 @@ function Dashboard() {
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
   const needsGender = data?.profile && !((data.profile as any).gender);
   const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
+
+  const renderLane = (lane: (typeof lanes)[number]) => {
+              const st = statusByLane.get(lane.lane_id) ?? "pending";
+              const color = statusColor(st);
+              const standing = data?.standingByLane?.[lane.lane_id] ?? 0;
+              const seats = data?.seatsByLane?.[lane.lane_id] ?? { active: 0, pending: 0 };
+              const unread = unreadByLane.get(lane.lane_id) ?? 0;
+              const isAvoid = lane.lane_type === "avoid";
+              return (
+                <Link
+                  key={lane.lane_id}
+                  to="/paths/$id"
+                  params={{ id: lane.lane_id }}
+                  search={{ newlyCreated: false }}
+                  className="relative overflow-hidden kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50"
+                >
+                  {st === "pending" && (
+                    <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r" style={{ background: "#e5af38", boxShadow: "0 0 10px #e5af3899" }} />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold leading-snug flex items-center gap-2">
+                      <span className="truncate">{lane.title}</span>
+                      <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={isAvoid
+                        ? { background: "#201008", color: "#e0a075", borderColor: "rgba(224,160,117,0.35)" }
+                        : { background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>
+                        {isAvoid ? "Flee" : "Pursue"}
+                      </span>
+                      {unread > 0 && (
+                        <button
+                          type="button"
+                          aria-label={`Read new words from your Watchman on ${lane.title}`}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenLane(lane.lane_id); }}
+                          className="text-[0.6rem] px-2 py-1 -my-1 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 cursor-pointer"
+                          style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}
+                        >New</button>
+                      )}
+                    </p>
+                    {lane.description && <p className="text-xs text-[#b8b0a4] leading-relaxed mt-1 mb-1.5 line-clamp-2">{lane.description}</p>}
+                    <p className="text-[0.72rem]" style={{ color: "#4ade80" }}>{standing} standing</p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <WatchmanPips active={seats.active} pending={seats.pending} />
+                    <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border shrink-0" style={{ color, background: `${color}14`, borderColor: `${color}44` }}>
+                      {statusLabel(st)}
+                    </span>
+                  </div>
+                </Link>
+              );
+  };
+  const openLanes = lanes.filter((l) => !checkedIds.has(l.lane_id));
+  const doneLanes = lanes.filter((l) => checkedIds.has(l.lane_id));
 
   return (
     <div>
@@ -144,56 +197,19 @@ function Dashboard() {
         {lanes.length === 0 ? (
           <p className="text-[#8a8478] text-sm">None yet.</p>
         ) : (
-          <div className="flex flex-col gap-2">
-            {lanes.map((lane) => {
-              const st = statusByLane.get(lane.lane_id) ?? "pending";
-              const color = statusColor(st);
-              const standing = data?.standingByLane?.[lane.lane_id] ?? 0;
-              const seats = data?.seatsByLane?.[lane.lane_id] ?? { active: 0, pending: 0 };
-              const unread = unreadByLane.get(lane.lane_id) ?? 0;
-              const isAvoid = lane.lane_type === "avoid";
-              return (
-                <Link
-                  key={lane.lane_id}
-                  to="/paths/$id"
-                  params={{ id: lane.lane_id }}
-                  search={{ newlyCreated: false }}
-                  className="relative overflow-hidden kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50"
-                >
-                  {st === "pending" && (
-                    <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r" style={{ background: "#e5af38", boxShadow: "0 0 10px #e5af3899" }} />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold leading-snug flex items-center gap-2">
-                      <span className="truncate">{lane.title}</span>
-                      <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 border" style={isAvoid
-                        ? { background: "#201008", color: "#e0a075", borderColor: "rgba(224,160,117,0.35)" }
-                        : { background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>
-                        {isAvoid ? "Flee" : "Pursue"}
-                      </span>
-                      {unread > 0 && (
-                        <button
-                          type="button"
-                          aria-label={`Read new words from your Watchman on ${lane.title}`}
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenLane(lane.lane_id); }}
-                          className="text-[0.6rem] px-2 py-1 -my-1 rounded-full font-semibold uppercase tracking-[0.1em] shrink-0 cursor-pointer"
-                          style={{ background: "rgba(201,168,76,0.12)", color: "#e5af38", border: "1px solid rgba(201,168,76,0.5)" }}
-                        >New</button>
-                      )}
-                    </p>
-                    {lane.description && <p className="text-xs text-[#b8b0a4] leading-relaxed mt-1 mb-1.5 line-clamp-2">{lane.description}</p>}
-                    <p className="text-[0.72rem]" style={{ color: "#4ade80" }}>{standing} standing</p>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <WatchmanPips active={seats.active} pending={seats.pending} />
-                    <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border shrink-0" style={{ color, background: `${color}14`, borderColor: `${color}44` }}>
-                      {statusLabel(st)}
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          <>
+            {openLanes.length > 0 && <div className="flex flex-col gap-2">{openLanes.map(renderLane)}</div>}
+            {doneLanes.length > 0 && (
+              <Accordion type="single" collapsible className={openLanes.length ? "mt-3" : ""}>
+                <AccordionItem value="done" className="border-t border-border border-b-0">
+                  <AccordionTrigger className="text-stone hover:no-underline text-sm">
+                    <span className="flex items-center gap-2"><Check size={16} className="text-history-held" aria-hidden="true" />Completed today · {doneLanes.length}</span>
+                  </AccordionTrigger>
+                  <AccordionContent><div className="flex flex-col gap-2">{doneLanes.map(renderLane)}</div></AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )}
+          </>
         )}
       </div>
 

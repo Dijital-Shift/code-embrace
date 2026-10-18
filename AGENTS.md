@@ -1,6 +1,6 @@
 # Architecture rules
 - Homepage membership presentation uses the existing access query through a client-safe classifier; it must not create a separate entitlement decision.
-- Check-In renders unanswered days directly and keeps logged entries in a collapsed shared accordion, preserving the existing offline merge and Undo flow.
+- Check-In groups rows into Yesterday/Today/Logged tabs; the Dashboard shows open Paths first and collapses completed ones into an accordion, so long lists stay short. Preserve the offline merge and Undo flow.
 - Watchman removal uses a shared client-safe reason validator and a focused Radix dialog with an in-flight guard; this keeps validation consistent and avoids keyboard-driven sheet motion.
 - Removal notices are read independently of active assignments and dismissed via recipient-scoped acknowledgment, never delivery status; former Watchmen retain closure context without regaining Path access.
 - Invite welcome reuses WatchmanPushPrompt's device registration checks rather than a separate subscription flow; permission alone does not establish alert readiness.
