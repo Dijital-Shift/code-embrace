@@ -433,6 +433,10 @@ function DeleteAccountSection({ requestedAt, onChanged }: { requestedAt: string 
           </div>
         )}
       </div>
+
+      <p className="pt-10 pb-2 text-center text-[0.625rem] tracking-[0.22em] uppercase text-[#8f887c]">
+        Dijital System · 02
+      </p>
     </div>
   );
 }
