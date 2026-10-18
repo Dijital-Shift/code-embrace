@@ -136,6 +136,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // Capture ?ref= invite codes on any landing page, not just the homepage.
+  useEffect(() => {
+    try {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref) window.localStorage.setItem("kp_ref", ref.toLowerCase());
+    } catch {}
+  }, []);
+
   // Notification taps route client-side instead of reloading the document.
   useEffect(() => {
     if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;

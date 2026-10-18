@@ -41,9 +41,16 @@ export const getMyReferral = createServerFn({ method: 'GET' })
     const ids = (claims ?? []).map((c) => c.referred_user_id);
     let walking = 0;
     if (ids.length) {
-      const { data: active } = await supabaseAdmin
-        .from('lanes').select('user_id').in('user_id', ids).eq('status', 'active');
-      walking = new Set((active ?? []).map((l) => l.user_id)).size;
+      // Walking = actually engaged: logged at least one check-in, or added a
+      // path of their own beyond the auto-seeded "Send Scripture" starter.
+      const engaged = new Set<string>();
+      const [{ data: active }, { data: checkins }] = await Promise.all([
+        supabaseAdmin.from('lanes').select('user_id, title').in('user_id', ids).eq('status', 'active'),
+        supabaseAdmin.from('checkins').select('user_id').in('user_id', ids),
+      ]);
+      for (const c of checkins ?? []) engaged.add(c.user_id);
+      for (const l of active ?? []) if (l.title !== 'Send Scripture') engaged.add(l.user_id);
+      walking = engaged.size;
     }
     const invited = ids.length;
     return { code, invited, walking };
