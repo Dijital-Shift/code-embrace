@@ -155,7 +155,18 @@ function InvitePage() {
       <StatusCard
         eyebrow="Link not recognized"
         title="Invite Not Found"
-        body="This link is invalid. Ask whoever sent it to send you a fresh one."
+        body="This link is no longer active. Reach out to whoever sent it to check in or get a fresh link."
+      />
+    );
+  }
+
+  if (preview.pathGone) {
+    const who = preview.ownerFirstName;
+    return (
+      <StatusCard
+        eyebrow="Invite closed"
+        title={who ? `Reach out to ${who}` : "Reach out to the sender"}
+        body={`This path is no longer active. Reach out to ${who ?? "them"} directly to check in on them or ask for a fresh link.`}
       />
     );
   }

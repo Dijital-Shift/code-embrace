@@ -73,7 +73,23 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: rows } = await supabaseAdmin.rpc('get_invite_preview', { _token: data.token });
     if (!rows || rows.length === 0) {
-      return { found: false as const };
+      // Invite rows outlive deleted paths; surface the sender so the Watchman can reach out.
+      const { data: orphan } = await supabaseAdmin
+        .from('lane_invites').select('owner_id').eq('token', data.token).maybeSingle();
+      if (!orphan) return { found: false as const };
+      const { data: owner } = await supabaseAdmin
+        .from('profiles').select('first_name').eq('user_id', orphan.owner_id).maybeSingle();
+      return {
+        found: true as const,
+        pathGone: true,
+        laneDescription: null,
+        isAvoid: true,
+        status: 'pending' as 'pending' | 'accepted' | 'revoked' | 'expired',
+        expired: false,
+        laneTitle: '',
+        ownerFirstName: (owner?.first_name as string | null) ?? null,
+        ownerEmail: null as string | null,
+      };
     }
     const row = rows[0];
     // The RPC doesn't expose the path description; fetch it for the invite screen.
@@ -93,7 +109,8 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
       isAvoid: (laneType ?? 'avoid') !== 'complete',
       status: row.status as 'pending' | 'accepted' | 'revoked' | 'expired',
       expired: row.expired as boolean,
-      laneTitle: row.lane_title as string,
+      laneTitle: (row.lane_title as string | null) ?? '',
+      pathGone: row.lane_title == null,
       ownerFirstName: (row.owner_first_name as string | null) ?? null,
       ownerEmail: (row.owner_email as string | null) ?? null,
     };
