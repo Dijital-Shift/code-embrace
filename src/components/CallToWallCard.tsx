@@ -9,7 +9,8 @@ export function CallToWallCard({ url, invited, walking, className = "" }: { url:
   async function copy() {
     try { await navigator.clipboard.writeText(url); } catch { /* ignore */ }
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try { navigator.vibrate?.(25); } catch { /* unsupported */ }
+    setTimeout(() => setCopied(false), 4000);
   }
   async function share() {
     try {

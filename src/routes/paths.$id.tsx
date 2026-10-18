@@ -573,8 +573,8 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
     try {
       await navigator.clipboard.writeText(message);
       setCopied(token);
-      toast.success("Invite copied");
-      setTimeout(() => setCopied((c) => (c === token ? null : c)), 2500);
+      try { navigator.vibrate?.(25); } catch { /* unsupported */ }
+      setTimeout(() => setCopied((c) => (c === token ? null : c)), 4000);
     } catch {
       toast.error("Couldn't copy — select the text and copy it manually.");
     }
