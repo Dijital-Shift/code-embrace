@@ -226,6 +226,95 @@ function InvitePage() {
           They chose you personally to keep them honest before the Most High God.
         </p>
       </div>
+
+      {user ? (
+        <>
+          <button
+            onClick={accept}
+            disabled={accepting}
+            className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold mb-3"
+          >
+            {accepting ? "Accepting…" : `Accept — Watch ${ownerName.split(" ")[0]}'s path`}
+          </button>
+          {err && <p className="text-red-400 text-xs mb-3">{err}</p>}
+        </>
+      ) : loading ? (
+        // Auth is still resolving (server render + first hydration beat) —
+        // hold the slot quietly instead of flashing the sign-in buttons.
+        <div className="flex justify-center py-4">
+          <div className="w-6 h-6 rounded-full border-2 border-[#c9a84c]/25 border-t-[#c9a84c] animate-spin" />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 mb-6">
+          {authStep === "choose" && (
+            <>
+              <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — it's free.</p>
+              <button
+                onClick={signInWithGoogle}
+                className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold flex items-center justify-center gap-2"
+              >
+                <GoogleIcon /> Continue with Google
+              </button>
+              <button
+                onClick={() => setAuthStep("email")}
+                className="w-full py-3 rounded-md border border-[#222] text-[#c8c0b4] text-sm"
+                style={{ background: "#161210" }}
+              >
+                Use email instead
+              </button>
+              {err && <p className="text-red-400 text-xs">{err}</p>}
+            </>
+          )}
+          {authStep === "email" && (
+            <form onSubmit={sendOtp} className="flex flex-col gap-3">
+              <input
+                type="email"
+                required
+                autoFocus
+                placeholder="you@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="px-4 py-3 bg-[#161210] border border-[#2a2518] rounded-md text-white outline-none"
+              />
+              <button disabled={busy} className="py-3 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold">
+                {busy ? "Sending…" : "Send code"}
+              </button>
+              <button type="button" onClick={() => setAuthStep("choose")} className="text-xs text-[#9e968a]">
+                ← Back
+              </button>
+              {err && <p className="text-red-400 text-xs">{err}</p>}
+            </form>
+          )}
+          {authStep === "code" && (
+            <form onSubmit={verifyOtp} className="flex flex-col gap-3">
+              <p className="text-xs text-[#b8b0a4]">Code sent to {email}</p>
+              <input
+                type="text"
+                required
+                autoFocus
+                maxLength={6}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]*"
+                placeholder="6-digit code"
+                value={code}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/\D/g, "").slice(0, 6);
+                  setCode(v);
+                  if (v.length === 6) runVerify(v);
+                }}
+                className="px-4 py-3 bg-[#161210] border border-[#2a2518] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
+              />
+              <button disabled={busy || accepting} className="py-3 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold">
+                {accepting ? "Accepting…" : busy ? "Verifying…" : "Verify & continue"}
+              </button>
+              {err && <p className="text-red-400 text-xs">{err}</p>}
+            </form>
+          )}
+        </div>
+      )}
+
+      <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#8f887c] text-center mb-4 mt-2">— What you're saying yes to —</p>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
         <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The commitment: under 5 minutes a week</p>
         <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
