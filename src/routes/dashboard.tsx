@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check } from "lucide-react";
 import { StarterWalkCard } from "@/components/StarterWalkCard";
+import { pathStartLabel } from "@/lib/path-start";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -50,7 +51,9 @@ function Dashboard() {
   const todayCheckins = data?.todayCheckins ?? [];
   const statusByLane = new Map(todayCheckins.map((c) => [c.lane_id, c.status]));
   const checkedIds = new Set(todayCheckins.map((c) => c.lane_id));
-  const pendingCount = lanes.filter((l) => !checkedIds.has(l.lane_id)).length;
+  const dueLanes = lanes.filter((l) => !l.upcoming);
+  const upcomingLanes = lanes.filter((l) => l.upcoming);
+  const pendingCount = dueLanes.filter((l) => !checkedIds.has(l.lane_id)).length;
   const unreadByLane = new Map(((data?.unreadPaths ?? []) as { lane_id: string; count: number }[]).map((p) => [p.lane_id, p.count]));
 
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
@@ -72,7 +75,7 @@ function Dashboard() {
                   search={{ newlyCreated: false }}
                   className="relative overflow-hidden kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50"
                 >
-                  {st === "pending" && (
+                  {st === "pending" && !lane.upcoming && (
                     <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r" style={{ background: "#e5af38", boxShadow: "0 0 10px #e5af3899" }} />
                   )}
                   <div className="flex-1 min-w-0">
@@ -98,15 +101,15 @@ function Dashboard() {
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <WatchmanPips active={seats.active} pending={seats.pending} />
-                    <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border shrink-0" style={{ color, background: `${color}14`, borderColor: `${color}44` }}>
+                    {lane.upcoming ? <span className="text-xs text-stone border border-border rounded-md px-2 py-1 max-w-24 text-center">{pathStartLabel(lane.starts_at ?? '', data?.today ?? '')}</span> : <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border shrink-0" style={{ color, background: `${color}14`, borderColor: `${color}44` }}>
                       {statusLabel(st)}
-                    </span>
+                    </span>}
                   </div>
                 </Link>
               );
   };
-  const openLanes = lanes.filter((l) => !checkedIds.has(l.lane_id));
-  const doneLanes = lanes.filter((l) => checkedIds.has(l.lane_id));
+  const openLanes = dueLanes.filter((l) => !checkedIds.has(l.lane_id));
+  const doneLanes = dueLanes.filter((l) => checkedIds.has(l.lane_id));
 
   return (
     <div>
@@ -153,8 +156,8 @@ function Dashboard() {
         </Link>
       )}
 
-      {lanes.length > 0 && (
-        <DayProgressBar statuses={lanes.map((l) => statusByLane.get(l.lane_id) ?? "pending")} />
+      {dueLanes.length > 0 && (
+        <DayProgressBar statuses={dueLanes.map((l) => statusByLane.get(l.lane_id) ?? "pending")} />
       )}
 
       {(() => {
@@ -177,7 +180,7 @@ function Dashboard() {
       ) : lanes.length > 0 ? (
         <div className="p-5 kp-card">
           <p className="text-[#4ade80] font-semibold">All clear.</p>
-          <p className="text-[#9e968a] text-xs">Every path checked in. Stay aligned.</p>
+          <p className="text-stone text-xs">{dueLanes.length ? 'Every Path due today is checked in.' : 'Your Paths start tomorrow. Nothing is owed tonight.'}</p>
         </div>
       ) : (
         <div className="p-5 kp-card">
@@ -199,6 +202,7 @@ function Dashboard() {
         ) : (
           <>
             {openLanes.length > 0 && <div className="flex flex-col gap-2">{openLanes.map(renderLane)}</div>}
+            {upcomingLanes.length > 0 && <div className={openLanes.length ? 'flex flex-col gap-2 mt-3' : 'flex flex-col gap-2'}>{upcomingLanes.map(renderLane)}</div>}
             {doneLanes.length > 0 && (
               <Accordion type="single" collapsible className={openLanes.length ? "mt-3" : ""}>
                 <AccordionItem value="done" className="border-t border-border border-b-0">
@@ -227,7 +231,7 @@ function Dashboard() {
       ) : lanes.length > 0 ? (
         <div className="p-5 kp-card">
           <p className="text-[#4ade80] font-semibold">All clear.</p>
-          <p className="text-[#9e968a] text-xs">Every path checked in. Stay aligned.</p>
+          <p className="text-stone text-xs">{dueLanes.length ? 'Every Path due today is checked in.' : 'Your Paths start tomorrow. Nothing is owed tonight.'}</p>
         </div>
       ) : (
         <div className="p-5 kp-card">

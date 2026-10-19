@@ -212,6 +212,9 @@ function LaneDetail() {
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug mt-3">
           {lane.title}
         </h1>
+        {lane.starts_at && data?.historyToday && lane.starts_at > data.historyToday && (
+          <p className="mt-3 text-sm text-primary">Starts tomorrow · First check-in tomorrow. Nothing is owed tonight.</p>
+        )}
         {lane.description && (
           <p className="text-xs sm:text-sm text-[#b8b0a4] leading-relaxed mt-2">{lane.description}</p>
         )}
@@ -282,7 +285,7 @@ function LaneDetail() {
         )}
         {lane.created_at && (
           <p className="text-center text-[0.8rem] text-[#8a8276] mt-2">
-            Since {new Date(lane.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {(data?.standing ?? 0) + (data?.fallen ?? 0)} days walked
+            {lane.starts_at && data?.historyToday && lane.starts_at > data.historyToday ? 'Starts' : 'Since'} {new Date((data?.historyStartDate ?? lane.created_at.slice(0, 10)) + 'T12:00:00Z').toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: 'UTC' })} · {(data?.standing ?? 0) + (data?.fallen ?? 0)} days walked
           </p>
         )}
         <div className="mt-4 pt-4 border-t border-[#2a2518] text-center">

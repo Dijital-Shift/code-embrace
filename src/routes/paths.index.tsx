@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listMyLanes } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPips } from "@/components/DashboardPieces";
+import { pathStartLabel } from "@/lib/path-start";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [
@@ -74,7 +75,7 @@ function Lanes() {
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <WatchmanPips active={names.length} pending={0} />
-                    <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border" style={{ background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>Active</span>
+                    {lane.upcoming ? <span className="text-xs text-stone border border-border rounded-md px-2 py-1 max-w-24 text-center">{pathStartLabel(lane.starts_at ?? '', lane.ownerToday)}</span> : <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border" style={{ background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>Active</span>}
                   </div>
                 </Link>
               );
