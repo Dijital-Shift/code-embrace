@@ -1,9 +1,9 @@
 # Tasks
-- [ ] Add timezone-aware today/tomorrow start choice and shield every accountability flow before start.
-- [ ] Safely protect existing late-created Paths without removing genuine check-ins.
-- [ ] Test start rules and verify creation, dashboard, and check-in readback.
+- [x] Add timezone-aware today/tomorrow start choice and shield check-in writes, missed records, reminders, history, and pending displays before start.
+- [x] Protect Justin's late-created reading Path starting October 19; no check-ins existed and genuine history elsewhere is unchanged.
+- [x] Nine timing tests pass; signed-in creation, dashboard readback, and check-in exclusion verified. Temporary verification Path removed through the UI.
 - [x] Show existing Lifetime/Monthly membership on the homepage without repeat-purchase prompts; four membership tests pass and signed-out mobile/desktop render checked.
-- [x] Replace Check-In tabs with open Paths and a collapsed checked-in drawer, preserving queued check-ins and Undo.
+- [x] Preserve Yesterday/Today/Logged Check-In tabs; Dashboard shows open Paths first and completed ones collapsed.
 - [ ] Verify these homepage and Check-In changes with the member's real signed-in account — blocked because self-session mint found no matching account; requires preview sign-in.
 - [x] Strengthen Watchman removal reason and stabilize the confirmation dialog.
 - [x] Show durable Watch ended notices with acknowledgment in The Watch.
