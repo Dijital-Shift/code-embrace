@@ -656,7 +656,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const myPathIds = await watchedPathIds(userId);
     const { data: lanes } = myPathIds.length
       ? await supabase.from('lanes')
-        .select('lane_id, title, description, notes, status, created_at, user_id')
+        .select('lane_id, title, description, notes, status, created_at, starts_at, user_id')
         .in('lane_id', myPathIds).order('status').order('created_at', { ascending: false })
       : { data: [] as any[] };
 
@@ -668,9 +668,11 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const relByPath = new Map((mySeats ?? []).map((s: any) => [s.path_id, s.relationship]));
 
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
+    const ownerTimezones = new Map<string, string>();
     const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null; avatar_url: string | null }>();
     if (userIds.length) {
-      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url').in('user_id', userIds);
+      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url, timezone').in('user_id', userIds);
+      for (const p of ps ?? []) ownerTimezones.set(p.user_id, p.timezone || DEFAULT_TZ);
       // Phone numbers go only to a Watchman holding an active seat on an active Path of that member.
       const { data: seatRows } = await supabaseAdmin.from('path_watchmen')
         .select('path_id').eq('watchman_id', userId).eq('status', 'active');
@@ -753,6 +755,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       lanes: (lanes ?? []).map((l) => ({
         ...l,
         partner_relationship: relByPath.get(l.lane_id) ?? null,
+        upcoming: !pathIsDue(l, localDate(ownerTimezones.get(l.user_id) ?? DEFAULT_TZ), ownerTimezones.get(l.user_id) ?? DEFAULT_TZ),
         owner: ownerEmails.get(l.user_id) ?? null,
         latestAlert: latestAlert.get(l.lane_id) ?? null,
         resting: restingOwners.has(l.user_id),

@@ -238,7 +238,7 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
   lane: any; checkin: any; statusColor: Record<string, string>; defaultOpen?: boolean; sendFn: any; onSent: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
-  const todayLabel = c ? c.status.charAt(0).toUpperCase() + c.status.slice(1) : "Pending";
+  const todayLabel = lane.upcoming ? 'Starts tomorrow' : c ? c.status.charAt(0).toUpperCase() + c.status.slice(1) : "Pending";
   const todayCol = c ? statusColor[c.status] ?? "#333" : "#f59e0b";
   const needsContact = c?.status === "breached" || c?.status === "missed";
   const phone = lane.owner?.phone;
