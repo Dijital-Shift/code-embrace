@@ -461,20 +461,43 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date }: {
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
 
+  const held = checkin.status === "completed" || checkin.status === "skipped";
+  const color = statusColor(checkin.status);
   return (
-    <div className="rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-      <div className="flex justify-between items-center gap-3 px-3 py-2.5">
-        <div className="min-w-0">
-          {dayTag && <span className="text-[0.6rem] text-[#a8a094] font-semibold uppercase tracking-wider block">{dayTag}</span>}
-          <span className="text-sm text-[#ded8cc] block truncate">{lane.title}</span>
+    <div
+      className="rounded-xl"
+      style={{
+        background: held ? "linear-gradient(135deg, #12201a 0%, #161210 70%)" : "#161210",
+        border: `1px solid ${held ? "#2f5a3e" : "#2a2518"}`,
+        boxShadow: held ? "0 0 16px rgba(74,222,128,0.08), inset 0 1px 0 rgba(212,175,55,0.10)" : undefined,
+      }}
+    >
+      <div className="flex justify-between items-center gap-3 px-3.5 py-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <span
+            aria-hidden
+            className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center"
+            style={{ border: `1.5px solid ${color}`, background: "#0e0c0a", boxShadow: `0 0 10px ${color}33`, color }}
+          >
+            {held ? <Check size={17} strokeWidth={3} /> : <X size={16} strokeWidth={3} />}
+          </span>
+          <div className="min-w-0">
+            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block" style={{ color: "#a8a094" }}>
+              {dayTag ? `${dayTag} · ` : ""}{lane.lane_type === "avoid" ? "Flee" : "Pursue"}
+            </span>
+            <span className="text-[0.95rem] font-semibold text-[#f1ece2] block truncate">{lane.title}</span>
+          </div>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs font-semibold" style={{ color: statusColor(checkin.status) }}>{statusLabel(checkin.status)}</span>
+          <span
+            className="text-[0.65rem] font-bold uppercase tracking-[0.14em] px-2 py-1 rounded"
+            style={{ color, border: `1px solid ${color}55`, background: `${color}12` }}
+          >{statusLabel(checkin.status)}</span>
           {pending && <span className="text-[0.6rem] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ color: "#f59e0b", border: "1px solid #5a4a1a" }}>Pending sync</span>}
           {canUndo && <UndoLink busy={busy} onClick={undo} />}
         </div>
       </div>
-      {err && <p className="text-red-400 text-xs px-3 pb-2.5">{err}</p>}
+      {err && <p className="text-red-400 text-xs px-3.5 pb-2.5">{err}</p>}
     </div>
   );
 }

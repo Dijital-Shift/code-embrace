@@ -330,6 +330,17 @@ export const PATH_TEMPLATES: PathTemplate[] = [
       "Neither murmur ye, as some of them also murmured, and were destroyed of the destroyer. — 1 Corinthians 10:10 (KJV)",
     ],
   },
+  {
+    id: "read-daily",
+    category: "Mind",
+    title: "Read Daily — Cultivate the Mind",
+    description: "Read from a book every day — sharpen your understanding, grow in wisdom, and build the discipline of learning.",
+    lane_type: "complete",
+    support_scripture: [
+      "The heart of the prudent getteth knowledge; and the ear of the wise seeketh knowledge. — Proverbs 18:15 (KJV)",
+      "A wise man will hear, and will increase learning; and a man of understanding shall attain unto wise counsels. — Proverbs 1:5 (KJV)",
+    ],
+  },
 
   // ── Stewardship ────────────────────────────────────────────
   {
