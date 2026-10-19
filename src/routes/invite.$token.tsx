@@ -206,7 +206,7 @@ function InvitePage() {
 
   return (
     <Shell>
-      <p className="text-[0.7rem] text-[#c9a84c] uppercase tracking-[0.2em] mb-4">You've been called</p>
+      <p className="text-[0.7rem] text-[#c9a84c] uppercase tracking-[0.2em] mb-4">You've been invited</p>
       <h1 className="text-2xl font-bold mb-3 leading-tight">
         {ownerName} is asking you to be their Watchman.
       </h1>
