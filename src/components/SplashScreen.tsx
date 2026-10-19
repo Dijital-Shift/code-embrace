@@ -31,8 +31,8 @@ export function SplashScreen() {
     if (!html.classList.contains("kp-splash")) return;
     try { sessionStorage.setItem("kp_splash", "1"); } catch { /* private mode */ }
     const el = document.getElementById("kp-splash-static");
-    const t1 = window.setTimeout(() => el?.classList.add("kp-out"), 600);
-    const t2 = window.setTimeout(() => { html.classList.remove("kp-splash"); el?.classList.remove("kp-out"); }, 1000);
+    const t1 = window.setTimeout(() => el?.classList.add("kp-out"), 2250);
+    const t2 = window.setTimeout(() => { html.classList.remove("kp-splash"); el?.classList.remove("kp-out"); }, 2750);
     return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
   }, []);
   return null;
