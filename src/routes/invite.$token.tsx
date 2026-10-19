@@ -206,7 +206,7 @@ function InvitePage() {
 
   return (
     <Shell>
-      <p className="text-[0.7rem] text-[#c9a84c] uppercase tracking-[0.2em] mb-4">You've been called</p>
+      <p className="text-[0.7rem] text-[#c9a84c] uppercase tracking-[0.2em] mb-4">You've been invited</p>
       <h1 className="text-2xl font-bold mb-3 leading-tight">
         {ownerName} is asking you to be their Watchman.
       </h1>
@@ -226,33 +226,6 @@ function InvitePage() {
           They chose you personally to keep them honest before the Most High God.
         </p>
       </div>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The commitment: under 5 minutes a week</p>
-        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
-          <li><span className="text-[#c9a84c]">◆</span> Zero daily homework. If they stay on the Path, your life isn't interrupted.</li>
-          <li><span className="text-[#c9a84c]">◆</span> When an alert lands, a 30-second text or a quick call is all it takes. You are the lifeline.</li>
-          <li><span className="text-[#c9a84c]">◆</span> Free forever. No trial, no card.</li>
-        </ul>
-      </div>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The Watchman's Role</p>
-        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
-          <li><span className="text-[#c9a84c]">◆</span> Stand watch over one Path — see its Standing and Fallen days in your app.</li>
-          <li><span className="text-[#c9a84c]">◆</span> Get pinged only on a breach, or after two silent days. No daily noise.</li>
-          <li><span className="text-[#c9a84c]">◆</span> When a ping lands, reach out — call, text, or send a word of Scripture.</li>
-        </ul>
-        <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4 text-center">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
-        <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1 text-right">Ezekiel 33:7 (KJV)</p>
-      </div>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/40 text-center" style={{ background: "#161210" }}>
-        <p className="text-sm font-semibold text-[#f3d27a]">Watching is free forever.</p>
-        <p className="text-xs text-[#c8c0b4] mt-1 leading-relaxed">No subscription, no payment required. Just create an account. You'd only pay if you later start a Path of your own, after its 30-day free trial.</p>
-      </div>
-      <div className="text-center mb-6">
-        <Link to="/demo" search={{ invite: token, name: ownerName }} className="inline-block text-xs text-[#c9a84c] underline">
-          How does this work?
-        </Link>
-      </div>
 
       {user ? (
         <>
@@ -263,7 +236,7 @@ function InvitePage() {
           >
             {accepting ? "Accepting…" : `Accept — Watch ${ownerName.split(" ")[0]}'s path`}
           </button>
-          {err && <p className="text-red-400 text-xs">{err}</p>}
+          {err && <p className="text-red-400 text-xs mb-3">{err}</p>}
         </>
       ) : loading ? (
         // Auth is still resolving (server render + first hydration beat) —
@@ -272,7 +245,7 @@ function InvitePage() {
           <div className="w-6 h-6 rounded-full border-2 border-[#c9a84c]/25 border-t-[#c9a84c] animate-spin" />
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mb-6">
           {authStep === "choose" && (
             <>
               <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — it's free.</p>
@@ -340,6 +313,35 @@ function InvitePage() {
           )}
         </div>
       )}
+
+      <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#8f887c] text-center mb-4 mt-2">— What you're saying yes to —</p>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The commitment: under 5 minutes a week</p>
+        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
+          <li><span className="text-[#c9a84c]">◆</span> Zero daily homework. If they stay on the Path, your life isn't interrupted.</li>
+          <li><span className="text-[#c9a84c]">◆</span> When an alert lands, a 30-second text or a quick call is all it takes. You are the lifeline.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Free forever. No trial, no card.</li>
+        </ul>
+      </div>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The Watchman's Role</p>
+        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
+          <li><span className="text-[#c9a84c]">◆</span> Stand watch over one Path — see its Standing and Fallen days in your app.</li>
+          <li><span className="text-[#c9a84c]">◆</span> Get pinged only on a breach, or after two silent days. No daily noise.</li>
+          <li><span className="text-[#c9a84c]">◆</span> When a ping lands, reach out — call, text, or send a word of Scripture.</li>
+        </ul>
+        <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4 text-center">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
+        <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1 text-right">Ezekiel 33:7 (KJV)</p>
+      </div>
+      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/40 text-center" style={{ background: "#161210" }}>
+        <p className="text-sm font-semibold text-[#f3d27a]">Watching is free forever.</p>
+        <p className="text-xs text-[#c8c0b4] mt-1 leading-relaxed">No subscription, no payment required. Just create an account. You'd only pay if you later start a Path of your own, after its 30-day free trial.</p>
+      </div>
+      <div className="text-center mb-6">
+        <Link to="/demo" search={{ invite: token, name: ownerName }} className="inline-block text-xs text-[#c9a84c] underline">
+          How does this work?
+        </Link>
+      </div>
     </Shell>
   );
 }
