@@ -588,7 +588,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
   function inviteMessage(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     const who = ownerName || "Someone";
-    return `${who} is inviting you to be their watchman on Kingdom Protocol:\n\n${url}`;
+    return `${who} is inviting you to be their watchman on Kingdom Protocol:\n\n${url}\n\nAlready have the app? Paste this message into The Watch tab.`;
   }
 
   async function revoke(inviteId: string) {

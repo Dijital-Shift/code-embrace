@@ -8,6 +8,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
+import { ClaimInviteCard } from "@/components/ClaimInviteCard";
 
 
 export const Route = createFileRoute("/partner")({
@@ -97,6 +98,8 @@ function Partner() {
           <p className="text-[0.7rem] text-[#c9a84c] mt-2">Tap a path to send encouragement.</p>
         )}
       </div>
+
+      <ClaimInviteCard />
 
       {showMicroPrompt && (
         <div className="p-5 rounded-xl border border-[#c9a84c]/50 mb-6" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
