@@ -461,7 +461,7 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date }: {
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
 
-  const held = checkin.status === "complete" || checkin.status === "held" || checkin.status === "sabbath";
+  const held = checkin.status === "completed" || checkin.status === "skipped";
   const color = statusColor(checkin.status);
   return (
     <div
