@@ -154,7 +154,7 @@ function CheckIn() {
   if (!lanes.length) {
     return (
       <div className="text-center pt-16">
-        <p className="text-[#9e968a] mb-4">No active paths.</p>
+        <p className="text-stone mb-4">{data?.upcomingCount ? 'Your Paths start tomorrow. Nothing is owed tonight.' : 'No active paths.'}</p>
         <Link to="/paths/new" className="px-5 py-2 bg-white text-black rounded font-semibold">Create a Path</Link>
       </div>
     );

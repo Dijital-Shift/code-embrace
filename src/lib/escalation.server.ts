@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
 import { reachOutLine } from './sibling';
+import { pathIsDue } from './path-start';
 
 /**
  * Owners whose free month has ended without a plan are "resting": no silence
@@ -115,7 +116,7 @@ export async function markMissedCheckins() {
     .eq('status', 'active').not('ends_at', 'is', null).lt('ends_at', utcToday);
 
   const { data: activeLanes } = await supabaseAdmin.from('lanes')
-    .select('lane_id, title, user_id, created_at').eq('status', 'active');
+    .select('lane_id, title, user_id, created_at, starts_at').eq('status', 'active');
   if (!activeLanes?.length) return { processed: 0, watchmenPinged: 0 };
 
   // Pull user timezones.
@@ -147,8 +148,7 @@ export async function markMissedCheckins() {
     const yesterdayLocal = prevDay(localToday);
 
     // Never manufacture history: a path cannot be silent on a day it did not exist.
-    const createdLocal = localParts(new Date(lane.created_at), tz).date;
-    if (yesterdayLocal < createdLocal) continue;
+    if (!pathIsDue(lane, yesterdayLocal, tz)) continue;
 
     // Skip if yesterday already has any check-in (held, breached, missed, skipped).
     const { data: existing } = await supabaseAdmin.from('checkins')
@@ -177,6 +177,7 @@ export async function markMissedCheckins() {
     const watchmen = await activeWatchmen(lane.lane_id);
     if (!watchmen.length) continue;
     const dayBefore = prevDay(yesterdayLocal);
+    if (!pathIsDue(lane, dayBefore, tz)) continue;
     const { data: priorMiss } = await supabaseAdmin.from('checkins')
       .select('checkin_id').eq('lane_id', lane.lane_id).eq('checkin_date', dayBefore)
       .eq('status', 'missed').maybeSingle();
@@ -267,12 +268,12 @@ export async function sendBedtimeReminders() {
     if (!reminderAccess.has(p.user_id)) continue;
     const today = localDate((p as any).timezone || DEFAULT_TZ);
     const { data: lanes } = await supabaseAdmin.from('lanes')
-      .select('lane_id').eq('user_id', p.user_id).eq('status', 'active');
+      .select('lane_id, created_at, starts_at').eq('user_id', p.user_id).eq('status', 'active');
     if (!lanes?.length) continue;
     const { data: cs } = await supabaseAdmin.from('checkins')
       .select('lane_id').eq('user_id', p.user_id).eq('checkin_date', today);
     const checked = new Set((cs ?? []).map((c: any) => c.lane_id));
-    const pending = lanes.filter((l: any) => !checked.has(l.lane_id)).length;
+    const pending = lanes.filter((l) => pathIsDue(l, today, p.timezone || DEFAULT_TZ) && !checked.has(l.lane_id)).length;
     if (pending > 0) {
       await sendPushToUser(p.user_id, {
         title: 'Check-in reminder', body: `${pending} path${pending !== 1 ? 's' : ''} pending before bed.`, url: '/checkin',
@@ -301,14 +302,14 @@ export async function sendMorningReminders() {
     const today = localDate((p as any).timezone || DEFAULT_TZ, now);
     const yesterday = prevDay(today);
     const { data: lanes } = await supabaseAdmin.from('lanes')
-      .select('lane_id, created_at').eq('user_id', p.user_id).eq('status', 'active');
+      .select('lane_id, created_at, starts_at').eq('user_id', p.user_id).eq('status', 'active');
     if (!lanes?.length) continue;
     const { data: cs } = await supabaseAdmin.from('checkins')
       .select('lane_id, checkin_date').eq('user_id', p.user_id).in('checkin_date', [today, yesterday]);
     const got = new Set((cs ?? []).map((c: any) => `${c.lane_id}|${c.checkin_date}`));
     const owesYesterday = lanes.some((l: any) =>
-      localParts(new Date(l.created_at), (p as any).timezone || DEFAULT_TZ).date <= yesterday && !got.has(`${l.lane_id}|${yesterday}`));
-    const owesToday = lanes.some((l: any) => !got.has(`${l.lane_id}|${today}`));
+      pathIsDue(l, yesterday, p.timezone || DEFAULT_TZ) && !got.has(`${l.lane_id}|${yesterday}`));
+    const owesToday = lanes.some((l) => pathIsDue(l, today, p.timezone || DEFAULT_TZ) && !got.has(`${l.lane_id}|${today}`));
     if (!owesYesterday && !owesToday) continue;
     await sendPushToUser(p.user_id, {
       title: 'Kingdom Protocol',

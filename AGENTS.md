@@ -1,4 +1,5 @@
 # Architecture rules
+- All Path accountability uses starts_at via the shared client-safe path-start helper, not created_at; database triggers protect inserts and reject pre-start check-ins, including old clients and reminder jobs.
 - Homepage membership presentation uses the existing access query through a client-safe classifier; it must not create a separate entitlement decision.
 - Check-In groups rows into Yesterday/Today/Logged tabs; the Dashboard shows open Paths first and collapses completed ones into an accordion, so long lists stay short. Preserve the offline merge and Undo flow.
 - Watchman removal uses a shared client-safe reason validator and a focused Radix dialog with an in-flight guard; this keeps validation consistent and avoids keyboard-driven sheet motion.

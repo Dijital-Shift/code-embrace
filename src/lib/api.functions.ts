@@ -10,6 +10,7 @@ import { friendlyLaneError } from './lane-errors.server';
 import { localDate, localHour, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import { alertContextLabel } from './alert-context';
 import { removalNotice } from './watchman-removal';
+import { defaultPathStart, resolvePathStart, pathStartDate, pathIsDue } from './path-start';
 
 import {
   activeWatchmen,
@@ -146,10 +147,11 @@ export const listMyLanes = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const { data } = await supabase
       .from('lanes')
-      .select('lane_id, title, description, notes, status, created_at, lane_type, support_scripture, ends_at')
+      .select('lane_id, title, description, notes, status, created_at, starts_at, lane_type, support_scripture, ends_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    const lanes = data ?? [];
+    const { tz, today } = await userDay(supabase, userId);
+    const lanes = (data ?? []).map((l) => ({ ...l, upcoming: !pathIsDue(l, today, tz), ownerToday: today }));
     const watchmenByPath = await activeWatchmenFor(lanes.map((l) => l.lane_id));
     // Unread words from a watchman, per path — drives the "New" mark.
     const { data: unreadRows } = await supabase.from('encouragements')
@@ -194,7 +196,7 @@ export const getLane = createServerFn({ method: 'GET' })
 
     // Full history for this path only — never before the day the path was created.
     const { tz } = await userDay(supabase, userId);
-    const createdLocal = localDate(tz, new Date(lane.created_at));
+    const createdLocal = pathStartDate(lane, tz);
     const { data: allChks } = await supabase
       .from('checkins').select('checkin_id, checkin_date, status, breach_explanation').eq('lane_id', data.id)
       .gte('checkin_date', createdLocal)
@@ -251,6 +253,14 @@ export const getLane = createServerFn({ method: 'GET' })
 
 
 
+export const getPathStartOptions = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { tz, today, yesterday } = await userDay(context.supabase, context.userId);
+    const { data: profile } = await context.supabase.from('profiles').select('bedtime').eq('user_id', context.userId).maybeSingle();
+    return { today, tomorrow: resolvePathStart('tomorrow', today), yesterday, defaultStart: defaultPathStart(tz, profile?.bedtime ?? '22:00') };
+  });
+
 export const createLane = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -259,6 +269,7 @@ export const createLane = createServerFn({ method: 'POST' })
       description: z.string().max(300).optional().nullable(),
       notes: z.string().max(500).optional().nullable(),
       lane_type: z.enum(['avoid', 'complete']),
+      start: z.enum(['today', 'tomorrow']).optional(),
       support_scripture: z.array(z.string().max(800)).max(3).optional(),
       ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     }),
@@ -275,6 +286,10 @@ export const createLane = createServerFn({ method: 'POST' })
     if ((ownLaneCount ?? 0) >= 10) return { error: 'You have 10 active paths — that is the cap. A watchman can only truly track so much. Archive or complete one before adding another.' };
 
     const scriptures = (data.support_scripture ?? []).map((s) => s.trim()).filter(Boolean);
+    const { tz, today } = await userDay(supabase, userId);
+    const { data: profile } = await supabase.from('profiles').select('bedtime').eq('user_id', userId).maybeSingle();
+    const starts_at = resolvePathStart(data.start ?? defaultPathStart(tz, profile?.bedtime ?? '22:00'), today);
+    if (data.ends_at && data.ends_at < starts_at) return { error: 'The end date cannot be before the Path starts.' };
     const { data: lane, error } = await supabase.from('lanes').insert({
       user_id: userId,
       title: data.title.trim(),
@@ -282,10 +297,12 @@ export const createLane = createServerFn({ method: 'POST' })
       notes: data.notes?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
       lane_type: data.lane_type,
+      starts_at,
       ends_at: data.ends_at || null,
     }).select('lane_id').single();
     if (error) return { error: friendlyLaneError(error, data.title.trim()) };
-    return { id: lane!.lane_id };
+    if (!lane) return { error: 'Path could not be created. Please try again.' };
+    return { id: lane.lane_id };
   });
 
 
@@ -415,10 +432,10 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const { today } = await userDay(supabase, userId);
+    const { tz, today } = await userDay(supabase, userId);
     const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: unreadRows }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
-      supabase.from('lanes').select('lane_id, title, status, lane_type, description').eq('user_id', userId).eq('status', 'active'),
+      supabase.from('lanes').select('lane_id, title, status, lane_type, description, starts_at, created_at').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
       supabase.from('encouragements').select('id, lane_id, body, created_at, watchman_id').eq('owner_id', userId).is('read_at', null).order('created_at', { ascending: false }),
     ]);
@@ -435,8 +452,7 @@ export const getDashboard = createServerFn({ method: 'GET' })
     const seatsByLane: Record<string, { active: number; pending: number }> = {};
     if (ids.length) {
       const { tz } = await userDay(supabase, userId);
-      const { data: laneMeta } = await supabase.from('lanes').select('lane_id, created_at').in('lane_id', ids);
-      const createdBy = new Map((laneMeta ?? []).map((l) => [l.lane_id, localDate(tz, new Date(l.created_at))]));
+      const createdBy = new Map((lanes ?? []).map((l) => [l.lane_id, pathStartDate(l, tz)]));
       const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
       const [{ data: held }, { data: seats }, { data: invites }] = await Promise.all([
         supabase.from('checkins').select('lane_id, checkin_date').eq('user_id', userId).eq('status', 'completed').in('lane_id', ids),
@@ -453,7 +469,8 @@ export const getDashboard = createServerFn({ method: 'GET' })
     }
     return {
       profile: profile ?? null,
-      lanes: lanes ?? [],
+      lanes: (lanes ?? []).map((l) => ({ ...l, upcoming: !pathIsDue(l, today, tz) })),
+      today,
       todayCheckins: todayChks ?? [],
       standingByLane,
       seatsByLane,
@@ -494,7 +511,7 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
     const { supabase, userId } = context;
     const { tz, today, yesterday: yest } = await userDay(supabase, userId);
     const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, description, lane_type, created_at').eq('user_id', userId).eq('status', 'active');
+      .select('lane_id, title, description, lane_type, created_at, starts_at').eq('user_id', userId).eq('status', 'active');
     const ids = (lanes ?? []).map((l) => l.lane_id);
     const { data: chks } = ids.length
       ? await supabase.from('checkins').select('lane_id, checkin_date, status, completion_time')
@@ -506,11 +523,11 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
     // 10 AM the grace window is open with nothing to show otherwise.
     const yestRows = new Set((chks ?? []).filter((c) => c.checkin_date === yest).map((c) => c.lane_id));
     const catchUp = (lanes ?? [])
-      .filter((l) => !yestRows.has(l.lane_id) && localDate(tz, new Date((l as any).created_at)) <= yest)
+      .filter((l) => !yestRows.has(l.lane_id) && pathIsDue(l, yest, tz))
       .map((l) => l.lane_id);
     const graceOpen = localHour(tz) < 10;
 
-    return { lanes: lanes ?? [], checkins: chks ?? [], today, yesterday: yest, catchUp, graceOpen };
+    return { lanes: (lanes ?? []).filter((l) => pathIsDue(l, today, tz)), upcomingCount: (lanes ?? []).filter((l) => !pathIsDue(l, today, tz)).length, checkins: chks ?? [], today, yesterday: yest, catchUp, graceOpen };
   });
 
 export const logComplete = createServerFn({ method: 'POST' })
@@ -521,10 +538,14 @@ export const logComplete = createServerFn({ method: 'POST' })
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
     const { today } = await userDay(supabase, userId);
-    await supabase.from('checkins').upsert(
+    const { data: lane } = await supabase.from('lanes').select('starts_at').eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').maybeSingle();
+    if (!lane) return { error: 'Path not found or inactive.' };
+    if (lane.starts_at && today < lane.starts_at) return { error: 'This Path has not started yet.' };
+    const { error } = await supabase.from('checkins').upsert(
       { lane_id: data.laneId, user_id: userId, checkin_date: today, status: 'completed', completion_time: new Date().toISOString() },
       { onConflict: 'lane_id,checkin_date' },
     );
+    if (error) return { error: error.message };
     return { success: true };
   });
 
@@ -566,7 +587,7 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     if (data.response === 'breach' && (data.explanation ?? '').trim().length < 5) {
       return { error: 'Write at least a few words about what happened.' };
     }
-    const { data: lane } = await supabase.from('lanes').select('lane_id, title')
+    const { data: lane } = await supabase.from('lanes').select('lane_id, title, starts_at')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found or inactive.' };
     const { today, yesterday } = await userDay(supabase, userId);
@@ -580,6 +601,7 @@ export const submitCheckin = createServerFn({ method: 'POST' })
         .eq('lane_id', data.laneId).eq('checkin_date', yesterday).eq('status', 'missed').maybeSingle();
       if (missedY) target = yesterday;
     }
+    if (lane.starts_at && target < lane.starts_at) return { error: 'This Path has not started for that day.' };
     const { data: chk, error } = await supabase.from('checkins').upsert({
       lane_id: data.laneId, user_id: userId, checkin_date: target,
       status: data.response === 'aligned' ? 'completed' : 'breached',
@@ -587,9 +609,9 @@ export const submitCheckin = createServerFn({ method: 'POST' })
       breach_explanation: data.response === 'breach' ? data.explanation : null,
     }, { onConflict: 'lane_id,checkin_date' }).select('checkin_id').single();
     if (error) return { error: error.message };
-    if (data.response === 'breach') {
+    if (data.response === 'breach' && chk) {
       await triggerBreachAlert({
-        checkinId: chk!.checkin_id, laneId: data.laneId, laneTitle: lane.title, userId,
+        checkinId: chk.checkin_id, laneId: data.laneId, laneTitle: lane.title, userId,
       });
     }
 
@@ -603,7 +625,7 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
-    const { data: lane } = await supabase.from('lanes').select('lane_id, title, lane_type')
+    const { data: lane } = await supabase.from('lanes').select('lane_id, title, lane_type, starts_at')
       .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
     if (!lane) return { error: 'Path not found.' };
     // Flee Paths never rest — there is no Sabbath from fleeing sin.
@@ -612,6 +634,7 @@ export const skipCheckin = createServerFn({ method: 'POST' })
     // The page says which day it is skipping; default to today. Writing the
     // right date is what makes the 30-minute Undo find the row afterwards.
     const target = data.forDay === 'yesterday' ? yesterday : today;
+    if (lane.starts_at && target < lane.starts_at) return { error: 'This Path has not started for that day.' };
     const { error } = await supabase.from('checkins').upsert({
       lane_id: data.laneId, user_id: userId, checkin_date: target,
       status: 'skipped', completion_time: new Date().toISOString(),
@@ -633,7 +656,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const myPathIds = await watchedPathIds(userId);
     const { data: lanes } = myPathIds.length
       ? await supabase.from('lanes')
-        .select('lane_id, title, description, notes, status, created_at, user_id')
+        .select('lane_id, title, description, notes, status, created_at, starts_at, user_id')
         .in('lane_id', myPathIds).order('status').order('created_at', { ascending: false })
       : { data: [] as any[] };
 
@@ -645,9 +668,11 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const relByPath = new Map((mySeats ?? []).map((s: any) => [s.path_id, s.relationship]));
 
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
+    const ownerTimezones = new Map<string, string>();
     const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null; avatar_url: string | null }>();
     if (userIds.length) {
-      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url').in('user_id', userIds);
+      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url, timezone').in('user_id', userIds);
+      for (const p of ps ?? []) ownerTimezones.set(p.user_id, p.timezone || DEFAULT_TZ);
       // Phone numbers go only to a Watchman holding an active seat on an active Path of that member.
       const { data: seatRows } = await supabaseAdmin.from('path_watchmen')
         .select('path_id').eq('watchman_id', userId).eq('status', 'active');
@@ -730,6 +755,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       lanes: (lanes ?? []).map((l) => ({
         ...l,
         partner_relationship: relByPath.get(l.lane_id) ?? null,
+        upcoming: !pathIsDue(l, localDate(ownerTimezones.get(l.user_id) ?? DEFAULT_TZ), ownerTimezones.get(l.user_id) ?? DEFAULT_TZ),
         owner: ownerEmails.get(l.user_id) ?? null,
         latestAlert: latestAlert.get(l.lane_id) ?? null,
         resting: restingOwners.has(l.user_id),

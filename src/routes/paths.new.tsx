@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { createLane, listMyLanes } from "@/lib/api.functions";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createLane, listMyLanes, getPathStartOptions } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AccessGate } from "@/components/AccessBanner";
 import { getPathTemplate } from "@/lib/path-templates";
@@ -10,6 +10,7 @@ import { PathTemplateCard } from "@/components/PathTemplateCard";
 import { PathCategoryAccordion } from "@/components/PathCategoryAccordion";
 import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
 import { SubpageHeader } from "@/components/SubpageHeader";
+import { Button } from "@/components/ui/button";
 
 type LaneNewSearch = { template?: string };
 
@@ -32,6 +33,12 @@ function NewLane() {
   const { template: templateId } = Route.useSearch();
   const navigate = useNavigate();
   const fn = useServerFn(createLane);
+  const qc = useQueryClient();
+  const startFn = useServerFn(getPathStartOptions);
+  const { data: startOptions } = useQuery({ queryKey: ['path-start-options'], queryFn: () => startFn(), staleTime: 0, refetchInterval: 60_000 });
+  const [startChoice, setStartChoice] = useState<'today' | 'tomorrow' | null>(null);
+  const selectedStart = startChoice ?? startOptions?.defaultStart ?? 'tomorrow';
+  const selectedStartDate = selectedStart === 'tomorrow' ? startOptions?.tomorrow : startOptions?.today;
   const listFn = useServerFn(listMyLanes);
   const { data: existingLanes } = useQuery({ queryKey: ["lanes"], queryFn: () => listFn() });
 
@@ -90,12 +97,14 @@ function NewLane() {
     setErr(null);
     setBusy(true);
     const support = [s1, s2, s3].map((s) => s.trim()).filter(Boolean);
+    try {
     const result = await fn({
       data: {
         title: title.trim(),
         description: description.trim() || null,
         notes: notes.trim() || null,
         lane_type: laneType,
+        start: startChoice ?? undefined,
         support_scripture: support,
         ends_at: endsAt || null,
       },
@@ -107,9 +116,15 @@ function NewLane() {
       return;
     }
     if ("id" in result && result.id) {
+      await Promise.all([qc.invalidateQueries({ queryKey: ['lanes'] }), qc.invalidateQueries({ queryKey: ['dashboard'] }), qc.invalidateQueries({ queryKey: ['checkin'] })]);
       navigate({ to: "/paths/$id", params: { id: result.id }, search: { newlyCreated: true } as any });
     } else {
       navigate({ to: "/paths" });
+    }
+    } catch {
+      setErr('Could not create the Path. Please try again.');
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -212,9 +227,25 @@ function NewLane() {
 
           <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
 
+          <fieldset className="flex flex-col gap-2">
+            <legend className="text-sm font-semibold text-parchment mb-2">Starts</legend>
+            <div className="grid grid-cols-2 gap-3" role="group" aria-label="Path start day">
+              {(['today', 'tomorrow'] as const).map((choice) => {
+                const date = choice === 'today' ? startOptions?.today : startOptions?.tomorrow;
+                return <Button key={choice} type="button" variant={selectedStart === choice ? 'default' : 'outline'}
+                  aria-pressed={selectedStart === choice} disabled={!startOptions}
+                  onClick={() => setStartChoice(choice)} className="h-auto min-h-16 flex-col gap-1 whitespace-normal py-3">
+                  <span className="font-semibold">{choice === 'today' ? 'Today' : 'Tomorrow'}</span>
+                  {date && <span className="text-xs">{new Date(date + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>}
+                </Button>;
+              })}
+            </div>
+            <p className="text-xs text-stone">{selectedStart === 'tomorrow' ? 'Your first check-in will be tomorrow. Nothing is owed tonight.' : 'Today counts as your first day, including tonight’s check-in.'}</p>
+          </fieldset>
+
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
-            <DateField value={endsAt} onChange={setEndsAt} min={new Date().toISOString().split("T")[0]} />
+            <DateField value={endsAt} onChange={setEndsAt} min={selectedStartDate} />
             <p className="text-[0.8rem] text-[#9e968a]">Leave empty for ongoing. Set a date for a fast or any path with a finish line.</p>
           </div>
 
@@ -226,9 +257,9 @@ function NewLane() {
 
           {err && <p className="text-red-400 text-sm">{err}</p>}
 
-          <button disabled={busy} className="pricing-gold-button text-[#0a0800] py-3.5 rounded-md font-semibold disabled:opacity-60">
+          <Button disabled={busy || !startOptions} type="submit" className="h-auto py-3.5 font-semibold">
             {busy ? "Creating…" : "Create Path"}
-          </button>
+          </Button>
         </form>
       )}
     </div>
