@@ -50,6 +50,13 @@
       "when": 1792205736155,
       "tag": "0006_restrict_notice_acknowledgment",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792392240323,
+      "tag": "0007_path_accountability_start",
+      "breakpoints": true
     }
   ]
 }

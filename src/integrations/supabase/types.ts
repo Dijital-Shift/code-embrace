@@ -274,6 +274,7 @@ export type Database = {
           partner_email: string | null
           partner_id: string | null
           partner_relationship: string | null
+          starts_at: string | null
           status: string
           support_scripture: string[] | null
           title: string
@@ -289,6 +290,7 @@ export type Database = {
           partner_email?: string | null
           partner_id?: string | null
           partner_relationship?: string | null
+          starts_at?: string | null
           status?: string
           support_scripture?: string[] | null
           title: string
@@ -304,6 +306,7 @@ export type Database = {
           partner_email?: string | null
           partner_id?: string | null
           partner_relationship?: string | null
+          starts_at?: string | null
           status?: string
           support_scripture?: string[] | null
           title?: string
