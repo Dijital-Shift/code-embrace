@@ -1,4 +1,8 @@
 # Tasks
+- [ ] Correct Watchman capacity to two active Paths per owner, with no global cap; enforce and test in the database and acceptance flow.
+- [ ] Add clear Safari/installed-app invitation FAQ and keep manual paste only as a fallback.
+- [ ] Audit live notification schedules and explain the reported 2 PM reminder.
+- [ ] Publish the approved Watchman and invitation fixes after verification.
 - [x] Add timezone-aware today/tomorrow start choice and shield check-in writes, missed records, reminders, history, and pending displays before start.
 - [x] Protect Justin's late-created reading Path starting October 19; no check-ins existed and genuine history elsewhere is unchanged.
 - [x] Nine timing tests pass; signed-in creation, dashboard readback, and check-in exclusion verified. Temporary verification Path removed through the UI.
