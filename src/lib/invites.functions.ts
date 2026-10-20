@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { removalReasonSchema } from './watchman-removal';
+import { canWatchAnotherPath, watchmanCapacityMessage } from './watchman-capacity';
 
 // Generate URL-safe random token (~32 bytes → 43 base64url chars)
 function generateToken(): string {
@@ -169,19 +170,24 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       .eq('status', 'active');
     if ((seatsTaken ?? 0) >= 2) return { error: 'This path already has two Watchmen.' };
 
-    // Unrelated, separate cap: a watchman can watch at most 2 paths in total.
-    const { count: myWatchmanCount } = await supabaseAdmin
+    // Count active Paths for this owner only; other people's Paths never block acceptance.
+    const { data: myAssignments, error: capacityError } = await supabaseAdmin
       .from('path_watchmen')
-      .select('id', { count: 'exact', head: true })
+      .select('status, lanes!inner(user_id, status)')
       .eq('watchman_id', userId)
-      .eq('status', 'active');
+      .eq('status', 'active')
+      .eq('lanes.user_id', invite.owner_id)
+      .eq('lanes.status', 'active');
 
-    if ((myWatchmanCount ?? 0) >= 2) {
-      return { error: "You're already watching 2 paths. That's the limit." };
+    if (capacityError) return { error: "Couldn't check your current watch. Try again." };
+    const { data: owner } = await supabaseAdmin.from('profiles')
+      .select('first_name').eq('user_id', invite.owner_id).maybeSingle();
+    const capacityMessage = watchmanCapacityMessage(owner?.first_name || 'this person');
+    if (!canWatchAnotherPath(myAssignments ?? [], invite.owner_id)) {
+      return { error: capacityMessage };
     }
 
-    // The DB triggers are the real race guard (2 watchmen per path, 2 paths per
-    // watchman). Translate their raw text into copy a human can read.
+    // Database triggers enforce two seats per Path and two Paths per owner/Watchman pair.
     const { error: insErr } = await supabaseAdmin.from('path_watchmen').insert({
       path_id: lane.lane_id,
       watchman_id: userId,
@@ -193,7 +199,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     if (insErr) {
       const msg = insErr.message || '';
       if (/at most 2 active watchmen/i.test(msg)) return { error: 'This path already has two Watchmen.' };
-      if (/already assigned to 2 active paths/i.test(msg)) return { error: "You're already watching 2 paths. That's the limit." };
+      if (/already assigned to 2 active paths/i.test(msg)) return { error: capacityMessage };
       return { error: msg };
     }
 

@@ -60,8 +60,8 @@ export function ClaimInviteCard() {
   if (!open) {
     return (
       <div className="mb-6 flex justify-between items-center gap-3 rounded-lg border border-[#2a2418] px-4 py-3">
-        <p className="text-xs text-[#a8a094]">Someone sent you a Watchman link?</p>
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>Accept an invite</Button>
+        <p className="text-xs text-muted-foreground">Trouble opening an invitation?</p>
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>Use a link instead</Button>
       </div>
     );
   }
@@ -71,7 +71,7 @@ export function ClaimInviteCard() {
       {!preview ? (
         <>
           <p className="font-semibold mb-1 text-[#c9a84c]">Accept an invite</p>
-          <p className="text-xs text-[#c2af80] mb-3">Paste the message or link you were sent.</p>
+          <p className="text-xs text-muted-foreground mb-3">Normally, tap the link you received. If that didn't work, paste it here.</p>
           <textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}
