@@ -1,4 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
+import { getRequest } from '@tanstack/react-start/server';
+import { allowsAutomaticTimezone } from './timezone-sync';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
@@ -70,6 +72,14 @@ export const updateProfile = createServerFn({ method: 'POST' })
       phone: data.phone || null, bedtime: data.bedtime, timezone: data.timezone, reminder_utc_hour,
     };
     if (typeof data.timezone_auto === 'boolean') baseUpdate.timezone_auto = data.timezone_auto;
+    // Saving unrelated settings in preview must not adopt the sandbox's clock.
+    if (data.timezone_auto !== false && !allowsAutomaticTimezone(new URL(getRequest().url).hostname)) {
+      const { data: profile, error: profileError } = await supabase.from('profiles')
+        .select('timezone').eq('user_id', userId).single();
+      if (profileError || !profile) return { error: "Couldn't verify your saved timezone. Try again." };
+      baseUpdate.timezone = profile.timezone || DEFAULT_TZ;
+      baseUpdate.reminder_utc_hour = reminderUtcHour(data.bedtime, baseUpdate.timezone);
+    }
     const update = data.gender ? { ...baseUpdate, gender: data.gender } : baseUpdate;
     const { error } = await supabase.from('profiles').update(update).eq('user_id', userId);
     if (error) return { error: error.message };
@@ -82,6 +92,8 @@ export const syncDeviceTimezone = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ timezone: z.string().min(1).max(64) }))
   .handler(async ({ data, context }) => {
+    // Enforce this on the server too, including calls from older preview clients.
+    if (!allowsAutomaticTimezone(new URL(getRequest().url).hostname)) return { changed: false };
     const { supabase, userId } = context;
     try { new Intl.DateTimeFormat('en-US', { timeZone: data.timezone }); } catch { return { changed: false }; }
     const { data: p } = await supabase.from('profiles').select('timezone, timezone_auto, bedtime').eq('user_id', userId).maybeSingle();

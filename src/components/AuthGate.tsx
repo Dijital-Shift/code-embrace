@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { linkPendingLanes, syncDeviceTimezone } from "@/lib/api.functions";
+import { allowsAutomaticTimezone } from "@/lib/timezone-sync";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -66,6 +67,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user) return;
     const run = () => {
+      if (!allowsAutomaticTimezone(window.location.hostname, navigator.webdriver)) return;
       try {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         if (timezone) syncTz({ data: { timezone } }).catch(() => {});
