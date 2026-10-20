@@ -6,6 +6,7 @@ import { getInvitePreview, acceptLaneInvite } from "@/lib/invites.functions";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
@@ -86,10 +87,14 @@ function InvitePage() {
 
   async function signInWithGoogle() {
     setErr(null);
+    sessionStorage.setItem("watchman-auto-accept", token);
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.href,
     });
-    if (result.error) setErr("Sign-in failed. Try again.");
+    if (result.error) {
+      sessionStorage.removeItem("watchman-auto-accept");
+      setErr("Sign-in failed. Try again.");
+    }
   }
 
   async function sendOtp(e: React.FormEvent) {
@@ -108,6 +113,7 @@ function InvitePage() {
   async function runVerify(value: string) {
     if (verifyingRef.current) return;
     verifyingRef.current = true;
+    autoAcceptRef.current = true;
     setBusy(true);
     setErr(null);
     const { error } = await supabase.auth.verifyOtp({
@@ -118,12 +124,12 @@ function InvitePage() {
     setBusy(false);
     verifyingRef.current = false;
     if (error) {
+      autoAcceptRef.current = false;
       setErr("Invalid or expired code.");
       return;
     }
     // Signed in just for this invite — accept right away, no extra tap.
     (document.activeElement as HTMLElement | null)?.blur?.();
-    autoAcceptRef.current = true;
   }
 
   function verifyOtp(e: React.FormEvent) {
@@ -132,8 +138,10 @@ function InvitePage() {
   }
 
   useEffect(() => {
-    if (user && autoAcceptRef.current && !accepting) {
+    const returningFromSignIn = sessionStorage.getItem("watchman-auto-accept") === token;
+    if (user && (autoAcceptRef.current || returningFromSignIn) && !accepting) {
       autoAcceptRef.current = false;
+      sessionStorage.removeItem("watchman-auto-accept");
       accept();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -229,13 +237,13 @@ function InvitePage() {
 
       {user ? (
         <>
-          <button
+          <Button
             onClick={accept}
             disabled={accepting}
-            className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold mb-3"
+            className="w-full h-auto min-h-12 whitespace-normal font-semibold mb-3"
           >
             {accepting ? "Accepting…" : `Accept — Watch ${ownerName.split(" ")[0]}'s path`}
-          </button>
+          </Button>
           {err && <p className="text-red-400 text-xs mb-3">{err}</p>}
         </>
       ) : loading ? (
@@ -314,6 +322,8 @@ function InvitePage() {
         </div>
       )}
 
+      <p className="text-xs text-muted-foreground text-center mb-4">On iPhone, this link opens Safari. Your accepted Path also appears in the installed app when you use the same account.</p>
+      <p className="text-xs text-muted-foreground text-center mb-6">Already watching two Paths for {ownerName.split(" ")[0]}? That's the limit for this person, not for everyone you watch.</p>
       <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#8f887c] text-center mb-4 mt-2">— What you're saying yes to —</p>
       <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
         <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The commitment: under 5 minutes a week</p>
