@@ -6,7 +6,8 @@ DECLARE
   owner_id uuid := 'ac3f83c8-1f09-4252-8639-1549862ab086';
   other_owner uuid := '2544c317-5451-4da1-ae84-7dd2dfb06159';
 BEGIN
-  IF public.active_watchman_path_count(owner_id, watcher, NULL) <> 2 THEN
+  IF (SELECT count(*) FROM public.path_watchmen pw JOIN public.lanes l ON l.lane_id=pw.path_id
+      WHERE l.user_id=owner_id AND pw.watchman_id=watcher AND pw.status='active' AND l.status='active') <> 2 THEN
     RAISE EXCEPTION 'Test requires two existing active assignments';
   END IF;
   BEGIN
@@ -31,7 +32,7 @@ BEGIN
       RETURNING lane_id INTO fixture;
     INSERT INTO public.path_watchmen(path_id,watchman_id,watchman_email)
       VALUES(fixture,watcher,'verification@example.invalid');
-    IF public.active_watchman_path_count(other_owner,watcher,NULL) <> 1 THEN
+    IF NOT EXISTS (SELECT 1 FROM public.path_watchmen WHERE path_id=fixture AND watchman_id=watcher AND status='active') THEN
       RAISE EXCEPTION 'Other person assignment was not saved';
     END IF;
     RAISE EXCEPTION USING ERRCODE='ZX001', MESSAGE='Verification passed; roll back fixtures';
