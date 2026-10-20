@@ -67,7 +67,8 @@ function Welcome() {
             <Button asChild variant="outline" className="w-full h-auto min-h-12 whitespace-normal"><Link to="/partner">Continue without device alerts</Link></Button>
           </div>}
         </>}
-        <p className="text-xs text-muted-foreground text-center mt-6">Already have the app? Open Kingdom Protocol from your Home Screen — your watch is active.</p>
+        <p className="text-xs text-muted-foreground text-center mt-6">Already have the app? Open it from your Home Screen with the same account — your watch is saved. Set up alerts there if Safari cannot receive them.</p>
+        <Button asChild variant="link" className="w-full mt-2"><a href="/?view=landing">Invitation FAQ</a></Button>
       </>}
     </div>
   </main>;

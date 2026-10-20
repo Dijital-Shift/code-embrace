@@ -501,6 +501,14 @@ function VerseBlock({ verses }: { verses: Verse[] }) {
 function FAQ() {
   const items: FaqItem[] = [
     {
+      q: "Does a Watchman link open the installed app?",
+      a: "On iPhone, a link usually opens Safari, not the Home Screen app. If you're already signed in there, tap Accept. Otherwise, sign in to accept. Then open Kingdom Protocol from your Home Screen using the same account; the Path will appear in The Watch. Safari and the installed app have separate sign-ins. Normal Safari remembers your session unless you sign out or clear its data; Private Browsing may not. Pasting a link in The Watch is only a fallback, not a required step.",
+    },
+    {
+      q: "How many Paths can a Watchman cover?",
+      a: "Up to two active Paths for each person. There is no total limit across different people — each Watchman chooses how much to take on. Each Path can have up to two Watchmen.",
+    },
+    {
       q: "What does \"Protocol\" mean?",
       a: "An established procedure for how something is done, held constant regardless of circumstance. That constancy is the whole idea here \u2014 the Silence Rule is that procedure: three thresholds, the same every night, whether you're strong or not. Kingdom Protocol takes its name from this.",
     },

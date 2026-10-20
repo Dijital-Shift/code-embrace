@@ -57,6 +57,13 @@
       "when": 1792392240323,
       "tag": "0007_path_accountability_start",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792532474704,
+      "tag": "0008_watchman_capacity_per_owner",
+      "breakpoints": true
     }
   ]
 }
