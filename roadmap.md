@@ -3,7 +3,7 @@
 - [x] Add clear Safari/installed-app invitation FAQ and keep manual paste only as a fallback; signed-in browser verification passed.
 - [x] Audit live notification schedules; 2 PM run sent one bedtime reminder, while Justin's Phoenix settings target 9 PM.
 - [ ] Identify the exact 2 PM device notification — requires its wording/screenshot; sender does not retain per-device delivery history.
-- [ ] Publish the approved Watchman and invitation fixes after verification.
+- [x] Request publication of the approved Watchman and invitation fixes after verification; deployment completion not yet confirmed.
 - [x] Add timezone-aware today/tomorrow start choice and shield check-in writes, missed records, reminders, history, and pending displays before start.
 - [x] Protect Justin's late-created reading Path starting October 19; no check-ins existed and genuine history elsewhere is unchanged.
 - [x] Nine timing tests pass; signed-in creation, dashboard readback, and check-in exclusion verified. Temporary verification Path removed through the UI.
