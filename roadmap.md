@@ -1,4 +1,5 @@
 # Tasks
+- [x] Protect saved timezone from automatic preview/testing updates; eight tests passed and signed-in UTC-browser attempt preserved Phoenix timezone and 04:00 UTC reminder hour.
 - [x] Correct Watchman capacity to two active Paths per owner, with no global cap; five rule tests and rolled-back database insert/legacy-update verification passed.
 - [x] Add clear Safari/installed-app invitation FAQ and keep manual paste only as a fallback; signed-in browser verification passed.
 - [x] Audit live notification schedules; 2 PM run sent one bedtime reminder, while Justin's Phoenix settings target 9 PM.

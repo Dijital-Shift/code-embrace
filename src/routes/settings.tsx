@@ -18,6 +18,7 @@ import { AvatarPicker } from "@/components/AvatarPicker";
 import { formatPhone, isValidPhone } from "@/lib/phone";
 import { TIMEZONE_GROUPS } from "@/lib/localday";
 import { useRevealOnOpen } from "@/hooks/useRevealOnOpen";
+import { allowsAutomaticTimezone } from "@/lib/timezone-sync";
 
 
 export const Route = createFileRoute("/settings")({
@@ -50,6 +51,7 @@ function Settings() {
   const [tzAuto, setTzAuto] = useState(true);
   const [deviceTz, setDeviceTz] = useState<string | null>(null);
   useEffect(() => {
+    if (!allowsAutomaticTimezone(window.location.hostname, navigator.webdriver)) return;
     try { setDeviceTz(Intl.DateTimeFormat().resolvedOptions().timeZone || null); } catch {}
   }, []);
   const [gender, setGender] = useState<"male" | "female" | "">("");
