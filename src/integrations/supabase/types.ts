@@ -685,6 +685,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      active_watchman_path_count: {
+        Args: { _exclude: string; _owner: string; _watchman: string }
+        Returns: number
+      }
       get_invite_preview: {
         Args: { _token: string }
         Returns: {
