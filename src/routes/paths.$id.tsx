@@ -571,7 +571,8 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
 
   async function copy(token: string) {
     // Copy carries the whole invitation — the sentence and the link — so what
-    // is pasted into Messages is exactly what the box shows.
+    // is pasted into Messages is exactly what the box shows, and the link lands
+    // last so the preview card unfurls.
     const message = inviteMessage(token);
     try {
       await navigator.clipboard.writeText(message);
@@ -583,12 +584,12 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
     }
   }
 
-  // Short and personal; the link sits alone on its own line so Android
-  // message apps detect it cleanly and can show the preview card.
+  // The link must be the LAST thing in the message. iMessage refuses to unfurl
+  // its preview card when any text trails the URL, so nothing goes after it.
   function inviteMessage(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     const who = ownerName || "Someone";
-    return `${who} is inviting you to be their watchman on Kingdom Protocol:\n\n${url}\n\nAlready have the app? Paste this message into The Watch tab.`;
+    return `${who} is inviting you to be their watchman on Kingdom Protocol:\n\n${url}`;
   }
 
   async function revoke(inviteId: string) {
