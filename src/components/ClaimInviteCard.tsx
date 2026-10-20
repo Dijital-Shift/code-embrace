@@ -87,9 +87,9 @@ export function ClaimInviteCard() {
         </>
       ) : (
         <>
-          <p className="text-[0.65rem] uppercase tracking-[0.22em] text-[#c2af80] mb-2">Called to the wall</p>
+          <p className="text-[0.65rem] uppercase tracking-[0.22em] text-[#c2af80] mb-2">Invitation to stand watch</p>
           <p className="text-lg text-[#f3e6c4] mb-1" style={{ fontFamily: "Cinzel, serif" }}>
-            {preview.ownerFirstName || "Someone"} asked you to stand watch
+            {preview.ownerFirstName || "Someone"} invited you to be their Watchman
           </p>
           <p className="text-sm text-[#e8dfc4] font-semibold">
             {preview.laneTitle} <span className="text-[0.6rem] uppercase tracking-wider text-[#c9a84c] ml-1">{preview.isAvoid ? "Flee" : "Pursue"}</span>
@@ -98,7 +98,7 @@ export function ClaimInviteCard() {
           <p className="text-xs text-[#c2af80] mt-3">Watching is free forever. You're only alerted when they miss a check-in or fall.</p>
           {err && <p className="text-xs text-[#f87171] mt-2">{err}</p>}
           <div className="flex gap-2 mt-4">
-            <Button size="sm" disabled={busy} onClick={accept}>{busy ? "Accepting…" : "Stand watch"}</Button>
+            <Button size="sm" disabled={busy} onClick={accept}>{busy ? "Accepting…" : "Accept invitation"}</Button>
             <Button size="sm" variant="ghost" disabled={busy} onClick={reset}>Back</Button>
           </div>
         </>

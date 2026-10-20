@@ -210,7 +210,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
         || accepterEmail.split('@')[0] || 'Your Watchman';
       const { sendPushToUser } = await import('@/lib/push.server');
       await sendPushToUser(invite.owner_id, {
-        title: 'Your Watchman accepted',
+        title: 'Watchman on the wall',
         body: `${name} accepted your invite and is now standing watch on "${lane.title}".`,
         url: `/paths/${lane.lane_id}`,
       });
