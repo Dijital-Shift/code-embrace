@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getLane, updateLane } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
+import { endDateEditable } from "@/lib/path-endlock";
 import { SubpageHeader } from "@/components/SubpageHeader";
 
 export const Route = createFileRoute("/paths/edit/$id")({
@@ -90,7 +91,11 @@ function EditPath() {
         <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
-          <DateField value={endsAt} onChange={setEndsAt} start={(data.lane as any).starts_at ?? undefined} />
+          {endDateEditable((data.lane as any).created_at)
+            ? <DateField value={endsAt} onChange={setEndsAt} start={(data.lane as any).starts_at ?? undefined} />
+            : <p className="px-4 py-3 rounded-md border border-[#c9a84c]/40 bg-[#14110a] text-sm text-[#e8dfc4]">
+                {endsAt ? <>Ends <span className="text-[#c9a84c]">{endsAt}</span> · </> : null}Locked. Finish the course set before you.
+              </p>}
         </div>
         {err && <p className="text-red-400 text-sm">{err}</p>}
         <button disabled={busy} className="pricing-gold-button text-[#0a0800] py-3.5 rounded-md font-semibold disabled:opacity-60">{busy ? "Saving…" : "Save changes"}</button>
