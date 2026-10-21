@@ -4,7 +4,8 @@ import { LineageTimeline } from "@/components/LineageTimeline";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead } from "@/lib/api.functions";
+import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead, extendCompletedLane } from "@/lib/api.functions";
+import { DateField } from "@/components/ScriptureFields";
 import {
   createLaneInvite,
   listLaneInvites,
@@ -761,6 +762,67 @@ function StatusHelp({ kind }: { kind: "paused" | "archived" }) {
       {open && (
         <p ref={helpRef} className="mt-2 mb-2 text-xs leading-relaxed text-[#e0d4b0] pl-3 border-l-2 border-[#c9a84c]/60">{h.body}</p>
       )}
+    </div>
+  );
+}
+
+function CompletionChoice({ laneId, status, startFrom }: { laneId: string; status: string; startFrom?: string }) {
+  const extendFn = useServerFn(extendCompletedLane);
+  const archiveFn = useServerFn(updateLaneStatus);
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [endsAt, setEndsAt] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const tomorrow = startFrom ? new Date(Date.parse(startFrom + "T12:00:00Z") + 86400000).toISOString().slice(0, 10) : undefined;
+
+  async function extend(openEnded: boolean) {
+    if (busy) return;
+    setBusy(true); setMsg(null);
+    const r: any = await extendFn({ data: { id: laneId, ends_at: openEnded ? null : endsAt || null } });
+    setBusy(false);
+    if (r?.error) { setMsg(r.error); return; }
+    setOpen(false);
+    qc.invalidateQueries();
+  }
+  async function archive() {
+    if (busy) return;
+    setBusy(true); setMsg(null);
+    const r: any = await archiveFn({ data: { id: laneId, status: "archived", reason: "Course completed" } });
+    setBusy(false);
+    if (r?.error) { setMsg(r.error); return; }
+    qc.invalidateQueries();
+  }
+
+  return (
+    <div className="mt-4 border-t border-[#c9a84c]/25 pt-4">
+      {!open ? (
+        <>
+          <p className="text-sm text-[#e8dfc4] mb-3">Continue this Path and keep your Watchman, or seal it in the archive.</p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button type="button" disabled={busy} onClick={() => setOpen(true)}
+              className="px-4 py-3 rounded-md bg-[#c9a84c] text-[#0a0800] font-bold text-sm">Extend the course</button>
+            {status !== "archived" && (
+              <button type="button" disabled={busy} onClick={archive}
+                className="px-4 py-3 rounded-md border border-[#c9a84c]/50 text-[#e8dfc4] font-semibold text-sm bg-transparent">Archive as completed</button>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-[#e8dfc4]">New end date. Once set, it locks.</p>
+          <DateField value={endsAt} onChange={setEndsAt} start={tomorrow} min={tomorrow} />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button type="button" disabled={busy || !endsAt} onClick={() => extend(false)}
+              className="px-4 py-3 rounded-md bg-[#c9a84c] text-[#0a0800] font-bold text-sm disabled:opacity-50">Extend</button>
+            <button type="button" disabled={busy} onClick={() => extend(true)}
+              className="px-4 py-3 rounded-md border border-[#c9a84c]/50 text-[#e8dfc4] font-semibold text-sm bg-transparent">No end date</button>
+            <button type="button" disabled={busy} onClick={() => setOpen(false)}
+              className="px-4 py-3 text-sm text-[#9e968a] bg-transparent">Back</button>
+          </div>
+        </div>
+      )}
+      {msg && <p className="mt-2 text-sm text-red-400">{msg}</p>}
     </div>
   );
 }
