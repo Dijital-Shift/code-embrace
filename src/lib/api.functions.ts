@@ -363,7 +363,7 @@ export const extendCompletedLane = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const denied = await requireAccess(supabase as any, userId);
     if (denied) return denied;
-    const today = await userDay(userId);
+    const { today } = await userDay(supabase, userId);
     const { data: lane } = await supabase.from('lanes').select('title, status, ends_at')
       .eq('lane_id', data.id).eq('user_id', userId).maybeSingle();
     if (!lane) return { error: 'Path not found.' };

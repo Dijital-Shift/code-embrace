@@ -204,8 +204,9 @@ function LaneDetail() {
         </div>
         {finished && (
           <div className="mt-4 p-4 rounded-xl border border-[#c9a84c]/50" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[#c9a84c] font-semibold mb-1">Race finished · {lane.ends_at}</p>
+            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[#c9a84c] font-semibold mb-1">Course complete · {lane.ends_at}</p>
             <p className="text-sm text-[#e8dfc4] leading-relaxed">"I have fought a good fight, I have finished my course, I have kept the faith." — 2 Timothy 4:7</p>
+            <CompletionChoice laneId={id} status={lane.status} startFrom={data?.historyToday} />
           </div>
         )}
 
