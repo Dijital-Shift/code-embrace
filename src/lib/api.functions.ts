@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { allowsAutomaticTimezone } from './timezone-sync';
+import { endDateEditable, courseComplete, validExtension } from './path-endlock';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
@@ -332,15 +333,61 @@ export const updateLane = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { data: current } = await supabase.from('lanes').select('created_at, ends_at')
+      .eq('lane_id', data.id).eq('user_id', userId).maybeSingle();
+    if (!current) return { error: 'Path not found.' };
+    const nextEnd = data.ends_at || null;
+    if (nextEnd !== (current.ends_at ?? null) && !endDateEditable(current.created_at)) {
+      return { error: 'The end date is locked. Finish the course set before you.' };
+    }
     const scriptures = (data.support_scripture ?? []).map((s) => s.trim()).filter(Boolean);
     const { error } = await supabase.from('lanes').update({
       title: data.title.trim(),
       description: data.description?.trim() || null,
       notes: data.notes?.trim() || null,
       support_scripture: scriptures.length ? scriptures : null,
-      ends_at: data.ends_at || null,
+      ends_at: nextEnd,
     }).eq('lane_id', data.id).eq('user_id', userId);
     if (error) return { error: friendlyLaneError(error, data.title.trim()) };
+    return { success: true };
+  });
+
+/** Extend a completed course on the same Path; Watchmen stay on the wall. */
+export const extendCompletedLane = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({
+    id: z.string().uuid(),
+    ends_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
+    const today = await userDay(userId);
+    const { data: lane } = await supabase.from('lanes').select('title, status, ends_at')
+      .eq('lane_id', data.id).eq('user_id', userId).maybeSingle();
+    if (!lane) return { error: 'Path not found.' };
+    if (!courseComplete(lane.ends_at, today)) return { error: 'Only a completed course can be extended.' };
+    if (!validExtension(data.ends_at, today)) return { error: 'Choose a new end date after today.' };
+    if (lane.status !== 'active') {
+      const { count } = await supabase.from('lanes').select('lane_id', { count: 'exact', head: true })
+        .eq('user_id', userId).eq('status', 'active');
+      if ((count ?? 0) >= 10) return { error: 'You already have 10 active paths. Archive one first.' };
+    }
+    const { error } = await supabase.from('lanes').update({ status: 'active', ends_at: data.ends_at })
+      .eq('lane_id', data.id).eq('user_id', userId);
+    if (error) return { error: error.message };
+    const { data: prof } = await supabaseAdmin.from('profiles').select('first_name').eq('user_id', userId).maybeSingle();
+    const name = (prof as any)?.first_name || 'Your brother';
+    const body = `${name} completed the course on "${lane.title}" and extended it${data.ends_at ? ` to ${data.ends_at}` : ' with no end date'}. You remain on the wall.`;
+    for (const w of await activeWatchmen(data.id)) {
+      if (!w.watchman_id) continue;
+      await supabaseAdmin.from('notifications').insert({
+        lane_id: data.id, partner_id: w.watchman_id, type: 'path_status',
+        status: 'sent', message_content: body, sent_at: new Date().toISOString(),
+      });
+      try { await sendPushToUser(w.watchman_id, { title: 'Course extended', body, url: '/partner' }); } catch {}
+    }
     return { success: true };
   });
 
