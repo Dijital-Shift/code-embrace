@@ -20,3 +20,20 @@ describe("path end-date lock", () => {
     assert.equal(validExtension(null, "2026-10-21"), true);
   });
 });
+
+import { pathDeletable } from "./path-endlock";
+describe("pathDeletable", () => {
+  const created = "2026-10-21T12:00:00Z";
+  it("allows delete within 30 minutes with no history", () => {
+    expect(pathDeletable(created, 0, 0, new Date("2026-10-21T12:29:00Z"))).toBe(true);
+  });
+  it("blocks delete after 30 minutes", () => {
+    expect(pathDeletable(created, 0, 0, new Date("2026-10-21T12:30:00Z"))).toBe(false);
+  });
+  it("blocks delete once a check-in exists", () => {
+    expect(pathDeletable(created, 1, 0, new Date("2026-10-21T12:05:00Z"))).toBe(false);
+  });
+  it("blocks delete with a Watchman", () => {
+    expect(pathDeletable(created, 0, 1, new Date("2026-10-21T12:05:00Z"))).toBe(false);
+  });
+});
