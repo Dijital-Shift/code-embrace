@@ -21,7 +21,10 @@ export function KingdomExplainer({ mp4, webm, poster }: KingdomExplainerProps) {
   return (
     <section aria-labelledby="kingdom-film-title" className="border-y border-border bg-background px-5 py-12 sm:px-8 sm:py-16">
       <div className="mx-auto max-w-4xl">
-        <h2 id="kingdom-film-title" className="mb-6 text-center text-2xl font-semibold text-primary sm:text-3xl">Put a Watchman on the wall.</h2>
+        <div className="mb-6 text-center">
+          <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Executive dispatch · 45 seconds</p>
+          <h2 id="kingdom-film-title" className="text-2xl font-semibold text-primary sm:text-3xl">See how the living Watchman breaks the silence.</h2>
+        </div>
         <div className="relative aspect-video overflow-hidden rounded-md border border-border bg-background">
           <video
             ref={videoRef}
