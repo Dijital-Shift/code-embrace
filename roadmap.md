@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Add approved Option One narration over the breach/silence beat; replace registered video sources and verify playback.
 - [x] Render the approved 45-second Watchman explainer using the site brand and fornication example; narration, music, and mute-readable text included.
 - [x] Register MP4/WebM and poster; add the homepage player with retry and completion CTA.
 - [x] Verify visual beats and continuous WebM playback, retry, CTA, and layout on desktop and phone widths; no page errors. MP4 decodes fully, but headless Chromium only plays WebM.
