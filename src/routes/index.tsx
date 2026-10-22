@@ -9,6 +9,10 @@ import { useAuth } from "@/lib/auth";
 import { useAccessState } from "@/components/AccessBanner";
 import { Button } from "@/components/ui/button";
 import { homepageMembership } from "@/lib/homepage-membership";
+import { KingdomExplainer } from "@/components/KingdomExplainer";
+import filmMp4 from "@/assets/videos/kingdom-protocol-explainer.mp4.asset.json";
+import filmWebm from "@/assets/videos/kingdom-protocol-explainer.webm.asset.json";
+import filmPoster from "@/assets/videos/kingdom-protocol-explainer-poster.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -754,6 +758,7 @@ function Landing() {
       <PaymentTestModeBanner />
       <Header />
       <Hero />
+      <KingdomExplainer mp4={filmMp4.url} webm={filmWebm.url} poster={filmPoster.url} />
       <ProblemTension />
       <SilenceRule />
       <WhoThisIsFor />

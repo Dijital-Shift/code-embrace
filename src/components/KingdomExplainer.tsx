@@ -36,7 +36,7 @@ export function KingdomExplainer({ mp4, webm, poster }: KingdomExplainerProps) {
             onLoadedMetadata={() => setFailed(false)}
             onError={() => setFailed(true)}
           >
-            <source src={mp4} type={'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'} />
+            <source src={mp4} type={'video/mp4; codecs="avc1.640028, mp4a.40.2"'} />
             <source src={webm} type="video/webm" />
           </video>
           {failed && (
