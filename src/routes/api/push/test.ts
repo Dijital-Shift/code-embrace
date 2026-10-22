@@ -20,9 +20,18 @@ export const Route = createFileRoute('/api/push/test')({
       GET: async ({ request }) => {
         const userId = await authUser(request);
         if (!userId) return new Response('Unauthorized', { status: 401 });
-        const parsed = Body.safeParse({ endpoint: new URL(request.url).searchParams.get('endpoint') });
-        if (!parsed.success) return new Response('Invalid', { status: 400 });
         const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+        const raw = new URL(request.url).searchParams.get('endpoint');
+        if (!raw) {
+          // No endpoint: how many devices does this account have registered?
+          const { count } = await supabaseAdmin
+            .from('push_subscriptions')
+            .select('endpoint', { count: 'exact', head: true })
+            .eq('user_id', userId);
+          return Response.json({ devices: count ?? 0 });
+        }
+        const parsed = Body.safeParse({ endpoint: raw });
+        if (!parsed.success) return new Response('Invalid', { status: 400 });
         const { data } = await supabaseAdmin
           .from('push_subscriptions')
           .select('endpoint')

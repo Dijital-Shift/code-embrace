@@ -53,6 +53,8 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
   const [testSent, setTestSent] = useState(false);
   const [open, setOpen] = useState(false);
   const [deferred, setDeferred] = useState<any>(null);
+  const [otherDevices, setOtherDevices] = useState(0);
+  const [setupHere, setSetupHere] = useState(false);
 
   const check = useCallback(async () => {
     const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
@@ -74,6 +76,12 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
       reg = false;
     }
     setRegistered(reg);
+    if (!reg) {
+      try {
+        const res = await fetch("/api/push/test", { headers: await authHeader() });
+        setOtherDevices(res.ok ? Number((await res.json()).devices) || 0 : 0);
+      } catch { setOtherDevices(0); }
+    } else setOtherDevices(0);
     setReady(true);
   }, []);
 
@@ -185,9 +193,24 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
     setDeferred(null);
   }
 
-  const alertReady = perm === "granted" && registered && (platform !== "ios" || installed);
+  // Alerts already reach another device on this account (e.g. the installed app) and this is just a browser.
+  const armedElsewhere = !registered && !isStandalone() && otherDevices > 0;
+  const alertReady = armedElsewhere || (perm === "granted" && registered && (platform !== "ios" || installed));
   useEffect(() => { onReadinessChange?.(ready && alertReady); }, [ready, alertReady, onReadinessChange]);
   if (!ready) return <p role="status" className="text-sm text-muted-foreground mb-6">Checking this device's alerts…</p>;
+  if (armedElsewhere && !setupHere) {
+    return (
+      <div className="mb-6 rounded-xl border border-[#2a2000] px-4 py-3">
+        <p className="text-xs text-[#ded8cc]">
+          <span className="text-[#4ade80] mr-2">●</span>Alerts armed on your installed app
+        </p>
+        <p className="text-[0.7rem] text-[#a8a094] mt-1 leading-relaxed">
+          You're in a browser right now. Alerts go to Kingdom Protocol on your Home Screen — open it there with the same account.
+        </p>
+        <button onClick={() => setSetupHere(true)} className="mt-2 text-[0.7rem] text-[#c9a84c] underline">Set up this browser too</button>
+      </div>
+    );
+  }
   const allGood = installed && perm === "granted" && registered;
   const expanded = !allGood || open;
 
