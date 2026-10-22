@@ -1,4 +1,7 @@
 # Tasks
+- [ ] Render the approved 45-second Watchman explainer using the site brand and fornication example.
+- [ ] Register MP4/WebM and poster; add the homepage player with retry and completion CTA.
+- [ ] Verify film content and phone-sized playback before delivery.
 - [x] Protect saved timezone from automatic preview/testing updates; eight tests passed and signed-in UTC-browser attempt preserved Phoenix timezone and 04:00 UTC reminder hour.
 - [x] Correct Watchman capacity to two active Paths per owner, with no global cap; five rule tests and rolled-back database insert/legacy-update verification passed.
 - [x] Add clear Safari/installed-app invitation FAQ and keep manual paste only as a fallback; signed-in browser verification passed.
