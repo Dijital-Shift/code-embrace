@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { endDateEditable, courseComplete, validExtension } from "./path-endlock";
+import { endDateEditable, courseComplete, validExtension, pathDeletable } from "./path-endlock";
 
 describe("path end-date lock", () => {
   const created = "2026-10-21T12:00:00Z";
@@ -18,5 +18,21 @@ describe("path end-date lock", () => {
     assert.equal(validExtension("2026-10-21", "2026-10-21"), false);
     assert.equal(validExtension("2026-11-20", "2026-10-21"), true);
     assert.equal(validExtension(null, "2026-10-21"), true);
+  });
+});
+
+describe("pathDeletable", () => {
+  const created = "2026-10-21T12:00:00Z";
+  it("allows delete within 30 minutes with no history", () => {
+    assert.equal(pathDeletable(created, 0, 0, new Date("2026-10-21T12:29:00Z")), true);
+  });
+  it("blocks delete after 30 minutes", () => {
+    assert.equal(pathDeletable(created, 0, 0, new Date("2026-10-21T12:30:00Z")), false);
+  });
+  it("blocks delete once a check-in exists", () => {
+    assert.equal(pathDeletable(created, 1, 0, new Date("2026-10-21T12:05:00Z")), false);
+  });
+  it("blocks delete with a Watchman", () => {
+    assert.equal(pathDeletable(created, 0, 1, new Date("2026-10-21T12:05:00Z")), false);
   });
 });

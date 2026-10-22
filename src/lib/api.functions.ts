@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { allowsAutomaticTimezone } from './timezone-sync';
-import { endDateEditable, courseComplete, validExtension } from './path-endlock';
+import { endDateEditable, courseComplete, validExtension, pathDeletable } from './path-endlock';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
@@ -437,8 +437,10 @@ export const deleteLane = createServerFn({ method: 'POST' })
     const { data: lane } = await supabase.from('lanes').select('created_at, title').eq('lane_id', data.id).eq('user_id', userId).single();
     if (!lane) return { error: 'Path not found.' };
     // Delete is only available while no watchman is locked in — nobody to notify.
-    if ((await activeWatchmen(data.id)).length > 0) {
-      return { error: 'This path has a watchman. Use Pause or Archive instead.' };
+    const { count: chkCount } = await supabase.from('checkins').select('checkin_id', { count: 'exact', head: true }).eq('lane_id', data.id);
+    const watchCount = (await activeWatchmen(data.id)).length;
+    if (!pathDeletable(lane.created_at, chkCount ?? 0, watchCount)) {
+      return { error: 'This path is past its 30-minute window. Archive it instead.' };
     }
 
     const { error } = await supabase.from('lanes').delete().eq('lane_id', data.id).eq('user_id', userId);
