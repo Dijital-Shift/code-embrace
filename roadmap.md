@@ -1,4 +1,5 @@
 # Tasks
+- [x] Add approved Option One narration at 29.88–35.16 seconds; register revised MP4/WebM and verify homepage playback through the alert beat and ending on desktop/phone widths. Picture stream unchanged; voice matching is approximate, original silence caption retained, listening review and physical iPhone check remain open below.
 - [x] Render the approved 45-second Watchman explainer using the site brand and fornication example; narration, music, and mute-readable text included.
 - [x] Register MP4/WebM and poster; add the homepage player with retry and completion CTA.
 - [x] Verify visual beats and continuous WebM playback, retry, CTA, and layout on desktop and phone widths; no page errors. MP4 decodes fully, but headless Chromium only plays WebM.
