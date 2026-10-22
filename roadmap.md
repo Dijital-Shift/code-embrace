@@ -1,7 +1,9 @@
 # Tasks
-- [ ] Render the approved 45-second Watchman explainer using the site brand and fornication example.
-- [ ] Register MP4/WebM and poster; add the homepage player with retry and completion CTA.
-- [ ] Verify film content and phone-sized playback before delivery.
+- [x] Render the approved 45-second Watchman explainer using the site brand and fornication example; narration, music, and mute-readable text included.
+- [x] Register MP4/WebM and poster; add the homepage player with retry and completion CTA.
+- [x] Verify visual beats and continuous WebM playback, retry, CTA, and layout on desktop and phone widths; no page errors. MP4 decodes fully, but headless Chromium only plays WebM.
+- [ ] Listen to the film and approve narration/music and caption synchronization — requires the user's listening review; audio exists but could not be heard here.
+- [ ] Confirm physical iPhone MP4 playback — desktop phone-size checks verified WebM, not Safari hardware.
 - [x] Protect saved timezone from automatic preview/testing updates; eight tests passed and signed-in UTC-browser attempt preserved Phoenix timezone and 04:00 UTC reminder hour.
 - [x] Correct Watchman capacity to two active Paths per owner, with no global cap; five rule tests and rolled-back database insert/legacy-update verification passed.
 - [x] Add clear Safari/installed-app invitation FAQ and keep manual paste only as a fallback; signed-in browser verification passed.
