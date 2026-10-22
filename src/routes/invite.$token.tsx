@@ -423,3 +423,26 @@ function GoogleIcon() {
     </svg>
   );
 }
+
+// Short tip for people who already have the app installed.
+function AppTip() {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      navigator.vibrate?.(25);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 4000);
+    } catch { /* clipboard blocked; the link stays in the address bar */ }
+  }
+  return (
+    <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-[#2a2418] px-4 py-3">
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        <span className="text-[#c9a84c] font-semibold">Already have the app?</span> Copy this link and paste it in The Watch tab — or accept above.
+      </p>
+      <button type="button" onClick={copy} className="shrink-0 rounded-md border border-[#c9a84c]/60 px-3 py-2 text-xs font-semibold text-[#c9a84c]">
+        {copied ? "Copied ✓" : "Copy link"}
+      </button>
+    </div>
+  );
+}
