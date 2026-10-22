@@ -4,6 +4,7 @@ import { LineageTimeline } from "@/components/LineageTimeline";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { pathDeletable } from "@/lib/path-endlock";
 import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead, extendCompletedLane } from "@/lib/api.functions";
 import { DateField } from "@/components/ScriptureFields";
 import {
@@ -153,8 +154,8 @@ function LaneDetail() {
   if (!lane) return <p>Not found.</p>;
 
   const checkins = data?.checkins ?? [];
-  // Delete is only offered while no watchman is locked in — nobody to notify.
-  const canDelete = (data?.watchmen ?? []).length === 0;
+  // Hard delete only in the first 30 minutes with no history; afterward the only exit is Archive.
+  const canDelete = pathDeletable(lane.created_at, checkins.length, (data?.watchmen ?? []).length);
 
   const isAvoid = (lane.lane_type ?? "complete") !== "complete";
   const type = TYPE_PILL[isAvoid ? "avoid" : "complete"];
