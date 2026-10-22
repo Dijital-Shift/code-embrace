@@ -322,6 +322,7 @@ function InvitePage() {
         </div>
       )}
 
+      <AppTip />
       <p className="text-xs text-muted-foreground text-center mb-4">On iPhone, this link opens Safari. Your accepted Path also appears in the installed app when you use the same account.</p>
       <p className="text-xs text-muted-foreground text-center mb-6">Already watching two Paths for {ownerName.split(" ")[0]}? That's the limit for this person, not for everyone you watch.</p>
       <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#8f887c] text-center mb-4 mt-2">— What you're saying yes to —</p>
