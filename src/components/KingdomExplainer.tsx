@@ -9,12 +9,10 @@ type KingdomExplainerProps = { mp4: string; webm: string; poster: string };
 export function KingdomExplainer({ mp4, webm, poster }: KingdomExplainerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [failed, setFailed] = useState(false);
-  const [ended, setEnded] = useState(false);
   const { user } = useAuth();
 
   function retry() {
     setFailed(false);
-    setEnded(false);
     videoRef.current?.load();
   }
 
@@ -34,8 +32,6 @@ export function KingdomExplainer({ mp4, webm, poster }: KingdomExplainerProps) {
             playsInline
             preload="metadata"
             poster={poster}
-            onEnded={() => setEnded(true)}
-            onPlay={() => setEnded(false)}
             onLoadedMetadata={() => setFailed(false)}
             onError={() => setFailed(true)}
           >
@@ -50,7 +46,7 @@ export function KingdomExplainer({ mp4, webm, poster }: KingdomExplainerProps) {
           )}
         </div>
         <div className="mt-6 flex justify-center">
-          <Button asChild variant={ended ? "default" : "outline"} size="lg" className="h-auto min-h-11 whitespace-normal text-center">
+          <Button asChild variant="default" size="lg" className="h-auto min-h-11 whitespace-normal text-center">
             <Link to={user ? "/dashboard" : "/login"}>
               {user ? "Open Kingdom Protocol" : "Begin the 30-day watch"}<ArrowRight aria-hidden="true" />
             </Link>
