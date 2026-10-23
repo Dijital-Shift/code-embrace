@@ -185,6 +185,23 @@ html.kp-splash body { overflow: hidden; }
 .kp-crop img { -webkit-user-drag: none; }
 .kp-crop .reactEasyCrop_Container { touch-action: none; }
 
+/* Film section title — imperial gold inscription (Cinzel, gilded leaf gradient, ember glow) */
+.kp-film-title {
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fff2cc 0%, #c9a84c 55%, #9a7b2c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(201, 168, 76, 0.22));
+}
+.kp-film-rule {
+  width: 180px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(201, 168, 76, 0.9) 50%, transparent 100%);
+}
+
 /* Pricing cards (landing) */
 .pricing-display { font-family: 'Cormorant Garamond', Georgia, serif; }
 .pricing-card {
