@@ -10,8 +10,8 @@ import { useAccessState } from "@/components/AccessBanner";
 import { Button } from "@/components/ui/button";
 import { homepageMembership } from "@/lib/homepage-membership";
 import { KingdomExplainer } from "@/components/KingdomExplainer";
-import filmMp4 from "@/assets/videos/kingdom-protocol-explainer-v6.mp4.asset.json";
-import filmWebm from "@/assets/videos/kingdom-protocol-explainer-v6.webm.asset.json";
+import filmMp4 from "@/assets/videos/kingdom-protocol-explainer-v7.mp4.asset.json";
+import filmWebm from "@/assets/videos/kingdom-protocol-explainer-v7.webm.asset.json";
 import filmPoster from "@/assets/videos/kingdom-protocol-explainer-poster-v4.png.asset.json";
 
 export const Route = createFileRoute("/")({
