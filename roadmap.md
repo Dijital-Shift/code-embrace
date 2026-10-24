@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Shrink the current v8 MP4 for phone loading; preserve audio/timing, register the smaller file, and verify homepage playback.
 - [x] Render the approved 58-second v7 explainer: commanding narration, deliberate pauses, triumphant close (name first, command last), bright gamification badges, corrected kingdomprotocol.app, re-ordered end card; MP4/WebM registered and mounted on the homepage; decode, key frames, and page mount verified.
 - [ ] Listen to v7 and approve the narration/music and pacing (especially 32s breach line and the close) — requires the user's listening review.
 - [ ] Confirm physical iPhone MP4 playback of v7 — desktop checks verified decode and WebM playback, not Safari hardware.
