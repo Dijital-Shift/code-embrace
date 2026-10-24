@@ -7,6 +7,7 @@ import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWa
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { statusLabel } from "@/lib/status";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { ClaimInviteCard } from "@/components/ClaimInviteCard";
 
@@ -241,8 +242,8 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
   lane: any; checkin: any; statusColor: Record<string, string>; defaultOpen?: boolean; sendFn: any; onSent: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
-  const todayLabel = lane.upcoming ? 'Starts tomorrow' : c ? c.status.charAt(0).toUpperCase() + c.status.slice(1) : "Pending";
-  const todayCol = c ? statusColor[c.status] ?? "#333" : "#f59e0b";
+  const todayLabel = lane.upcoming ? 'Starts tomorrow' : c ? statusLabel(c.status) : "Open";
+  const todayCol = c ? statusColor[c.status] ?? "#333" : "#948d80";
   const needsContact = c?.status === "breached" || c?.status === "missed";
   const phone = lane.owner?.phone;
   const rel = lane.partner_relationship as string | null | undefined;
@@ -489,7 +490,7 @@ function IncidentList({ items }: { items: AlertItem[] }) {
         const range = fmt(i.start) === fmt(i.end) ? fmt(i.end) : `${fmt(i.start)} – ${fmt(i.end)}`;
         const label = breach
           ? (i.count > 1 ? `${i.count} breaches` : "Breach")
-          : (i.count > 1 ? `Silent ${i.count} days` : "Silent day");
+          : (i.count > 1 ? `Silent ${i.count} days` : "2 days silent");
         return (
           <div key={i.key} className="flex justify-between items-center gap-3 px-3 py-2 rounded-md border border-[#2a2518]" style={{ background: "#0d0b06" }}>
             <span className="flex items-center gap-2 min-w-0">
