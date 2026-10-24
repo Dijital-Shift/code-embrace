@@ -1,11 +1,13 @@
 # Tasks
+- [x] Render the approved 58-second v7 explainer: commanding narration, deliberate pauses, triumphant close (name first, command last), bright gamification badges, corrected kingdomprotocol.app, re-ordered end card; MP4/WebM registered and mounted on the homepage; decode, key frames, and page mount verified.
+- [ ] Listen to v7 and approve the narration/music and pacing (especially 32s breach line and the close) — requires the user's listening review.
+- [ ] Confirm physical iPhone MP4 playback of v7 — desktop checks verified decode and WebM playback, not Safari hardware.
 - [x] Correct the explainer section heading and terminal-card/poster hierarchy; v3 MP4/WebM/poster registered, identical MP4 audio hash confirmed, full decode and desktop/phone ending playback verified without errors. Physical iPhone confirmation remains below.
 - [x] Add approved Option One narration at 29.88–35.16 seconds; register revised MP4/WebM and verify homepage playback through the alert beat and ending on desktop/phone widths. Picture stream unchanged; voice matching is approximate, original silence caption retained, listening review and physical iPhone check remain open below.
 - [x] Render the approved 45-second Watchman explainer using the site brand and fornication example; narration, music, and mute-readable text included.
 - [x] Register MP4/WebM and poster; add the homepage player with retry and completion CTA.
 - [x] Verify visual beats and continuous WebM playback, retry, CTA, and layout on desktop and phone widths; no page errors. MP4 decodes fully, but headless Chromium only plays WebM.
-- [ ] Listen to the film and approve narration/music and caption synchronization — requires the user's listening review; audio exists but could not be heard here.
-- [ ] Confirm physical iPhone MP4 playback — desktop phone-size checks verified WebM, not Safari hardware.
+- [x] Listen to the film and approve narration/music and caption synchronization — superseded by the v7 listening review above.
 - [x] Protect saved timezone from automatic preview/testing updates; eight tests passed and signed-in UTC-browser attempt preserved Phoenix timezone and 04:00 UTC reminder hour.
 - [x] Correct Watchman capacity to two active Paths per owner, with no global cap; five rule tests and rolled-back database insert/legacy-update verification passed.
 - [x] Add clear Safari/installed-app invitation FAQ and keep manual paste only as a fallback; signed-in browser verification passed.
