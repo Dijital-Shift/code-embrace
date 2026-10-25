@@ -64,6 +64,13 @@
       "when": 1792532474704,
       "tag": "0008_watchman_capacity_per_owner",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792890267208,
+      "tag": "0009_recipient_encouragement_visibility",
+      "breakpoints": true
     }
   ]
 }
