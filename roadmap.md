@@ -1,5 +1,6 @@
 # Tasks
-- [ ] Add matching, independently dismissible walker and Watchman briefings; verify dismissal and returning visits.
+- [x] Add shared obsidian/gold walker and Watchman briefings with independent per-account/per-role browser dismissal. Four tests pass; actual component desktop/mobile fixture verified both buttons, stored acknowledgments, and no overflow.
+- [ ] Verify role briefings on real signed-in Dashboard and The Watch, including returning visits — self-session mint found no matching account; requires preview sign-in. Dismissal is remembered in that browser, not synced across devices.
 - [x] Polish Path actions; portal bottom navigation with safe-area/viewport handling; add recipient-only Hide/restore encouragements across Path/calendar/unread; remove Watchman verse search; add duty briefing and five-second pre-send Undo. Ten tests pass; applied visibility column/trigger verified; isolated mobile CSS check shows bottom dock stable with scrolling and no overflow, desktop dock hidden.
 - [ ] Verify this polish pass on a signed-in real Path (Hide/restore readback and Watchman send/Undo), plus physical iPhone keyboard-to-dock recovery — self-session mint found no matching account; requires preview sign-in and a phone check.
 - [x] Shrink v8 MP4 from 56.3 MB to 13.6 MB; full HD and 55.5-second timing retained, audio hash identical, full decode passed, registered and mounted; homepage fallback playback verified without page errors. Physical iPhone MP4 playback remains user verification.
