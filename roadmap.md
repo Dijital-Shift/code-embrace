@@ -1,4 +1,5 @@
 # Tasks
+- [x] Unify both briefing eyebrows to "How it works" and reword the Watchman creed to "A silent sentinel / Answer the horn / Send words of strength" with no negative labels; four tests pass and desktop/mobile fixture verified the exact copy with no clipping or overflow.
 - [x] Add shared obsidian/gold walker and Watchman briefings with independent per-account/per-role browser dismissal. Four tests pass; actual component desktop/mobile fixture verified both buttons, stored acknowledgments, and no overflow.
 - [ ] Verify role briefings on real signed-in Dashboard and The Watch, including returning visits — self-session mint found no matching account; requires preview sign-in. Dismissal is remembered in that browser, not synced across devices.
 - [x] Polish Path actions; portal bottom navigation with safe-area/viewport handling; add recipient-only Hide/restore encouragements across Path/calendar/unread; remove Watchman verse search; add duty briefing and five-second pre-send Undo. Ten tests pass; applied visibility column/trigger verified; isolated mobile CSS check shows bottom dock stable with scrolling and no overflow, desktop dock hidden.
