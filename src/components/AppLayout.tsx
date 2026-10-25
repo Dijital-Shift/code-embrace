@@ -7,6 +7,8 @@ import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import { TrialEndingModal } from "@/components/AccessBanner";
 import { useOfflineCheckinSync } from "@/lib/offline-checkins";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const menuItems = [
   { href: "/dashboard", label: "Home", short: "Home", icon: Home },
@@ -32,6 +34,27 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   });
   const hasUnread = (unread?.count ?? 0) > 0;
   useOfflineCheckinSync(!authLoading && !!session?.access_token);
+  const [dockHost, setDockHost] = useState<HTMLElement | null>(null);
+  const dockRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    setDockHost(document.body);
+    const viewport = window.visualViewport;
+    const sync = () => {
+      if (!dockRef.current) return;
+      // Follow the visible bottom through browser chrome and keyboard transitions.
+      const offset = viewport ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop) : 0;
+      dockRef.current.style.bottom = `${offset}px`;
+    };
+    sync();
+    viewport?.addEventListener("resize", sync);
+    viewport?.addEventListener("scroll", sync);
+    window.addEventListener("resize", sync);
+    return () => {
+      viewport?.removeEventListener("resize", sync);
+      viewport?.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
+  }, [dockHost]);
 
   return (
     <AuthGate>
@@ -64,7 +87,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Mobile bottom dock — sticky, app-style */}
-        <nav className="nav-mobile-dock grid grid-cols-5" aria-label="Primary">
+        {dockHost && createPortal(<nav ref={dockRef} className="nav-mobile-dock grid grid-cols-5" aria-label="Primary">
             {menuItems.map((i) => {
               const active = pathname === i.href || pathname.startsWith(i.href + "/");
               const Icon = i.icon;
@@ -89,7 +112,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
-        </nav>
+        </nav>, dockHost)}
 
         <main className="app-main flex-1 px-5 pb-10 pt-5 max-w-2xl w-full mx-auto box-border">{children}</main>
         <TrialEndingModal />

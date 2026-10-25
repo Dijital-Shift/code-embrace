@@ -168,7 +168,7 @@ export const listMyLanes = createServerFn({ method: 'GET' })
     const watchmenByPath = await activeWatchmenFor(lanes.map((l) => l.lane_id));
     // Unread words from a watchman, per path — drives the "New" mark.
     const { data: unreadRows } = await supabase.from('encouragements')
-      .select('lane_id').eq('owner_id', userId).is('read_at', null);
+      .select('lane_id').eq('owner_id', userId).is('read_at', null).is('hidden_at', null);
     const unreadByPath = new Map<string, number>();
     for (const r of (unreadRows ?? []) as any[]) {
       unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
@@ -222,7 +222,7 @@ export const getLane = createServerFn({ method: 'GET' })
     const fallen = breached + missed;
 
     const { data: encRows } = await supabase
-      .from('encouragements').select('id, body, created_at, read_at, watchman_id, checkin_id')
+      .from('encouragements').select('id, body, created_at, read_at, watchman_id, checkin_id, hidden_at')
       .eq('lane_id', data.id).eq('owner_id', userId)
       .order('created_at', { ascending: false });
 
@@ -241,6 +241,7 @@ export const getLane = createServerFn({ method: 'GET' })
       const c = e.checkin_id ? chkById.get(e.checkin_id) : null;
       return {
         id: e.id, body: e.body, created_at: e.created_at, read_at: e.read_at,
+        hidden_at: e.hidden_at,
         from_name: nameByWatchman.get(e.watchman_id) ?? 'Your watchman',
         from_avatar: avatarByWatchman.get(e.watchman_id) ?? null,
         history_date: c?.checkin_date ?? localDate(tz, new Date(e.created_at)),
@@ -259,7 +260,8 @@ export const getLane = createServerFn({ method: 'GET' })
       fallen,
       breached,
       missed,
-      encouragements,
+      encouragements: encouragements.filter((e) => !e.hidden_at),
+      hiddenEncouragements: encouragements.filter((e) => !!e.hidden_at),
       ownerFirstName: me?.first_name ?? null,
     };
   });
@@ -498,7 +500,7 @@ export const getDashboard = createServerFn({ method: 'GET' })
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
       supabase.from('lanes').select('lane_id, title, status, lane_type, description, starts_at, created_at').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
-      supabase.from('encouragements').select('id, lane_id, body, created_at, watchman_id').eq('owner_id', userId).is('read_at', null).order('created_at', { ascending: false }),
+      supabase.from('encouragements').select('id, lane_id, body, created_at, watchman_id').eq('owner_id', userId).is('read_at', null).is('hidden_at', null).order('created_at', { ascending: false }),
     ]);
     // Which paths hold the unread words — so the banner can point at one.
     const unreadByPath = new Map<string, number>();
@@ -562,7 +564,7 @@ export const getUnreadEncouragementCount = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { count } = await supabase.from('encouragements')
-      .select('id', { count: 'exact', head: true }).eq('owner_id', userId).is('read_at', null);
+      .select('id', { count: 'exact', head: true }).eq('owner_id', userId).is('read_at', null).is('hidden_at', null);
     return { count: count ?? 0 };
   });
 
@@ -959,6 +961,17 @@ export const markEncouragementsRead = createServerFn({ method: 'POST' })
     await supabase.from('encouragements')
       .update({ read_at: new Date().toISOString() })
       .in('id', data.ids).eq('owner_id', userId).is('read_at', null);
+    return { success: true };
+  });
+
+export const setEncouragementVisibility = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ id: z.string().uuid(), hidden: z.boolean() }))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase.from('encouragements')
+      .update({ hidden_at: data.hidden ? new Date().toISOString() : null })
+      .eq('id', data.id).eq('owner_id', context.userId).select('id').maybeSingle();
+    if (error || !row) throw new Error("Couldn't update this encouragement. Please try again.");
     return { success: true };
   });
 
