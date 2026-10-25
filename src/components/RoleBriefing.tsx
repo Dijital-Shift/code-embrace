@@ -18,8 +18,8 @@ const briefings = {
     title: "The Watchman's Creed",
     action: "Understood — Stand the Watch",
     principles: [
-      { title: "Stand watch.", body: "A breach or two consecutive silent days calls for your attention. Reach out personally." },
-      { title: "Stay attentive.", body: "No alarm is not proof that all is well. You can check their Path and contact them." },
+      { title: "A silent sentinel.", body: "If the wall is quiet, the one you watch is standing firm. An unalarming day is a day well fought." },
+      { title: "Answer the horn.", body: "A declared breach or two consecutive silent days brings the alarm to you. Reach out personally." },
       { title: "Send words of strength.", body: "Offer prayer, personal counsel, or Scripture. Your encouragement belongs to their Path history—not casual chatter." },
     ],
   },
@@ -48,7 +48,7 @@ export function RoleBriefing({ role }: { role: BriefingRole }) {
           <Icon className="size-6 text-primary" />
         </span>
         <div className="min-w-0 self-center">
-          <p className="mb-1 text-xs font-semibold text-primary">How it works · {role === "walker" ? "Your walk" : "The Watch"}</p>
+          <p className="mb-1 text-xs font-semibold text-primary">How it works</p>
           <h2 id={titleId} className="kp-briefing-title text-xl leading-snug text-parchment">{content.title}</h2>
         </div>
       </div>
