@@ -3,8 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { scheduleEncouragementSend } from "@/lib/encouragement-send";
-import { useAuth } from "@/lib/auth";
-import { Shield, Undo2, Send } from "lucide-react";
+import { Undo2, Send } from "lucide-react";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWatchmanRemoval } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { toast } from "sonner";
 import { statusLabel } from "@/lib/status";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { ClaimInviteCard } from "@/components/ClaimInviteCard";
+import { RoleBriefing } from "@/components/RoleBriefing";
 
 
 export const Route = createFileRoute("/partner")({
@@ -76,7 +76,7 @@ function Partner() {
 
   return (
     <div>
-      <WatchmanCreed />
+      <RoleBriefing role="watchman" />
       {(data?.closureNotices ?? []).map((notice) => (
         <article key={notice.notification_id} className="mb-6 rounded-lg border border-primary/40 bg-card p-5">
           <p className="text-xs uppercase font-semibold text-primary mb-2">Watch ended</p>
@@ -235,26 +235,6 @@ function Partner() {
 
     </div>
   );
-}
-
-function WatchmanCreed() {
-  const { session } = useAuth();
-  const [dismissed, setDismissed] = useState(true);
-  const key = session?.user.id ? `kp-watchman-creed:${session.user.id}` : null;
-  useEffect(() => {
-    if (!key) return;
-    try { setDismissed(localStorage.getItem(key) === 'read'); } catch { setDismissed(false); }
-  }, [key]);
-  if (dismissed) return null;
-  return <section className="mb-6 border-y border-primary/30 py-5">
-    <h2 className="flex items-center gap-2 text-parchment font-semibold"><Shield className="size-5 text-primary" />The Watchman's Creed</h2>
-    <ul className="mt-3 space-y-3 text-sm text-stone leading-relaxed">
-      <li><strong className="text-parchment">Stand watch.</strong> A breach or two consecutive silent days calls for your attention. Reach out personally.</li>
-      <li><strong className="text-parchment">Stay attentive.</strong> No alarm is not proof that all is well. You can check their Path and contact them.</li>
-      <li><strong className="text-parchment">Send words of strength.</strong> Encouragement belongs to their Path history: a prayer, personal counsel, or Scripture—not casual messages.</li>
-    </ul>
-    <Button variant="outline" size="sm" className="mt-4" onClick={() => { if (key) { try { localStorage.setItem(key, 'read'); } catch {} } setDismissed(true); }}>Understood</Button>
-  </section>;
 }
 
 /**

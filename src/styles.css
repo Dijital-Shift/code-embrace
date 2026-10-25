@@ -33,7 +33,15 @@
   --color-action-stone-edge: #443b2c;
   --color-action-ember-edge: #733434;
   --shadow-action: inset 0 1px 0 color-mix(in srgb, var(--color-parchment) 10%, transparent), 0 3px 8px color-mix(in srgb, var(--color-background) 65%, transparent);
+  --background-image-briefing: linear-gradient(120deg, var(--color-action-pause), var(--color-background));
+  --shadow-briefing: inset 0 1px 0 color-mix(in srgb, var(--color-parchment) 8%, transparent);
+  --background-image-briefing-accept: linear-gradient(135deg, var(--color-parchment), var(--color-primary) 45%, var(--color-primary));
 }
+
+.kp-role-briefing { background: var(--background-image-briefing); border-block: 1px solid var(--color-action-gold-edge); padding-inline: 1rem; box-shadow: var(--shadow-briefing); }
+.kp-briefing-emblem { background: var(--color-action-edit); border: 1px solid var(--color-action-gold-edge); box-shadow: var(--shadow-action); }
+.kp-briefing-title { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0; }
+.kp-briefing-accept { min-height: 44px; height: auto; background: var(--background-image-briefing-accept); box-shadow: var(--shadow-action); }
 
 .kp-action { min-height: 44px; height: 44px; border: 1px solid; box-shadow: var(--shadow-action); transition: border-color 160ms, background 160ms, box-shadow 160ms; }
 .kp-action-edit { background: var(--color-action-edit); border-color: var(--color-action-gold-edge); color: var(--color-parchment); }
