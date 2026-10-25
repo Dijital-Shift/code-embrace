@@ -14,6 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check } from "lucide-react";
 import { StarterWalkCard } from "@/components/StarterWalkCard";
 import { pathStartLabel } from "@/lib/path-start";
+import { RoleBriefing } from "@/components/RoleBriefing";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -124,6 +125,8 @@ function Dashboard() {
       </div>
 
       <AccessBanner />
+
+      <RoleBriefing role="walker" />
 
       {(data?.unreadEncouragements ?? 0) > 0 && (() => {
         const paths = (data?.unreadPaths ?? []) as { lane_id: string; count: number; title: string }[];

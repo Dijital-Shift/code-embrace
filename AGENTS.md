@@ -1,4 +1,5 @@
 # Architecture rules
+- Walker and Watchman onboarding use the shared RoleBriefing presentation with independent versioned per-account/per-role browser dismissals, preventing one role's acknowledgment from hiding the other.
 - Recipient-hidden encouragements retain their source record; all owner history and unread surfaces filter hidden rows, while a recipient-scoped action restores visibility.
 - Mobile navigation portals to the document body and follows visual viewport resize/scroll, avoiding containing-block traps while keeping safe-area space.
 - Watchman encouragement sends wait five seconds before saving or pushing; Undo and composer unmount cancel that pending delivery.
