@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { fetchPathScripture } from "@/lib/scripture.functions";
+import { useEffect, useRef, useState } from "react";
+import { scheduleEncouragementSend } from "@/lib/encouragement-send";
+import { useAuth } from "@/lib/auth";
+import { Shield, Undo2, Send } from "lucide-react";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWatchmanRemoval } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -74,6 +76,7 @@ function Partner() {
 
   return (
     <div>
+      <WatchmanCreed />
       {(data?.closureNotices ?? []).map((notice) => (
         <article key={notice.notification_id} className="mb-6 rounded-lg border border-primary/40 bg-card p-5">
           <p className="text-xs uppercase font-semibold text-primary mb-2">Watch ended</p>
@@ -234,6 +237,26 @@ function Partner() {
   );
 }
 
+function WatchmanCreed() {
+  const { session } = useAuth();
+  const [dismissed, setDismissed] = useState(true);
+  const key = session?.user.id ? `kp-watchman-creed:${session.user.id}` : null;
+  useEffect(() => {
+    if (!key) return;
+    try { setDismissed(localStorage.getItem(key) === 'read'); } catch { setDismissed(false); }
+  }, [key]);
+  if (dismissed) return null;
+  return <section className="mb-6 border-y border-primary/30 py-5">
+    <h2 className="flex items-center gap-2 text-parchment font-semibold"><Shield className="size-5 text-primary" />The Watchman's Creed</h2>
+    <ul className="mt-3 space-y-3 text-sm text-stone leading-relaxed">
+      <li><strong className="text-parchment">Stand watch.</strong> A breach or two consecutive silent days calls for your attention. Reach out personally.</li>
+      <li><strong className="text-parchment">Stay attentive.</strong> No alarm is not proof that all is well. You can check their Path and contact them.</li>
+      <li><strong className="text-parchment">Send words of strength.</strong> Encouragement belongs to their Path history: a prayer, personal counsel, or Scripture—not casual messages.</li>
+    </ul>
+    <Button variant="outline" size="sm" className="mt-4" onClick={() => { if (key) { try { localStorage.setItem(key, 'read'); } catch {} } setDismissed(true); }}>Understood</Button>
+  </section>;
+}
+
 /**
  * One watched path. Urgent ones render expanded; quiet ones collapse to a
  * single line so watching several people stays readable.
@@ -320,40 +343,33 @@ function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: s
   const [linked, setLinked] = useState(true);
 
   const attach = !!alert && linked;
-  const fetchFn = useServerFn(fetchPathScripture);
-  const [verses, setVerses] = useState<string[]>([]);
-  const [vBusy, setVBusy] = useState(false);
-  const [picked, setPicked] = useState<string | null>(null);
+  const [queued, setQueued] = useState(false);
+  const cancelRef = useRef<(() => void) | null>(null);
+  const sendingRef = useRef(false);
+  useEffect(() => () => cancelRef.current?.(), []);
 
-  async function findVerses() {
-    setVBusy(true); setErr(null);
-    const q = [title, alert?.label, body.trim()].filter(Boolean).join(". ").slice(0, 400);
-    const r = await fetchFn({ data: { text: q } }).catch(() => ({ verses: [], error: "Send Scripture couldn't be reached." }));
-    setVBusy(false);
-    if (r.error) { setErr(r.error); return; }
-    const fit = r.verses.filter((v: string) => v.length <= 240).slice(0, 3);
-    if (!fit.length) setErr("No short verses found. Try typing a line first.");
-    setVerses(fit);
-  }
-
-  function pick(v: string) {
-    const own = picked ? body.replace(picked, "").trim() : body.trim();
-    const next = (v + (own ? "\n\n" + own : "")).slice(0, 280);
-    setPicked(v); setBody(next);
+  function undoSend() {
+    cancelRef.current?.(); cancelRef.current = null;
+    sendingRef.current = false; setQueued(false);
   }
 
   const smsHref = phone ? `sms:${phone}${/iPhone|iPad|Mac/.test(typeof navigator !== "undefined" ? navigator.userAgent : "") ? "&" : "?"}body=${encodeURIComponent(body.trim())}` : null;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!body.trim()) return;
-    setBusy(true); setErr(null);
-    const r = await send({ data: { laneId, body: body.trim(), checkinId: attach ? alert!.checkin_id : null } });
-    setBusy(false);
-    if (r?.error) { setErr(r.error); return; }
-    setBody(""); setSent(true);
-    setTimeout(() => setSent(false), 2500);
-    onSent();
+    if (!body.trim() || sendingRef.current) return;
+    sendingRef.current = true; setQueued(true); setErr(null);
+    const payload = { laneId, body: body.trim(), checkinId: attach ? alert?.checkin_id ?? null : null };
+    cancelRef.current = scheduleEncouragementSend(() => {
+      cancelRef.current = null; setQueued(false); setBusy(true);
+      void send({ data: payload }).then((r: any) => {
+        if (r?.error) { setErr(r.error); return; }
+        setBody(""); setSent(true);
+        setTimeout(() => setSent(false), 2500);
+        onSent();
+      }).catch(() => setErr("Couldn't send. Your words are still here—try again."))
+        .finally(() => { sendingRef.current = false; setBusy(false); });
+    });
   }
 
   return (
@@ -369,23 +385,11 @@ function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: s
         value={body}
         onChange={(e) => setBody(e.target.value.slice(0, 280))}
         rows={2}
-        placeholder="A verse, a line, a prayer. They'll see it."
+        placeholder="A personal word of strength, prayer, or Scripture."
+        disabled={queued || busy}
         className="w-full px-3 py-2 text-base bg-[#0a0800] border border-[#2a2518] rounded text-white outline-none resize-none"
       />
 
-      <button type="button" onClick={findVerses} disabled={vBusy} className="mt-2 text-xs px-3 py-1.5 rounded border border-[#c9a84c]/50 text-[#c9a84c] font-semibold disabled:opacity-60" style={{ background: "#1a1508" }}>
-        {vBusy ? "Finding verses…" : "✦ Find a verse for this moment"}
-      </button>
-      {verses.length > 0 && (
-        <div className="mt-2 flex flex-col gap-1.5">
-          {verses.map((v) => (
-            <button type="button" key={v} onClick={() => pick(v)} className={`text-left text-[0.8rem] leading-snug px-3 py-2 rounded border ${picked === v ? "border-[#c9a84c] text-white" : "border-[#2a2518] text-[#c8c0b4]"}`} style={{ background: "#0a0800" }}>
-              {v}
-            </button>
-          ))}
-          <p className="text-[0.65rem] text-[#948d80]">Tap one to place it. Tapping another swaps it. Your own words stay.</p>
-        </div>
-      )}
 
       <div className="flex justify-between items-center mt-2 gap-2">
         <span className="text-[0.65rem] text-[#948d80]">{body.length}/280</span>
@@ -393,10 +397,11 @@ function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: s
         {smsHref && body.trim() && (
           <a href={smsHref} className="text-xs px-3 py-1.5 rounded font-semibold text-white border border-[#222]" style={{ background: "#1a1a1a" }}>Text it</a>
         )}
-        <button disabled={busy || !body.trim()} className="text-xs px-4 py-1.5 bg-[#c9a84c] text-black rounded font-semibold disabled:opacity-40">
+        <Button size="sm" disabled={busy || queued || !body.trim()}><Send />
           {busy ? "Sending…" : sent ? "Sent" : "Send in app"}
-        </button>
+        </Button>
       </div>
+      {queued && <div role="status" className="mt-2 flex items-center justify-between gap-2 text-xs text-primary"><span>Sending in 5 seconds…</span><Button type="button" variant="outline" size="sm" onClick={undoSend}><Undo2 />Undo Send</Button></div>}
       {err && <p className="text-red-400 text-[0.7rem] mt-1">{err}</p>}
     </form>
   );

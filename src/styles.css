@@ -26,7 +26,22 @@
   --color-history-sabbath: oklch(0.75 0.13 80);
   --color-parchment: #f3e6c4;
   --color-stone: #a8a094;
+  --color-action-edit: #100e08;
+  --color-action-pause: #17140e;
+  --color-action-archive: #1b0e0e;
+  --color-action-gold-edge: #665329;
+  --color-action-stone-edge: #443b2c;
+  --color-action-ember-edge: #733434;
+  --shadow-action: inset 0 1px 0 color-mix(in srgb, var(--color-parchment) 10%, transparent), 0 3px 8px color-mix(in srgb, var(--color-background) 65%, transparent);
 }
+
+.kp-action { min-height: 44px; height: 44px; border: 1px solid; box-shadow: var(--shadow-action); transition: border-color 160ms, background 160ms, box-shadow 160ms; }
+.kp-action-edit { background: var(--color-action-edit); border-color: var(--color-action-gold-edge); color: var(--color-parchment); }
+.kp-action-pause { background: var(--color-action-pause); border-color: var(--color-action-stone-edge); color: var(--color-secondary-foreground); }
+.kp-action-archive { background: var(--color-action-archive); border-color: var(--color-action-ember-edge); color: var(--color-destructive); }
+.kp-action:hover { border-color: currentColor; background: var(--color-accent); }
+.kp-action-edit:hover { box-shadow: var(--shadow-action), 0 0 16px color-mix(in srgb, var(--color-primary) 14%, transparent); }
+@media (prefers-reduced-motion: reduce) { .kp-action { transition: none; } }
 
 .history-completed { color: var(--color-history-held); background: color-mix(in oklab, var(--color-history-held) 14%, transparent); }
 .kp-removal-dialog { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); overflow-anchor: none; }
@@ -95,9 +110,12 @@ button, nav a { user-select: none; -webkit-user-select: none; }
     background: rgba(10, 8, 0, 0.92);
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-top: 1px solid #2a2518;
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    transform: translate3d(0, 0, 0);
+    isolation: isolate;
   }
-  .app-main { padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+  .app-main { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 
 /* Splash aura */

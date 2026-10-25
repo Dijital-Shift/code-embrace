@@ -154,6 +154,7 @@ export type Database = {
           body: string
           checkin_id: string | null
           created_at: string
+          hidden_at: string | null
           id: string
           lane_id: string
           owner_id: string
@@ -164,6 +165,7 @@ export type Database = {
           body: string
           checkin_id?: string | null
           created_at?: string
+          hidden_at?: string | null
           id?: string
           lane_id: string
           owner_id: string
@@ -174,6 +176,7 @@ export type Database = {
           body?: string
           checkin_id?: string | null
           created_at?: string
+          hidden_at?: string | null
           id?: string
           lane_id?: string
           owner_id?: string

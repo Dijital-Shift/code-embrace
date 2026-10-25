@@ -5,7 +5,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { pathDeletable } from "@/lib/path-endlock";
-import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead, extendCompletedLane } from "@/lib/api.functions";
+import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead, extendCompletedLane, setEncouragementVisibility } from "@/lib/api.functions";
+import { Button } from "@/components/ui/button";
+import { Archive, Pencil, Pause, Play, EyeOff, RotateCcw, Trash2 } from "lucide-react";
 import { DateField } from "@/components/ScriptureFields";
 import {
   createLaneInvite,
@@ -83,6 +85,17 @@ function LaneDetail() {
   const qc = useQueryClient();
   const [err, setErr] = useState<string | null>(null);
   const markReadFn = useServerFn(markEncouragementsRead);
+  const visibilityFn = useServerFn(setEncouragementVisibility);
+  const [showHiddenWords, setShowHiddenWords] = useState(false);
+  const visibility = useMutation({
+    mutationFn: ({ id, hidden }: { id: string; hidden: boolean }) => visibilityFn({ data: { id, hidden } }),
+    onSuccess: (_, variables) => {
+      for (const key of ["lane", "lanes", "dashboard", "unread-encouragements"]) void qc.invalidateQueries({ queryKey: key === "lane" ? [key, id] : [key] });
+      if (variables.hidden) toast("Hidden from your Path", { action: { label: "Undo", onClick: () => visibility.mutate({ id: variables.id, hidden: false }) } });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const hideWord = (wordId: string) => visibility.mutate({ id: wordId, hidden: true });
 
   const { data, isLoading } = useQuery({ queryKey: ["lane", id], queryFn: () => getFn({ data: { id } }) });
 
@@ -303,7 +316,7 @@ function LaneDetail() {
       <LineageTimeline checkins={checkins} words={data?.encouragements ?? []}
         startDate={data?.historyStartDate ?? lane.created_at.slice(0, 10)}
         today={data?.historyToday ?? lane.created_at.slice(0, 10)}
-        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} defaultOpen />} />
+        renderWord={(e) => <EncouragementCard key={e.id} enc={e} isNew={unreadIds.includes(e.id)} faded={fadedIds.includes(e.id)} onSeen={handleSeen} onHide={hideWord} hiding={visibility.isPending} defaultOpen />} />
 
       {(data?.encouragements ?? []).length > 0 && (
         <div className="mt-6">
@@ -316,6 +329,8 @@ function LaneDetail() {
                 isNew={unreadIds.includes(e.id)}
                 faded={fadedIds.includes(e.id)}
                 onSeen={handleSeen}
+                onHide={hideWord}
+                hiding={visibility.isPending}
               />
             ))}
           </div>
@@ -348,27 +363,35 @@ function LaneDetail() {
         </div>
       )}
 
+      {(data?.hiddenEncouragements ?? []).length > 0 && <div className="mt-4">
+        <Button variant="ghost" size="sm" className="text-stone" aria-expanded={showHiddenWords} onClick={() => setShowHiddenWords((v) => !v)}><EyeOff />Hidden encouragements ({data?.hiddenEncouragements?.length})</Button>
+        {showHiddenWords && <div className="mt-2 divide-y divide-border">
+          {data?.hiddenEncouragements?.map((e: any) => <div key={e.id} className="flex items-start gap-3 py-3">
+            <div className="min-w-0 flex-1"><p className="text-xs text-stone">{e.from_name}</p><p className="text-sm text-parchment break-words whitespace-pre-wrap">{e.body}</p></div>
+            <Button variant="ghost" size="sm" disabled={visibility.isPending} onClick={() => visibility.mutate({ id: e.id, hidden: false })}><RotateCcw />Restore</Button>
+          </div>)}
+        </div>}
+      </div>}
+
 
       <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} isAvoid={isAvoid} />
 
       <div className="mt-8 flex gap-2 flex-wrap">
         {lane.status !== "active" && (
-          <button onClick={() => setStatus.mutate({ status: "active" })} className="inline-flex items-center justify-center px-4 py-2 bg-white text-black rounded-md text-xs font-semibold leading-none">Set Active</button>
+          <Button variant="pathEdit" size="sm" disabled={setStatus.isPending} onClick={() => setStatus.mutate({ status: "active" })}><Play />Set Active</Button>
         )}
         {lane.status === "active" && (
-          <button onClick={() => { setErr(null); setReason(""); setPending("paused"); }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#b8b0a4]" style={{ background: "#2a2518" }}>Pause</button>
+          <Button variant="pathPause" size="sm" onClick={() => { setErr(null); setReason(""); setPending("paused"); }}><Pause />Pause</Button>
         )}
         {lane.status !== "archived" && (
-          <button onClick={() => { setErr(null); setReason(""); setPending("archived"); }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]" style={{ background: "#2a2518" }}>Archive</button>
+          <Button variant="pathArchive" size="sm" onClick={() => { setErr(null); setReason(""); setPending("archived"); }}><Archive />Archive</Button>
         )}
-        <Link to="/paths/edit/$id" params={{ id }} className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#ded8cc] no-underline" style={{ background: "#2a2518" }}>Edit</Link>
+        <Button variant="pathEdit" size="sm" asChild><Link to="/paths/edit/$id" params={{ id }} className="no-underline"><Pencil />Edit</Link></Button>
         {canDelete && (
-          <button
+          <Button variant="pathArchive" size="sm"
             disabled={del.isPending}
             onClick={() => { setErr(null); setPending("delete"); }}
-            className="inline-flex items-center justify-center px-4 py-2 rounded-md text-xs font-semibold leading-none border border-[#222] text-[#f87171]"
-            style={{ background: "#1a0a0a" }}
-          >{del.isPending ? "Deleting…" : "Delete"}</button>
+          ><Trash2 />{del.isPending ? "Deleting…" : "Delete"}</Button>
         )}
       </div>
 
@@ -449,12 +472,16 @@ function EncouragementCard({
   faded,
   onSeen,
   defaultOpen = false,
+  onHide,
+  hiding = false,
 }: {
   enc: any;
   isNew: boolean;
   faded: boolean;
   onSeen: (id: string) => void;
   defaultOpen?: boolean;
+  onHide?: (id: string) => void;
+  hiding?: boolean;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(defaultOpen);
@@ -514,6 +541,7 @@ function EncouragementCard({
             {enc.from_name} ·{" "}
             {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
           </p>
+          {onHide && <Button type="button" variant="ghost" size="sm" className="mt-2 text-stone" disabled={hiding} onClick={() => onHide(enc.id)}><EyeOff />Hide from Path</Button>}
         </div>
       )}
     </div>
