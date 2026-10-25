@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Polish Path actions; stabilize mobile bottom navigation; add recipient-only Hide/restore encouragements; remove Watchman verse search; clarify duty and allow five-second Undo before sending.
 - [x] Shrink v8 MP4 from 56.3 MB to 13.6 MB; full HD and 55.5-second timing retained, audio hash identical, full decode passed, registered and mounted; homepage fallback playback verified without page errors. Physical iPhone MP4 playback remains user verification.
 - [x] Render the approved 58-second v7 explainer: commanding narration, deliberate pauses, triumphant close (name first, command last), bright gamification badges, corrected kingdomprotocol.app, re-ordered end card; MP4/WebM registered and mounted on the homepage; decode, key frames, and page mount verified.
 - [ ] Listen to v7 and approve the narration/music and pacing (especially 32s breach line and the close) — requires the user's listening review.
