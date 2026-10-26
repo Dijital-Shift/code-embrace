@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { fetchPathScripture } from "@/lib/scripture.functions";
+import { ScriptureSlot } from "@/components/ScriptureSlot";
 
 /** Grows with its content so every line stays visible — no inner scrolling. 16px text prevents iOS focus zoom. */
 export function AutoTextarea({ value, onChange, placeholder, maxLength = 800 }: { value: string; onChange: (v: string) => void; placeholder?: string; maxLength?: number }) {
@@ -128,7 +129,7 @@ export function ScriptureFields({
         Support Scripture <span className="text-[#948d80]">(optional — up to 3)</span>
       </label>
       {values.map((v, i) => (
-        <AutoTextarea key={i} value={v} onChange={setValues[i]} placeholder={placeholders[i]} />
+        <ScriptureSlot key={i} number={i + 1} value={v} onChange={setValues[i]} placeholder={placeholders[i]} />
       ))}
       <button
         type="button"

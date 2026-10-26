@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Add one-tap Scripture clearing with five-second Undo to both Path forms; verify clearing, restoration, and replacement protection.
 - [x] Guard normal navigation and card collapse throughout encouragement countdown/delivery; five tests pass and actual-form fixture verified Undo, failure recovery, retry, and navigation release. Build OK.
 - [ ] Verify encouragement recipient readback with a real signed-in account — self-session mint found no matching account; requires preview sign-in. Forced auth-loss or assignment-regroup unmounts remain outside the normal navigation guard.
 - [x] Unify both briefing eyebrows to "How it works" and reword the Watchman creed to "A silent sentinel / Answer the horn / Send words of strength" with no negative labels; four tests pass and desktop/mobile fixture verified the exact copy with no clipping or overflow.
