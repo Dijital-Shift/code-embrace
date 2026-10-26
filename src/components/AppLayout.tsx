@@ -70,7 +70,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Mobile bottom dock — sticky, app-style */}
-        {dockHost && createPortal(<nav ref={dockRef} className="nav-mobile-dock grid grid-cols-5" aria-label="Primary">
+        {dockHost && createPortal(<nav className="nav-mobile-dock grid grid-cols-5" aria-label="Primary">
             {menuItems.map((i) => {
               const active = pathname === i.href || pathname.startsWith(i.href + "/");
               const Icon = i.icon;
