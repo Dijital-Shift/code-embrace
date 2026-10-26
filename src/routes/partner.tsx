@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useBlocker } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { scheduleEncouragementSend } from "@/lib/encouragement-send";
+import { isEncouragementPending, scheduleEncouragementSend } from "@/lib/encouragement-send";
 import { Undo2, Send } from "lucide-react";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWatchmanRemoval } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
@@ -245,6 +245,7 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
   lane: any; checkin: any; statusColor: Record<string, string>; defaultOpen?: boolean; sendFn: any; onSent: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const [sending, setSending] = useState(false);
   const todayLabel = lane.upcoming ? 'Starts tomorrow' : c ? statusLabel(c.status) : "Open";
   const todayCol = c ? statusColor[c.status] ?? "#333" : "#948d80";
   const needsContact = c?.status === "breached" || c?.status === "missed";
@@ -254,7 +255,7 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
   return (
     <div className="rounded-xl border border-[#2a2418] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]" style={{ background: "linear-gradient(135deg, #14100a 0%, #0a0800 100%)" }}>
       <button
-        type="button" onClick={() => setOpen((v) => !v)}
+        type="button" disabled={sending} aria-expanded={open} onClick={() => setOpen((v) => !v)}
         className="w-full flex justify-between items-center gap-3 text-left px-4 py-3"
       >
         <div className="min-w-0 flex items-center gap-3">
@@ -308,14 +309,14 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
             </div>
           )}
           {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
-          <EncourageBox laneId={lane.lane_id} title={lane.title} phone={needsContact ? phone : null} send={sendFn} alert={lane.latestAlert ?? null} onSent={onSent} />
+          <EncourageBox laneId={lane.lane_id} title={lane.title} phone={needsContact ? phone : null} send={sendFn} alert={lane.latestAlert ?? null} onSent={onSent} onPendingChange={setSending} />
         </div>
       )}
     </div>
   );
 }
 
-function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: string; title: string; phone?: string | null; send: any; onSent: () => void; alert?: { checkin_id: string; label: string } | null }) {
+export function EncourageBox({ laneId, title, phone, send, onSent, alert, onPendingChange }: { laneId: string; title: string; phone?: string | null; send: any; onSent: () => void; alert?: { checkin_id: string; label: string } | null; onPendingChange?: (pending: boolean) => void }) {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
@@ -327,6 +328,16 @@ function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: s
   const cancelRef = useRef<(() => void) | null>(null);
   const sendingRef = useRef(false);
   useEffect(() => () => cancelRef.current?.(), []);
+  const pending = isEncouragementPending(queued, busy);
+  useEffect(() => { onPendingChange?.(pending); }, [pending, onPendingChange]);
+  useBlocker({
+    shouldBlockFn: () => {
+      if (!sendingRef.current) return false;
+      toast.info("Your encouragement is still sending. Wait for confirmation, or use Undo Send during the countdown.");
+      return true;
+    },
+    enableBeforeUnload: () => sendingRef.current,
+  });
 
   function undoSend() {
     cancelRef.current?.(); cancelRef.current = null;
@@ -382,7 +393,7 @@ function EncourageBox({ laneId, title, phone, send, onSent, alert }: { laneId: s
         </Button>
       </div>
       {queued && <div role="status" className="mt-2 flex items-center justify-between gap-2 text-xs text-primary"><span>Sending in 5 seconds…</span><Button type="button" variant="outline" size="sm" onClick={undoSend}><Undo2 />Undo Send</Button></div>}
-      {err && <p className="text-red-400 text-[0.7rem] mt-1">{err}</p>}
+      {err && <p role="alert" className="text-destructive text-[0.7rem] mt-1">{err}</p>}
     </form>
   );
 }

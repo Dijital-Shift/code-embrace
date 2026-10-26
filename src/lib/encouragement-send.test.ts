@@ -1,8 +1,17 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { scheduleEncouragementSend } from './encouragement-send';
+import { isEncouragementPending, scheduleEncouragementSend } from './encouragement-send';
 
 describe('encouragement recall', () => {
+  it('protects the composer throughout the five-second recall window', () => {
+    assert.equal(isEncouragementPending(true, false), true);
+  });
+  it('protects the composer while delivery is in flight', () => {
+    assert.equal(isEncouragementPending(false, true), true);
+  });
+  it('allows leaving after Undo or a settled delivery attempt', () => {
+    assert.equal(isEncouragementPending(false, false), false);
+  });
   it('waits five seconds before sending', () => {
     let delay = 0;
     let sent = false;
