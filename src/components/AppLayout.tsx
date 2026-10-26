@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
 import { TrialEndingModal } from "@/components/AccessBanner";
 import { useOfflineCheckinSync } from "@/lib/offline-checkins";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 const menuItems = [
@@ -35,25 +35,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const hasUnread = (unread?.count ?? 0) > 0;
   useOfflineCheckinSync(!authLoading && !!session?.access_token);
   const [dockHost, setDockHost] = useState<HTMLElement | null>(null);
-  const dockRef = useRef<HTMLElement>(null);
   useEffect(() => {
     setDockHost(document.body);
-    const viewport = window.visualViewport;
-    const sync = () => {
-      if (!dockRef.current) return;
-      // Follow the visible bottom through browser chrome and keyboard transitions.
-      const offset = viewport ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop) : 0;
-      dockRef.current.style.bottom = `${offset}px`;
-    };
-    sync();
-    viewport?.addEventListener("resize", sync);
-    viewport?.addEventListener("scroll", sync);
-    window.addEventListener("resize", sync);
-    return () => {
-      viewport?.removeEventListener("resize", sync);
-      viewport?.removeEventListener("scroll", sync);
-      window.removeEventListener("resize", sync);
-    };
   }, [dockHost]);
 
   return (
