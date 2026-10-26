@@ -15,6 +15,7 @@ import { Check } from "lucide-react";
 import { StarterWalkCard } from "@/components/StarterWalkCard";
 import { pathStartLabel } from "@/lib/path-start";
 import { RoleBriefing } from "@/components/RoleBriefing";
+import { AppInstallCard } from "@/components/AppInstallCard";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -127,6 +128,7 @@ function Dashboard() {
       <AccessBanner />
 
       <RoleBriefing role="walker" />
+      <AppInstallCard />
 
       {(data?.unreadEncouragements ?? 0) > 0 && (() => {
         const paths = (data?.unreadPaths ?? []) as { lane_id: string; count: number; title: string }[];
