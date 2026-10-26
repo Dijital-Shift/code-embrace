@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { allowsAutomaticTimezone } from './timezone-sync';
 import { endDateEditable, courseComplete, validExtension, pathDeletable } from './path-endlock';
+import { pathIdentityEditable, pathIdentityChanged } from './path-identity';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
@@ -335,9 +336,18 @@ export const updateLane = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: current } = await supabase.from('lanes').select('created_at, ends_at')
+    const { data: current } = await supabase.from('lanes').select('created_at, ends_at, title, description')
       .eq('lane_id', data.id).eq('user_id', userId).maybeSingle();
     if (!current) return { error: 'Path not found.' };
+    if (pathIdentityChanged(current, data)) {
+      const [{ count, error: historyError }, watchmen] = await Promise.all([
+        supabase.from('checkins').select('checkin_id', { count: 'exact', head: true }).eq('lane_id', data.id),
+        activeWatchmen(data.id),
+      ]);
+      if (historyError || !pathIdentityEditable(current.created_at, count ?? 0, watchmen.length)) {
+        return { error: 'The Path name and description are locked. Notes and Scripture can still be updated.' };
+      }
+    }
     const nextEnd = data.ends_at || null;
     if (nextEnd !== (current.ends_at ?? null) && !endDateEditable(current.created_at)) {
       return { error: 'The end date is locked. Finish the course set before you.' };

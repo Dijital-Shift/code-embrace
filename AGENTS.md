@@ -1,4 +1,7 @@
 # Architecture rules
+- Path identity correction uses a shared client-safe validator in the edit form and authenticated update function; history, assigned Watchmen, or expiry close the correction window to preserve the original commitment.
+- One root-level AppInstallProvider owns native installation events across routes; install cards and alert setup share it without changing service-worker registration or update behavior.
+- All legal pages use LegalPageLayout with translate="no", notranslate, and leaf-level no-translation metadata to preserve legal wording without disabling translation elsewhere.
 - Scripture slots share a focused clear control and guarded five-second Undo; Undo never overwrites new typing or fetched replacements, and clearing remains part of the existing form save.
 - Walker and Watchman onboarding use the shared RoleBriefing presentation with independent versioned per-account/per-role browser dismissals, preventing one role's acknowledgment from hiding the other.
 - Recipient-hidden encouragements retain their source record; all owner history and unread surfaces filter hidden rows, while a recipient-scoped action restores visibility.

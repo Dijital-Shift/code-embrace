@@ -7,6 +7,9 @@ import { AppLayout } from "@/components/AppLayout";
 import { ScriptureFields, AutoTextarea, DateField } from "@/components/ScriptureFields";
 import { endDateEditable } from "@/lib/path-endlock";
 import { SubpageHeader } from "@/components/SubpageHeader";
+import { pathIdentityEditable } from "@/lib/path-identity";
+import { Button } from "@/components/ui/button";
+import { LockKeyhole, Save } from "lucide-react";
 
 export const Route = createFileRoute("/paths/edit/$id")({
   head: () => ({ meta: [
@@ -36,6 +39,11 @@ function EditPath() {
   const [endsAt, setEndsAt] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const l = data?.lane;
@@ -50,6 +58,7 @@ function EditPath() {
 
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   if (!data?.lane) return <p>Not found.</p>;
+  const identityEditable = pathIdentityEditable(data.lane.created_at, data.checkins.length, data.watchmen.length, now);
 
   const inputCls = "px-4 py-3 bg-[#111] border border-[#222] rounded-md text-white outline-none w-full text-base";
 
@@ -59,8 +68,8 @@ function EditPath() {
     const r: any = await saveFn({
       data: {
         id,
-        title: title.trim(),
-        description: description.trim() || null,
+        title: identityEditable ? title.trim() : data?.lane?.title ?? title,
+        description: identityEditable ? description.trim() || null : data?.lane?.description ?? null,
         notes: notes.trim() || null,
         support_scripture: [s1, s2, s3].map((s) => s.trim()).filter(Boolean),
         ends_at: endsAt || null,
@@ -76,13 +85,14 @@ function EditPath() {
       <SubpageHeader title="Edit Path" link={{ to: "/paths/$id", params: { id }, search: { newlyCreated: false } }} />
 
       <form onSubmit={submit} className="flex flex-col gap-6 max-w-md">
+        {!identityEditable && <p className="flex items-start gap-2 text-sm text-stone"><LockKeyhole size={16} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />Name and description are locked. Your commitment stays the same; notes and Scripture remain editable.</p>}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">What's the path?</label>
-          <input required maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} />
+          {identityEditable ? <input required maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} /> : <p className="text-parchment font-semibold break-words">{data.lane.title}</p>}
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Description <span className="text-[#948d80]">(optional)</span></label>
-          <AutoTextarea maxLength={300} value={description} onChange={setDescription} />
+          {identityEditable ? <AutoTextarea maxLength={300} value={description} onChange={setDescription} /> : <p className="text-stone whitespace-pre-wrap break-words">{data.lane.description || 'No description.'}</p>}
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Notes <span className="text-[#948d80]">(your watchman sees these)</span></label>
@@ -91,14 +101,14 @@ function EditPath() {
         <ScriptureFields values={[s1, s2, s3]} setValues={[setS1, setS2, setS3]} title={title} description={description} />
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-[#ded8cc]">Ends on <span className="text-[#948d80]">(optional)</span></label>
-          {endDateEditable((data.lane as any).created_at)
+          {endDateEditable(data.lane.created_at, now)
             ? <DateField value={endsAt} onChange={setEndsAt} start={(data.lane as any).starts_at ?? undefined} />
             : <p className="px-4 py-3 rounded-md border border-[#c9a84c]/40 bg-[#14110a] text-sm text-[#e8dfc4]">
                 {endsAt ? <>Ends <span className="text-[#c9a84c]">{endsAt}</span> · </> : null}Locked. Finish the course set before you.
               </p>}
         </div>
         {err && <p className="text-red-400 text-sm">{err}</p>}
-        <button disabled={busy} className="pricing-gold-button text-[#0a0800] py-3.5 rounded-md font-semibold disabled:opacity-60">{busy ? "Saving…" : "Save changes"}</button>
+        <Button disabled={busy} className="kp-briefing-accept py-3.5 font-semibold"><Save aria-hidden="true" />{busy ? "Saving…" : "Save changes"}</Button>
       </form>
     </div>
   );

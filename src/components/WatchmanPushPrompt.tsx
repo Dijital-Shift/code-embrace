@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { getVapidPublicKey } from "@/lib/push.functions";
+import { useAppInstall } from "@/components/AppInstallProvider";
+import { Button } from "@/components/ui/button";
 
 function b64ToUint8(base64: string): Uint8Array {
   const pad = "=".repeat((4 - (base64.length % 4)) % 4);
@@ -43,7 +45,7 @@ const btn = "px-4 py-2 bg-[#c9a84c] text-black rounded-md text-xs font-bold disa
 export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: { variant?: "watchman" | "owner"; onReadinessChange?: (ready: boolean) => void } = {}) {
   const vapidFn = useServerFn(getVapidPublicKey);
   const [ready, setReady] = useState(false);
-  const [installed, setInstalled] = useState(false);
+  const { installed, available, busy: installBusy, install } = useAppInstall();
   const [perm, setPerm] = useState<Perm>("default");
   const [registered, setRegistered] = useState(false);
   const [platform, setPlatform] = useState<Platform>("desktop");
@@ -52,7 +54,6 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
   const [testMsg, setTestMsg] = useState<string | null>(null);
   const [testSent, setTestSent] = useState(false);
   const [open, setOpen] = useState(false);
-  const [deferred, setDeferred] = useState<any>(null);
   const [otherDevices, setOtherDevices] = useState(0);
   const [setupHere, setSetupHere] = useState(false);
 
@@ -87,18 +88,11 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
 
   useEffect(() => {
     setPlatform(detectPlatform());
-    setInstalled(isStandalone());
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e);
-    };
-    window.addEventListener("beforeinstallprompt", onPrompt);
     const resume = () => { if (document.visibilityState === "visible") void check(); };
     window.addEventListener("focus", resume);
     document.addEventListener("visibilitychange", resume);
     void check();
     return () => {
-      window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("focus", resume);
       document.removeEventListener("visibilitychange", resume);
     };
@@ -185,14 +179,6 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
     }
   }
 
-  async function install() {
-    if (!deferred) return;
-    deferred.prompt();
-    const choice = await deferred.userChoice;
-    if (choice?.outcome === "accepted") setInstalled(true);
-    setDeferred(null);
-  }
-
   // Alerts already reach another device on this account (e.g. the installed app) and this is just a browser.
   const armedElsewhere = !registered && !isStandalone() && otherDevices > 0;
   const alertReady = armedElsewhere || (perm === "granted" && registered && (platform !== "ios" || installed));
@@ -268,7 +254,7 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
           {platform === "desktop" && (
             <p className="mb-2">Use the install icon in your browser's address bar to install Kingdom Protocol.</p>
           )}
-          {platform !== "ios" && deferred && <button onClick={install} className={btn}>Install app</button>}
+          {platform !== "ios" && (available || installBusy) && <Button onClick={() => void install()} disabled={installBusy}>Install app</Button>}
         </Row>
 
         <Row

@@ -1,4 +1,9 @@
 # Tasks
+- [x] Lock Path identity in the edit page and authenticated server function after 30 minutes, any check-in, or assigned Watchman; notes and Scripture remain editable. Six identity tests and eight existing lock tests pass.
+- [x] Add shared root-level Android native install capture with homepage/dashboard controls and existing alert-panel reuse; simulated install action and installation completion verified. Existing offline/update behavior unchanged.
+- [x] Protect Terms, Privacy and Refund with shared translation guards and leaf metadata; browser checks confirm all three, homepage unaffected; cross-system preference saved.
+- [ ] Verify Path notes/Scripture save and locked identity with a real signed-in account — self-session mint has no matching account; requires preview sign-in.
+- [ ] Verify native Android installation on a physical device — browser test verifies event handling, not Chrome's real installation eligibility or OS sheet.
 - [x] Add one-tap Scripture clearing with five-second Undo to both Path forms; two tests pass and actual-control browser check verifies clear, restoration, replacement protection, and expiry. Build OK; signed-in form save/readback remains unverified.
 - [x] Guard normal navigation and card collapse throughout encouragement countdown/delivery; five tests pass and actual-form fixture verified Undo, failure recovery, retry, and navigation release. Build OK.
 - [ ] Verify encouragement recipient readback with a real signed-in account — self-session mint found no matching account; requires preview sign-in. Forced auth-loss or assignment-regroup unmounts remain outside the normal navigation guard.

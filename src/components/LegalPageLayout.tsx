@@ -24,7 +24,7 @@ export function LegalPageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-[#0a0800]">
+    <div translate="no" className="notranslate min-h-[100dvh] flex flex-col bg-[#0a0800]">
       <div
         className="sticky top-0 z-30 border-b border-[#2a2418]"
         style={{ background: "rgba(10,8,0,0.88)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", paddingTop: "env(safe-area-inset-top, 0px)" }}
@@ -75,6 +75,7 @@ export function legalHead(title: string, description: string) {
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "google", content: "notranslate" },
     ],
   };
 }
