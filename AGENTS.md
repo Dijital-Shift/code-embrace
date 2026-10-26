@@ -1,7 +1,7 @@
 # Architecture rules
 - Walker and Watchman onboarding use the shared RoleBriefing presentation with independent versioned per-account/per-role browser dismissals, preventing one role's acknowledgment from hiding the other.
 - Recipient-hidden encouragements retain their source record; all owner history and unread surfaces filter hidden rows, while a recipient-scoped action restores visibility.
-- Mobile navigation portals to the document body and follows visual viewport resize/scroll, avoiding containing-block traps while keeping safe-area space.
+- Mobile navigation portals to the document body and stays pinned with pure CSS `position: fixed; bottom: 0` plus `env(safe-area-inset-bottom)`; no visualViewport JS offset — Safari's rubber-band scroll must never lift the dock.
 - Watchman encouragement sends wait five seconds before saving or pushing; navigation and card collapse are guarded until Undo or delivery settles so composer-unmount cleanup cannot silently discard a normal in-app send.
 - The explainer uses a reusable native-controls player with registered MP4/WebM/poster pointers and a session-aware ended-state CTA; playback stays user-initiated and media stays outside Git.
 - Automatic device-timezone adoption is limited to published app hosts, with client automation checks and server request-host checks; preview settings saves preserve the stored timezone in Auto mode so testing cannot shift live reminders.
