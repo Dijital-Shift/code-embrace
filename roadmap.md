@@ -1,4 +1,7 @@
 # Tasks
+- [ ] Lock Path identity in the edit page and server, preserving notes and Scripture editing.
+- [ ] Add a shared Android native installation option without changing offline/update behavior.
+- [ ] Protect all legal pages from translation and remember this default across systems.
 - [x] Add one-tap Scripture clearing with five-second Undo to both Path forms; two tests pass and actual-control browser check verifies clear, restoration, replacement protection, and expiry. Build OK; signed-in form save/readback remains unverified.
 - [x] Guard normal navigation and card collapse throughout encouragement countdown/delivery; five tests pass and actual-form fixture verified Undo, failure recovery, retry, and navigation release. Build OK.
 - [ ] Verify encouragement recipient readback with a real signed-in account — self-session mint found no matching account; requires preview sign-in. Forced auth-loss or assignment-regroup unmounts remain outside the normal navigation guard.
