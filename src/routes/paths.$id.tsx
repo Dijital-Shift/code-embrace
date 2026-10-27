@@ -19,6 +19,7 @@ import { RemoveWatchmanDialog } from "@/components/RemoveWatchmanDialog";
 import { Avatar } from "@/components/AvatarPicker";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AppLayout } from "@/components/AppLayout";
+import { WatchmanReminder } from "@/components/WatchmanReminder";
 // status helpers used by timeline
 import { toast } from "sonner";
 
@@ -209,6 +210,12 @@ function LaneDetail() {
           Paths
         </Link>
       </div>
+
+      <WatchmanReminder paths={[{ id, title: lane.title, status: lane.status, watchmen: (data?.watchmen ?? []).length, endsAt: lane.ends_at, today: data?.historyToday }]} onInvite={() => {
+        const panel = document.getElementById('path-watchmen');
+        panel?.scrollIntoView({ behavior: 'instant', block: 'start' });
+        panel?.focus({ preventScroll: true });
+      }} />
 
       <div className="mb-7">
         <div className="flex items-center gap-2 flex-wrap mt-5">
@@ -659,7 +666,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
   const emptySlots = Math.max(0, 2 - (slotCount + expiredInvites.length));
 
   return (
-    <div className="kp-card mt-6 p-5">
+    <div id="path-watchmen" tabIndex={-1} className="kp-card mt-6 p-5 scroll-mt-32 focus-visible:outline-2 focus-visible:outline-primary">
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs text-[#a8a094] uppercase tracking-wider font-semibold">Watchmen</p>
         <span className="text-xs text-[#a8a094]">{slotCount}/2</span>
