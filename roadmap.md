@@ -1,4 +1,7 @@
 # Tasks
+- [ ] Add Solemn Covenant Watchman reminders atop the Path detail and Paths list, distinguishing pending invitations; leave email support on deck.
+- [ ] Keep mobile bottom navigation out of the way during keyboard text entry and verify restoration.
+- [ ] Send existing in-app support/feedback to the owner's email with Reply-To — deferred by user until the Watchman reminders are finished.
 - [x] Lock Path identity in the edit page and authenticated server function after 30 minutes, any check-in, or assigned Watchman; notes and Scripture remain editable. Six identity tests and eight existing lock tests pass.
 - [x] Add shared root-level Android native install capture with homepage/dashboard controls and existing alert-panel reuse; simulated install action and installation completion verified. Existing offline/update behavior unchanged.
 - [x] Protect Terms, Privacy and Refund with shared translation guards and leaf metadata; browser checks confirm all three, homepage unaffected; cross-system preference saved.
