@@ -5,6 +5,7 @@ import { listMyLanes } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPips } from "@/components/DashboardPieces";
 import { pathStartLabel } from "@/lib/path-start";
+import { WatchmanReminder } from "@/components/WatchmanReminder";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [
@@ -40,9 +41,8 @@ function Lanes() {
       <Link to="/paths/library" className="inline-block mb-8 text-xs text-[#c9a84c] font-semibold">
         Browse path library →
       </Link>
-
-
       {isLoading && <p className="text-[#9e968a]">Loading…</p>}
+      {!isLoading && <WatchmanReminder paths={lanes.map((lane) => ({ id: lane.lane_id, title: lane.title, status: lane.status, watchmen: lane.watchman_count, endsAt: lane.ends_at, today: lane.ownerToday }))} />}
       {!isLoading && lanes.length === 0 && <p className="text-[#948d80]">No paths yet. Create your first one.</p>}
 
       {active.length > 0 && (

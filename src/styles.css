@@ -124,6 +124,11 @@ button, nav a { user-select: none; -webkit-user-select: none; }
     isolation: isolate;
   }
   .app-main { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; }
+  /* Remove the dock while typing instead of moving it with the keyboard. */
+  body:has(textarea:focus, [contenteditable="true"]:focus, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):focus) .nav-mobile-dock {
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 /* Splash aura */
