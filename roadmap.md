@@ -1,5 +1,6 @@
 # Tasks
-- [ ] Level the current film's music bed without changing the approved pictures or narration; register MP4/WebM and verify playback before a vertical cut.
+- [x] Level the current film's music bed: v9 preserves picture stream and isolated narration, replaces pumping music with a steady bed; optimized 1080p MP4/WebM registered and mounted, 55.5s timing and homepage playback through ending verified with no page errors.
+- [ ] Approve v9 sound on the user's phone before creating the vertical cut — measurements verify steady music, but listening approval requires the user.
 - [x] Add shared Solemn Covenant reminders atop Path detail and Paths list, with pending acceptance distinguished; three eligibility tests and isolated actual-component browser checks pass.
 - [x] Hide fixed mobile navigation during editable-field focus with CSS; browser checks verify disappearance, blur restoration, and desktop hiding without changing dock offsets.
 - [ ] Verify reminders on a real signed-in Path and keyboard dismissal on a physical iPhone — preview self-session mint found no matching account; requires preview sign-in and device check.
