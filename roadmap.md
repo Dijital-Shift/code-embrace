@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Level the current film's music bed without changing the approved pictures or narration; register MP4/WebM and verify playback before a vertical cut.
 - [x] Add shared Solemn Covenant reminders atop Path detail and Paths list, with pending acceptance distinguished; three eligibility tests and isolated actual-component browser checks pass.
 - [x] Hide fixed mobile navigation during editable-field focus with CSS; browser checks verify disappearance, blur restoration, and desktop hiding without changing dock offsets.
 - [ ] Verify reminders on a real signed-in Path and keyboard dismissal on a physical iPhone — preview self-session mint found no matching account; requires preview sign-in and device check.
