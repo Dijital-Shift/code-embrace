@@ -10,7 +10,6 @@ import { useAccessState } from "@/components/AccessBanner";
 import { Button } from "@/components/ui/button";
 import { homepageMembership } from "@/lib/homepage-membership";
 import { KingdomExplainer } from "@/components/KingdomExplainer";
-import { AppInstallCard } from "@/components/AppInstallCard";
 import filmMp4 from "@/assets/videos/kingdom-protocol-explainer-v8-optimized.mp4.asset.json";
 import filmWebm from "@/assets/videos/kingdom-protocol-explainer-v8.webm.asset.json";
 import filmPoster from "@/assets/videos/kingdom-protocol-explainer-poster-v8.png.asset.json";
@@ -759,7 +758,6 @@ function Landing() {
       <PaymentTestModeBanner />
       <Header />
       <Hero />
-      <AppInstallCard />
       <KingdomExplainer mp4={filmMp4.url} webm={filmWebm.url} poster={filmPoster.url} />
       <ProblemTension />
       <SilenceRule />
