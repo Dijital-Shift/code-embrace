@@ -2,9 +2,6 @@ import { statusColor } from "@/lib/status";
 
 /** One segment per active path, colored by tonight's status. */
 export function DayProgressBar({ statuses }: { statuses: string[] }) {
-  const total = statuses.length;
-  const held = statuses.filter((s) => s === "completed").length;
-  const open = statuses.filter((s) => s === "pending").length;
   return (
     <div className="mb-5">
       <div className="flex gap-1">
@@ -19,9 +16,6 @@ export function DayProgressBar({ statuses }: { statuses: string[] }) {
           />
         ))}
       </div>
-      <p className="text-[0.72rem] text-[#a8a094] mt-2">
-        {open === 0 ? "All answered. Stay aligned." : `${held} of ${total} held tonight`}
-      </p>
     </div>
   );
 }
