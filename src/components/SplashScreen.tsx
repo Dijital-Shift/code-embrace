@@ -12,14 +12,8 @@ export function StaticSplash() {
     <div id="kp-splash-static" aria-hidden>
       <div className="relative">
         <div className="kp-splash-aura absolute inset-[-40%] rounded-full" />
-        <img src="/kingdom-protocol-logo.png" alt="" className="relative w-28 h-28 object-contain" />
+        <img src="/kingdom-protocol-logo.png" alt="" className="relative w-36 h-36 object-contain" />
       </div>
-      <p className="mt-7 text-xl tracking-[0.22em] text-[#c9a84c]" style={{ fontFamily: "Cinzel, serif" }}>
-        KINGDOM PROTOCOL
-      </p>
-      <p className="mt-2 text-sm italic text-[#a49d8e]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-        Accountability with a watchman.
-      </p>
     </div>
   );
 }
