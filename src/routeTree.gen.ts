@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BarPreviewRouteImport } from './routes/bar-preview'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -56,6 +57,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BarPreviewRoute = BarPreviewRouteImport.update({
+  id: '/bar-preview',
+  path: '/bar-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BillingRoute = BillingRouteImport.update({
@@ -247,6 +253,7 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/bar-preview': typeof BarPreviewRoute
   '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/bar-preview': typeof BarPreviewRoute
   '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
@@ -328,6 +336,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/bar-preview': typeof BarPreviewRoute
   '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
@@ -370,6 +379,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/bar-preview'
     | '/billing'
     | '/checkin'
     | '/dashboard'
@@ -410,6 +420,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/bar-preview'
     | '/billing'
     | '/checkin'
     | '/dashboard'
@@ -450,6 +461,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/bar-preview'
     | '/billing'
     | '/checkin'
     | '/dashboard'
@@ -491,6 +503,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  BarPreviewRoute: typeof BarPreviewRoute
   BillingRoute: typeof BillingRoute
   CheckinRoute: typeof CheckinRoute
   DashboardRoute: typeof DashboardRoute
@@ -542,6 +555,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bar-preview': {
+      id: '/bar-preview'
+      path: '/bar-preview'
+      fullPath: '/bar-preview'
+      preLoaderRoute: typeof BarPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billing': {
@@ -814,6 +834,7 @@ const InviteTokenRouteWithChildren = InviteTokenRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  BarPreviewRoute: BarPreviewRoute,
   BillingRoute: BillingRoute,
   CheckinRoute: CheckinRoute,
   DashboardRoute: DashboardRoute,
