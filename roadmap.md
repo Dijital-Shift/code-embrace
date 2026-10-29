@@ -69,3 +69,4 @@
 - [x] Path list and dashboard cards: no Watchman shown once — faint empty seat rings replace the duplicate uppercase label. Verified signed in on both pages.
 - [x] Shorten invite text (Option 1), link on its own line; Android preview tag.
 - [x] Push the Path owner when a Watchman accepts their invite.
+- [x] Dashboard day bar fills left-to-right: settled slots lead, open slots trail. Verified with mixed statuses.
