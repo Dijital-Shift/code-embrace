@@ -1,11 +1,12 @@
-import { statusColor } from "@/lib/status";
+import { orderBarStatuses, statusColor } from "@/lib/status";
 
-/** One segment per active path, colored by tonight's status. */
+/** One segment per active path, settled ones filled from the left. */
 export function DayProgressBar({ statuses }: { statuses: string[] }) {
+  const ordered = orderBarStatuses(statuses);
   return (
     <div className="mb-5">
       <div className="flex gap-1">
-        {statuses.map((s, i) => (
+        {ordered.map((s, i) => (
           <div
             key={i}
             className="h-1.5 flex-1 rounded-full transition-colors duration-500"

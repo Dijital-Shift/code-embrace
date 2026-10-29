@@ -26,3 +26,11 @@ export function statusLabel(status: string): string {
 export function statusColor(status: string): string {
   return STATUS_COLOR[status as CheckinStatus] ?? "#444";
 }
+
+/** Tonight's bar fills left-to-right: every settled slot leads, open slots trail. */
+export function orderBarStatuses(statuses: string[]): string[] {
+  const settled: string[] = [];
+  const open: string[] = [];
+  for (const s of statuses) (s === "pending" ? open : settled).push(s);
+  return [...settled, ...open];
+}
