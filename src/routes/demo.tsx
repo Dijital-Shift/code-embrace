@@ -84,8 +84,8 @@ function MockPathLibrary() {
     <div className="space-y-3">
       <div className="rounded-md border border-[#c9a84c]/50 p-2.5" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
         <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#c9a84c]">Your Starter Walk</div>
-        <div className="mt-0.5 text-[12px] font-semibold text-white">Send Scripture is active</div>
-        <div className="text-[10px] text-[#b8b0a4]">Send a verse to at least one person every day. Edit, pause, or remove anytime.</div>
+        <div className="mt-0.5 text-[12px] font-semibold text-white">Your first Path is active</div>
+        <div className="text-[10px] text-[#b8b0a4]">A starter discipline is ready on day one. Keep it, edit it, or replace it anytime.</div>
       </div>
       <div className="text-sm font-semibold text-white">Path Library</div>
       <div className="grid grid-cols-4 gap-1.5">
@@ -200,7 +200,7 @@ function MockCheckin() {
       <div className="text-[10px] font-bold uppercase tracking-wider text-[#a8a094]">Pursue</div>
       <div className="flex items-center gap-3 rounded-xl border border-[#166534] px-3 py-3" style={{ background: "linear-gradient(135deg, #052e16 0%, #031a0d 100%)" }}>
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4ade80] text-[10px] font-bold text-black">✓</span>
-        <span className="flex-1 text-sm text-[#4ade80]">Send Scripture</span>
+        <span className="flex-1 text-sm text-[#4ade80]">Daily Scripture</span>
         <span className="text-[10px] text-[#a8a094] underline">Undo</span>
       </div>
       <div className="flex items-center gap-3 rounded-xl border border-[#2a2518] bg-[#161210] px-3 py-3">
@@ -404,7 +404,7 @@ const SCENES: Scene[] = [
     step: 1,
     role: "user",
     title: "Start walking on day one",
-    body: "Every new member starts with Send Scripture already active — keep it, edit it, or remove it. Then pick more from eight categories, each path scripture-backed and labeled Flee or Pursue.",
+    body: "You sign in to a starter Path that's already active, so day one begins with something to hold. Add more from eight categories, each backed by scripture and labeled Flee or Pursue.",
     why: "Why it matters: vague accountability fails. A named path with a verse behind it is something you can actually walk.",
     render: MockPathLibrary,
   },
