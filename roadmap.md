@@ -1,6 +1,7 @@
 # Tasks
+- [x] Correct vertical film's final emblem using the public shofar/watchtower logo; preserve 55.5-second timing and identical MP4 audio packets; export versioned MP4/WebM and corrected closing poster.
 - [x] Level the current film's music bed: v9 preserves picture stream and isolated narration, replaces pumping music with a steady bed; optimized 1080p MP4/WebM registered and mounted, 55.5s timing and homepage playback through ending verified with no page errors.
-- [ ] Approve v9 sound on the user's phone before creating the vertical cut — measurements verify steady music, but listening approval requires the user.
+- [x] Approve v9 sound before the vertical cut — user approved the leveled audio and requested the portrait version.
 - [x] Add shared Solemn Covenant reminders atop Path detail and Paths list, with pending acceptance distinguished; three eligibility tests and isolated actual-component browser checks pass.
 - [x] Hide fixed mobile navigation during editable-field focus with CSS; browser checks verify disappearance, blur restoration, and desktop hiding without changing dock offsets.
 - [ ] Verify reminders on a real signed-in Path and keyboard dismissal on a physical iPhone — preview self-session mint found no matching account; requires preview sign-in and device check.
