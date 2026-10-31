@@ -81,7 +81,9 @@ Writing rules:
 
 Reuse the established explainer player pattern (see `src/components/AthleteExplainer.tsx` in Combat Golf as the reference implementation):
 
-- `<video controls playsInline preload="metadata" poster={...}>` with the MP4 `<source>` (explicit codec type) and the WebM `<source type="video/webm">` fallback listed after it.
+- **Mandatory poster-first top-left play treatment:** initialize `started` to false and render `<video controls={started} playsInline preload="metadata" poster={...}>`. Place a branded design-system button with a Play icon and the label “Play film” in the top-left corner of the poster. No large centered play overlay and no visible native controls before playback. No runtime label on the play button.
+- The top-left button starts playback with `videoRef.current.play()` and reveals native controls. Hide the custom button after playback starts; keep native controls available for pause, seeking, volume and replay. Handle rejected play promises without an unhandled error: restore the custom play button when playback cannot start. Retry resets the poster-first state. Never autoplay or bake this clickable control into the video/poster pixels. Verify the first frame and click-to-play on desktop and phone widths.
+- Include the MP4 `<source>` (explicit codec type) and the WebM `<source type="video/webm">` fallback listed after it.
 - Error state with a retry button.
 - A follow-through link directly beneath the player: "Open [System Name]" or "Claim Access" → the live entry route.
 - `onEnded` handler that illuminates/highlights the follow-through link (Terminal Air-Lock).
@@ -106,6 +108,7 @@ Once — and only once — the 16:9 master is approved and mounted, forge the 9:
 - [ ] 100% understandable on mute via on-screen typography.
 - [ ] ≥40% of runtime shows actual host UI components.
 - [ ] MP4 + WebM both registered via asset pointers (no repo bloat).
-- [ ] Player has controls, poster, retry, and the `onEnded` air-lock CTA.
+- [ ] Player starts with a top-left branded “Play film” button over the poster; native controls appear after user-initiated playback, retry restores the play button, and desktop/phone click-to-play is verified.
+- [ ] Player has poster, retry, and the `onEnded` air-lock CTA.
 - [ ] Playback verified on a phone-sized viewport with zero page errors.
 - [ ] Vertical strike cut (if made) recomposed natively at 1080×1920 with master audio, and NOT mounted as the in-app player.

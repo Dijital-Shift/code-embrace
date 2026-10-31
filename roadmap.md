@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Apply and verify the homepage top-left Play film control; save the same treatment in the active Dijital Explainer Film skill.
 - [x] Correct vertical film's final emblem using the public shofar/watchtower logo; preserve 55.5-second timing and identical MP4 audio packets; export versioned MP4/WebM and corrected closing poster.
 - [x] Level the current film's music bed: v9 preserves picture stream and isolated narration, replaces pumping music with a steady bed; optimized 1080p MP4/WebM registered and mounted, 55.5s timing and homepage playback through ending verified with no page errors.
 - [x] Approve v9 sound before the vertical cut — user approved the leveled audio and requested the portrait version.
