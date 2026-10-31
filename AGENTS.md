@@ -8,7 +8,7 @@
 - Mobile navigation portals to the document body and stays pinned with pure CSS `position: fixed; bottom: 0` plus `env(safe-area-inset-bottom)`; CSS hides it during editable-field focus, without visualViewport JS offsets, so typing never lifts the dock.
 - Path detail and list share WatchmanReminder and the existing per-Path invitation query cache; eligibility excludes closed Paths and pending invitations remain distinct from missing Watchmen to avoid duplicate invitation prompts.
 - Watchman encouragement sends wait five seconds before saving or pushing; navigation and card collapse are guarded until Undo or delivery settles so composer-unmount cleanup cannot silently discard a normal in-app send.
-- The explainer uses a reusable native-controls player with registered MP4/WebM/poster pointers and a session-aware ended-state CTA; playback stays user-initiated and media stays outside Git.
+- The explainer uses a reusable poster-first player with a top-left Play film control, revealing native controls after user-initiated playback; registered media stays outside Git and the session-aware CTA stays visible beneath the player.
 - Automatic device-timezone adoption is limited to published app hosts, with client automation checks and server request-host checks; preview settings saves preserve the stored timezone in Auto mode so testing cannot shift live reminders.
 - All Path accountability uses starts_at via the shared client-safe path-start helper, not created_at; database triggers protect inserts and reject pre-start check-ins, including old clients and reminder jobs.
 - Homepage membership presentation uses the existing access query through a client-safe classifier; it must not create a separate entitlement decision.
