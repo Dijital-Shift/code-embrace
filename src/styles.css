@@ -49,6 +49,13 @@
 .kp-action-archive { background: var(--color-action-archive); border-color: var(--color-action-ember-edge); color: var(--color-destructive); }
 .kp-action:hover { border-color: currentColor; background: var(--color-accent); }
 .kp-action-edit:hover { box-shadow: var(--shadow-action), 0 0 16px color-mix(in srgb, var(--color-primary) 14%, transparent); }
+.kp-watch-card { background: var(--background-image-briefing); box-shadow: var(--shadow-action); }
+.kp-watch-header { min-height: 70px; height: auto; white-space: normal; }
+.kp-watch-header[aria-expanded="true"] { background: var(--color-action-pause); border-bottom: 1px solid var(--color-action-gold-edge); }
+.kp-watch-header:hover { background: var(--color-accent); }
+.kp-watch-explanation { border-left: 2px solid var(--color-action-ember-edge); background: color-mix(in srgb, var(--color-action-archive) 65%, transparent); }
+.kp-watch-call { background: var(--background-image-briefing-accept); color: var(--color-primary-foreground); border-color: var(--color-primary); }
+.kp-watch-call:hover { background: var(--color-primary); }
 @media (prefers-reduced-motion: reduce) { .kp-action { transition: none; } }
 
 .history-completed { color: var(--color-history-held); background: color-mix(in oklab, var(--color-history-held) 14%, transparent); }

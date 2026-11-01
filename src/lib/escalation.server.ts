@@ -5,6 +5,7 @@ import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
 import { reachOutLine } from './sibling';
 import { pathIsDue } from './path-start';
+import { watchmanAlertName } from './watchman-alert';
 
 /**
  * Owners whose free month has ended without a plan are "resting": no silence
@@ -65,8 +66,8 @@ export async function triggerBreachAlert(args: {
 }) {
   const watchmen = await activeWatchmen(args.laneId);
   if (!watchmen.length) return;
-  const { data: u } = await supabaseAdmin.from('profiles').select('email, phone').eq('user_id', args.userId).single();
-  const body = u?.phone ? `${u.email} reported a breach. Phone: ${u.phone}` : `${u?.email} reported a breach. Open to view details.`;
+  const { data: u } = await supabaseAdmin.from('profiles').select('first_name, last_name').eq('user_id', args.userId).single();
+  const body = `${watchmanAlertName(u)} reported a breach on "${args.laneTitle}". Open The Watch to read their explanation and reach out.`;
 
   for (const w of watchmen) {
     if (!w.watchman_id) continue;
@@ -83,12 +84,12 @@ export async function triggerBreachAlert(args: {
 export async function notifyPartnerSkip(args: { laneId: string; laneTitle: string; userId: string }) {
   const watchmen = await activeWatchmen(args.laneId);
   if (!watchmen.length) return;
-  const { data: u } = await supabaseAdmin.from('profiles').select('email').eq('user_id', args.userId).single();
+  const { data: u } = await supabaseAdmin.from('profiles').select('first_name, last_name').eq('user_id', args.userId).single();
   for (const w of watchmen) {
     if (!w.watchman_id) continue;
     await sendPushToUser(w.watchman_id, {
       title: `Sabbath — ${args.laneTitle}`,
-      body: `${u?.email ?? 'Your partner'} is observing the Sabbath. No check-in today.`,
+      body: `${watchmanAlertName(u)} is observing the Sabbath. No check-in today.`,
       url: '/partner',
     });
   }
@@ -122,9 +123,9 @@ export async function markMissedCheckins() {
   // Pull user timezones.
   const userIds = Array.from(new Set(activeLanes.map((l: any) => l.user_id)));
   const { data: profs } = await supabaseAdmin.from('profiles')
-    .select('user_id, timezone, email, first_name, gender').in('user_id', userIds);
+    .select('user_id, timezone, first_name, last_name, gender').in('user_id', userIds);
   const tzMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.timezone || 'America/Chicago']));
-  const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.first_name || p.email]));
+  const nameMap = new Map((profs ?? []).map((p: any) => [p.user_id, watchmanAlertName(p)]));
   const genderMap = new Map((profs ?? []).map((p: any) => [p.user_id, p.gender ?? null]));
   const withAccess = await accessibleOwners(userIds as string[]);
 
@@ -183,7 +184,7 @@ export async function markMissedCheckins() {
       .eq('status', 'missed').maybeSingle();
     if (!priorMiss) continue; // day 1 — user only
 
-    const who = nameMap.get(lane.user_id) ?? 'Your partner';
+    const who = nameMap.get(lane.user_id) ?? 'Someone you watch';
     const body = `${who} has gone silent on "${lane.title}" two days running. ${reachOutLine(genderMap.get(lane.user_id))}`;
 
     for (const w of watchmen) {

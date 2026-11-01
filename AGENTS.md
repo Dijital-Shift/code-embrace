@@ -1,4 +1,5 @@
 # Architecture rules
+- Watchman notification identity uses the client-safe watchman-alert name helper without credential fallback; history expansion uses its downward-only viewport reveal helper to keep new incidents above the mobile dock.
 - Path identity correction uses a shared client-safe validator in the edit form and authenticated update function; history, assigned Watchmen, or expiry close the correction window to preserve the original commitment.
 - One root-level AppInstallProvider owns native installation events across routes; install cards and alert setup share it without changing service-worker registration or update behavior.
 - All legal pages use LegalPageLayout with translate="no", notranslate, and leaf-level no-translation metadata to preserve legal wording without disabling translation elsewhere.
