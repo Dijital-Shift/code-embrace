@@ -14,6 +14,7 @@ import { friendlyLaneError } from './lane-errors.server';
 import { localDate, localHour, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import { alertContextLabel } from './alert-context';
 import { removalNotice } from './watchman-removal';
+import { watchmanAlertName } from './watchman-alert';
 import { defaultPathStart, resolvePathStart, pathStartDate, pathIsDue } from './path-start';
 
 import {
@@ -742,9 +743,9 @@ export const getPartnerView = createServerFn({ method: 'GET' })
 
     const userIds = [...new Set((lanes ?? []).map((l) => l.user_id))];
     const ownerTimezones = new Map<string, string>();
-    const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null; avatar_url: string | null }>();
+    const ownerEmails = new Map<string, { email: string; phone: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null }>();
     if (userIds.length) {
-      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, avatar_url, timezone').in('user_id', userIds);
+      const { data: ps } = await supabaseAdmin.from('profiles').select('user_id, email, phone, first_name, last_name, avatar_url, timezone').in('user_id', userIds);
       for (const p of ps ?? []) ownerTimezones.set(p.user_id, p.timezone || DEFAULT_TZ);
       // Phone numbers go only to a Watchman holding an active seat on an active Path of that member.
       const { data: seatRows } = await supabaseAdmin.from('path_watchmen')
@@ -753,7 +754,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       const phoneOwners = new Set((lanes ?? [])
         .filter((l: any) => l.status === 'active' && seatSet.has(l.lane_id) && l.user_id !== userId)
         .map((l: any) => l.user_id));
-      for (const p of (ps ?? []) as any[]) ownerEmails.set(p.user_id, { email: p.email, phone: phoneOwners.has(p.user_id) ? p.phone : null, first_name: p.first_name, avatar_url: p.avatar_url ?? null });
+      for (const p of (ps ?? []) as any[]) ownerEmails.set(p.user_id, { email: p.email, phone: phoneOwners.has(p.user_id) ? p.phone : null, first_name: p.first_name, last_name: p.last_name, avatar_url: p.avatar_url ?? null });
     }
     // Owners whose free month lapsed are resting — the watchman sees a quiet
     // label, never anything about money.
@@ -805,7 +806,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     const alertHistory = (notifications ?? []).map((n: any) => {
       const title = laneTitles.get(n.lane_id);
       const prof = ownerEmails.get(laneOwner.get(n.lane_id) ?? '');
-      const who = (prof?.first_name || '').trim() || prof?.email || null;
+      const who = watchmanAlertName(prof);
       let line: string | null = null;
       if (title && who) {
         if (n.type === 'missed_checkin') line = `${who} has gone silent on "${title}" two days running. Reach out.`;
