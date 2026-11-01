@@ -74,7 +74,7 @@ export async function triggerBreachAlert(args: {
     await deliverToWatchman({
       laneId: args.laneId, checkinId: args.checkinId, watchmanId: w.watchman_id,
       watchmanPhone: w.phone, type: 'breach_report', body,
-      title: `Breach — ${args.laneTitle}`, smsFallback: SMS_BREACH,
+      title: 'Breach reported', smsFallback: SMS_BREACH,
     });
   }
 }
@@ -88,7 +88,7 @@ export async function notifyPartnerSkip(args: { laneId: string; laneTitle: strin
   for (const w of watchmen) {
     if (!w.watchman_id) continue;
     await sendPushToUser(w.watchman_id, {
-      title: `Sabbath — ${args.laneTitle}`,
+      title: 'Sabbath observed',
       body: `${watchmanAlertName(u)} is observing the Sabbath. No check-in today.`,
       url: '/partner',
     });
@@ -216,7 +216,7 @@ export async function markMissedCheckins() {
       ? `Yesterday went silent on "${titles[0]}". The grace window has closed.`
       : `${titles.length} paths went silent yesterday. The grace window has closed.`;
     await sendPushToUser(ownerId, {
-      title: titles.length === 1 ? `Silent — ${titles[0]}` : 'Silent — yesterday',
+      title: 'Silence on your path',
       body,
       url: '/checkin',
     });
@@ -225,22 +225,18 @@ export async function markMissedCheckins() {
   for (const [watchmanId, pending] of watchQueue) {
     const owners = [...pending.owners.entries()];
     const pathCount = owners.reduce((n, [, o]) => n + o.titles.length, 0);
-    let title: string;
     let body: string;
     if (owners.length === 1 && pathCount === 1) {
       const [ownerId, o] = owners[0]!;
-      title = `Silence — ${o.titles[0]}`;
       body = `${o.name} has gone silent on "${o.titles[0]}" two days running. ${reachOutLine(genderMap.get(ownerId))}`;
     } else if (owners.length === 1) {
       const [ownerId, o] = owners[0]!;
-      title = `Silence — ${o.name}`;
       body = `${o.name} has gone silent on ${o.titles.length} paths, two days running. ${reachOutLine(genderMap.get(ownerId))}`;
     } else {
-      title = 'Silence — your watch';
       body = `${owners.length} people you watch have gone silent, two days running. Reach out to them.`;
     }
 
-    const sent = await sendPushToUser(watchmanId, { title, body, url: '/partner' });
+    const sent = await sendPushToUser(watchmanId, { title: 'Silence on the wall', body, url: '/partner' });
     let channel: 'push' | 'sms' | null = sent ? 'push' : null;
     if (!sent && (await sendSms(pending.phone, SMS_SILENCE))) channel = 'sms';
     if (channel) watchmenPinged++;
