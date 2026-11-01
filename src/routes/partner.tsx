@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useId, useRef, useState } from "react";
 import { isEncouragementPending, scheduleEncouragementSend } from "@/lib/encouragement-send";
 import { Undo2, Send, Phone, MessageSquare, ChevronUp, ChevronDown, ShieldAlert } from "lucide-react";
-import { contactHaptic, revealWatchmanAlert, watchmanAlertName } from "@/lib/watchman-alert";
+import { contactHaptic, revealWatchmanAlert, silenceIncidentRange, watchmanAlertName } from "@/lib/watchman-alert";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWatchmanRemoval } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -488,7 +488,7 @@ function batchIncidents(items: AlertItem[]): Incident[] {
   // A lone silence alert already covers two silent days (Day 1 stays private):
   // backdate its start one day so the badge reads e.g. "Oct 23 – Oct 24".
   for (const inc of out) {
-    if (inc.kind === "silent" && inc.count === 1) inc.start = new Date(inc.end.getTime() - 24 * 3600_000);
+    if (inc.kind === "silent") inc.start = silenceIncidentRange(inc.count, inc.end).start;
   }
   return out;
 }
@@ -505,7 +505,7 @@ function IncidentList({ items }: { items: AlertItem[] }) {
         const range = fmt(i.start) === fmt(i.end) ? fmt(i.end) : `${fmt(i.start)} – ${fmt(i.end)}`;
         const label = breach
           ? (i.count > 1 ? `${i.count} breaches` : "Breach")
-          : `Silent · ${i.count > 1 ? i.count : 2} days`;
+          : `Silent · ${silenceIncidentRange(i.count, i.end).days} days`;
         return (
           <div key={i.key} className="flex justify-between items-center gap-3 px-3 py-2 rounded-md border border-[#2a2518]" style={{ background: "#0d0b06" }}>
             <span className="flex items-center gap-2 min-w-0">

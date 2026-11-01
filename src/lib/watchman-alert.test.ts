@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { assert } from 'node:assert';
 import { alertRevealDistance, watchmanAlertName } from './watchman-alert';
 
 test('alert identity uses the saved personal name, not credentials', () => {
