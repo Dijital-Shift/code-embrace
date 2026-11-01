@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useBlocker } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { isEncouragementPending, scheduleEncouragementSend } from "@/lib/encouragement-send";
-import { Undo2, Send } from "lucide-react";
+import { Undo2, Send, Phone, MessageSquare, ChevronUp, ChevronDown, ShieldAlert } from "lucide-react";
+import { contactHaptic, revealWatchmanAlert, watchmanAlertName } from "@/lib/watchman-alert";
 import { getPartnerView, sendEncouragement, dismissWatchmanPrompt, acknowledgeWatchmanRemoval } from "@/lib/api.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -241,11 +242,12 @@ function Partner() {
  * One watched path. Urgent ones render expanded; quiet ones collapse to a
  * single line so watching several people stays readable.
  */
-function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, sendFn, onSent }: {
+export function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, sendFn, onSent }: {
   lane: any; checkin: any; statusColor: Record<string, string>; defaultOpen?: boolean; sendFn: any; onSent: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const [sending, setSending] = useState(false);
+  const detailsId = useId();
   const todayLabel = lane.upcoming ? 'Starts tomorrow' : c ? statusLabel(c.status) : "Open";
   const todayCol = c ? statusColor[c.status] ?? "#333" : "#948d80";
   const needsContact = c?.status === "breached" || c?.status === "missed";
@@ -253,10 +255,10 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
   const rel = lane.partner_relationship as string | null | undefined;
 
   return (
-    <div className="rounded-xl border border-[#2a2418] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]" style={{ background: "linear-gradient(135deg, #14100a 0%, #0a0800 100%)" }}>
-      <button
-        type="button" disabled={sending} aria-expanded={open} onClick={() => setOpen((v) => !v)}
-        className="w-full flex justify-between items-center gap-3 text-left px-4 py-3"
+    <div className="kp-watch-card rounded-lg border border-action-gold-edge overflow-hidden">
+      <Button variant="ghost"
+        type="button" disabled={sending} aria-expanded={open} aria-controls={detailsId} onClick={() => setOpen((v) => !v)}
+        className="kp-watch-header w-full flex justify-between items-center gap-3 text-left px-4 py-3 rounded-none"
       >
         <div className="min-w-0 flex items-center gap-3">
           {lane.owner?.avatar_url && (
@@ -269,7 +271,7 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
             <p className="font-semibold text-sm truncate">{lane.title}</p>
             <p className="text-xs text-[#948d80] truncate">
               {rel && <span className="text-[#c9a84c] font-semibold">{rel} · </span>}
-              {lane.owner?.first_name || lane.owner?.email}
+              {watchmanAlertName(lane.owner)}
             </p>
           </div>
         </div>
@@ -277,12 +279,15 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
           <p className="text-xs font-semibold" style={{ color: lane.resting ? "#948d80" : todayCol }}>
             {lane.resting ? "Resting" : todayLabel}
           </p>
-          <p className="text-[0.65rem] text-[#c9a84c]">{open ? "Hide" : "Tap to encourage"}</p>
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary mt-1">
+            {open ? <ChevronUp aria-hidden="true" className="size-4" /> : <ChevronDown aria-hidden="true" className="size-4" />}
+            {open ? "Hide details" : "Encourage"}
+          </span>
         </div>
-      </button>
+      </Button>
 
       {open && (
-        <div className="px-4 pb-4">
+        <div id={detailsId} className="px-4 pt-4 pb-4">
           {lane.resting && (
             <p className="text-xs text-[#948d80] mb-3 leading-relaxed">
               This path is resting. Their history is all still here — you just won't get alerts
@@ -296,16 +301,18 @@ function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = false, se
             </div>
           )}
           {c?.status === "breached" && c.breach_explanation && (
-            <div className="p-2.5 rounded mb-3 border border-[#3d1515]" style={{ background: "#1a0a0a" }}>
-              <p className="text-[0.7rem] text-[#f87171] font-semibold mb-1">Breach explanation</p>
-              <p className="text-xs text-[#ded8cc]">{c.breach_explanation}</p>
+            <div className="kp-watch-explanation py-3 pl-3 pr-2 mb-4">
+              <p className="text-xs text-destructive font-semibold mb-2 flex items-center gap-2"><ShieldAlert className="size-4 shrink-0" aria-hidden="true" />Breach explanation:</p>
+              <p className="text-sm text-secondary-foreground leading-relaxed whitespace-pre-wrap break-words">{c.breach_explanation}</p>
             </div>
           )}
           {needsContact && phone && (
-            <div className="flex items-center gap-2 mb-3">
-              <a href={`tel:${phone}`} className="px-5 py-2 rounded text-sm font-semibold bg-white text-black border border-[#222]">Call</a>
-              <a href={`sms:${phone}`} className="px-5 py-2 rounded text-sm font-semibold text-white border border-[#222]" style={{ background: "#1a1a1a" }}>Text</a>
-              <span className="text-xs text-[#948d80] ml-1">{phone}</span>
+            <div className="my-5">
+              <div className="grid grid-cols-2 gap-5">
+                <Button asChild variant="pathEdit" className="kp-watch-call w-full font-semibold"><a href={`tel:${phone}`} onClick={contactHaptic}><Phone aria-hidden="true" />Call</a></Button>
+                <Button asChild variant="pathEdit" className="w-full font-semibold"><a href={`sms:${phone}`} onClick={contactHaptic}><MessageSquare aria-hidden="true" />Text</a></Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3 text-center break-words">{phone}</p>
             </div>
           )}
           {needsContact && !phone && <p className="text-xs text-[#9e968a] mb-3">No phone number on file — reach out another way.</p>}
@@ -386,7 +393,7 @@ export function EncourageBox({ laneId, title, phone, send, onSent, alert, onPend
         <span className="text-[0.65rem] text-[#948d80]">{body.length}/280</span>
         <span className="flex-1" />
         {smsHref && body.trim() && (
-          <a href={smsHref} className="text-xs px-3 py-1.5 rounded font-semibold text-white border border-[#222]" style={{ background: "#1a1a1a" }}>Text it</a>
+          <Button asChild variant="pathEdit" size="sm"><a href={smsHref} onClick={contactHaptic}><MessageSquare aria-hidden="true" />Text it</a></Button>
         )}
         <Button size="sm" disabled={busy || queued || !body.trim()}><Send />
           {busy ? "Sending…" : sent ? "Sent" : "Send in app"}
@@ -425,8 +432,15 @@ function groupAlerts(notifications: any[], lanes: any[]): AlertGroupData[] {
   return [...groups.values()];
 }
 
-function AlertGroup({ group }: { group: AlertGroupData }) {
+export function AlertGroup({ group }: { group: AlertGroupData }) {
   const [open, setOpen] = useState(false);
+  const detailsId = useId();
+  const detailsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => revealWatchmanAlert(detailsRef.current));
+    return () => cancelAnimationFrame(frame);
+  }, [open]);
   const parts: string[] = [];
   if (group.silent) parts.push(`${group.silent} silent`);
   if (group.breach) parts.push(`${group.breach} breach`);
@@ -435,8 +449,8 @@ function AlertGroup({ group }: { group: AlertGroupData }) {
     : null;
 
   return (
-    <div className="rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
-      <button type="button" onClick={() => setOpen((v) => !v)} className="w-full flex justify-between items-center gap-3 text-left px-4 py-3">
+    <div className="kp-watch-card rounded-lg border border-action-stone-edge overflow-hidden">
+      <Button variant="ghost" type="button" aria-expanded={open} aria-controls={detailsId} onClick={() => setOpen((v) => !v)} className="kp-watch-header rounded-none w-full flex justify-between items-center gap-3 text-left px-4 py-3">
         <div className="min-w-0">
           <p className="text-sm text-[#ded8cc] truncate">
             {group.title}{group.who ? <span className="text-[#948d80]"> · {group.who}</span> : null}
@@ -445,10 +459,10 @@ function AlertGroup({ group }: { group: AlertGroupData }) {
             {parts.join(", ")}{lastLabel ? ` — last ${lastLabel}` : ""}
           </p>
         </div>
-        <span className="text-[0.65rem] text-[#c9a84c] shrink-0">{open ? "Hide" : "Open"}</span>
-      </button>
+        <span className="text-xs text-primary font-semibold shrink-0 inline-flex items-center gap-1.5">{open ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}{open ? "Hide" : "Open"}</span>
+      </Button>
 
-      {open && <IncidentList items={group.items} />}
+      {open && <div id={detailsId} ref={detailsRef}><IncidentList items={group.items} /></div>}
     </div>
   );
 }
@@ -459,7 +473,7 @@ type Incident = { key: string; kind: "breach" | "silent"; start: Date; end: Date
 function batchIncidents(items: AlertItem[]): Incident[] {
   const sorted = items
     .filter((n) => n.sent_at)
-    .map((n) => ({ n, t: new Date(n.sent_at!) }))
+    .flatMap((n) => n.sent_at ? [{ n, t: new Date(n.sent_at) }] : [])
     .sort((a, b) => b.t.getTime() - a.t.getTime());
   const out: Incident[] = [];
   for (const { n, t } of sorted) {
