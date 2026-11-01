@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AssignmentCard, AlertGroup } from './partner';
 
-export const Route = createFileRoute('/__verify-watch')({ component: VerifyWatch });
+export const Route = createFileRoute('/verify-watch')({ component: VerifyWatch });
 function VerifyWatch() {
   return <main className="max-w-lg mx-auto p-5">
     <AssignmentCard lane={{ lane_id: 'fixture', title: 'Daily Scripture', owner: { first_name: 'Test', phone: '+15555550100' } }} checkin={{ status: 'breached', breach_explanation: 'I let distractions take priority today. I need to return to the commitment I made.' }} statusColor={{ breached: 'var(--color-destructive)' }} defaultOpen sendFn={async () => ({})} onSent={() => {}} />
