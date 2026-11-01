@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Polish Watchman alert identity, contact actions, breach explanation, collapse header, and downward Alert History reveal; verify tests and live interactions.
 - [x] Apply and verify the homepage top-left Play film control; active Dijital Explainer Film skill updated. Desktop/phone-width WebM playback and native pause controls verified without page errors.
 - [x] Correct vertical film's final emblem using the public shofar/watchtower logo; preserve 55.5-second timing and identical MP4 audio packets; export versioned MP4/WebM and corrected closing poster.
 - [x] Level the current film's music bed: v9 preserves picture stream and isolated narration, replaces pumping music with a steady bed; optimized 1080p MP4/WebM registered and mounted, 55.5s timing and homepage playback through ending verified with no page errors.
