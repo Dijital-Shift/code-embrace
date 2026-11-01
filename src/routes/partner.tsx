@@ -485,6 +485,11 @@ function batchIncidents(items: AlertItem[]): Incident[] {
       out.push({ key: n.notification_id, kind, start: t, end: t, count: 1, items: [n] });
     }
   }
+  // A lone silence alert already covers two silent days (Day 1 stays private):
+  // backdate its start one day so the badge reads e.g. "Oct 23 – Oct 24".
+  for (const inc of out) {
+    if (inc.kind === "silent" && inc.count === 1) inc.start = new Date(inc.end.getTime() - 24 * 3600_000);
+  }
   return out;
 }
 
@@ -500,7 +505,7 @@ function IncidentList({ items }: { items: AlertItem[] }) {
         const range = fmt(i.start) === fmt(i.end) ? fmt(i.end) : `${fmt(i.start)} – ${fmt(i.end)}`;
         const label = breach
           ? (i.count > 1 ? `${i.count} breaches` : "Breach")
-          : (i.count > 1 ? `Silent ${i.count} days` : "2 days silent");
+          : `Silent · ${i.count > 1 ? i.count : 2} days`;
         return (
           <div key={i.key} className="flex justify-between items-center gap-3 px-3 py-2 rounded-md border border-[#2a2518]" style={{ background: "#0d0b06" }}>
             <span className="flex items-center gap-2 min-w-0">
