@@ -185,7 +185,7 @@ function Partner() {
                   <p className="font-semibold text-sm truncate">{lane.title}</p>
                   <span className="text-[0.6rem] uppercase tracking-wider px-2 py-0.5 rounded border border-[#2a2518] text-[#948d80] shrink-0">{lane.status === "archived" ? "Archived" : "Paused"}</span>
                 </div>
-                <p className="text-xs text-[#948d80]">{lane.owner?.first_name || lane.owner?.email}</p>
+                <p className="text-xs text-muted-foreground">{watchmanAlertName(lane.owner)}</p>
               </div>
             ))}
           </div>
@@ -420,7 +420,7 @@ function groupAlerts(notifications: any[], lanes: any[]): AlertGroupData[] {
       g = {
         key,
         title: lane?.title ?? "Path",
-        who: lane ? (lane.owner?.first_name || lane.owner?.email || null) : null,
+        who: lane ? watchmanAlertName(lane.owner) : null,
         silent: 0, breach: 0, last: null, items: [],
       };
       groups.set(key, g);
