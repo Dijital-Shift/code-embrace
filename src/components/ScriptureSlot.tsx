@@ -33,7 +33,6 @@ export function ScriptureSlot({ value, onChange, placeholder, number }: { value:
     if (undoToast.current !== undefined) toast.dismiss(undoToast.current);
     current.current = "";
     change.current("");
-    textarea.current?.focus({ preventScroll: true });
     undoToast.current = toast("Scripture cleared", {
       duration: SCRIPTURE_UNDO_MS,
       action: {
