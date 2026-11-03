@@ -34,3 +34,9 @@ export function orderBarStatuses(statuses: string[]): string[] {
   for (const s of statuses) (s === "pending" ? open : settled).push(s);
   return [...settled, ...open];
 }
+
+/** Classify only today's due Paths; upcoming Paths are not accountability owed. */
+export function settledWatchState(statuses: string[]): "open" | "clear" | "recorded" {
+  if (statuses.some((s) => s === "pending")) return "open";
+  return statuses.some((s) => s === "breached" || s === "missed") ? "recorded" : "clear";
+}

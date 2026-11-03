@@ -505,8 +505,12 @@ function VerseBlock({ verses }: { verses: Verse[] }) {
 function FAQ() {
   const items: FaqItem[] = [
     {
+      q: "What if I hesitate to ask someone to watch me?",
+      a: "Hesitation is the flesh defending its exit door. You are not asking someone to judge you or manage your life; you are asking them to bear witness. Choose someone you trust and tell them what you want to be held accountable to. They can decide whether to stand watch. There is no daily homework: they see your Path and are alerted to a declared breach or two silent days. If asking feels heavy, remember: secrecy has never healed what it hid.",
+    },
+    {
       q: "Does a Watchman link open the installed app?",
-      a: "On iPhone, a link usually opens Safari, not the Home Screen app. If you're already signed in there, tap Accept. Otherwise, sign in to accept. Then open Kingdom Protocol from your Home Screen using the same account; the Path will appear in The Watch. Safari and the installed app have separate sign-ins. Normal Safari remembers your session unless you sign out or clear its data; Private Browsing may not. Pasting a link in The Watch is only a fallback, not a required step.",
+      a: "An invite link may open your default browser or the app you tapped it in, rather than the Home Screen app. It does not always open Safari, and automatic opening of the installed app cannot be guaranteed. Accept in the browser, then open Kingdom Protocol from your Home Screen using the same account; the Path will appear in The Watch. Your browser and installed app can have separate sign-ins. If you prefer to accept in the installed app, copy the link and paste it in The Watch. That is an option, not a required step.",
     },
     {
       q: "How many Paths can a Watchman cover?",
