@@ -1,4 +1,5 @@
 # Architecture rules
+- Invite duty disclosure reuses the downward-only viewport reveal helper after expansion; its top-anchored layout prevents opening content from shifting the invitation upward.
 - Watchman notification identity uses the client-safe watchman-alert name helper without credential fallback; history expansion uses its downward-only viewport reveal helper to keep new incidents above the mobile dock.
 - Silence history ranges use the earliest grouped alert plus its preceding private day and count one more silent day than notifications, preserving the two-day notification threshold without collapsing multi-alert spans.
 - Path identity correction uses a shared client-safe validator in the edit form and authenticated update function; history, assigned Watchmen, or expiry close the correction window to preserve the original commitment.
