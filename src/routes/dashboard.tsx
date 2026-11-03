@@ -6,7 +6,7 @@ import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { AccessBanner, LifetimeBadge } from "@/components/AccessBanner";
-import { statusColor, statusLabel } from "@/lib/status";
+import { statusColor, statusLabel, settledWatchState } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
 import { WatchmanWordsModal, type Word } from "@/components/WatchmanWordsModal";
 import { useEffect, useState } from "react";
@@ -56,6 +56,15 @@ function Dashboard() {
   const dueLanes = lanes.filter((l) => !l.upcoming);
   const upcomingLanes = lanes.filter((l) => l.upcoming);
   const pendingCount = dueLanes.filter((l) => !checkedIds.has(l.lane_id)).length;
+  const watchState = settledWatchState(dueLanes.map((l) => statusByLane.get(l.lane_id) ?? "pending"));
+  const settledSummary = (
+    <div className={watchState === "recorded" ? "py-4 border-y border-action-stone-edge" : "p-5 kp-card"}>
+      <p className={watchState === "recorded" ? "text-parchment font-semibold" : "text-history-held font-semibold"}>
+        {watchState === "recorded" ? "Watch Settled" : "All clear."}
+      </p>
+      <p className="text-stone text-xs mt-1">{!dueLanes.length ? "Your Paths start tomorrow. Nothing is owed tonight." : watchState === "recorded" ? "Roll call complete. Accountability recorded." : "Every Path due today is checked in."}</p>
+    </div>
+  );
   const unreadByLane = new Map(((data?.unreadPaths ?? []) as { lane_id: string; count: number }[]).map((p) => [p.lane_id, p.count]));
 
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
@@ -183,10 +192,7 @@ function Dashboard() {
           </div>
         </div>
       ) : lanes.length > 0 ? (
-        <div className="p-5 kp-card">
-          <p className="text-[#4ade80] font-semibold">All clear.</p>
-          <p className="text-stone text-xs">{dueLanes.length ? 'Every Path due today is checked in.' : 'Your Paths start tomorrow. Nothing is owed tonight.'}</p>
-        </div>
+        settledSummary
       ) : (
         <div className="p-5 kp-card">
           <p className="text-[#b8b0a4] text-sm mb-4">No active paths yet.</p>
@@ -234,10 +240,7 @@ function Dashboard() {
           </div>
         </div>
       ) : lanes.length > 0 ? (
-        <div className="p-5 kp-card">
-          <p className="text-[#4ade80] font-semibold">All clear.</p>
-          <p className="text-stone text-xs">{dueLanes.length ? 'Every Path due today is checked in.' : 'Your Paths start tomorrow. Nothing is owed tonight.'}</p>
-        </div>
+        settledSummary
       ) : (
         <div className="p-5 kp-card">
           <p className="text-[#b8b0a4] text-sm mb-4">No active paths yet.</p>

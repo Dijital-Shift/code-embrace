@@ -1,4 +1,6 @@
 # Tasks
+- [x] Polish invite alignment/Path card, consolidate duty copy into disclosure, correct browser wording, add hesitation FAQ without repeated verses, and distinguish settled breaches from All clear. Live pending invite/FAQ verified at phone and desktop widths; 15 tests pass and build OK.
+- [ ] Verify Watch Settled on the real signed-in dashboard — preview self-session has no matching account; requires preview sign-in. Invite acceptance was intentionally not submitted during read-only checks.
 - [x] Correct multi-alert silence history to preserve the earliest alert and include the private first day; eight regression tests pass and preview build OK. Real signed-in history display remains unverified.
 - [x] Polish Watchman alert identity, contact actions, breach explanation, collapse header, and downward Alert History reveal; 63 tests pass, actual components verified at desktop/phone widths with 20px contact separation and downward reveal.
 - [ ] Verify Watchman polish with real signed-in assignments and physical-device contact/push delivery — self-session mint has no matching account; requires preview sign-in and device check. Browser fixture checks do not establish iPhone vibration support.

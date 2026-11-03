@@ -15,6 +15,7 @@
 - All Path accountability uses starts_at via the shared client-safe path-start helper, not created_at; database triggers protect inserts and reject pre-start check-ins, including old clients and reminder jobs.
 - Homepage membership presentation uses the existing access query through a client-safe classifier; it must not create a separate entitlement decision.
 - Check-In groups rows into Yesterday/Today/Logged tabs; the Dashboard shows open Paths first and collapses completed ones into an accordion, so long lists stay short. Preserve the offline merge and Undo flow.
+- Dashboard settled summaries share the client-safe status classifier and use only due Paths, so logged breaches/silence never imply a clear day and upcoming Paths never block settlement.
 - Watchman removal uses a shared client-safe reason validator and a focused Radix dialog with an in-flight guard; this keeps validation consistent and avoids keyboard-driven sheet motion.
 - Removal notices are read independently of active assignments and dismissed via recipient-scoped acknowledgment, never delivery status; former Watchmen retain closure context without regaining Path access.
 - Invite welcome reuses WatchmanPushPrompt's device registration checks rather than a separate subscription flow; permission alone does not establish alert readiness.

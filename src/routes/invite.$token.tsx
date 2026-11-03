@@ -7,13 +7,14 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
     { title: "You've been invited — Kingdom Protocol" },
     { name: "description", content: "You've been asked to stand watch. Watching is free forever." },
     { property: "og:title", content: "You've been invited to stand watch." },
-    { property: "og:description", content: "Watching a brother is free forever. No subscription, no payment required." },
+    { property: "og:description", content: "Stand watch over someone you know. No subscription, no payment required." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: `https://kingdomprotocol.app/invite/${params.token}` },
     { property: "og:image", content: "https://kingdomprotocol.app/og-card.jpg?v=7" },
@@ -210,28 +211,33 @@ function InvitePage() {
     );
   }
 
-  const ownerName = preview.ownerFirstName || preview.ownerEmail || "Someone";
+  const ownerName = preview.ownerFirstName || "Someone";
 
   return (
     <Shell>
-      <p className="text-[0.7rem] text-[#c9a84c] uppercase tracking-[0.2em] mb-4">You've been invited</p>
-      <h1 className="text-2xl font-bold mb-3 leading-tight">
+      <p className="text-xs text-primary uppercase mb-3 text-center">You've been invited</p>
+      <h1 className="text-2xl font-bold mb-5 leading-tight text-center text-parchment">
         {ownerName} is asking you to be their Watchman.
       </h1>
-      <div className="p-4 rounded-md border border-[#2a2518] mb-6" style={{ background: "#161210" }}>
-        <p className="text-[0.65rem] text-[#a8a094] uppercase tracking-wider mb-1">The path</p>
-        <p className="text-base text-white font-semibold">"{preview.laneTitle}"</p>
+      <div className="kp-watch-card p-5 rounded-md border border-action-gold-edge mb-5 text-center">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <p className="text-xs text-stone uppercase">The Path</p>
+          <span className={`text-xs font-semibold border rounded px-2 py-1 ${preview.isAvoid ? "text-history-breach border-action-ember-edge" : "text-history-held border-action-gold-edge"}`}>
+            {preview.isAvoid ? "Flee" : "Pursue"}
+          </span>
+        </div>
+        <p className="text-lg text-parchment font-semibold break-words">“{preview.laneTitle}”</p>
         {preview.laneDescription && (
-          <p className="text-xs text-[#b8b0a4] mt-1.5 leading-relaxed">{preview.laneDescription}</p>
+          <p className="text-sm text-stone mt-2 leading-relaxed break-words">{preview.laneDescription}</p>
         )}
       </div>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30 text-center" style={{ background: "#161210" }}>
-        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-2">Why you were chosen</p>
-        <p className="text-sm text-[#e8dfc4] leading-relaxed">
-          {ownerName.split(" ")[0]} {(preview as any).isAvoid
+      <div className="mb-5 text-center">
+        <p className="text-xs uppercase text-primary font-semibold mb-2">Why you were chosen</p>
+        <p className="text-sm text-secondary-foreground leading-relaxed">
+          {ownerName.split(" ")[0]} {preview.isAvoid
             ? "is fighting to break a stronghold and refuses to fight it in the dark."
             : "is committed to building a disciplined walk and refuses to walk it alone."}{" "}
-          They chose you personally to keep them honest before the Most High God.
+          They chose you personally to keep them honest.
         </p>
       </div>
 
@@ -257,19 +263,19 @@ function InvitePage() {
           {authStep === "choose" && (
             <>
               <p className="text-xs text-[#a8a094] mb-1 text-center">Sign in to accept — it's free.</p>
-              <button
+              <Button
                 onClick={signInWithGoogle}
-                className="w-full py-3.5 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold flex items-center justify-center gap-2"
+                className="w-full min-h-12 h-auto py-3 font-semibold"
               >
                 <GoogleIcon /> Continue with Google
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => setAuthStep("email")}
-                className="w-full py-3 rounded-md border border-[#222] text-[#c8c0b4] text-sm"
-                style={{ background: "#161210" }}
+                className="w-full min-h-12 h-auto text-secondary-foreground"
               >
                 Use email instead
-              </button>
+              </Button>
               {err && <p className="text-red-400 text-xs">{err}</p>}
             </>
           )}
@@ -284,12 +290,12 @@ function InvitePage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="px-4 py-3 bg-[#161210] border border-[#2a2518] rounded-md text-white outline-none"
               />
-              <button disabled={busy} className="py-3 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold">
+              <Button disabled={busy} className="min-h-12 h-auto py-3 font-semibold">
                 {busy ? "Sending…" : "Send code"}
-              </button>
-              <button type="button" onClick={() => setAuthStep("choose")} className="text-xs text-[#9e968a]">
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => setAuthStep("choose")} className="text-xs text-stone">
                 ← Back
-              </button>
+              </Button>
               {err && <p className="text-red-400 text-xs">{err}</p>}
             </form>
           )}
@@ -313,9 +319,9 @@ function InvitePage() {
                 }}
                 className="px-4 py-3 bg-[#161210] border border-[#2a2518] rounded-md text-white outline-none text-center tracking-[0.3em] text-xl"
               />
-              <button disabled={busy || accepting} className="py-3 bg-[#c9a84c] text-[#0a0800] rounded-md font-semibold">
+              <Button disabled={busy || accepting} className="min-h-12 h-auto py-3 font-semibold">
                 {accepting ? "Accepting…" : busy ? "Verifying…" : "Verify & continue"}
-              </button>
+              </Button>
               {err && <p className="text-red-400 text-xs">{err}</p>}
             </form>
           )}
@@ -323,33 +329,27 @@ function InvitePage() {
       )}
 
       <AppTip />
-      <p className="text-xs text-muted-foreground text-center mb-4">On iPhone, this link opens Safari. Your accepted Path also appears in the installed app when you use the same account.</p>
-      <p className="text-xs text-muted-foreground text-center mb-6">Already watching two Paths for {ownerName.split(" ")[0]}? That's the limit for this person, not for everyone you watch.</p>
-      <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#8f887c] text-center mb-4 mt-2">— What you're saying yes to —</p>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The commitment: under 5 minutes a week</p>
-        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
-          <li><span className="text-[#c9a84c]">◆</span> Zero daily homework. If they stay on the Path, your life isn't interrupted.</li>
-          <li><span className="text-[#c9a84c]">◆</span> When an alert lands, a 30-second text or a quick call is all it takes. You are the lifeline.</li>
-          <li><span className="text-[#c9a84c]">◆</span> Free forever. No trial, no card.</li>
-        </ul>
-      </div>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/30" style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
-        <p className="text-[0.65rem] uppercase tracking-[0.24em] text-[#c9a84c] font-semibold mb-3 text-center">The Watchman's Role</p>
-        <ul className="flex flex-col gap-2.5 text-sm text-[#e8dfc4] leading-relaxed list-none p-0 m-0">
-          <li><span className="text-[#c9a84c]">◆</span> Stand watch over one Path — see its Standing and Fallen days in your app.</li>
-          <li><span className="text-[#c9a84c]">◆</span> Get pinged only on a breach, or after two silent days. No daily noise.</li>
-          <li><span className="text-[#c9a84c]">◆</span> When a ping lands, reach out — call, text, or send a word of Scripture.</li>
-        </ul>
-        <p className="text-xs italic text-[#c2af80] leading-relaxed mt-4 text-center">“So thou, O son of man, I have set thee a watchman unto the house of Israel.”</p>
-        <p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#f3d27a] font-bold mt-1 text-right">Ezekiel 33:7 (KJV)</p>
-      </div>
-      <div className="mb-6 p-4 rounded-xl border border-[#c9a84c]/40 text-center" style={{ background: "#161210" }}>
-        <p className="text-sm font-semibold text-[#f3d27a]">Watching is free forever.</p>
-        <p className="text-xs text-[#c8c0b4] mt-1 leading-relaxed">No subscription, no payment required. Just create an account. You'd only pay if you later start a Path of your own, after its 30-day free trial.</p>
-      </div>
+      <Accordion type="single" collapsible className="mb-6 border-y border-action-gold-edge">
+        <AccordionItem value="watchman-duty" className="border-0">
+          <AccordionTrigger className="text-parchment text-sm hover:no-underline py-4 text-left [&_svg]:text-primary">
+            What you're saying yes to
+          </AccordionTrigger>
+          <AccordionContent className="text-sm text-secondary-foreground leading-relaxed">
+            <ul className="space-y-4 list-none p-0 m-0">
+              <li><span className="text-primary font-semibold">Stand watch.</span> See this Path's Standing and Fallen days. There is no daily homework.</li>
+              <li><span className="text-primary font-semibold">Answer the alert.</span> A declared breach or two silent days calls you to reach out — by text, call, or a word of Scripture. The first silent day does not send you a silence alert.</li>
+              <li><span className="text-primary font-semibold">Watching is free forever.</span> No subscription, no card, no trial to stand watch. Walking a Path of your own is separate and has a 30-day free trial.</li>
+            </ul>
+            <p className="text-xs text-stone leading-relaxed mt-5">You can watch up to two active Paths for {ownerName.split(" ")[0]}. There is no total limit across different people — you choose how much to take on.</p>
+            <blockquote className="border-l border-action-gold-edge pl-4 mt-5 text-stone text-sm italic">
+              “So thou, O son of man, I have set thee a watchman unto the house of Israel.”
+              <cite className="block mt-2 text-xs text-primary not-italic">Ezekiel 33:7 (KJV)</cite>
+            </blockquote>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       <div className="text-center mb-6">
-        <Link to="/demo" search={{ invite: token, name: ownerName }} className="inline-block text-xs text-[#c9a84c] underline">
+        <Link to="/demo" search={{ invite: token, name: ownerName }} className="inline-block text-xs text-primary underline">
           How does this work?
         </Link>
       </div>
@@ -359,16 +359,11 @@ function InvitePage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center px-6 py-12" style={{ background: "#0a0800" }}>
+    <main className="min-h-[100dvh] flex items-center justify-center px-5 py-8 bg-background">
       <div className="w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <img src="/kingdom-protocol-logo.png" alt="" className="w-24" style={{ filter: "drop-shadow(0 0 28px rgba(201,168,76,0.3))" }} />
-          <p
-            className="mt-4 text-[0.8rem] uppercase tracking-[0.32em] text-[#e5af38]"
-            style={{ fontFamily: "'Cinzel', 'Cormorant Garamond', serif", textShadow: "0 0 18px rgba(229,175,56,0.35)" }}
-          >
-            Kingdom Protocol
-          </p>
+        <div className="flex flex-col items-center mb-6">
+          <img src="/kingdom-protocol-logo.png" alt="" className="w-24" />
+          <p className="mt-3 text-sm uppercase text-primary kp-briefing-title">Kingdom Protocol</p>
         </div>
         {children}
       </div>
@@ -436,13 +431,13 @@ function AppTip() {
     } catch { /* clipboard blocked; the link stays in the address bar */ }
   }
   return (
-    <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-[#2a2418] px-4 py-3">
+    <div className="mb-4 flex items-center justify-between gap-4 border-y border-border py-3">
       <p className="text-xs text-muted-foreground leading-relaxed">
-        <span className="text-[#c9a84c] font-semibold">Already have the app?</span> Copy this link and paste it in The Watch tab — or accept above.
+        <span className="text-primary font-semibold">Already have the app?</span> Copy this link and paste it in The Watch tab — or accept above.
       </p>
-      <button type="button" onClick={copy} className="shrink-0 rounded-md border border-[#c9a84c]/60 px-3 py-2 text-xs font-semibold text-[#c9a84c]">
+      <Button type="button" variant="outline" onClick={copy} className="shrink-0 px-3 text-xs font-semibold text-primary">
         {copied ? "Copied ✓" : "Copy link"}
-      </button>
+      </Button>
     </div>
   );
 }
