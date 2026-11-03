@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Correct multi-alert silence history to preserve the earliest alert, include the private first day, and verify date/count regressions.
 - [x] Polish Watchman alert identity, contact actions, breach explanation, collapse header, and downward Alert History reveal; 63 tests pass, actual components verified at desktop/phone widths with 20px contact separation and downward reveal.
 - [ ] Verify Watchman polish with real signed-in assignments and physical-device contact/push delivery — self-session mint has no matching account; requires preview sign-in and device check. Browser fixture checks do not establish iPhone vibration support.
 - [x] Apply and verify the homepage top-left Play film control; active Dijital Explainer Film skill updated. Desktop/phone-width WebM playback and native pause controls verified without page errors.
