@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Eye, BellRing, ShieldCheck } from "lucide-react";
+import { revealWatchmanAlert } from "@/lib/watchman-alert";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
@@ -58,6 +60,14 @@ function InvitePage() {
   const verifyingRef = useRef(false);
   const autoAcceptRef = useRef(false);
   const acceptingRef = useRef(false);
+  const dutyRef = useRef<HTMLDivElement>(null);
+  const [dutyOpen, setDutyOpen] = useState("");
+
+  useEffect(() => {
+    if (!dutyOpen) return;
+    const timer = window.setTimeout(() => revealWatchmanAlert(dutyRef.current), 240);
+    return () => window.clearTimeout(timer);
+  }, [dutyOpen]);
 
   const { data: preview, isLoading } = useQuery({
     queryKey: ["invite-preview", token],
@@ -215,13 +225,13 @@ function InvitePage() {
 
   return (
     <Shell>
-      <p className="text-xs text-primary uppercase mb-3 text-center">You've been invited</p>
+      <p className="text-sm text-stone font-medium mb-3 text-center">You've been invited</p>
       <h1 className="text-2xl font-bold mb-5 leading-tight text-center text-parchment">
         {ownerName} is asking you to be their Watchman.
       </h1>
       <div className="kp-watch-card p-5 rounded-md border border-action-gold-edge mb-5 text-center">
         <div className="flex items-center justify-center gap-3 mb-3">
-          <p className="text-xs text-stone uppercase">The Path</p>
+          <p className="kp-briefing-title text-lg text-parchment font-semibold">The Path</p>
           <span className={`text-xs font-semibold border rounded px-2 py-1 ${preview.isAvoid ? "text-history-breach border-action-ember-edge" : "text-history-held border-action-gold-edge"}`}>
             {preview.isAvoid ? "Flee" : "Pursue"}
           </span>
@@ -329,16 +339,16 @@ function InvitePage() {
       )}
 
       <AppTip />
-      <Accordion type="single" collapsible className="mb-6 border-y border-action-gold-edge">
-        <AccordionItem value="watchman-duty" className="border-0">
-          <AccordionTrigger className="text-parchment text-sm hover:no-underline py-4 text-left [&_svg]:text-primary">
+      <Accordion type="single" collapsible value={dutyOpen} onValueChange={setDutyOpen} className="kp-invite-duty mb-6 border-y border-action-gold-edge">
+        <AccordionItem ref={dutyRef} value="watchman-duty" className="border-0">
+          <AccordionTrigger className="kp-briefing-title text-parchment text-lg font-semibold hover:no-underline py-5 gap-4 text-left [&_svg]:text-primary [&_svg]:h-5 [&_svg]:w-5">
             What you're saying yes to
           </AccordionTrigger>
-          <AccordionContent className="text-sm text-secondary-foreground leading-relaxed">
-            <ul className="space-y-4 list-none p-0 m-0">
-              <li><span className="text-primary font-semibold">Stand watch.</span> See this Path's Standing and Fallen days. There is no daily homework.</li>
-              <li><span className="text-primary font-semibold">Answer the alert.</span> A declared breach or two silent days calls you to reach out — by text, call, or a word of Scripture. The first silent day does not send you a silence alert.</li>
-              <li><span className="text-primary font-semibold">Watching is free forever.</span> No subscription, no card, no trial to stand watch. Walking a Path of your own is separate and has a 30-day free trial.</li>
+          <AccordionContent className="text-sm text-secondary-foreground leading-relaxed pb-6">
+            <ul className="list-none p-0 m-0 divide-y divide-action-stone-edge">
+              <li className="flex gap-4 pb-4"><Eye aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-primary" /><div><h3 className="kp-briefing-title text-base font-semibold text-parchment mb-1">See how they're doing.</h3><p>Open The Watch to see whether they kept their commitment, reported a breach, or missed a check-in. You don't need to check in every day yourself.</p></div></li>
+              <li className="flex gap-4 py-4"><BellRing aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-primary" /><div><h3 className="kp-briefing-title text-base font-semibold text-parchment mb-1">Reach out when alerted.</h3><p>If they report a breach or miss two days in a row, you receive an alert. Call, text, or send Scripture to encourage them and ask what happened. One silent day is visible in The Watch, but does not send you a silence alert.</p></div></li>
+              <li className="flex gap-4 pt-4"><ShieldCheck aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-primary" /><div><h3 className="kp-briefing-title text-base font-semibold text-parchment mb-1">Watching is free forever.</h3><p>No subscription, payment card, or trial is required to be their Watchman. Walking a Path of your own is separate.</p></div></li>
             </ul>
             <p className="text-xs text-stone leading-relaxed mt-5">You can watch up to two active Paths for {ownerName.split(" ")[0]}. There is no total limit across different people — you choose how much to take on.</p>
             <blockquote className="border-l border-action-gold-edge pl-4 mt-5 text-stone text-sm italic">
@@ -359,11 +369,11 @@ function InvitePage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center px-5 py-8 bg-background">
-      <div className="w-full max-w-md">
+    <main className="min-h-[100dvh] px-5 py-8 bg-background">
+      <div className="w-full max-w-md mx-auto">
         <div className="flex flex-col items-center mb-6">
           <img src="/kingdom-protocol-logo.png" alt="" className="w-24" />
-          <p className="mt-3 text-sm uppercase text-primary kp-briefing-title">Kingdom Protocol</p>
+          <p className="kp-invite-wordmark mt-3 text-2xl sm:text-3xl font-semibold uppercase text-center">Kingdom Protocol</p>
         </div>
         {children}
       </div>

@@ -41,6 +41,8 @@
 .kp-role-briefing { background: var(--background-image-briefing); border-block: 1px solid var(--color-action-gold-edge); padding-inline: 1rem; box-shadow: var(--shadow-briefing); }
 .kp-briefing-emblem { background: var(--color-action-edit); border: 1px solid var(--color-action-gold-edge); box-shadow: var(--shadow-action); }
 .kp-briefing-title { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0; }
+.kp-invite-wordmark { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0; background: var(--background-image-briefing-accept); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.kp-invite-duty { padding-inline: 1rem; background: var(--background-image-briefing); box-shadow: var(--shadow-briefing); overflow-anchor: none; }
 .kp-briefing-accept { min-height: 44px; height: auto; background: var(--background-image-briefing-accept); box-shadow: var(--shadow-action); }
 
 .kp-action { min-height: 44px; height: 44px; border: 1px solid; box-shadow: var(--shadow-action); transition: border-color 160ms, background 160ms, box-shadow 160ms; }

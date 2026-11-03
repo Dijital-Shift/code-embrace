@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Polish invitation brand/Path/duty headings, clarify Watchman responsibilities, and reveal the expanded commitment without manual downward scrolling.
 - [x] Polish invite alignment/Path card, consolidate duty copy into disclosure, correct browser wording, add hesitation FAQ without repeated verses, and distinguish settled breaches from All clear. Live pending invite/FAQ verified at phone and desktop widths; 15 tests pass and build OK.
 - [ ] Verify Watch Settled on the real signed-in dashboard — preview self-session has no matching account; requires preview sign-in. Invite acceptance was intentionally not submitted during read-only checks.
 - [x] Correct multi-alert silence history to preserve the earliest alert and include the private first day; eight regression tests pass and preview build OK. Real signed-in history display remains unverified.
