@@ -27,7 +27,9 @@ export function contactHaptic(): void {
   try { navigator.vibrate?.(25); } catch { /* Device/browser does not support vibration. */ }
 }
 
-/** A lone silence alert already covers two silent days (Day 1 is private), so its start is backdated one day. */
-export function silenceIncidentRange(count: number, end: Date): { start: Date; days: number } {
-  return count === 1 ? { start: new Date(end.getTime() - 24 * 3600_000), days: 2 } : { start: end, days: count };
+/** The first notified day is Day 2; retain the earliest alert and include its private preceding day. */
+export function silenceIncidentRange(count: number, earliestAlert: Date): { start: Date; days: number } {
+  const start = new Date(earliestAlert);
+  start.setDate(start.getDate() - 1);
+  return { start, days: count + 1 };
 }
