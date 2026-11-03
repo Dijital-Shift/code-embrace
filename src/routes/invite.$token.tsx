@@ -225,17 +225,14 @@ function InvitePage() {
 
   return (
     <Shell>
-      <p className="text-sm text-stone font-medium mb-3 text-center">You've been invited</p>
       <h1 className="text-2xl font-bold mb-5 leading-tight text-center text-parchment">
         {ownerName} is asking you to be their Watchman.
       </h1>
-      <div className="kp-watch-card p-5 rounded-md border border-action-gold-edge mb-5 text-center">
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <p className="kp-briefing-title text-lg text-parchment font-semibold">The Path</p>
-          <span className={`text-xs font-semibold border rounded px-2 py-1 ${preview.isAvoid ? "text-history-breach border-action-ember-edge" : "text-history-held border-action-gold-edge"}`}>
-            {preview.isAvoid ? "Flee" : "Pursue"}
-          </span>
-        </div>
+      <div className="kp-watch-card relative p-5 rounded-md border border-action-gold-edge mb-5 text-center">
+        <span className={`absolute top-3 right-3 text-xs font-semibold border rounded px-2 py-1 ${preview.isAvoid ? "text-history-breach border-action-ember-edge" : "text-history-held border-action-gold-edge"}`}>
+          {preview.isAvoid ? "Flee" : "Pursue"}
+        </span>
+        <p className="kp-briefing-title text-lg text-parchment font-semibold mb-3">The Path</p>
         <p className="text-lg text-parchment font-semibold break-words">“{preview.laneTitle}”</p>
         {preview.laneDescription && (
           <p className="text-sm text-stone mt-2 leading-relaxed break-words">{preview.laneDescription}</p>
@@ -246,7 +243,7 @@ function InvitePage() {
         <p className="text-sm text-secondary-foreground leading-relaxed">
           {ownerName.split(" ")[0]} {preview.isAvoid
             ? "is fighting to break a stronghold and refuses to fight it in the dark."
-            : "is committed to building a disciplined walk and refuses to walk it alone."}{" "}
+            : "is committed to building a disciplined walk and refuses to stand alone."}{" "}
           They chose you personally to keep them honest.
         </p>
       </div>
@@ -353,7 +350,7 @@ function InvitePage() {
             <p className="text-xs text-stone leading-relaxed mt-5">You can watch up to two active Paths for {ownerName.split(" ")[0]}. There is no total limit across different people — you choose how much to take on.</p>
             <blockquote className="border-l border-action-gold-edge pl-4 mt-5 text-stone text-sm italic">
               “So thou, O son of man, I have set thee a watchman unto the house of Israel.”
-              <cite className="block mt-2 text-xs text-primary not-italic">Ezekiel 33:7 (KJV)</cite>
+              <cite className="block mt-2 text-xs text-primary not-italic text-right">— Ezekiel 33:7 (KJV)</cite>
             </blockquote>
           </AccordionContent>
         </AccordionItem>
