@@ -4,12 +4,13 @@ import { saveCheckinCache, readCheckinCache, isNetworkError } from "@/lib/offlin
 
 // Keep visited tabs available in memory without extending data freshness.
 const tabCache = { staleTime: 45_000, gcTime: 30 * 60_000 };
-export const dashboardOptions = (call = getDashboard) => queryOptions({ ...tabCache, queryKey: ["dashboard"], queryFn: () => call() });
-export const pathsOptions = (call = listMyLanes) => queryOptions({ ...tabCache, queryKey: ["lanes"], queryFn: () => call() });
-export const partnerOptions = (call = getPartnerView) => queryOptions({ ...tabCache, queryKey: ["partner"], queryFn: () => call() });
-export const settingsOptions = (call = getSettings) => queryOptions({ ...tabCache, queryKey: ["settings"], queryFn: () => call() });
+type ReadCall<T extends (...args: any[]) => any> = () => ReturnType<T>;
+export const dashboardOptions = (call: ReadCall<typeof getDashboard> = getDashboard) => queryOptions({ ...tabCache, queryKey: ["dashboard"], queryFn: () => call() });
+export const pathsOptions = (call: ReadCall<typeof listMyLanes> = listMyLanes) => queryOptions({ ...tabCache, queryKey: ["lanes"], queryFn: () => call() });
+export const partnerOptions = (call: ReadCall<typeof getPartnerView> = getPartnerView) => queryOptions({ ...tabCache, queryKey: ["partner"], queryFn: () => call() });
+export const settingsOptions = (call: ReadCall<typeof getSettings> = getSettings) => queryOptions({ ...tabCache, queryKey: ["settings"], queryFn: () => call() });
 
-export async function loadCheckin(call = getCheckinPage) {
+export async function loadCheckin(call: ReadCall<typeof getCheckinPage> = getCheckinPage) {
   try {
     const data = await call();
     saveCheckinCache(data);
@@ -20,4 +21,4 @@ export async function loadCheckin(call = getCheckinPage) {
     throw error;
   }
 }
-export const checkinOptions = (call = getCheckinPage) => queryOptions({ ...tabCache, queryKey: ["checkin"], queryFn: () => loadCheckin(call) });
+export const checkinOptions = (call: ReadCall<typeof getCheckinPage> = getCheckinPage) => queryOptions({ ...tabCache, queryKey: ["checkin"], queryFn: () => loadCheckin(call) });
