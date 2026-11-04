@@ -7,6 +7,7 @@ import { enqueueCheckin, dequeueCheckin, readQueue, readCheckinCache, isNetworkE
 import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/lib/api.functions";
 import { Check, X, Lock, ShieldCheck, ShieldAlert, Moon, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { contactHaptic } from "@/lib/watchman-alert";
 import { checkinOptions } from "@/lib/app-page-queries";
 
@@ -343,39 +344,55 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   }
 
   return (
-    <div className="kp-checkin-card px-4 py-4">
-      <div className="flex items-center justify-between gap-3 mb-2.5">
-        <span className={`kp-checkin-type ${isAvoid ? "kp-checkin-flee" : "kp-checkin-pursue"}`}>
-          {isAvoid ? <ShieldAlert size={12} /> : <TrendingUp size={12} />}{isAvoid ? "Flee" : "Pursue"}
-        </span>
-        {isLate && <span className="text-[0.65rem] text-history-silent font-semibold">Yesterday</span>}
-      </div>
-      <p className="text-base leading-snug font-semibold text-parchment break-words">{lane.title}</p>
-      <div className="mt-4 pt-3 border-t border-action-gold-edge/40">
-        <div className={`grid gap-2 ${isAvoid ? "grid-cols-2" : "grid-cols-[1fr_1fr_auto]"}`}>
-          <Button
-            type="button" disabled={busy} variant="checkinHeld"
-            aria-label={yesLabel} title={yesLabel}
-            onClick={() => { contactHaptic(); setOpen(false); send("aligned"); }}
-            className="w-full px-2 text-xs"
-          >{busy && !open ? <span>…</span> : <ShieldCheck />}{yesLabel}</Button>
-          <Button
-            type="button" disabled={busy} variant="checkinBreach"
-            aria-label={noLabel} title={noLabel} aria-expanded={open}
-            onClick={() => { contactHaptic(); setOpen((v) => !v); setErr(null); }}
-            className="w-full px-2 text-xs"
-          ><ShieldAlert />{noLabel}</Button>
-          {!isAvoid && (
-            <Button
-              type="button" disabled={busy || open}
-              variant="checkinSabbath"
-              aria-label="Skip — Sabbath"
-              title="Sabbath — no check-in today"
-              onClick={() => { contactHaptic(); doSkip(); }}
-              className="px-2.5 text-[0.65rem]"
-            ><Moon />Sabbath</Button>
-          )}
+    <div className="kp-checkin-card px-3 py-2.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <span className={`kp-checkin-type ${isAvoid ? "kp-checkin-flee" : "kp-checkin-pursue"}`}>
+              {isAvoid ? <ShieldAlert size={10} /> : <TrendingUp size={10} />}{isAvoid ? "Flee" : "Pursue"}
+            </span>
+            {isLate && <span className="text-[0.65rem] text-history-silent font-semibold">Yesterday</span>}
+          </div>
+          <p className="text-sm leading-snug font-semibold text-parchment [overflow-wrap:anywhere]">{lane.title}</p>
         </div>
+        <TooltipProvider delayDuration={250}>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {!isAvoid && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button type="button" disabled={busy || open} variant="checkinSabbath"
+                    aria-label="Skip — Sabbath" title="Sabbath — no check-in today"
+                    onClick={() => { contactHaptic(); doSkip(); }} className="kp-checkin-seal rounded-md">
+                    <Moon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Sabbath — no check-in today</TooltipContent>
+              </Tooltip>
+            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" disabled={busy} variant="checkinHeld"
+                  aria-label={yesLabel} title={yesLabel}
+                  onClick={() => { contactHaptic(); setOpen(false); send("aligned"); }}
+                  className="kp-checkin-seal rounded-full">
+                  {busy && !open ? <span>…</span> : <ShieldCheck />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{yesLabel}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" disabled={busy} variant="checkinBreach"
+                  aria-label={noLabel} title={noLabel} aria-expanded={open}
+                  onClick={() => { contactHaptic(); setOpen((v) => !v); setErr(null); }}
+                  className="kp-checkin-seal rounded-full">
+                  <ShieldAlert />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{noLabel}</TooltipContent>
+            </Tooltip>
+          </div>
+        </TooltipProvider>
       </div>
 
 

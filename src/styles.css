@@ -45,6 +45,8 @@
 .kp-checkin-pursue { color: var(--color-history-held); background: color-mix(in srgb, var(--color-history-held) 9%, var(--color-background)); }
 .kp-checkin-flee { color: var(--color-destructive); background: color-mix(in srgb, var(--color-destructive) 9%, var(--color-background)); }
 .kp-checkin-action { min-height: 44px; height: 44px; border: 1px solid; box-shadow: var(--shadow-action); }
+.kp-checkin-seal { width: 44px; min-width: 44px; padding: 0; }
+.kp-checkin-card .kp-checkin-type { padding: 1px 5px; line-height: 14px; }
 .kp-checkin-held { color: var(--color-history-held); border-color: color-mix(in srgb, var(--color-history-held) 40%, var(--color-background)); background: linear-gradient(180deg, color-mix(in srgb, var(--color-history-held) 17%, var(--color-background)), var(--color-background)); }
 .kp-checkin-breach { color: var(--color-destructive); border-color: var(--color-action-ember-edge); background: linear-gradient(180deg, var(--color-action-archive), var(--color-background)); }
 .kp-checkin-breach[aria-expanded="true"] { border-color: var(--color-destructive); background: var(--color-action-archive); }
