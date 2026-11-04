@@ -15,7 +15,7 @@ Every Dijital Shift `/demo` route follows this exact structure. The scaffold and
 4. **Fixed role arc, 10–15 scenes (hard cap).** Order is always `consumer → staff → operator → admin`. Insert a full-width divider band between role changes. Each scene closes with an italic muted "Why it matters: …" line. If a system genuinely needs more depth, add a second route (e.g. `/demo/admin-deep-dive`) — never extend the scroll.
 5. **Semantic tokens only.** All colors via Tailwind semantic classes (`bg-accent`, `text-foreground`, `border-border`, etc.) or `ROLE_META` tints. No raw hex, no `oklch(...)` in components.
 
-6. **Read larger stepper is mandatory.** Every demo ships a sticky-header `ReadLargerControl` (quiet "Read larger" pill → −/％/+ stepper, scales 100/115/130/150%, saved in localStorage, read in `useEffect`). Scale applies only to each scene's copy column (`style={{ zoom: scale }}`) — never the mocks. On ANY demo edit, first check the route for it; if missing, add it in the same pass.
+6. **Read larger stepper is mandatory.** Every demo ships a sticky-header `ReadLargerControl` (collapsed: quiet `BookOpen`-icon "Read larger" pill → expanded: −/％/+ stepper; scales 100/115/130/150%, saved in localStorage, read in `useEffect`). Scale applies only to each scene's copy column (`style={{ zoom: scale }}`) — never the mocks. The control is styled exclusively with the project's semantic tokens (`text-primary`, `border-border`, `bg-card`, …) so device light/dark settings can never restyle it. On ANY demo edit, first check the route for it; if missing, add it in the same pass.
 
 ## Before writing any JSX
 
