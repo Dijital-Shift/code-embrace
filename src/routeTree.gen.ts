@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as CheckinRouteImport } from './routes/checkin'
-import { Route as CheckinPreviewCheckRouteImport } from './routes/checkin-preview-check'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
@@ -67,11 +66,6 @@ const BillingRoute = BillingRouteImport.update({
 const CheckinRoute = CheckinRouteImport.update({
   id: '/checkin',
   path: '/checkin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckinPreviewCheckRoute = CheckinPreviewCheckRouteImport.update({
-  id: '/checkin-preview-check',
-  path: '/checkin-preview-check',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -255,7 +249,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
-  '/checkin-preview-check': typeof CheckinPreviewCheckRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -296,7 +289,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
-  '/checkin-preview-check': typeof CheckinPreviewCheckRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -338,7 +330,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/billing': typeof BillingRoute
   '/checkin': typeof CheckinRoute
-  '/checkin-preview-check': typeof CheckinPreviewCheckRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -381,7 +372,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/billing'
     | '/checkin'
-    | '/checkin-preview-check'
     | '/dashboard'
     | '/demo'
     | '/how-it-works'
@@ -422,7 +412,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/billing'
     | '/checkin'
-    | '/checkin-preview-check'
     | '/dashboard'
     | '/demo'
     | '/how-it-works'
@@ -463,7 +452,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/billing'
     | '/checkin'
-    | '/checkin-preview-check'
     | '/dashboard'
     | '/demo'
     | '/how-it-works'
@@ -505,7 +493,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   BillingRoute: typeof BillingRoute
   CheckinRoute: typeof CheckinRoute
-  CheckinPreviewCheckRoute: typeof CheckinPreviewCheckRoute
   DashboardRoute: typeof DashboardRoute
   DemoRoute: typeof DemoRoute
   HowItWorksRoute: typeof HowItWorksRoute
@@ -569,13 +556,6 @@ declare module '@tanstack/react-router' {
       path: '/checkin'
       fullPath: '/checkin'
       preLoaderRoute: typeof CheckinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkin-preview-check': {
-      id: '/checkin-preview-check'
-      path: '/checkin-preview-check'
-      fullPath: '/checkin-preview-check'
-      preLoaderRoute: typeof CheckinPreviewCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -836,7 +816,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   BillingRoute: BillingRoute,
   CheckinRoute: CheckinRoute,
-  CheckinPreviewCheckRoute: CheckinPreviewCheckRoute,
   DashboardRoute: DashboardRoute,
   DemoRoute: DemoRoute,
   HowItWorksRoute: HowItWorksRoute,
