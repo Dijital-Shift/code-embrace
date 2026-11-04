@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPips } from "@/components/DashboardPieces";
 import { pathStartLabel } from "@/lib/path-start";
 import { WatchmanReminder } from "@/components/WatchmanReminder";
+import { pathsOptions } from "@/lib/app-page-queries";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [
@@ -16,16 +17,12 @@ export const Route = createFileRoute("/paths/")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  loader: ({ context }) => {
-    if (typeof window === "undefined") return;
-    void context.queryClient.prefetchQuery({ queryKey: ["lanes"], queryFn: () => listMyLanes() });
-  },
   component: () => <AppLayout><Lanes /></AppLayout>,
 });
 
 function Lanes() {
   const fn = useServerFn(listMyLanes);
-  const { data: lanes = [], isLoading } = useQuery({ queryKey: ["lanes"], queryFn: () => fn() });
+  const { data: lanes = [], isLoading } = useQuery(pathsOptions(fn));
   const active = lanes.filter((l) => l.status === "active");
   const paused = lanes.filter((l) => l.status === "paused");
 

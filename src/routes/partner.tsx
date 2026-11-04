@@ -13,6 +13,7 @@ import { statusLabel } from "@/lib/status";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { ClaimInviteCard } from "@/components/ClaimInviteCard";
 import { RoleBriefing } from "@/components/RoleBriefing";
+import { partnerOptions } from "@/lib/app-page-queries";
 
 
 export const Route = createFileRoute("/partner")({
@@ -24,10 +25,6 @@ export const Route = createFileRoute("/partner")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  loader: ({ context }) => {
-    if (typeof window === "undefined") return;
-    void context.queryClient.prefetchQuery({ queryKey: ["partner"], queryFn: () => getPartnerView() }).catch(() => {});
-  },
   component: () => <AppLayout><Partner /></AppLayout>,
 });
 
@@ -37,7 +34,7 @@ function Partner() {
   const dismissFn = useServerFn(dismissWatchmanPrompt);
   const acknowledgeFn = useServerFn(acknowledgeWatchmanRemoval);
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({ queryKey: ["partner"], queryFn: () => fn() });
+  const { data, isLoading } = useQuery(partnerOptions(fn));
   
 
   const dismissMut = useMutation({

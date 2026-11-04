@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getUnreadEncouragementCount } from "@/lib/api.functions";
 import { Home, Route as RouteIcon, CircleCheck, Eye, Settings } from "lucide-react";
@@ -9,6 +9,7 @@ import { TrialEndingModal } from "@/components/AccessBanner";
 import { useOfflineCheckinSync } from "@/lib/offline-checkins";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { dashboardOptions, pathsOptions, checkinOptions, partnerOptions, settingsOptions } from "@/lib/app-page-queries";
 
 const menuItems = [
   { href: "/dashboard", label: "Home", short: "Home", icon: Home },
@@ -21,6 +22,20 @@ const menuItems = [
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, loading: authLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const queryClient = useQueryClient();
+  // Warm the other tabs only after session hydration. Failed prefetches never
+  // block the current page; normal query observers still refresh stale data.
+  useEffect(() => {
+    if (authLoading || !session?.access_token) return;
+    const timer = window.setTimeout(() => {
+      void queryClient.prefetchQuery(dashboardOptions());
+      void queryClient.prefetchQuery(pathsOptions());
+      void queryClient.prefetchQuery(checkinOptions());
+      void queryClient.prefetchQuery(partnerOptions());
+      void queryClient.prefetchQuery(settingsOptions());
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [authLoading, session?.user.id, queryClient]);
   // A gold dot on Paths whenever a watchman has written something unread.
   const unreadFn = useServerFn(getUnreadEncouragementCount);
   const { data: unread } = useQuery({
@@ -49,7 +64,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex items-center gap-5">
             {menuItems.map((i) => (
-              <Link key={i.href} to={i.href} className="text-[#b8b0a4] text-sm no-underline hover:text-white">
+              <Link key={i.href} to={i.href} preload="render" className="text-[#b8b0a4] text-sm no-underline hover:text-white">
                 {i.label}
                 {hasUnread && i.href === "/paths" && (
                   <span className="inline-block ml-1.5 w-2 h-2 rounded-full align-middle" style={{ background: "#e5af38" }} />
@@ -78,6 +93,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={i.href}
                   to={i.href}
+                  preload="render"
                   aria-label={i.label}
                   className="relative flex flex-col items-center justify-center gap-1 pt-2.5 pb-1.5 min-h-[54px] no-underline"
                   style={{ color: active ? "#c9a84c" : "#8f887c" }}

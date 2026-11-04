@@ -36,7 +36,21 @@
   --background-image-briefing: linear-gradient(120deg, var(--color-action-pause), var(--color-background));
   --shadow-briefing: inset 0 1px 0 color-mix(in srgb, var(--color-parchment) 8%, transparent);
   --background-image-briefing-accept: linear-gradient(135deg, var(--color-parchment), var(--color-primary) 45%, var(--color-primary));
+  --background-image-checkin: linear-gradient(145deg, var(--color-action-pause), var(--color-action-edit) 65%, var(--color-background));
+  --shadow-checkin: inset 0 1px 0 color-mix(in srgb, var(--color-parchment) 12%, transparent), 0 8px 20px color-mix(in srgb, var(--color-background) 75%, transparent);
 }
+
+.kp-checkin-card { background: var(--background-image-checkin); border: 1px solid var(--color-action-gold-edge); border-radius: 8px; box-shadow: var(--shadow-checkin); }
+.kp-checkin-type { display: inline-flex; align-items: center; gap: 5px; font-size: 0.625rem; font-weight: 700; border: 1px solid currentColor; border-radius: 4px; padding: 3px 7px; }
+.kp-checkin-pursue { color: var(--color-history-held); background: color-mix(in srgb, var(--color-history-held) 9%, var(--color-background)); }
+.kp-checkin-flee { color: var(--color-destructive); background: color-mix(in srgb, var(--color-destructive) 9%, var(--color-background)); }
+.kp-checkin-action { min-height: 44px; height: 44px; border: 1px solid; box-shadow: var(--shadow-action); }
+.kp-checkin-held { color: var(--color-history-held); border-color: color-mix(in srgb, var(--color-history-held) 40%, var(--color-background)); background: linear-gradient(180deg, color-mix(in srgb, var(--color-history-held) 17%, var(--color-background)), var(--color-background)); }
+.kp-checkin-breach { color: var(--color-destructive); border-color: var(--color-action-ember-edge); background: linear-gradient(180deg, var(--color-action-archive), var(--color-background)); }
+.kp-checkin-breach[aria-expanded="true"] { border-color: var(--color-destructive); background: var(--color-action-archive); }
+.kp-checkin-sabbath { color: var(--color-primary); border-color: var(--color-action-stone-edge); background: var(--background-image-briefing); }
+.kp-checkin-action:hover { border-color: currentColor; }
+.kp-checkin-confession { background: var(--color-action-archive); border: 1px solid var(--color-action-ember-edge); box-shadow: var(--shadow-action); }
 
 .kp-role-briefing { background: var(--background-image-briefing); border-block: 1px solid var(--color-action-gold-edge); padding-inline: 1rem; box-shadow: var(--shadow-briefing); }
 .kp-briefing-emblem { background: var(--color-action-edit); border: 1px solid var(--color-action-gold-edge); box-shadow: var(--shadow-action); }

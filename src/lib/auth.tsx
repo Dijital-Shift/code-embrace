@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -30,11 +31,19 @@ if (typeof window !== "undefined") {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
+  const identity = useRef<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      const nextIdentity = s?.user.id ?? null;
+      if (identity.current && identity.current !== nextIdentity) {
+        void queryClient.cancelQueries();
+        queryClient.clear();
+      }
+      identity.current = nextIdentity;
       setSession(s);
       setLoading(false);
     });
@@ -43,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
     return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   return (
     <Ctx.Provider
@@ -52,6 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         loading,
         signOut: async () => {
+          await queryClient.cancelQueries();
+          queryClient.clear();
           await supabase.auth.signOut();
         },
       }}

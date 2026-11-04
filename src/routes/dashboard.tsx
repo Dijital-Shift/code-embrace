@@ -16,6 +16,7 @@ import { StarterWalkCard } from "@/components/StarterWalkCard";
 import { pathStartLabel } from "@/lib/path-start";
 import { RoleBriefing } from "@/components/RoleBriefing";
 import { AppInstallCard } from "@/components/AppInstallCard";
+import { dashboardOptions } from "@/lib/app-page-queries";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -27,17 +28,13 @@ export const Route = createFileRoute("/dashboard")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  loader: ({ context }) => {
-    if (typeof window === "undefined") return;
-    void context.queryClient.prefetchQuery({ queryKey: ["dashboard"], queryFn: () => getDashboard() }).catch(() => {});
-  },
   component: () => <AppLayout><Dashboard /></AppLayout>,
 });
 
 function Dashboard() {
   const fn = useServerFn(getDashboard);
   const refFn = useServerFn(getMyReferral);
-  const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fn() });
+  const { data, isLoading } = useQuery(dashboardOptions(fn));
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
   const [starterVisible, setStarterVisible] = useState(false);
   const [openLane, setOpenLane] = useState<string | null>(null);
