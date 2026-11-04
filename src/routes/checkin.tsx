@@ -256,7 +256,7 @@ function CheckIn() {
  * One compact row per path — works the same for "complete" and "avoid" paths.
  * Yes submits instantly. No opens the mandatory honesty field.
  */
-export function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; isLate?: boolean; day?: "today" | "yesterday"; date: string }) {
+function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; isLate?: boolean; day?: "today" | "yesterday"; date: string }) {
   const qc = useQueryClient();
   const submit = useServerFn(submitCheckin);
   const skip = useServerFn(skipCheckin);
