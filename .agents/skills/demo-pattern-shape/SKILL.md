@@ -15,7 +15,7 @@ Every Dijital Shift `/demo` route follows this exact structure. The scaffold and
 4. **Fixed role arc, 10–15 scenes (hard cap).** Order is always `consumer → staff → operator → admin`. Insert a full-width divider band between role changes. Each scene closes with an italic muted "Why it matters: …" line. If a system genuinely needs more depth, add a second route (e.g. `/demo/admin-deep-dive`) — never extend the scroll.
 5. **Semantic tokens only.** All colors via Tailwind semantic classes (`bg-accent`, `text-foreground`, `border-border`, etc.) or `ROLE_META` tints. No raw hex, no `oklch(...)` in components.
 
-6. **Read larger stepper is mandatory.** Every demo ships a sticky-header `ReadLargerControl` (collapsed: quiet `BookOpen`-icon "Read larger" pill → expanded: −/％/+ stepper; scales 100/115/130/150%, saved in localStorage, read in `useEffect`). Scale applies only to each scene's copy column (`style={{ zoom: scale }}`) — never the mocks. The control is styled exclusively with the project's semantic tokens (`text-primary`, `border-border`, `bg-card`, …) so device light/dark settings can never restyle it. On ANY demo edit, first check the route for it; if missing, add it in the same pass.
+6. **Read larger stepper is mandatory.** Every demo ships a sticky-header `ReadLargerControl` (collapsed: quiet `BookOpenText`-icon, single-line "Read larger" pill → expanded: −/％/+ and Done; scales 100/115/130/150%, saved in localStorage, read in `useEffect`). Done collapses the control without resetting the selection. Apply `--read-scale` to narrative `.rs-*` font sizes using `calc(base * var(--read-scale, 1))`; never browser `zoom`, transforms, or scaling mock screens. Keep role chips, status pills and controls unchanged. The control uses only project semantic tokens, independent of device light/dark settings. On ANY demo edit, check and repair this control in the same pass, then verify actual computed font sizes increase, mock dimensions stay fixed, storage persists, and the header fits mobile and desktop.
 
 ## Before writing any JSX
 
@@ -30,5 +30,5 @@ Every Dijital Shift `/demo` route follows this exact structure. The scaffold and
 - [ ] Role divider band between each role change
 - [ ] Every scene has italic "Why it matters: …"
 - [ ] No hex / oklch in components; only semantic tokens + `ROLE_META`
-- [ ] Read larger stepper present in sticky header (BookOpen pill → −/％/+), scales copy only, semantic tokens only
+- [ ] Read larger single-line BookOpenText pill → −/％/+ and Done; computed narrative font sizes change at every step, mocks stay fixed, selection persists, phone/desktop header fits, project colors match in light/dark device settings
 - [ ] No vendor names, copy, or accent values borrowed from another project

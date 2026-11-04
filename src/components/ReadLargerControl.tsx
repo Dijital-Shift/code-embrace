@@ -1,5 +1,6 @@
 import * as React from "react";
-import { BookOpen, Minus, Plus } from "lucide-react";
+import { BookOpenText, Minus, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const READ_SCALES = [1, 1.15, 1.3, 1.5] as const;
@@ -8,8 +9,10 @@ const KEY = "demo-read-scale";
 export function useReadScale() {
   const [idx, setIdx] = React.useState(0);
   React.useEffect(() => {
-    const v = Number(window.localStorage.getItem(KEY));
-    if (Number.isInteger(v) && v >= 0 && v < READ_SCALES.length) setIdx(v);
+    try {
+      const v = Number(window.localStorage.getItem(KEY));
+      if (Number.isInteger(v) && v >= 0 && v < READ_SCALES.length) setIdx(v);
+    } catch { /* Keep the default when browser storage is unavailable. */ }
   }, []);
   const set = React.useCallback((n: number) => {
     const c = Math.max(0, Math.min(READ_SCALES.length - 1, n));
@@ -21,24 +24,26 @@ export function useReadScale() {
 }
 
 export function ReadLargerControl({ idx, set, className }: { idx: number; set: (n: number) => void; className?: string }) {
+  const [expanded, setExpanded] = React.useState(false);
   // Project-fixed obsidian/gold tokens only — never device light/dark scheme.
-  if (idx === 0) {
+  if (!expanded) {
     return (
-      <button
+      <Button
+        variant="outline"
         type="button"
-        onClick={() => set(1)}
+        onClick={() => setExpanded(true)}
         aria-label="Read larger"
         title="Read larger"
         className={cn(
-          "inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-card/90",
+          "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-card/90",
           "px-3 text-xs font-semibold text-primary shadow-sm",
           "transition-colors hover:border-primary/40 hover:bg-primary/10 active:bg-primary/15",
           className,
         )}
       >
-        <BookOpen className="h-4 w-4" aria-hidden="true" />
+        <BookOpenText className="h-4 w-4 shrink-0" aria-hidden="true" />
         Read larger
-      </button>
+      </Button>
     );
   }
   return (
@@ -46,34 +51,38 @@ export function ReadLargerControl({ idx, set, className }: { idx: number; set: (
       role="group"
       aria-label="Text size"
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full border border-primary/40 bg-primary/10",
+        "inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-full border border-primary/40 bg-card",
         "p-0.5 shadow-sm",
         className,
       )}
     >
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => set(idx - 1)}
+        disabled={idx === 0}
         aria-label="Smaller text"
-        className="flex h-8 w-8 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15 disabled:opacity-30"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full p-0 text-primary transition-colors hover:bg-primary/15 disabled:opacity-30"
       >
         <Minus className="h-4 w-4" aria-hidden="true" />
-      </button>
+      </Button>
       <span
         className="min-w-10 text-center font-mono text-xs font-semibold text-primary"
         aria-live="polite"
       >
         {Math.round(READ_SCALES[idx] * 100)}%
       </span>
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => set(idx + 1)}
         disabled={idx === READ_SCALES.length - 1}
         aria-label="Larger text"
-        className="flex h-8 w-8 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15 disabled:opacity-30"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full p-0 text-primary transition-colors hover:bg-primary/15 disabled:opacity-30"
       >
         <Plus className="h-4 w-4" aria-hidden="true" />
-      </button>
+      </Button>
+      <Button variant="ghost" type="button" onClick={() => setExpanded(false)} className="h-11 rounded-full px-2 text-xs text-primary hover:bg-primary/15">Done</Button>
     </div>
   );
 }

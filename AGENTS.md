@@ -1,4 +1,5 @@
 # Architecture rules
+- Demo text scaling uses a CSS custom property with explicit narrative font sizes, never browser zoom; verify rendered font-size changes, unchanged mocks, persistence, and mobile control fit on every demo edit.
 - App tab queries share in-memory retention and session-gated background prefetch; preserve the existing freshness window, clear query data on identity changes, and never run protected reads from public route loaders.
 - Check-In action variants use semantic obsidian/status tokens and shared haptics in compact title/action rows with accessible 44px icon targets and tooltips; preserve offline merge, Sabbath eligibility, and Undo behavior.
 - Invite duty disclosure reuses the downward-only viewport reveal helper after expansion; its top-anchored layout prevents opening content from shifting the invitation upward.

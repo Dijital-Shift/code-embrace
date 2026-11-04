@@ -520,19 +520,19 @@ function Demo() {
   const first = (name || "your brother").split(" ")[0];
   const read = useReadScale();
   return (
-    <div className="min-h-screen text-white" style={{ background: "#0a0800" }}>
+    <div className="read-scaled min-h-screen text-white" style={{ background: "#0a0800", "--read-scale": read.scale } as React.CSSProperties}>
       <header className="sticky top-0 z-30 border-b border-[#2a2518]/60 backdrop-blur" style={{ background: "rgba(10,8,0,0.8)" }}>
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Wordmark size="sm" />
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
           <ReadLargerControl idx={read.idx} set={read.set} />
           {invite ? (
-            <Link to="/invite/$token" params={{ token: invite }} className="inline-flex items-center gap-2 rounded-md bg-[#c9a84c] px-3 py-1.5 text-xs font-bold text-black">
-              <ArrowLeft className="h-4 w-4" /> Return to invite
+            <Link to="/invite/$token" params={{ token: invite }} aria-label="Return to invite" title="Return to invite" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md bg-primary px-3 text-xs font-bold text-primary-foreground">
+              <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Return to invite</span>
             </Link>
           ) : (
-          <Link to="/" className="inline-flex items-center gap-2 rounded-md border border-[#2a2518] px-3 py-1.5 text-xs font-semibold text-[#c9a84c]">
-            <ArrowLeft className="h-4 w-4" /> Back
+          <Link to="/" aria-label="Back" title="Back" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-xs font-semibold text-primary">
+            <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Back</span>
           </Link>
           )}
           </div>
@@ -548,10 +548,10 @@ function Demo() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
           style={{ background: "radial-gradient(ellipse at center top, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 45%, transparent 72%)" }} />
         <div className="mx-auto max-w-3xl px-6 py-16 text-center md:py-20 relative">
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="rs-hero font-bold">
             One path. <span className="text-[#c9a84c]">Two people.</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-[#c8c0b4] md:text-lg">
+          <p className="rs-body mx-auto mt-4 max-w-2xl text-parchment">
             Twelve scenes following one believer's path and the watchman who walks it with them. Every screen below is what you'll actually see in the app once you've created an account.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-2 text-xs">
@@ -574,7 +574,7 @@ function Demo() {
           return (
             <React.Fragment key={scene.id}>
               <article className="grid items-center gap-6 md:grid-cols-2 md:gap-10">
-                <div style={{ zoom: read.scale }}>
+                <div className="min-w-0" data-demo-copy>
                   <div className="mb-3 flex items-center gap-2">
                     <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", meta.chipBg)}>
                       <meta.icon className="h-3 w-3" /> {meta.label}
@@ -583,11 +583,11 @@ function Demo() {
                       Step {scene.step} / {SCENES.length}
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold tracking-tight">{scene.title}</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-[#c8c0b4] md:text-base">{scene.body}</p>
-                  <p className="mt-3 text-xs italic leading-relaxed text-[#c9a84c]/90 md:text-sm">{scene.why}</p>
+                  <h2 className="rs-title font-bold">{scene.title}</h2>
+                  <p className="rs-body mt-3 text-parchment">{scene.body}</p>
+                  <p className="rs-tip mt-3 italic text-primary/90">{scene.why}</p>
                 </div>
-                <div>
+                <div className="min-w-0" data-demo-mock>
                   <div className={cn("overflow-hidden rounded-xl border-2 shadow-[0_10px_40px_-12px_rgba(201,168,76,0.25)]", meta.frameBorder)} style={{ background: "#0d0a04" }}>
                     <div className={cn("flex items-center gap-2 border-b border-[#2a2518] px-3 py-1.5", meta.titleBarBg)}>
                       <span className="h-2 w-2 rounded-full bg-red-500/40" />

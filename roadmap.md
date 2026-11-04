@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Correct demo Read larger: one-line BookOpenText pill, Done stepper, real CSS text resizing, fixed project colors; verify phone/desktop resizing and unchanged mocks.
 - [x] Compact Check-In cards into title/badge and right-aligned icon actions, keeping sculpted finishes, 44px tap targets, and existing confession/Undo behavior.
 - [x] Add session-gated tab prefetch, preload tab code, and retain visited query data for 30 minutes without changing the 45-second freshness window or splash; clear in-memory query data on account changes.
 - [x] Polish Check-In Path cards with gold edges, Pursue/Flee badges, sculpted status actions and haptics; offline merge and Undo retained. Actual cards verified at 414px and 1280px with breach expand/cancel, no overflow or page errors; 71 tests pass.
