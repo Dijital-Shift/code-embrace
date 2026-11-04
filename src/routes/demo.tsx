@@ -19,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { Wordmark } from "@/components/Wordmark";
+import { ReadLargerControl, useReadScale } from "@/components/ReadLargerControl";
 
 export const Route = createFileRoute("/demo")({
   head: () => ({
@@ -517,11 +518,14 @@ const SCENES: Scene[] = [
 function Demo() {
   const { invite, name } = Route.useSearch();
   const first = (name || "your brother").split(" ")[0];
+  const read = useReadScale();
   return (
     <div className="min-h-screen text-white" style={{ background: "#0a0800" }}>
       <header className="sticky top-0 z-30 border-b border-[#2a2518]/60 backdrop-blur" style={{ background: "rgba(10,8,0,0.8)" }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <Wordmark size="sm" />
+          <div className="flex items-center gap-2">
+          <ReadLargerControl idx={read.idx} set={read.set} />
           {invite ? (
             <Link to="/invite/$token" params={{ token: invite }} className="inline-flex items-center gap-2 rounded-md bg-[#c9a84c] px-3 py-1.5 text-xs font-bold text-black">
               <ArrowLeft className="h-4 w-4" /> Return to invite
@@ -531,6 +535,7 @@ function Demo() {
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
           )}
+          </div>
         </div>
         {invite && (
           <div className="border-t border-[#c9a84c]/25 bg-[#c9a84c]/10 px-6 py-2 text-center text-xs text-[#e8dfc4]">
@@ -569,7 +574,7 @@ function Demo() {
           return (
             <React.Fragment key={scene.id}>
               <article className="grid items-center gap-6 md:grid-cols-2 md:gap-10">
-                <div>
+                <div style={{ zoom: read.scale }}>
                   <div className="mb-3 flex items-center gap-2">
                     <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", meta.chipBg)}>
                       <meta.icon className="h-3 w-3" /> {meta.label}
