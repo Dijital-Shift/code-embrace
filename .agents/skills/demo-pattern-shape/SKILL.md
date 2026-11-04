@@ -30,5 +30,5 @@ Every Dijital Shift `/demo` route follows this exact structure. The scaffold and
 - [ ] Role divider band between each role change
 - [ ] Every scene has italic "Why it matters: …"
 - [ ] No hex / oklch in components; only semantic tokens + `ROLE_META`
-- [ ] Read larger stepper present in sticky header, scales copy only
+- [ ] Read larger stepper present in sticky header (BookOpen pill → −/％/+), scales copy only, semantic tokens only
 - [ ] No vendor names, copy, or accent values borrowed from another project
