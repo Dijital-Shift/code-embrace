@@ -3,23 +3,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { enqueueCheckin, dequeueCheckin, readQueue, saveCheckinCache, readCheckinCache, isNetworkError, QUEUE_EVENT, type QueuedCheckin } from "@/lib/offline-checkins";
+import { enqueueCheckin, dequeueCheckin, readQueue, readCheckinCache, isNetworkError, QUEUE_EVENT, type QueuedCheckin } from "@/lib/offline-checkins";
 import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/lib/api.functions";
-import { Check, X, Lock } from "lucide-react";
+import { Check, X, Lock, ShieldCheck, ShieldAlert, Moon, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { contactHaptic } from "@/lib/watchman-alert";
+import { checkinOptions } from "@/lib/app-page-queries";
 
 import { AppLayout } from "@/components/AppLayout";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { AccessBanner, useAccessState } from "@/components/AccessBanner";
 import { statusColor, statusLabel } from "@/lib/status";
-
-async function loadCheckin(call: () => Promise<any>) {
-  try { const d = await call(); saveCheckinCache(d); return { ...d, offline: false }; }
-  catch (e) {
-    const cached = readCheckinCache<any>();
-    if (cached && isNetworkError(e)) return { ...cached, offline: true };
-    throw e;
-  }
-}
 
 export const Route = createFileRoute("/checkin")({
   head: () => ({ meta: [
@@ -30,10 +24,6 @@ export const Route = createFileRoute("/checkin")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  loader: ({ context }) => {
-    if (typeof window === "undefined") return;
-    void context.queryClient.prefetchQuery({ queryKey: ["checkin"], queryFn: () => loadCheckin(() => getCheckinPage()) }).catch(() => {});
-  },
   component: () => <AppLayout><CheckIn /></AppLayout>,
 });
 
@@ -62,8 +52,7 @@ function UndoLink({ busy, onClick }: { busy: boolean; onClick: () => void }) {
 function CheckIn() {
   const fn = useServerFn(getCheckinPage);
   const { data, isLoading } = useQuery({
-    queryKey: ["checkin"],
-    queryFn: () => loadCheckin(() => fn()),
+    ...checkinOptions(fn),
     // Show the last known list on frame one; fresh data replaces it silently.
     placeholderData: () => {
       const c = typeof window !== "undefined" ? readCheckinCache<any>() : null;
@@ -247,10 +236,10 @@ function CheckIn() {
                 {done.length + undoableYesterday.length === 0 && <p className="text-[0.75rem] text-[#9e968a]">Nothing logged yet today.</p>}
                 <div className="flex flex-col gap-2">
                   {undoableYesterday.map((l) => (
-                    <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id)! as any} dayTag="Yesterday" day="yesterday" date={yesterday} />
+                    <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id) as any} dayTag="Yesterday" day="yesterday" date={yesterday} />
                   ))}
                   {done.map((l) => {
-                    const c = todayMap.get(l.lane_id)!;
+                    const c = todayMap.get(l.lane_id);
                     return <LoggedRow key={l.lane_id} lane={l} checkin={c as any} date={today} />;
                   })}
                 </div>
@@ -340,7 +329,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
 
   if (result) {
     return (
-      <div className="rounded-lg border border-[#2a2518]" style={{ background: "#161210" }}>
+      <div className="kp-checkin-card">
         <div className="flex justify-between items-center gap-3 px-3 py-2.5">
           <span className="text-sm text-[#ded8cc] min-w-0 truncate">{lane.title}</span>
           <div className="flex items-center gap-3 shrink-0">
@@ -354,43 +343,38 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   }
 
   return (
-    <div className="px-3.5 py-3 rounded-xl border border-[#2a2518]" style={{ background: "linear-gradient(180deg, #19140b 0%, #120e07 100%)", boxShadow: "inset 0 1px 0 rgba(201,168,76,0.06)" }}>
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          {isLate && <span className="text-[0.6rem] text-[#f59e0b] font-semibold uppercase tracking-wider block">Yesterday</span>}
-          <span className="text-[0.95rem] font-medium text-[#e8dfc4] block truncate">{lane.title}</span>
-        </div>
-        <div className="flex gap-2 flex-shrink-0 items-center">
+    <div className="kp-checkin-card px-4 py-4">
+      <div className="flex items-center justify-between gap-3 mb-2.5">
+        <span className={`kp-checkin-type ${isAvoid ? "kp-checkin-flee" : "kp-checkin-pursue"}`}>
+          {isAvoid ? <ShieldAlert size={12} /> : <TrendingUp size={12} />}{isAvoid ? "Flee" : "Pursue"}
+        </span>
+        {isLate && <span className="text-[0.65rem] text-history-silent font-semibold">Yesterday</span>}
+      </div>
+      <p className="text-base leading-snug font-semibold text-parchment break-words">{lane.title}</p>
+      <div className="mt-4 pt-3 border-t border-action-gold-edge/40">
+        <div className={`grid gap-2 ${isAvoid ? "grid-cols-2" : "grid-cols-[1fr_1fr_auto]"}`}>
+          <Button
+            type="button" disabled={busy} variant="checkinHeld"
+            aria-label={yesLabel} title={yesLabel}
+            onClick={() => { contactHaptic(); setOpen(false); send("aligned"); }}
+            className="w-full px-2 text-xs"
+          >{busy && !open ? <span>…</span> : <ShieldCheck />}{yesLabel}</Button>
+          <Button
+            type="button" disabled={busy} variant="checkinBreach"
+            aria-label={noLabel} title={noLabel} aria-expanded={open}
+            onClick={() => { contactHaptic(); setOpen((v) => !v); setErr(null); }}
+            className="w-full px-2 text-xs"
+          ><ShieldAlert />{noLabel}</Button>
           {!isAvoid && (
-            <button
+            <Button
               type="button" disabled={busy || open}
+              variant="checkinSabbath"
               aria-label="Skip — Sabbath"
               title="Sabbath — no check-in today"
-              onClick={doSkip}
-              className="h-8 px-2.5 rounded-full text-[0.62rem] font-semibold uppercase tracking-wider disabled:opacity-40"
-              style={{ border: "1px solid #3a3020", color: "#c9a84c", background: "transparent" }}
-            >Sabbath</button>
+              onClick={() => { contactHaptic(); doSkip(); }}
+              className="px-2.5 text-[0.65rem]"
+            ><Moon />Sabbath</Button>
           )}
-          <button
-            type="button" disabled={busy}
-            aria-label={yesLabel}
-            title={yesLabel}
-            onClick={() => { setOpen(false); send("aligned"); }}
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ border: "1px solid #1f5133", background: "#0b2016", color: "#4ade80" }}
-          >
-            {busy && !open ? <span className="text-xs">…</span> : <Check size={20} strokeWidth={3} />}
-          </button>
-          <button
-            type="button" disabled={busy}
-            aria-label={noLabel}
-            title={noLabel}
-            onClick={() => { setOpen((v) => !v); setErr(null); }}
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ border: `1px solid ${open ? "#f87171" : "#4a1f1f"}`, background: open ? "#2d0d0d" : "#1a0f0f", color: "#f87171" }}
-          >
-            <X size={20} strokeWidth={3} />
-          </button>
         </div>
       </div>
 
@@ -398,29 +382,25 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
       {open && (
         <div
           ref={missRef}
-          className="mt-3 p-3 rounded-lg"
-          style={{ background: "linear-gradient(180deg, #2a0a0a 0%, #1a0606 100%)", border: "1px solid #7f1d1d", boxShadow: "0 0 18px rgba(220,38,38,0.18), inset 0 1px 0 rgba(248,113,113,0.12)" }}
+          className="kp-checkin-confession mt-3 p-3 rounded-lg"
         >
-          <p className="text-[0.65rem] font-semibold uppercase tracking-wider mb-2" style={{ color: "#fca5a5" }}>
+          <p className="text-[0.65rem] font-semibold uppercase mb-2 text-destructive">
             {isAvoid ? "Confess the breach" : "Tell the truth"}
           </p>
           <textarea
             rows={3} required minLength={5} value={explanation} onChange={(e) => setExplanation(e.target.value)}
             placeholder="What happened? Be honest."
-            className="w-full p-2.5 text-base rounded-md outline-none resize-none placeholder:text-[#a87878]"
-            style={{ background: "#120404", border: "1px solid #5a1a1a", color: "#fde8e8" }}
+            className="w-full p-2.5 text-base rounded-md outline-none resize-none placeholder:text-stone bg-background border border-action-ember-edge text-parchment"
           />
           <div className="flex items-center justify-between gap-3 mt-2.5">
-            <button type="button" onClick={() => { setOpen(false); setExplanation(""); }} className="text-[0.72rem] text-[#d4a5a5] underline underline-offset-2">Cancel</button>
-            <button
+            <Button type="button" variant="link" onClick={() => { contactHaptic(); setOpen(false); setExplanation(""); }} className="text-xs text-stone px-0">Cancel</Button>
+            <Button
               type="button"
+              variant="checkinBreach"
               disabled={busy || explanation.trim().length < 5}
-              onClick={() => send("breach")}
-              className="px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-colors"
-              style={explanation.trim().length >= 5
-                ? { background: "#7f1d1d", color: "#fff", border: "1px solid #f87171" }
-                : { background: "#2a1212", color: "#8a5a5a", border: "1px solid #3a1a1a" }}
-            >{busy ? "Submitting…" : isAvoid ? "Submit Breach" : "Submit"}</button>
+              onClick={() => { contactHaptic(); send("breach"); }}
+              className="px-4 text-xs font-bold"
+            >{busy ? "Submitting…" : isAvoid ? "Submit Breach" : "Submit"}</Button>
           </div>
         </div>
       )}

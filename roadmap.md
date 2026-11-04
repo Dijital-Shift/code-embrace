@@ -1,4 +1,7 @@
 # Tasks
+- [x] Add session-gated tab prefetch, preload tab code, and retain visited query data for 30 minutes without changing the 45-second freshness window or splash; clear in-memory query data on account changes.
+- [x] Polish Check-In Path cards with gold edges, Pursue/Flee badges, sculpted status actions and haptics; offline merge and Undo retained. Actual cards verified at 414px and 1280px with breach expand/cancel, no overflow or page errors; 71 tests pass.
+- [ ] Verify real-account navigation and Check-In save/Undo — session mint and self-session failed; requires the user to sign into the preview. Physical iPhone haptics remain device-only verification.
 - [x] Polish invitation brand/Path/duty headings and clarify Watchman responsibilities; live pending invite verified at 390px and 1280px, full duty disclosure revealed on tap with collapse working, no overflow or page errors, eight reveal tests pass and build OK. Acceptance intentionally not submitted.
 - [x] Polish invite alignment/Path card, consolidate duty copy into disclosure, correct browser wording, add hesitation FAQ without repeated verses, and distinguish settled breaches from All clear. Live pending invite/FAQ verified at phone and desktop widths; 15 tests pass and build OK.
 - [ ] Verify Watch Settled on the real signed-in dashboard — preview self-session has no matching account; requires preview sign-in. Invite acceptance was intentionally not submitted during read-only checks.

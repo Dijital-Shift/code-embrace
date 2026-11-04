@@ -19,6 +19,7 @@ import { formatPhone, isValidPhone } from "@/lib/phone";
 import { TIMEZONE_GROUPS } from "@/lib/localday";
 import { useRevealOnOpen } from "@/hooks/useRevealOnOpen";
 import { allowsAutomaticTimezone } from "@/lib/timezone-sync";
+import { settingsOptions } from "@/lib/app-page-queries";
 
 
 export const Route = createFileRoute("/settings")({
@@ -30,10 +31,6 @@ export const Route = createFileRoute("/settings")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  loader: ({ context }) => {
-    if (typeof window === "undefined") return;
-    void context.queryClient.prefetchQuery({ queryKey: ["settings"], queryFn: () => getSettings() }).catch(() => {});
-  },
   component: () => <AppLayout><Settings /></AppLayout>,
 });
 
@@ -41,7 +38,7 @@ function Settings() {
   const fn = useServerFn(getSettings);
   const update = useServerFn(updateProfile);
   const refFn = useServerFn(getMyReferral);
-  const { data, isLoading, refetch } = useQuery({ queryKey: ["settings"], queryFn: () => fn() });
+  const { data, isLoading, refetch } = useQuery(settingsOptions(fn));
   const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");

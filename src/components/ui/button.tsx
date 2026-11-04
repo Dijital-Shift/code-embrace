@@ -19,6 +19,9 @@ const buttonVariants = cva(
         pathEdit: "kp-action kp-action-edit",
         pathPause: "kp-action kp-action-pause",
         pathArchive: "kp-action kp-action-archive",
+        checkinHeld: "kp-checkin-action kp-checkin-held",
+        checkinBreach: "kp-checkin-action kp-checkin-breach",
+        checkinSabbath: "kp-checkin-action kp-checkin-sabbath",
       },
       size: {
         default: "h-9 px-4 py-2",
