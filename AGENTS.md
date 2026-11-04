@@ -1,6 +1,6 @@
 # Architecture rules
 - App tab queries share in-memory retention and session-gated background prefetch; preserve the existing freshness window, clear query data on identity changes, and never run protected reads from public route loaders.
-- Check-In action variants use semantic obsidian/status tokens and shared haptics; preserve offline merge, Sabbath eligibility, and Undo behavior.
+- Check-In action variants use semantic obsidian/status tokens and shared haptics in compact title/action rows with accessible 44px icon targets and tooltips; preserve offline merge, Sabbath eligibility, and Undo behavior.
 - Invite duty disclosure reuses the downward-only viewport reveal helper after expansion; its top-anchored layout prevents opening content from shifting the invitation upward.
 - Watchman notification identity uses the client-safe watchman-alert name helper without credential fallback; history expansion uses its downward-only viewport reveal helper to keep new incidents above the mobile dock.
 - Silence history ranges use the earliest grouped alert plus its preceding private day and count one more silent day than notifications, preserving the two-day notification threshold without collapsing multi-alert spans.
