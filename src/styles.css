@@ -281,6 +281,17 @@ html.kp-splash body { overflow: hidden; }
   background: #0a0800;
   border-bottom: 1px solid #2a2518;
 }
+
+/* Scale real typography, not browser zoom; mock screens remain outside this scope. */
+.read-scaled .rs-title { font-size: calc(1.5rem * var(--read-scale, 1)); line-height: 1.25; letter-spacing: 0; overflow-wrap: anywhere; }
+.read-scaled .rs-body { font-size: calc(0.875rem * var(--read-scale, 1)); line-height: 1.625; }
+.read-scaled .rs-tip { font-size: calc(0.75rem * var(--read-scale, 1)); line-height: 1.625; }
+.read-scaled .rs-hero { font-size: calc(2.25rem * var(--read-scale, 1)); line-height: 1.15; letter-spacing: 0; overflow-wrap: anywhere; }
+@media (min-width: 768px) {
+  .read-scaled .rs-body { font-size: calc(1rem * var(--read-scale, 1)); }
+  .read-scaled .rs-tip { font-size: calc(0.875rem * var(--read-scale, 1)); }
+  .read-scaled .rs-hero { font-size: calc(3rem * var(--read-scale, 1)); }
+}
 @media (max-width: 600px) {
   .kp-subpage-bar { top: calc(44px + env(safe-area-inset-top)); margin-top: -1.25rem; }
 }
