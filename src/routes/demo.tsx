@@ -18,7 +18,6 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { Wordmark } from "@/components/Wordmark";
 import { ReadLargerControl, useReadScale } from "@/components/ReadLargerControl";
 
 export const Route = createFileRoute("/demo")({
