@@ -105,13 +105,15 @@ body {
   margin: 0;
 }
 
-button, a {
-  -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.12s, transform 0.1s;
+@layer base {
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.12s, transform 0.1s;
+  }
+  button:active, a:active { opacity: 0.75; transform: scale(0.97); }
+  button { min-height: 44px; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
-button:active, a:active { opacity: 0.75; transform: scale(0.97); }
-button { min-height: 44px; }
-button:disabled { opacity: 0.4; cursor: not-allowed; }
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: #444 !important;
