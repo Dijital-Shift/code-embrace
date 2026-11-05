@@ -35,7 +35,7 @@ export function ReadLargerControl({ idx, set, className }: { idx: number; set: (
         aria-label="Read larger"
         title="Read larger"
         className={cn(
-          "inline-flex h-auto min-h-0 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-primary bg-primary",
+          "inline-flex h-auto min-h-0 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-primary bg-primary [&_svg]:size-3.5",
           "px-3 py-1.5 text-[0.6875rem] font-bold text-primary-foreground shadow-sm",
           "transition-opacity hover:opacity-90 active:opacity-80",
           className,
@@ -62,7 +62,7 @@ export function ReadLargerControl({ idx, set, className }: { idx: number; set: (
         onClick={() => set(idx - 1)}
         disabled={idx === 0}
         aria-label="Smaller text"
-        className="flex h-7 min-h-0 w-7 shrink-0 items-center justify-center rounded-full p-0 text-primary transition-colors hover:bg-primary/15 disabled:opacity-30"
+        className="flex h-7 min-h-0 w-7 shrink-0 items-center justify-center rounded-full p-0 text-primary transition-colors hover:bg-primary/15 disabled:opacity-30 [&_svg]:size-3.5"
       >
         <Minus className="h-3.5 w-3.5" aria-hidden="true" />
       </Button>
@@ -78,7 +78,7 @@ export function ReadLargerControl({ idx, set, className }: { idx: number; set: (
         onClick={() => set(idx + 1)}
         disabled={idx === READ_SCALES.length - 1}
         aria-label="Larger text"
-        className="flex h-7 min-h-0 w-7 shrink-0 items-center justify-center rounded-full p-0 text-primary transition-colors hover:bg-primary/15 disabled:opacity-30"
+        className="flex h-7 min-h-0 w-7 shrink-0 items-center justify-center rounded-full p-0 text-primary transition-colors hover:bg-primary/15 disabled:opacity-30 [&_svg]:size-3.5"
       >
         <Plus className="h-3.5 w-3.5" aria-hidden="true" />
       </Button>
