@@ -35,9 +35,9 @@ export function ReadLargerControl({ idx, set, className }: { idx: number; set: (
         aria-label="Read larger"
         title="Read larger"
         className={cn(
-          "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-card/90",
-          "px-3 text-xs font-semibold text-primary shadow-sm",
-          "transition-colors hover:border-primary/40 hover:bg-primary/10 active:bg-primary/15",
+          "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-primary bg-primary",
+          "px-3 text-xs font-bold text-primary-foreground shadow-sm",
+          "transition-opacity hover:opacity-90 active:opacity-80",
           className,
         )}
       >

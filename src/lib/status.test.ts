@@ -35,3 +35,9 @@ test("held Paths and legitimate Sabbath settle clear", () => {
 test("a breach never settles a day with another Path still open", () => {
   assert.equal(settledWatchState(["breached", "pending"]), "open");
 });
+
+test("settled tally names every breach and silent day", async () => {
+  const { settledTally } = await import("./status");
+  assert.equal(settledTally(["completed", "breached", "completed", "breached", "completed"]), "3 held · 2 breached");
+  assert.equal(settledTally(["completed", "missed", "breached", "skipped"]), "2 held · 1 breached · 1 silent");
+});

@@ -6,7 +6,7 @@ import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { AccessBanner, LifetimeBadge } from "@/components/AccessBanner";
-import { statusColor, statusLabel, settledWatchState } from "@/lib/status";
+import { statusColor, statusLabel, settledWatchState, settledTally } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
 import { WatchmanWordsModal, type Word } from "@/components/WatchmanWordsModal";
 import { useEffect, useState } from "react";
@@ -59,7 +59,7 @@ function Dashboard() {
       <p className={watchState === "recorded" ? "text-parchment font-semibold" : "text-history-held font-semibold"}>
         {watchState === "recorded" ? "Watch Settled" : "All clear."}
       </p>
-      <p className="text-stone text-xs mt-1">{!dueLanes.length ? "Your Paths start tomorrow. Nothing is owed tonight." : watchState === "recorded" ? "Roll call complete. Accountability recorded." : "Every Path due today is checked in."}</p>
+      <p className="text-stone text-xs mt-1">{!dueLanes.length ? "Your Paths start tomorrow. Nothing is owed tonight." : watchState === "recorded" ? `Roll call complete. ${settledTally(dueLanes.map((l) => statusByLane.get(l.lane_id) ?? "pending"))}.` : "Every Path due today is checked in."}</p>
     </div>
   );
   const unreadByLane = new Map(((data?.unreadPaths ?? []) as { lane_id: string; count: number }[]).map((p) => [p.lane_id, p.count]));
