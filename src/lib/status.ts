@@ -40,3 +40,14 @@ export function settledWatchState(statuses: string[]): "open" | "clear" | "recor
   if (statuses.some((s) => s === "pending")) return "open";
   return statuses.some((s) => s === "breached" || s === "missed") ? "recorded" : "clear";
 }
+
+/** Plain tally for a settled day: "4 held · 2 breached · 1 silent". Sabbath counts as held. */
+export function settledTally(statuses: string[]): string {
+  const held = statuses.filter((s) => s === "completed" || s === "skipped").length;
+  const breached = statuses.filter((s) => s === "breached").length;
+  const silent = statuses.filter((s) => s === "missed").length;
+  const parts = [`${held} held`];
+  if (breached) parts.push(`${breached} breached`);
+  if (silent) parts.push(`${silent} silent`);
+  return parts.join(" · ");
+}

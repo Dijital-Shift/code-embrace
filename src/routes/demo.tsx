@@ -18,7 +18,6 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { Wordmark } from "@/components/Wordmark";
 import { ReadLargerControl, useReadScale } from "@/components/ReadLargerControl";
 
 export const Route = createFileRoute("/demo")({
@@ -522,19 +521,23 @@ function Demo() {
   return (
     <div className="read-scaled min-h-screen text-white" style={{ background: "#0a0800", "--read-scale": read.scale } as React.CSSProperties}>
       <header className="sticky top-0 z-30 border-b border-[#2a2518]/60 backdrop-blur" style={{ background: "rgba(10,8,0,0.8)" }}>
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Wordmark size="sm" />
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-          <ReadLargerControl idx={read.idx} set={read.set} />
+        <div className="mx-auto grid max-w-5xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2 sm:px-6">
+          <div className="flex justify-start">
           {invite ? (
-            <Link to="/invite/$token" params={{ token: invite }} aria-label="Return to invite" title="Return to invite" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md bg-primary px-3 text-xs font-bold text-primary-foreground">
-              <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Return to invite</span>
+            <Link to="/invite/$token" params={{ token: invite }} className="inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-1 text-xs font-semibold text-primary">
+              <ArrowLeft className="h-4 w-4" /> <span>Invite</span>
             </Link>
           ) : (
-          <Link to="/" aria-label="Back" title="Back" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-xs font-semibold text-primary">
-            <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Back</span>
+          <Link to="/" className="inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-1 text-xs font-semibold text-primary">
+            <ArrowLeft className="h-4 w-4" /> <span>Back</span>
           </Link>
           )}
+          </div>
+          <Link to="/" aria-label="Kingdom Protocol home" className="flex justify-center">
+            <img src="/kingdom-protocol-logo.png" alt="Kingdom Protocol" className="h-10 w-10 object-contain" />
+          </Link>
+          <div className="flex justify-end">
+            <ReadLargerControl idx={read.idx} set={read.set} />
           </div>
         </div>
         {invite && (
