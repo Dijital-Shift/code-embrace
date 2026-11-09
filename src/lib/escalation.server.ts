@@ -6,6 +6,7 @@ import { activeWatchmen } from './watchmen.server';
 import { reachOutLine } from './sibling';
 import { pathIsDue } from './path-start';
 import { watchmanAlertName } from './watchman-alert';
+import { isUnwatchedReminderSlot, unwatchedReminderPush } from './unwatched-reminder';
 
 /**
  * Owners whose free month has ended without a plan are "resting": no silence
@@ -318,4 +319,41 @@ export async function sendMorningReminders() {
     morningSent++;
   }
   return { morningSent };
+}
+
+/** Thursday noon + Sunday 6 PM local: one nudge per owner with unwatched, uninvited Paths. */
+export async function sendUnwatchedReminders() {
+  const now = new Date();
+  const { data: profiles } = await supabaseAdmin.from('profiles')
+    .select('user_id, timezone').eq('status', 'active');
+  const due = (profiles ?? []).filter((p: any) => {
+    const { date, hour } = localParts(now, p.timezone || DEFAULT_TZ);
+    return isUnwatchedReminderSlot(date, hour);
+  });
+  if (!due.length) return { unwatchedSent: 0 };
+  const access = await accessibleOwners(due.map((p: any) => p.user_id));
+  let unwatchedSent = 0;
+  for (const p of due) {
+    if (!access.has(p.user_id)) continue;
+    const today = localDate((p as any).timezone || DEFAULT_TZ, now);
+    const { data: lanes } = await supabaseAdmin.from('lanes')
+      .select('lane_id, ends_at').eq('user_id', p.user_id).eq('status', 'active');
+    const open = (lanes ?? []).filter((l: any) => !l.ends_at || String(l.ends_at).slice(0, 10) >= today);
+    if (!open.length) continue;
+    const ids = open.map((l: any) => l.lane_id);
+    const [{ data: watched }, { data: invites }] = await Promise.all([
+      supabaseAdmin.from('path_watchmen').select('path_id').in('path_id', ids).eq('status', 'active'),
+      supabaseAdmin.from('lane_invites').select('lane_id').in('lane_id', ids)
+        .eq('status', 'pending').gt('expires_at', now.toISOString()),
+    ]);
+    const covered = new Set([
+      ...(watched ?? []).map((w: any) => w.path_id),
+      ...(invites ?? []).map((i: any) => i.lane_id),
+    ]);
+    const push = unwatchedReminderPush(ids.filter((id) => !covered.has(id)));
+    if (!push) continue;
+    await sendPushToUser(p.user_id, push);
+    unwatchedSent++;
+  }
+  return { unwatchedSent };
 }

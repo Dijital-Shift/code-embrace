@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { sendBedtimeReminders, sendMorningReminders } from '@/lib/escalation.server';
+import { sendBedtimeReminders, sendMorningReminders, sendUnwatchedReminders } from '@/lib/escalation.server';
 import { checkCronAuth } from '@/lib/cron-auth.server';
 
 export const Route = createFileRoute('/api/public/hooks/bedtime-reminder')({
@@ -8,7 +8,11 @@ export const Route = createFileRoute('/api/public/hooks/bedtime-reminder')({
       POST: async ({ request }) => {
         const unauth = checkCronAuth(request);
         if (unauth) return unauth;
-        const result = { ...(await sendBedtimeReminders()), ...(await sendMorningReminders()) };
+        const result = {
+          ...(await sendBedtimeReminders()),
+          ...(await sendMorningReminders()),
+          ...(await sendUnwatchedReminders()),
+        };
         return Response.json({ ok: true, ...result });
       },
     },
