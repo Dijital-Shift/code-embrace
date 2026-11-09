@@ -54,6 +54,15 @@ export function KingdomExplainer({ mp4, webm, poster }: KingdomExplainerProps) {
             <source src={webm} type="video/webm" />
           </video>
           {!started && !failed && (
+            <button
+              type="button"
+              onClick={playFilm}
+              tabIndex={-1}
+              aria-hidden="true"
+              className="absolute inset-0 z-[5] cursor-pointer bg-transparent"
+            />
+          )}
+          {!started && !failed && (
             <Button
               variant="outline"
               onClick={playFilm}
