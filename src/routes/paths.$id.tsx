@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { pathDeletable } from "@/lib/path-endlock";
 import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead, extendCompletedLane, setEncouragementVisibility } from "@/lib/api.functions";
 import { Button } from "@/components/ui/button";
-import { Archive, Pencil, Pause, Play, EyeOff, RotateCcw, Trash2 } from "lucide-react";
+import { Archive, Pencil, Pause, Play, EyeOff, RotateCcw, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { DateField } from "@/components/ScriptureFields";
 import {
   createLaneInvite,
@@ -533,8 +533,11 @@ function EncouragementCard({
             {open ? enc.from_name : enc.body}
           </span>
         </div>
-        <span className="text-xs text-[#a8a094] shrink-0">
+        <span className="shrink-0 inline-flex items-center gap-1.5 text-xs text-[#a8a094]">
           {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+          {open
+            ? <ChevronUp aria-hidden="true" className="size-4 text-primary" />
+            : <ChevronDown aria-hidden="true" className="size-4 text-primary" />}
         </span>
       </button>
 
@@ -548,7 +551,12 @@ function EncouragementCard({
             {enc.from_name} ·{" "}
             {new Date(enc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
           </p>
-          {onHide && <Button type="button" variant="ghost" size="sm" className="mt-2 text-stone" disabled={hiding} onClick={() => onHide(enc.id)}><EyeOff />Hide from Path</Button>}
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+            {onHide
+              ? <Button type="button" variant="ghost" size="sm" className="text-stone" disabled={hiding} onClick={() => onHide(enc.id)}><EyeOff />Hide from Path</Button>
+              : <span />}
+            <Button type="button" variant="ghost" size="sm" className="text-primary" aria-label="Collapse encouragement" onClick={() => setOpen(false)}><ChevronUp />Collapse</Button>
+          </div>
         </div>
       )}
     </div>
