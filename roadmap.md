@@ -1,4 +1,6 @@
 # Tasks
+- [x] Add clear open/close chevron and bottom Collapse to encouragement cards; label late confessions "Breach declared after check-in" in Watchman push, alert history, and The Watch card. 90 tests pass.
+- [ ] Verify late-breach alert on a real Watchman phone and a real encouragement collapse — requires preview sign-in and a device check.
 - [x] Correct demo Read larger: single-line BookOpenText pill, Done stepper, real CSS text resizing and project colors; verified 100/115/130/150% computed sizes, unchanged mock widths/fonts, saved selection, light/dark color parity, and no overflow/errors at 320/390/414/1280px. Demo skill updated and active; build OK.
 - [x] Compact Check-In cards into title/badge and right-aligned icon actions, keeping sculpted finishes, 44px tap targets, and existing confession/Undo behavior.
 - [x] Add session-gated tab prefetch, preload tab code, and retain visited query data for 30 minutes without changing the 45-second freshness window or splash; clear in-memory query data on account changes.
