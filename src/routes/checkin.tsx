@@ -288,6 +288,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
     } catch (e) {
       setBusy(false);
       if (!isNetworkError(e) || !date) { setErr("Couldn't save. Try again."); return; }
+      setReviewing(false);
       enqueueCheckin({ laneId: lane.lane_id, date, kind: response, explanation: expl });
       return; // the page now shows it as "Pending sync"
     }
@@ -462,7 +463,6 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
   const [err, setErr] = useState<string | null>(null);
   const [confessing, setConfessing] = useState(false);
   const [note, setNote] = useState("");
-  const confessRef = useRevealOnOpen<HTMLDivElement>(confessing, true);
 
   const pending = !!checkin.pending;
   const canConfess = !pending && canDeclareLateBreach(lane.lane_type, checkin.status, day, graceOpen);
@@ -470,8 +470,9 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
   async function confess() {
     if (busy) return;
     setBusy(true); setErr(null);
+    if (!breachNoteReady(note)) return;
     let r: any;
-    try { r = await declare({ data: { laneId: lane.lane_id, forDay: day, explanation: note } }); }
+    try { r = await declare({ data: { laneId: lane.lane_id, forDay: day, explanation: note.trim() } }); }
     catch { setBusy(false); setErr("Couldn't save. Try again."); return; }
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
@@ -495,64 +496,54 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
   const held = checkin.status === "completed" || checkin.status === "skipped";
   const color = statusColor(checkin.status);
   return (
-    <div
-      className="rounded-xl"
-      style={{
-        background: held ? "linear-gradient(135deg, #12201a 0%, #161210 70%)" : "#161210",
-        border: `1px solid ${held ? "#2f5a3e" : "#2a2518"}`,
-        boxShadow: held ? "0 0 16px rgba(74,222,128,0.08), inset 0 1px 0 rgba(212,175,55,0.10)" : undefined,
-      }}
-    >
+    <div className="kp-logged-card rounded-xl">
       <div className="flex justify-between items-center gap-3 px-3.5 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <span
             aria-hidden
-            className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center"
-            style={{ border: `1.5px solid ${color}`, background: "#0e0c0a", boxShadow: `0 0 10px ${color}33`, color }}
+            className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center bg-background"
+            style={{ border: `1.5px solid ${color}`, color }}
           >
             {held ? <Check size={17} strokeWidth={3} /> : <X size={16} strokeWidth={3} />}
           </span>
           <div className="min-w-0">
-            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block" style={{ color: "#a8a094" }}>
+            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block text-stone">
               {dayTag ? `${dayTag} · ` : ""}{lane.lane_type === "avoid" ? "Flee" : "Pursue"}
             </span>
-            <span className="text-[0.95rem] font-semibold text-[#f1ece2] block truncate">{lane.title}</span>
+            <span className="text-[0.95rem] font-semibold text-parchment block truncate">{lane.title}</span>
           </div>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <span
-            className="text-[0.65rem] font-bold uppercase tracking-[0.14em] px-2 py-1 rounded"
-            style={{ color, border: `1px solid ${color}55`, background: `${color}12` }}
-          >{statusLabel(checkin.status)}</span>
-          {pending && <span className="text-[0.6rem] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ color: "#f59e0b", border: "1px solid #5a4a1a" }}>Pending sync</span>}
+          <span className="text-[0.65rem] font-bold uppercase tracking-[0.14em]" style={{ color }}>
+            {statusLabel(checkin.status)}
+          </span>
+          {pending && <span className="text-[0.6rem] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded text-primary border border-action-gold-edge">Pending sync</span>}
           {canUndo && <UndoLink busy={busy} onClick={undo} />}
         </div>
       </div>
-      {canConfess && !confessing && (
+      {canConfess && (
         <div className="px-3.5 pb-3 -mt-1 flex justify-end">
           <button
             type="button"
             onClick={() => { contactHaptic(); setConfessing(true); setErr(null); }}
-            className="text-[0.7rem] font-semibold uppercase tracking-wider text-destructive border border-destructive/40 rounded-md px-2.5 py-1.5"
+            className="kp-declare-pill min-h-0 h-8 rounded-full px-3.5 text-[0.65rem] font-bold uppercase tracking-wider"
           >Declare Breach</button>
         </div>
       )}
       {confessing && (
-        <div ref={confessRef} className="kp-checkin-confession mx-3.5 mb-3 p-3 rounded-lg">
-          <p className="text-[0.65rem] font-semibold uppercase mb-2 text-destructive">Did you breach this Path after checking in?</p>
-          <textarea
-            rows={3} value={note} onChange={(e) => setNote(e.target.value)}
-            placeholder="What happened? Be honest."
-            className="w-full p-2.5 text-base rounded-md outline-none resize-none placeholder:text-stone bg-background border border-action-ember-edge text-parchment"
-          />
-          <p className="text-[0.65rem] text-stone mt-1.5">Your Watchman is alerted. This cannot be changed back to Held.</p>
-          <div className="flex items-center justify-between gap-3 mt-2.5">
-            <Button type="button" variant="link" onClick={() => { contactHaptic(); setConfessing(false); setNote(""); }} className="text-xs text-stone px-0">Cancel</Button>
-            <HoldToConfirm label="Hold to Sound Alarm" busy={busy} disabled={note.trim().length < 5} onConfirm={confess} />
-          </div>
-        </div>
+        <BreachConfirmDialog
+          title={`Declare Breach on ${lane.title}?`}
+          description={`This alerts your Watchman and permanently records a breach for ${day === "yesterday" ? "yesterday" : "today"}. It cannot be changed back to Held.`}
+          note={note}
+          onNoteChange={(v) => { setNote(v); setErr(null); }}
+          cancelLabel="Keep as Held"
+          busy={busy}
+          error={err}
+          onCancel={() => { setConfessing(false); setNote(""); setErr(null); }}
+          onConfirm={confess}
+        />
       )}
-      {err && <p className="text-red-400 text-xs px-3.5 pb-2.5">{err}</p>}
+      {err && !confessing && <p className="text-red-400 text-xs px-3.5 pb-2.5">{err}</p>}
     </div>
   );
 }

@@ -53,6 +53,9 @@
 .kp-checkin-sabbath { color: var(--color-primary); border-color: var(--color-action-stone-edge); background: var(--background-image-briefing); }
 .kp-checkin-action:hover { border-color: currentColor; }
 .kp-checkin-confession { background: var(--color-action-archive); border: 1px solid var(--color-action-ember-edge); box-shadow: var(--shadow-action); }
+.kp-logged-card { background: var(--color-card); border: 1px solid var(--color-action-stone-edge); box-shadow: var(--shadow-briefing); }
+.kp-declare-pill { color: var(--color-destructive); background: var(--color-action-archive); border: 1px solid var(--color-action-ember-edge); box-shadow: var(--shadow-action); }
+.kp-declare-pill:hover { border-color: currentColor; }
 
 .kp-role-briefing { background: var(--background-image-briefing); border-block: 1px solid var(--color-action-gold-edge); padding-inline: 1rem; box-shadow: var(--shadow-briefing); }
 .kp-briefing-emblem { background: var(--color-action-edit); border: 1px solid var(--color-action-gold-edge); box-shadow: var(--shadow-action); }
