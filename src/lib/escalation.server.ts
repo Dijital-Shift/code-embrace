@@ -5,7 +5,7 @@ import { localParts, localDate, prevDay, DEFAULT_TZ } from './localday';
 import { activeWatchmen } from './watchmen.server';
 import { reachOutLine } from './sibling';
 import { pathIsDue } from './path-start';
-import { watchmanAlertName } from './watchman-alert';
+import { breachAlertCopy, watchmanAlertName } from './watchman-alert';
 import { isUnwatchedReminderSlot, unwatchedReminderPush } from './unwatched-reminder';
 
 /**
@@ -63,19 +63,19 @@ async function deliverToWatchman(args: {
 
 // Every active watchman on the path is pinged immediately on a self-reported breach.
 export async function triggerBreachAlert(args: {
-  checkinId: string; laneId: string; laneTitle: string; userId: string;
+  checkinId: string; laneId: string; laneTitle: string; userId: string; late?: boolean;
 }) {
   const watchmen = await activeWatchmen(args.laneId);
   if (!watchmen.length) return;
   const { data: u } = await supabaseAdmin.from('profiles').select('first_name, last_name').eq('user_id', args.userId).single();
-  const body = `${watchmanAlertName(u)} reported a breach on "${args.laneTitle}". Open The Watch to read their explanation and reach out.`;
+  const { title, body } = breachAlertCopy(watchmanAlertName(u), args.laneTitle, !!args.late);
 
   for (const w of watchmen) {
     if (!w.watchman_id) continue;
     await deliverToWatchman({
       laneId: args.laneId, checkinId: args.checkinId, watchmanId: w.watchman_id,
       watchmanPhone: w.phone, type: 'breach_report', body,
-      title: 'Breach reported', smsFallback: SMS_BREACH,
+      title, smsFallback: SMS_BREACH,
     });
   }
 }

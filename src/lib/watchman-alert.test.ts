@@ -47,3 +47,19 @@ test('silence range crosses month and year boundaries', () => {
   assert.equal(range.days, 2);
   assert.equal(range.start.toISOString(), '2026-12-31T17:00:00.000Z');
 });
+test('a breach confessed after check-in is labeled late in title, push body, and history line', async () => {
+  const { breachAlertCopy, isLateBreachMessage } = await import('./watchman-alert');
+  const late = breachAlertCopy('Justin J', 'No Cannabis', true);
+  assert.equal(late.title, 'Breach declared after check-in');
+  assert.equal(late.line, 'Justin J declared a breach on "No Cannabis" after check-in.');
+  assert.ok(late.body.startsWith(late.line));
+  assert.equal(isLateBreachMessage(late.body), true);
+});
+
+test('a regular breach is never labeled late', async () => {
+  const { breachAlertCopy, isLateBreachMessage } = await import('./watchman-alert');
+  const normal = breachAlertCopy('Justin J', 'No Cannabis', false);
+  assert.equal(normal.title, 'Breach reported');
+  assert.equal(isLateBreachMessage(normal.body), false);
+  assert.equal(isLateBreachMessage(null), false);
+});

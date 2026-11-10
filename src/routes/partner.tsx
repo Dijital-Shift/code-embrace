@@ -299,7 +299,8 @@ export function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = fa
           )}
           {c?.status === "breached" && c.breach_explanation && (
             <div className="kp-watch-explanation py-3 pl-3 pr-2 mb-4">
-              <p className="text-xs text-destructive font-semibold mb-2 flex items-center gap-2"><ShieldAlert className="size-4 shrink-0" aria-hidden="true" />Breach explanation:</p>
+              <p className="text-xs text-destructive font-semibold mb-2 flex items-center gap-2"><ShieldAlert className="size-4 shrink-0" aria-hidden="true" />{c.late ? "Breach declared after check-in:" : "Breach explanation:"}</p>
+              {c.late && <p className="text-xs text-muted-foreground mb-2 leading-relaxed">They first logged this day as Held. Ask what happened after they checked in.</p>}
               <p className="text-sm text-secondary-foreground leading-relaxed whitespace-pre-wrap break-words">{c.breach_explanation}</p>
             </div>
           )}
@@ -402,7 +403,7 @@ export function EncourageBox({ laneId, title, phone, send, onSent, alert, onPend
   );
 }
 
-type AlertItem = { notification_id: string; type: string; sent_at: string | null; message_content: string | null; lane_id: string | null };
+type AlertItem = { notification_id: string; type: string; sent_at: string | null; message_content: string | null; lane_id: string | null; late?: boolean };
 type AlertGroupData = { key: string; title: string; who: string | null; silent: number; breach: number; last: string | null; items: AlertItem[] };
 
 /** One line per path instead of a wall of near-identical alert cards. */
@@ -500,8 +501,11 @@ function IncidentList({ items }: { items: AlertItem[] }) {
       {visible.map((i) => {
         const breach = i.kind === "breach";
         const range = fmt(i.start) === fmt(i.end) ? fmt(i.end) : `${fmt(i.start)} – ${fmt(i.end)}`;
+        const lateCount = i.items.filter((n) => n.late).length;
         const label = breach
-          ? (i.count > 1 ? `${i.count} breaches` : "Breach")
+          ? (i.count > 1
+            ? `${i.count} breaches${lateCount ? ` · ${lateCount} after check-in` : ""}`
+            : lateCount ? "Breach · after check-in" : "Breach")
           : `Silent · ${i.count + 1} days`;
         return (
           <div key={i.key} className="flex justify-between items-center gap-3 px-3 py-2 rounded-md border border-[#2a2518]" style={{ background: "#0d0b06" }}>

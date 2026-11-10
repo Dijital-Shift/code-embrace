@@ -7,6 +7,23 @@ export function watchmanAlertName(profile?: { first_name?: string | null; last_n
   return name || 'Someone you watch';
 }
 
+const LATE_BREACH_MARK = /\bdeclared a breach on\b[\s\S]*\bafter check-in\b/;
+
+/** A breach confessed after a Held check-in is named as such — the gap is what the Watchman must ask about. */
+export function breachAlertCopy(who: string, pathTitle: string, late: boolean): { title: string; body: string; line: string } {
+  if (late) {
+    const line = `${who} declared a breach on "${pathTitle}" after check-in.`;
+    return { title: 'Breach declared after check-in', body: `${line} Open The Watch to read their explanation and reach out.`, line };
+  }
+  const line = `${who} reported a breach on "${pathTitle}".`;
+  return { title: 'Breach reported', body: `${line} Open The Watch to read their explanation and reach out.`, line };
+}
+
+/** Stored alert text carries the late marker, so history keeps the distinction without a schema change. */
+export function isLateBreachMessage(content: string | null | undefined): boolean {
+  return !!content && LATE_BREACH_MARK.test(content);
+}
+
 /** Reveal new content below the fold without pulling the viewport upward. */
 export function alertRevealDistance(top: number, bottom: number, viewportHeight: number, dockHeight = 0): number {
   const availableBottom = viewportHeight - dockHeight - 20;
