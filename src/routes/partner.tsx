@@ -299,7 +299,8 @@ export function AssignmentCard({ lane, checkin: c, statusColor, defaultOpen = fa
           )}
           {c?.status === "breached" && c.breach_explanation && (
             <div className="kp-watch-explanation py-3 pl-3 pr-2 mb-4">
-              <p className="text-xs text-destructive font-semibold mb-2 flex items-center gap-2"><ShieldAlert className="size-4 shrink-0" aria-hidden="true" />Breach explanation:</p>
+              <p className="text-xs text-destructive font-semibold mb-2 flex items-center gap-2"><ShieldAlert className="size-4 shrink-0" aria-hidden="true" />{c.late ? "Breach declared after check-in:" : "Breach explanation:"}</p>
+              {c.late && <p className="text-xs text-muted-foreground mb-2 leading-relaxed">They first logged this day as Held. Ask what happened after they checked in.</p>}
               <p className="text-sm text-secondary-foreground leading-relaxed whitespace-pre-wrap break-words">{c.breach_explanation}</p>
             </div>
           )}

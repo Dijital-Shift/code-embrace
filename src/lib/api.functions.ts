@@ -14,7 +14,7 @@ import { friendlyLaneError } from './lane-errors.server';
 import { localDate, localHour, prevDay, reminderUtcHour, DEFAULT_TZ } from './localday';
 import { alertContextLabel } from './alert-context';
 import { removalNotice } from './watchman-removal';
-import { watchmanAlertName } from './watchman-alert';
+import { breachAlertCopy, isLateBreachMessage, watchmanAlertName } from './watchman-alert';
 import { defaultPathStart, resolvePathStart, pathStartDate, pathIsDue } from './path-start';
 
 import {
@@ -718,7 +718,7 @@ export const declareLateBreach = createServerFn({ method: 'POST' })
       .select('checkin_id').maybeSingle();
     if (error) return { error: error.message };
     if (!chk) return { error: 'No Held record to confess on.' };
-    await triggerBreachAlert({ checkinId: chk.checkin_id, laneId: data.laneId, laneTitle: lane.title, userId });
+    await triggerBreachAlert({ checkinId: chk.checkin_id, laneId: data.laneId, laneTitle: lane.title, userId, late: true });
     return { success: true };
   });
 
@@ -815,8 +815,16 @@ export const getPartnerView = createServerFn({ method: 'GET' })
     }
 
     const { data: notifications } = await supabase.from('notifications')
-      .select('notification_id, type, status, message_content, sent_at, lane_id')
+      .select('notification_id, type, status, message_content, sent_at, lane_id, checkin_id')
       .eq('partner_id', userId).in('type', ['missed_checkin', 'breach_report']).order('sent_at', { ascending: false }).limit(20);
+    // Late confessions are marked in the stored alert text; the Watch card needs it for today's row too.
+    const todayBreachIds = ((todayChks ?? []) as any[]).filter((c) => c.status === 'breached').map((c) => c.checkin_id);
+    const { data: lateRows } = todayBreachIds.length
+      ? await supabase.from('notifications').select('checkin_id, message_content')
+        .eq('partner_id', userId).eq('type', 'breach_report').in('checkin_id', todayBreachIds)
+      : { data: [] as any[] };
+    const lateCheckinIds = new Set(((lateRows ?? []) as any[])
+      .filter((n) => isLateBreachMessage(n.message_content)).map((n) => n.checkin_id));
     const { data: closureRows, error: closureError } = await supabase.from('notifications')
       .select('notification_id, message_content, sent_at, created_at')
       .eq('partner_id', userId).eq('type', 'watchman_removed')
@@ -840,9 +848,9 @@ export const getPartnerView = createServerFn({ method: 'GET' })
       let line: string | null = null;
       if (title && who) {
         if (n.type === 'missed_checkin') line = `${who} has gone silent on "${title}" two days running. Reach out.`;
-        else if (n.type === 'breach_report') line = `${who} reported a breach on "${title}".`;
+        else if (n.type === 'breach_report') line = breachAlertCopy(who, title, isLateBreachMessage(n.message_content)).line;
       }
-      return { ...n, message_content: line ?? n.message_content };
+      return { ...n, late: n.type === 'breach_report' && isLateBreachMessage(n.message_content), message_content: line ?? n.message_content };
     });
     const chkById = new Map(((history ?? []) as any[]).map((c) => [c.checkin_id, c]));
     const sentEncouragements = (sentEncouragementRows ?? []).map((e: any) => {
@@ -864,7 +872,7 @@ export const getPartnerView = createServerFn({ method: 'GET' })
         latestAlert: latestAlert.get(l.lane_id) ?? null,
         resting: restingOwners.has(l.user_id),
       })),
-      todayCheckins: todayChks ?? [], history: history ?? [],
+      todayCheckins: ((todayChks ?? []) as any[]).map((c) => ({ ...c, late: lateCheckinIds.has(c.checkin_id) })), history: history ?? [],
       notifications: alertHistory,
       closureNotices: (closureRows ?? []).map((n) => ({ ...n, ...removalNotice(n.message_content) })),
       showNudge: (ownLaneCount ?? 0) === 0,
