@@ -56,15 +56,15 @@ export function BreachConfirmDialog({
 
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-[auto_1fr] gap-2">
           <Button ref={cancelRef} type="button" variant="pathPause" disabled={busy}
             onClick={() => { contactHaptic(); onCancel(); }}
-            className="rounded-full px-3 text-xs font-semibold whitespace-normal">
+            className="rounded-full px-4 text-xs font-semibold whitespace-nowrap">
             {cancelLabel}
           </Button>
           <Button type="button" variant="pathArchive" disabled={!ready || busy}
             onClick={() => { contactHaptic(); onConfirm(); }}
-            className="rounded-full px-3 text-xs font-bold whitespace-normal leading-tight">
+            className="rounded-full px-3 text-xs font-bold whitespace-nowrap">
             {busy ? "Sounding…" : "Confirm & Sound Alarm"}
           </Button>
         </div>
