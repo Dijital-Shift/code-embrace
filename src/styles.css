@@ -114,6 +114,16 @@ body {
   button { min-height: 44px; }
   button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
+/* Native-app feel: hide scrollbar indicators everywhere while keeping touch, wheel and keyboard scrolling. */
+html, body, * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: #444 !important;
