@@ -25,7 +25,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StandingRouteImport } from './routes/standing'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as ZzBreachPreviewRouteImport } from './routes/zz-breach-preview'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as LanesIndexRouteImport } from './routes/lanes.index'
@@ -127,11 +126,6 @@ const TermsRoute = TermsRouteImport.update({
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ZzBreachPreviewRoute = ZzBreachPreviewRouteImport.update({
-  id: '/zz-breach-preview',
-  path: '/zz-breach-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
@@ -267,7 +261,6 @@ export interface FileRoutesByFullPath {
   '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
-  '/zz-breach-preview': typeof ZzBreachPreviewRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
@@ -308,7 +301,6 @@ export interface FileRoutesByTo {
   '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
-  '/zz-breach-preview': typeof ZzBreachPreviewRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
@@ -350,7 +342,6 @@ export interface FileRoutesById {
   '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
-  '/zz-breach-preview': typeof ZzBreachPreviewRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
@@ -393,7 +384,6 @@ export interface FileRouteTypes {
     | '/standing'
     | '/terms'
     | '/unsubscribe'
-    | '/zz-breach-preview'
     | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
@@ -434,7 +424,6 @@ export interface FileRouteTypes {
     | '/standing'
     | '/terms'
     | '/unsubscribe'
-    | '/zz-breach-preview'
     | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
@@ -475,7 +464,6 @@ export interface FileRouteTypes {
     | '/standing'
     | '/terms'
     | '/unsubscribe'
-    | '/zz-breach-preview'
     | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
@@ -517,7 +505,6 @@ export interface RootRouteChildren {
   StandingRoute: typeof StandingRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
-  ZzBreachPreviewRoute: typeof ZzBreachPreviewRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
@@ -653,13 +640,6 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/zz-breach-preview': {
-      id: '/zz-breach-preview'
-      path: '/zz-breach-preview'
-      fullPath: '/zz-breach-preview'
-      preLoaderRoute: typeof ZzBreachPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/return': {
@@ -848,7 +828,6 @@ const rootRouteChildren: RootRouteChildren = {
   StandingRoute: StandingRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
-  ZzBreachPreviewRoute: ZzBreachPreviewRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,
