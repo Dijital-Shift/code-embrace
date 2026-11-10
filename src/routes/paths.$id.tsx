@@ -518,6 +518,7 @@ function EncouragementCard({
     <div ref={ref} className="rounded border border-[#3a2f12]" style={{ background: "#1a1408" }}>
       <button
         type="button"
+        aria-expanded={open}
         onClick={() => { setOpen((v) => !v); onSeen(enc.id); }}
         className="w-full flex items-center justify-between gap-3 text-left px-3 py-2.5"
       >
