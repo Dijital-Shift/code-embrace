@@ -5,8 +5,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { enqueueCheckin, dequeueCheckin, readQueue, readCheckinCache, isNetworkError, QUEUE_EVENT, type QueuedCheckin } from "@/lib/offline-checkins";
 import { getCheckinPage, submitCheckin, skipCheckin, revertComplete, declareLateBreach } from "@/lib/api.functions";
-import { HoldToConfirm } from "@/components/HoldToConfirm";
-import { canDeclareLateBreach } from "@/lib/hold-seal";
+import { BreachConfirmDialog } from "@/components/BreachConfirmDialog";
+import { breachNoteReady, canDeclareLateBreach } from "@/lib/late-breach";
 import { Check, X, Lock, ShieldCheck, ShieldAlert, Moon, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -270,6 +270,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
   const missRef = useRevealOnOpen<HTMLDivElement>(open, true);
 
   const isAvoid = lane.lane_type === "avoid";
@@ -292,6 +293,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
     }
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
+    setReviewing(false);
     setResult(response === "aligned" ? "completed" : "breached");
     // Undo covers a mis-click on either day.
     if (response === "aligned") setCanUndo(true);
@@ -413,18 +415,29 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
           />
           <div className="flex items-center justify-between gap-3 mt-2.5">
             <Button type="button" variant="link" onClick={() => { contactHaptic(); setOpen(false); setExplanation(""); }} className="text-xs text-stone px-0">Cancel</Button>
-            <HoldToConfirm
-              label="Hold to Sound Alarm"
-              busyLabel="Submitting…"
-              busy={busy}
-              disabled={explanation.trim().length < 5}
-              onConfirm={() => send("breach")}
-            />
+            <Button type="button" variant="pathArchive" disabled={busy || !breachNoteReady(explanation)}
+              onClick={() => { contactHaptic(); if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); setErr(null); setReviewing(true); }}
+              className="rounded-full px-4 text-xs font-bold">
+              Review Breach
+            </Button>
           </div>
         </div>
       )}
 
-      {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
+      {reviewing && (
+        <BreachConfirmDialog
+          title={isAvoid ? "Review your confession" : "Review before you send"}
+          description="Read it once more. Your Watchman is alerted the moment you confirm, and this day is recorded as a breach."
+          note={explanation}
+          cancelLabel="Edit"
+          busy={busy}
+          error={err}
+          onCancel={() => setReviewing(false)}
+          onConfirm={() => send("breach")}
+        />
+      )}
+
+      {err && !reviewing && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
     </div>
   );
