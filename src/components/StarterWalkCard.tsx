@@ -32,7 +32,7 @@ export function StarterWalkCard({ laneId, onVisibilityChange }: { laneId: string
       </p>
       <div className="flex items-center gap-4 mt-3">
         <Button asChild variant="link" className="px-0 text-xs">
-          <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer" className="kp-ext-link">SendScripture.xyz <span aria-hidden="true">↗</span><span className="sr-only"> — opens an external site in a new tab</span></a>
+          <a href="https://sendscripture.app" target="_blank" rel="noopener noreferrer" className="kp-ext-link">SendScripture.app <span aria-hidden="true">↗</span><span className="sr-only"> — opens an external site in a new tab</span></a>
         </Button>
         <Link to="/paths/$id" params={{ id: laneId }} search={{ newlyCreated: false }} onClick={dismiss}
           className="px-3 py-1.5 rounded text-xs font-bold no-underline"
@@ -40,7 +40,7 @@ export function StarterWalkCard({ laneId, onVisibilityChange }: { laneId: string
         <button type="button" onClick={dismiss} className="text-xs text-[#a8a094] underline bg-transparent border-0">Got it</button>
       </div>
       <p className="text-xs text-[#948d80] leading-relaxed mt-2">
-        Tip: Create a free account once at SendScripture.xyz. It keeps you logged in so every send from Kingdom Protocol is tracked.
+        Tip: Create a free account once at SendScripture.app. It keeps you logged in so every send from Kingdom Protocol is tracked.
       </p>
     </div>
   );

@@ -243,9 +243,9 @@ function LaneDetail() {
         )}
         {/^send scripture/i.test(lane.title ?? "") && (
           <div className="flex items-center gap-2 mt-3">
-            <a href="https://sendscripture.xyz" target="_blank" rel="noopener noreferrer"
+            <a href="https://sendscripture.app" target="_blank" rel="noopener noreferrer"
               className="kp-ext-link inline-flex items-center gap-1 py-2 text-sm font-semibold text-primary underline underline-offset-2">
-              SendScripture.xyz <span aria-hidden="true">↗</span>
+              SendScripture.app <span aria-hidden="true">↗</span>
               <span className="sr-only"> — opens an external site in a new tab</span>
             </a>
             <Popover>
@@ -255,7 +255,7 @@ function LaneDetail() {
               </PopoverTrigger>
               <PopoverContent className="w-72 bg-[#14110a] border-[#c9a84c]/40 text-[#ded8cc]">
                 <p className="text-sm font-semibold text-[#c9a84c] mb-1">Keep your sends tracked</p>
-                <p className="text-xs leading-relaxed">Sign in or create a free account at SendScripture.xyz once. Your browser remembers your session so every verse you send from Kingdom Protocol counts toward your history.</p>
+                <p className="text-xs leading-relaxed">Sign in or create a free account at SendScripture.app once. Your browser remembers your session so every verse you send from Kingdom Protocol counts toward your history.</p>
               </PopoverContent>
             </Popover>
           </div>

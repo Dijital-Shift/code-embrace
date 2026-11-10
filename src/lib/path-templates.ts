@@ -57,7 +57,7 @@ export const PATH_TEMPLATES: PathTemplate[] = [
     id: "send-scripture",
     category: "Devotion",
     title: "Send Scripture",
-    description: "Send a verse to someone every day — a word in season, not a sermon. Easy way to do this: SendScripture.xyz",
+    description: "Send a verse to someone every day — a word in season, not a sermon. Easy way to do this: SendScripture.app",
     lane_type: "complete",
     support_scripture: [
       "Preach the word; be instant in season, out of season; reprove, rebuke, exhort with all longsuffering and doctrine. — 2 Timothy 4:2 (KJV)",
