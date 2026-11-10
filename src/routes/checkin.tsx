@@ -4,7 +4,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { enqueueCheckin, dequeueCheckin, readQueue, readCheckinCache, isNetworkError, QUEUE_EVENT, type QueuedCheckin } from "@/lib/offline-checkins";
-import { getCheckinPage, submitCheckin, skipCheckin, revertComplete } from "@/lib/api.functions";
+import { getCheckinPage, submitCheckin, skipCheckin, revertComplete, declareLateBreach } from "@/lib/api.functions";
+import { HoldToConfirm } from "@/components/HoldToConfirm";
+import { canDeclareLateBreach } from "@/lib/hold-seal";
 import { Check, X, Lock, ShieldCheck, ShieldAlert, Moon, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -137,7 +139,7 @@ function CheckIn() {
   // mis-click on a catch-up answer can be taken back after a refresh.
   const undoableYesterday = lanes.filter((l) => {
     const c: any = yesterdayMap.get(l.lane_id);
-    return c?.pending || undoable(c);
+    return c?.pending || undoable(c) || (c && canDeclareLateBreach(l.lane_type, c.status, "yesterday", graceOpen));
   });
   const allDone = pending.length === 0 && late.length === 0;
 
@@ -237,7 +239,7 @@ function CheckIn() {
                 {done.length + undoableYesterday.length === 0 && <p className="text-[0.75rem] text-[#9e968a]">Nothing logged yet today.</p>}
                 <div className="flex flex-col gap-2">
                   {undoableYesterday.map((l) => (
-                    <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id) as any} dayTag="Yesterday" day="yesterday" date={yesterday} />
+                    <LoggedRow key={`ly-${l.lane_id}`} lane={l} checkin={yesterdayMap.get(l.lane_id) as any} dayTag="Yesterday" day="yesterday" date={yesterday} graceOpen={graceOpen} />
                   ))}
                   {done.map((l) => {
                     const c = todayMap.get(l.lane_id);
@@ -411,13 +413,13 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
           />
           <div className="flex items-center justify-between gap-3 mt-2.5">
             <Button type="button" variant="link" onClick={() => { contactHaptic(); setOpen(false); setExplanation(""); }} className="text-xs text-stone px-0">Cancel</Button>
-            <Button
-              type="button"
-              variant="checkinBreach"
-              disabled={busy || explanation.trim().length < 5}
-              onClick={() => { contactHaptic(); send("breach"); }}
-              className="px-4 text-xs font-bold"
-            >{busy ? "Submitting…" : isAvoid ? "Submit Breach" : "Submit"}</Button>
+            <HoldToConfirm
+              label="Hold to Sound Alarm"
+              busyLabel="Submitting…"
+              busy={busy}
+              disabled={explanation.trim().length < 5}
+              onConfirm={() => send("breach")}
+            />
           </div>
         </div>
       )}
@@ -432,8 +434,9 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
  * A check-in already logged. Keeps a quiet inline Undo alive for 30 minutes
  * after a "Held" or Sabbath entry, so it survives a page refresh.
  */
-function LoggedRow({ lane, checkin, dayTag, day = "today", date }: {
+function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = false }: {
   lane: Lane;
+  graceOpen?: boolean;
   checkin: { status: string; completion_time?: string | null; pending?: boolean };
   date?: string;
   dayTag?: string;
@@ -441,10 +444,28 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date }: {
 }) {
   const qc = useQueryClient();
   const revert = useServerFn(revertComplete);
+  const declare = useServerFn(declareLateBreach);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [confessing, setConfessing] = useState(false);
+  const [note, setNote] = useState("");
+  const confessRef = useRevealOnOpen<HTMLDivElement>(confessing, true);
 
   const pending = !!checkin.pending;
+  const canConfess = !pending && canDeclareLateBreach(lane.lane_type, checkin.status, day, graceOpen);
+
+  async function confess() {
+    if (busy) return;
+    setBusy(true); setErr(null);
+    let r: any;
+    try { r = await declare({ data: { laneId: lane.lane_id, forDay: day, explanation: note } }); }
+    catch { setBusy(false); setErr("Couldn't save. Try again."); return; }
+    setBusy(false);
+    if (r?.error) { setErr(r.error); return; }
+    setConfessing(false); setNote("");
+    qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["checkin"] });
+  }
   const canUndo = pending || undoable(checkin);
 
   async function undo() {
@@ -494,6 +515,30 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date }: {
           {canUndo && <UndoLink busy={busy} onClick={undo} />}
         </div>
       </div>
+      {canConfess && !confessing && (
+        <div className="px-3.5 pb-3 -mt-1 flex justify-end">
+          <button
+            type="button"
+            onClick={() => { contactHaptic(); setConfessing(true); setErr(null); }}
+            className="text-[0.7rem] font-semibold uppercase tracking-wider text-destructive border border-destructive/40 rounded-md px-2.5 py-1.5"
+          >Declare Breach</button>
+        </div>
+      )}
+      {confessing && (
+        <div ref={confessRef} className="kp-checkin-confession mx-3.5 mb-3 p-3 rounded-lg">
+          <p className="text-[0.65rem] font-semibold uppercase mb-2 text-destructive">Did you breach this Path after checking in?</p>
+          <textarea
+            rows={3} value={note} onChange={(e) => setNote(e.target.value)}
+            placeholder="What happened? Be honest."
+            className="w-full p-2.5 text-base rounded-md outline-none resize-none placeholder:text-stone bg-background border border-action-ember-edge text-parchment"
+          />
+          <p className="text-[0.65rem] text-stone mt-1.5">Your Watchman is alerted. This cannot be changed back to Held.</p>
+          <div className="flex items-center justify-between gap-3 mt-2.5">
+            <Button type="button" variant="link" onClick={() => { contactHaptic(); setConfessing(false); setNote(""); }} className="text-xs text-stone px-0">Cancel</Button>
+            <HoldToConfirm label="Hold to Sound Alarm" busy={busy} disabled={note.trim().length < 5} onConfirm={confess} />
+          </div>
+        </div>
+      )}
       {err && <p className="text-red-400 text-xs px-3.5 pb-2.5">{err}</p>}
     </div>
   );

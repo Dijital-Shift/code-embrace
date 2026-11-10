@@ -30,3 +30,4 @@
 - StarterWalkCard reports dismissal visibility to the dashboard so introductory ordering ends when the prompt is dismissed.
 - Six-digit OTP entry invokes verification directly with an in-flight guard; manual submission remains a retry fallback.
 - Watchman capacity is scoped to active Paths for each owner/Watchman pair, never globally; shared capacity logic and database triggers protect all acceptance and legacy assignment paths.
+- Breach submits use shared HoldToConfirm; late confession is one-way, Held Flee only, server-validated.

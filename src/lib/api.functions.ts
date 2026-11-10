@@ -692,6 +692,36 @@ export const submitCheckin = createServerFn({ method: 'POST' })
     return { success: true };
   });
 
+/** Confess a breach on a Flee Path already logged "Held". One-way; yesterday closes at 10 AM local. */
+export const declareLateBreach = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({
+    laneId: z.string().uuid(),
+    forDay: z.enum(['today', 'yesterday']),
+    explanation: z.string().max(1000),
+  }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const denied = await requireAccess(supabase as any, userId);
+    if (denied) return denied;
+    if (data.explanation.trim().length < 5) return { error: 'Write at least a few words about what happened.' };
+    const { data: lane } = await supabase.from('lanes').select('lane_id, title, lane_type')
+      .eq('lane_id', data.laneId).eq('user_id', userId).eq('status', 'active').single();
+    if (!lane) return { error: 'Path not found or inactive.' };
+    if (lane.lane_type !== 'avoid') return { error: 'Only Flee Paths can declare a breach after logging.' };
+    const { tz, today, yesterday } = await userDay(supabase, userId);
+    if (data.forDay === 'yesterday' && localHour(tz) >= 10) return { error: "Yesterday's record closed at 10 AM." };
+    const target = data.forDay === 'yesterday' ? yesterday : today;
+    const { data: chk, error } = await supabase.from('checkins')
+      .update({ status: 'breached', breach_explanation: data.explanation.trim(), completion_time: new Date().toISOString() })
+      .eq('lane_id', data.laneId).eq('user_id', userId).eq('checkin_date', target).eq('status', 'completed')
+      .select('checkin_id').maybeSingle();
+    if (error) return { error: error.message };
+    if (!chk) return { error: 'No Held record to confess on.' };
+    await triggerBreachAlert({ checkinId: chk.checkin_id, laneId: data.laneId, laneTitle: lane.title, userId });
+    return { success: true };
+  });
+
 export const skipCheckin = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ laneId: z.string().uuid(), forDay: z.enum(['today', 'yesterday']).optional() }))
