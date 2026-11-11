@@ -507,29 +507,29 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
             {held ? <Check size={17} strokeWidth={3} /> : <X size={16} strokeWidth={3} />}
           </span>
           <div className="min-w-0">
-            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block text-stone">
+            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block text-stone whitespace-nowrap">
               {dayTag ? `${dayTag} · ` : ""}{lane.lane_type === "avoid" ? "Flee" : "Pursue"}
             </span>
             <span className="text-[0.95rem] font-semibold text-parchment block truncate">{lane.title}</span>
           </div>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[0.65rem] font-bold uppercase tracking-[0.14em]" style={{ color }}>
-            {statusLabel(checkin.status)}
-          </span>
+          {!held && (
+            <span className="text-[0.65rem] font-bold uppercase tracking-[0.14em]" style={{ color }}>
+              {statusLabel(checkin.status)}
+            </span>
+          )}
           {pending && <span className="text-[0.6rem] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded text-primary border border-action-gold-edge">Pending sync</span>}
+          {canConfess && (
+            <button
+              type="button"
+              onClick={() => { contactHaptic(); setConfessing(true); setErr(null); }}
+              className="kp-declare-pill min-h-0 h-8 rounded-full px-3 text-[0.6rem] font-bold uppercase tracking-wider"
+            >Declare Breach</button>
+          )}
           {canUndo && <UndoLink busy={busy} onClick={undo} />}
         </div>
       </div>
-      {canConfess && (
-        <div className="px-3.5 pb-3 -mt-1 flex justify-end">
-          <button
-            type="button"
-            onClick={() => { contactHaptic(); setConfessing(true); setErr(null); }}
-            className="kp-declare-pill min-h-0 h-8 rounded-full px-3.5 text-[0.65rem] font-bold uppercase tracking-wider"
-          >Declare Breach</button>
-        </div>
-      )}
       {confessing && (
         <BreachConfirmDialog
           title={`Declare Breach on ${lane.title}?`}
