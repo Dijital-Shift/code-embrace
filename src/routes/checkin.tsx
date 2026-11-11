@@ -525,15 +525,17 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
               type="button"
               onClick={() => { contactHaptic(); setConfessing(true); setErr(null); }}
               className="kp-declare-pill min-h-0 h-8 rounded-full px-3 text-[0.6rem] font-bold uppercase tracking-wider"
-            >Declare Breach</button>
+            >Confess Breach</button>
           )}
           {canUndo && <UndoLink busy={busy} onClick={undo} />}
         </div>
       </div>
       {confessing && (
         <BreachConfirmDialog
-          title={`Declare Breach on ${lane.title}?`}
-          description={`This alerts your Watchman and permanently records a breach for ${day === "yesterday" ? "yesterday" : "today"}. It cannot be changed back to Held.`}
+          title={`Confess Breach on ${lane.title}?`}
+          description="You marked this as Held, but the wall cracked afterward. Confessing it now restores honor. This permanently records the breach and sounds the alarm to your Watchman."
+          noteLabel="Confession after check-in"
+          notePlaceholder="What happened in the hours after you marked it Held? Name what gave way so your Watchman knows how to stand with you."
           note={note}
           onNoteChange={(v) => { setNote(v); setErr(null); }}
           cancelLabel="Keep as Held"

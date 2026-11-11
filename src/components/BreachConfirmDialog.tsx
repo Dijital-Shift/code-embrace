@@ -10,10 +10,12 @@ import { contactHaptic } from "@/lib/watchman-alert";
  * review mode shows the already-written note so it can be read before sending.
  */
 export function BreachConfirmDialog({
-  title, description, note, onNoteChange, cancelLabel, busy, error, onCancel, onConfirm,
+  title, description, noteLabel = "What happened?", notePlaceholder = "Be honest.", note, onNoteChange, cancelLabel, busy, error, onCancel, onConfirm,
 }: {
   title: string;
   description: string;
+  noteLabel?: string;
+  notePlaceholder?: string;
   note: string;
   onNoteChange?: (v: string) => void;
   cancelLabel: string;
@@ -39,11 +41,11 @@ export function BreachConfirmDialog({
 
         {editable ? (
           <div>
-            <label htmlFor="breach-note" className="block text-[0.65rem] uppercase font-semibold tracking-wider text-stone mb-2">What happened?</label>
+            <label htmlFor="breach-note" className="block text-[0.65rem] uppercase font-semibold tracking-wider text-stone mb-2">{noteLabel}</label>
             <textarea
               id="breach-note" rows={4} maxLength={1000} value={note} disabled={busy}
               onChange={(e) => onNoteChange!(e.target.value)}
-              placeholder="Be honest."
+              placeholder={notePlaceholder}
               className="w-full rounded-md border border-action-stone-edge bg-background p-3 text-base text-parchment placeholder:text-stone resize-none outline-none focus:border-primary/60"
             />
             {!ready && <p className="text-[0.65rem] text-stone mt-1.5">{note.trim().length} / {MIN_BREACH_NOTE} characters minimum</p>}
