@@ -533,9 +533,9 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
       {confessing && (
         <BreachConfirmDialog
           title={`Confess Breach on ${lane.title}?`}
-          description="You marked this as Held, but the wall cracked afterward. Confessing it now restores honor. This permanently records the breach and sounds the alarm to your Watchman."
-          noteLabel="Confession after check-in"
-          notePlaceholder="What happened in the hours after you marked it Held? Name what gave way so your Watchman knows how to stand with you."
+          description="This updates your status to Breached and alerts your Watchman."
+          noteLabel="What happened after the check-in?"
+          notePlaceholder="Be honest."
           note={note}
           onNoteChange={(v) => { setNote(v); setErr(null); }}
           cancelLabel="Keep as Held"
