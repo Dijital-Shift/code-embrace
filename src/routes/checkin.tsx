@@ -448,7 +448,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
  * A check-in already logged. Keeps a quiet inline Undo alive for 30 minutes
  * after a "Held" or Sabbath entry, so it survives a page refresh.
  */
-function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = false }: {
+export function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = false }: {
   lane: Lane;
   graceOpen?: boolean;
   checkin: { status: string; completion_time?: string | null; pending?: boolean };
