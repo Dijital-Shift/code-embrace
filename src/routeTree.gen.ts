@@ -19,6 +19,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as PreviewLoggedRouteImport } from './routes/preview-logged'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -96,6 +97,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const PartnerRoute = PartnerRouteImport.update({
   id: '/partner',
   path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewLoggedRoute = PreviewLoggedRouteImport.update({
+  id: '/preview-logged',
+  path: '/preview-logged',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
+  '/preview-logged': typeof PreviewLoggedRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
+  '/preview-logged': typeof PreviewLoggedRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
@@ -336,6 +344,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/partner': typeof PartnerRoute
+  '/preview-logged': typeof PreviewLoggedRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/settings': typeof SettingsRoute
@@ -378,6 +387,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/partner'
+    | '/preview-logged'
     | '/privacy'
     | '/refund'
     | '/settings'
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/partner'
+    | '/preview-logged'
     | '/privacy'
     | '/refund'
     | '/settings'
@@ -458,6 +469,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/partner'
+    | '/preview-logged'
     | '/privacy'
     | '/refund'
     | '/settings'
@@ -499,6 +511,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   PartnerRoute: typeof PartnerRoute
+  PreviewLoggedRoute: typeof PreviewLoggedRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
   SettingsRoute: typeof SettingsRoute
@@ -598,6 +611,13 @@ declare module '@tanstack/react-router' {
       path: '/partner'
       fullPath: '/partner'
       preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview-logged': {
+      id: '/preview-logged'
+      path: '/preview-logged'
+      fullPath: '/preview-logged'
+      preLoaderRoute: typeof PreviewLoggedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -822,6 +842,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   PartnerRoute: PartnerRoute,
+  PreviewLoggedRoute: PreviewLoggedRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
   SettingsRoute: SettingsRoute,
