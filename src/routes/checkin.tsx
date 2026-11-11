@@ -507,7 +507,7 @@ export function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpe
             {held ? <Check size={17} strokeWidth={3} /> : <X size={16} strokeWidth={3} />}
           </span>
           <div className="min-w-0">
-            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block text-stone">
+            <span className="text-[0.6rem] font-semibold uppercase tracking-wider block text-stone whitespace-nowrap">
               {dayTag ? `${dayTag} · ` : ""}{lane.lane_type === "avoid" ? "Flee" : "Pursue"}
             </span>
             <span className="text-[0.95rem] font-semibold text-parchment block truncate">{lane.title}</span>
