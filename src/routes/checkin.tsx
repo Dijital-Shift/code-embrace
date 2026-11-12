@@ -11,6 +11,8 @@ import { Check, X, Lock, ShieldCheck, ShieldAlert, Moon, TrendingUp } from "luci
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { contactHaptic } from "@/lib/watchman-alert";
+import { toast } from "sonner";
+import { withLoggedCheckin } from "@/lib/checkin-optimistic";
 import { checkinOptions } from "@/lib/app-page-queries";
 
 import { AppLayout } from "@/components/AppLayout";
@@ -263,13 +265,10 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   const qc = useQueryClient();
   const submit = useServerFn(submitCheckin);
   const skip = useServerFn(skipCheckin);
-  const revert = useServerFn(revertComplete);
   const [open, setOpen] = useState(false);
   const [explanation, setExplanation] = useState("");
-  const [result, setResult] = useState<null | "completed" | "breached" | "skipped">(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [canUndo, setCanUndo] = useState(false);
   const [reviewing, setReviewing] = useState(false);
   const missRef = useRevealOnOpen<HTMLDivElement>(open, true);
 
@@ -277,75 +276,69 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
   const yesLabel = isAvoid ? "Held" : "Did it";
   const noLabel = isAvoid ? "Breach" : "Didn't";
 
-  async function send(response: "aligned" | "breach") {
+  /**
+   * Move this Path straight into Logged in the cached list, so the card leaves
+   * on the tap instead of lingering until the refetch lands. Returns a rollback.
+   */
+  function logLocally(status: "completed" | "breached" | "skipped") {
+    void qc.cancelQueries({ queryKey: ["checkin"] });
+    const before = qc.getQueryData<any>(["checkin"]);
+    if (!before || !date) return () => {};
+    qc.setQueryData(["checkin"], withLoggedCheckin(before, lane.lane_id, date, status, day));
+    return () => qc.setQueryData(["checkin"], before);
+  }
+
+  function settle() {
+    qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["checkin"] });
+  }
+
+  /** Quick answers (Held / Did it / Sabbath): the card leaves on the tap. */
+  async function quick(kind: "aligned" | "skip") {
+    if (busy) return;
+    setErr(null);
+    const offline = typeof navigator !== "undefined" && !navigator.onLine;
+    if (offline) {
+      if (!date) { setErr("Couldn't save. Try again."); return; }
+      enqueueCheckin({ laneId: lane.lane_id, date, kind, explanation: null });
+      return; // the page now shows it as "Pending sync"
+    }
+    const rollback = logLocally(kind === "aligned" ? "completed" : "skipped");
+    let r: any;
+    try {
+      r = kind === "aligned"
+        ? await submit({ data: { laneId: lane.lane_id, response: "aligned", explanation: null, forDay: day } })
+        : await skip({ data: { laneId: lane.lane_id, forDay: day } });
+    } catch (e) {
+      rollback();
+      if (isNetworkError(e) && date) { enqueueCheckin({ laneId: lane.lane_id, date, kind, explanation: null }); return; }
+      toast.error(`Couldn't save ${lane.title}. Try again.`);
+      return;
+    }
+    if (r?.error) { rollback(); toast.error(r.error); return; }
+    settle();
+  }
+
+  /** Breach keeps the review dialog open until the server confirms. */
+  async function sendBreach() {
     if (busy) return;
     setBusy(true); setErr(null);
-    const expl = response === "breach" ? explanation : null;
     let r: any;
     try {
       if (!navigator.onLine) throw new Error("offline");
-      r = await submit({ data: { laneId: lane.lane_id, response, explanation: expl, forDay: day } });
+      r = await submit({ data: { laneId: lane.lane_id, response: "breach", explanation, forDay: day } });
     } catch (e) {
       setBusy(false);
       if (!isNetworkError(e) || !date) { setErr("Couldn't save. Try again."); return; }
       setReviewing(false);
-      enqueueCheckin({ laneId: lane.lane_id, date, kind: response, explanation: expl });
-      return; // the page now shows it as "Pending sync"
-    }
-    setBusy(false);
-    if (r?.error) { setErr(r.error); return; }
-    setReviewing(false);
-    setResult(response === "aligned" ? "completed" : "breached");
-    // Undo covers a mis-click on either day.
-    if (response === "aligned") setCanUndo(true);
-    qc.invalidateQueries({ queryKey: ["dashboard"] });
-    qc.invalidateQueries({ queryKey: ["checkin"] });
-  }
-
-  async function undo() {
-    if (busy) return;
-    setBusy(true); setErr(null);
-    const r: any = await revert({ data: { laneId: lane.lane_id, forDay: day } });
-    setBusy(false);
-    if (r?.error) { setErr(r.error); return; }
-    setResult(null); setCanUndo(false); setOpen(false);
-    qc.invalidateQueries({ queryKey: ["dashboard"] });
-    qc.invalidateQueries({ queryKey: ["checkin"] });
-  }
-
-  async function doSkip() {
-    setBusy(true);
-    let r: any;
-    try {
-      if (!navigator.onLine) throw new Error("offline");
-      r = await skip({ data: { laneId: lane.lane_id, forDay: day } });
-    } catch (e) {
-      setBusy(false);
-      if (!isNetworkError(e) || !date) { setErr("Couldn't save. Try again."); return; }
-      enqueueCheckin({ laneId: lane.lane_id, date, kind: "skip", explanation: null });
+      enqueueCheckin({ laneId: lane.lane_id, date, kind: "breach", explanation });
       return;
     }
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
-    setResult("skipped");
-    setCanUndo(true);
-    qc.invalidateQueries({ queryKey: ["dashboard"] });
-    qc.invalidateQueries({ queryKey: ["checkin"] });
-  }
-
-  if (result) {
-    return (
-      <div className="kp-checkin-card">
-        <div className="flex justify-between items-center gap-3 px-3 py-2.5">
-          <span className="text-sm text-[#ded8cc] min-w-0 truncate">{lane.title}</span>
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="text-xs font-semibold" style={{ color: statusColor(result) }}>{statusLabel(result)}</span>
-            {canUndo && <UndoLink busy={busy} onClick={undo} />}
-          </div>
-        </div>
-        {err && <p className="text-red-400 text-xs px-3 pb-2.5">{err}</p>}
-      </div>
-    );
+    setReviewing(false);
+    logLocally("breached");
+    settle();
   }
 
   return (
@@ -367,7 +360,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
                 <TooltipTrigger asChild>
                   <Button type="button" disabled={busy || open} variant="checkinSabbath"
                     aria-label="Skip — Sabbath" title="Sabbath — no check-in today"
-                    onClick={() => { contactHaptic(); doSkip(); }} className="kp-checkin-seal rounded-md">
+                    onClick={() => { contactHaptic(); void quick("skip"); }} className="kp-checkin-seal rounded-md">
                     <Moon />
                   </Button>
                 </TooltipTrigger>
@@ -378,9 +371,9 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
               <TooltipTrigger asChild>
                 <Button type="button" disabled={busy} variant="checkinHeld"
                   aria-label={yesLabel} title={yesLabel}
-                  onClick={() => { contactHaptic(); setOpen(false); send("aligned"); }}
+                  onClick={() => { contactHaptic(); setOpen(false); void quick("aligned"); }}
                   className="kp-checkin-seal rounded-full">
-                  {busy && !open ? <span>…</span> : <ShieldCheck />}
+                  <ShieldCheck />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>{yesLabel}</TooltipContent>
@@ -434,7 +427,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
           busy={busy}
           error={err}
           onCancel={() => setReviewing(false)}
-          onConfirm={() => send("breach")}
+          onConfirm={sendBreach}
         />
       )}
 
