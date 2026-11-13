@@ -497,7 +497,7 @@ function InstallDrawer() {
           <Smartphone aria-hidden="true" size={14} /> Installing on your phone? Tap for steps
         </button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto rounded-t-2xl pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto rounded-t-2xl px-5 pt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <SheetHeader className="text-left">
           <SheetTitle className="kp-briefing-title text-parchment">How to install</SheetTitle>
           <SheetDescription>On iPhone, use Safari. On Android, use Chrome. Accept the invitation first, then install.</SheetDescription>

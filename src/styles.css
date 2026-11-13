@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Phones with little vertical room (iPhone SE under Safari bars). */
+@custom-variant short (@media (max-height: 620px));
+
 
 
 @theme {

@@ -27,26 +27,28 @@ export function InstallWalkthrough() {
   const oneTap = tab === "android" && (available || busy);
 
   return (
-    <div className="mt-5">
+    <div className="mt-3">
       <div role="tablist" aria-label="Phone type" className="grid grid-cols-2 gap-1 rounded-xl border border-border bg-card p-1">
         {(["ios", "android"] as const).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
-            className={`rounded-lg py-2.5 text-sm font-semibold transition-colors ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
+            className={`min-h-10 rounded-lg py-2 text-sm font-semibold transition-colors ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
             {t === "ios" ? "iPhone (Safari)" : "Android (Chrome)"}
           </button>
         ))}
       </div>
       {oneTap && (
-        <button type="button" onClick={() => void install()} disabled={busy} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 font-semibold text-primary-foreground">
+        <button type="button" onClick={() => void install()} disabled={busy} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-semibold text-primary-foreground">
           <Download className="h-4 w-4" /> {busy ? "Installing…" : "Install Kingdom Protocol"}
         </button>
       )}
+      {/* Short screens (iPhone SE) put the phone beside the steps so the guide never scrolls. */}
+      <div className="short:flex short:items-start short:gap-3">
       {!["inapp", "ios-other", "android-other"].includes(browser) && <InstallDemo tab={tab} />}
-      <ol className="mt-5 grid gap-3">
+      <ol className="mt-3 grid gap-2 short:min-w-0 short:flex-1">
         {steps.map((s, i) => (
-          <li key={`${tab}-${i}`} className="flex items-start gap-3 text-sm text-foreground">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-primary text-primary font-semibold">{i + 1}</span>
-            <div className="pt-1">
+          <li key={`${tab}-${i}`} className="flex items-start gap-2.5 text-xs leading-5 text-foreground">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-primary text-[11px] font-semibold text-primary">{i + 1}</span>
+            <div>
               {s.text}
               {s.copyLink && (
                 <button type="button" onClick={copyLink} className="mt-2 flex min-h-11 items-center gap-1.5 rounded-lg border border-primary px-3 text-xs font-semibold text-primary">
@@ -57,6 +59,7 @@ export function InstallWalkthrough() {
           </li>
         ))}
       </ol>
+      </div>
     </div>
   );
 }

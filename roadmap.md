@@ -84,3 +84,4 @@
 - [x] Shorten invite text (Option 1), link on its own line; Android preview tag.
 - [x] Push the Path owner when a Watchman accepts their invite.
 - [x] Dashboard day bar fills left-to-right: settled slots lead, open slots trail. Verified with mixed statuses.
+- [x] Fit the install guide drawer on one screen: smaller phone animation, tighter numbered steps, side-by-side layout on short phones. Verified no scroll at 414x700, 390x664 and 375x548 (iPhone and Android tabs).
