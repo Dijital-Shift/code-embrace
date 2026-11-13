@@ -193,7 +193,7 @@ function NewLane() {
                     disabled={!!tpl}
                     onClick={() => setLaneType(t)}
                     className="flex-1 flex flex-col gap-1 p-3.5 rounded-md text-left disabled:cursor-not-allowed"
-                    style={{ border: `1px solid ${laneType === t ? "#fff" : "#222"}`, background: laneType === t ? "#1e1a10" : "#161210", color: laneType === t ? "#fff" : "#666", opacity: locked ? 0.4 : 1 }}
+                    style={{ border: `1px solid ${laneType === t ? (t === "complete" ? "#4ade80" : "#f87171") : "#222"}`, background: laneType === t ? (t === "complete" ? "#0c2010" : "#1a0a0a") : "#161210", color: laneType === t ? (t === "complete" ? "#6ee7a0" : "#f87171") : "#666", opacity: locked ? 0.4 : 1 }}
                   >
                     <strong>{t === "avoid" ? "Flee" : "Pursue"}</strong>
                     <span className="text-[0.8rem] font-normal text-[#9e968a]">
