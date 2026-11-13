@@ -5,6 +5,8 @@ import { acceptLaneInvite, getInvitePreview } from "@/lib/invites.functions";
 import { useAuth } from "@/lib/auth";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { Button } from "@/components/ui/button";
+import { WatchmanAppGate } from "@/components/WatchmanAppGate";
+import { PENDING_INVITE_KEY } from "@/lib/app-mode";
 
 export const Route = createFileRoute("/invite/$token/welcome")({
   head: () => ({ meta: [
@@ -40,6 +42,7 @@ function Welcome() {
         if (!live) return;
         if (result.error) { setError(result.error); return; }
         setAccepted(true);
+        try { localStorage.removeItem(PENDING_INVITE_KEY); } catch { /* storage blocked */ }
         const preview = await previewFn({ data: { token } });
         if (live && preview.found) setOwnerName(preview.ownerFirstName || preview.ownerEmail || "your friend");
       } catch { if (live) setError("Couldn't confirm this invitation. Please try again."); }
@@ -58,6 +61,7 @@ function Welcome() {
       </div> : !accepted ? <p className="text-center text-muted-foreground" role="status">Confirming your watch…</p> : <>
         <p className="text-xs uppercase text-primary text-center mb-3">You're in</p>
         <h1 className="text-2xl font-bold text-center leading-tight mb-3">You're now watching {ownerName ? `${ownerName}'s` : 'their'} Path.</h1>
+        <WatchmanAppGate>
         <p className="text-sm text-muted-foreground text-center mb-8">Make sure their alerts can reach this device.</p>
         <WatchmanPushPrompt onReadinessChange={setAlertsReady} />
         {alertsReady ? <Button asChild className="w-full h-12"><Link to="/partner">Go to The Watch →</Link></Button> : <>
@@ -67,6 +71,7 @@ function Welcome() {
             <Button asChild variant="outline" className="w-full h-auto min-h-12 whitespace-normal"><Link to="/partner">Continue without device alerts</Link></Button>
           </div>}
         </>}
+        </WatchmanAppGate>
         <p className="text-xs text-muted-foreground text-center mt-6">Already have the app? Open it from your Home Screen with the same account — your watch is saved. Set up alerts there if Safari cannot receive them.</p>
         <Button asChild variant="link" className="w-full mt-2"><a href="/?view=landing">Invitation FAQ</a></Button>
       </>}

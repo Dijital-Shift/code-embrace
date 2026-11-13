@@ -25,6 +25,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StandingRouteImport } from './routes/standing'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as ZzInstallPreviewRouteImport } from './routes/zz-install-preview'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as LanesIndexRouteImport } from './routes/lanes.index'
@@ -126,6 +127,11 @@ const TermsRoute = TermsRouteImport.update({
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZzInstallPreviewRoute = ZzInstallPreviewRouteImport.update({
+  id: '/zz-install-preview',
+  path: '/zz-install-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/zz-install-preview': typeof ZzInstallPreviewRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
@@ -301,6 +308,7 @@ export interface FileRoutesByTo {
   '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/zz-install-preview': typeof ZzInstallPreviewRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
@@ -342,6 +350,7 @@ export interface FileRoutesById {
   '/standing': typeof StandingRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/zz-install-preview': typeof ZzInstallPreviewRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/invite/$token': typeof InviteTokenRouteWithChildren
   '/lanes/$id': typeof LanesIdRoute
@@ -384,6 +393,7 @@ export interface FileRouteTypes {
     | '/standing'
     | '/terms'
     | '/unsubscribe'
+    | '/zz-install-preview'
     | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
@@ -424,6 +434,7 @@ export interface FileRouteTypes {
     | '/standing'
     | '/terms'
     | '/unsubscribe'
+    | '/zz-install-preview'
     | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
@@ -464,6 +475,7 @@ export interface FileRouteTypes {
     | '/standing'
     | '/terms'
     | '/unsubscribe'
+    | '/zz-install-preview'
     | '/checkout/return'
     | '/invite/$token'
     | '/lanes/$id'
@@ -505,6 +517,7 @@ export interface RootRouteChildren {
   StandingRoute: typeof StandingRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  ZzInstallPreviewRoute: typeof ZzInstallPreviewRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   InviteTokenRoute: typeof InviteTokenRouteWithChildren
   LanesIdRoute: typeof LanesIdRoute
@@ -640,6 +653,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zz-install-preview': {
+      id: '/zz-install-preview'
+      path: '/zz-install-preview'
+      fullPath: '/zz-install-preview'
+      preLoaderRoute: typeof ZzInstallPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/return': {
@@ -828,6 +848,7 @@ const rootRouteChildren: RootRouteChildren = {
   StandingRoute: StandingRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  ZzInstallPreviewRoute: ZzInstallPreviewRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   InviteTokenRoute: InviteTokenRouteWithChildren,
   LanesIdRoute: LanesIdRoute,

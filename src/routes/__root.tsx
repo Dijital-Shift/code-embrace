@@ -14,6 +14,7 @@ import UpdateAvailablePill from "@/components/UpdateAvailablePill";
 import { SplashScreen, StaticSplash, SPLASH_BOOT_SCRIPT } from "@/components/SplashScreen";
 import { Toaster } from "@/components/ui/sonner";
 import { AppInstallProvider } from "@/components/AppInstallProvider";
+import { PendingInviteResume } from "@/components/PendingInviteResume";
 
 
 import appCss from "../styles.css?url";
@@ -176,6 +177,7 @@ function RootComponent() {
       <AuthProvider>
         <AppInstallProvider>
         <SplashScreen />
+        <PendingInviteResume />
         <Outlet />
         <UpdateAvailablePill />
         <Toaster />

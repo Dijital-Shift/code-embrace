@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Eye, BellRing, ShieldCheck } from "lucide-react";
 import { revealWatchmanAlert } from "@/lib/watchman-alert";
+import { PENDING_INVITE_KEY, encodePendingInvite } from "@/lib/app-mode";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
@@ -76,6 +77,14 @@ function InvitePage() {
     // client refetch so the card never flashes a loading state.
     initialData: loaderData?.preview ?? undefined,
   });
+
+  // Remember an open invitation so installing first never loses it; closed invitations are forgotten.
+  useEffect(() => {
+    try {
+      if (preview?.found && !preview.pathGone && !preview.expired && preview.status !== "accepted" && preview.status !== "revoked") localStorage.setItem(PENDING_INVITE_KEY, encodePendingInvite(token, Date.now()));
+      else if (preview) localStorage.removeItem(PENDING_INVITE_KEY);
+    } catch { /* storage blocked */ }
+  }, [preview, token]);
 
   async function accept() {
     if (acceptingRef.current) return;
