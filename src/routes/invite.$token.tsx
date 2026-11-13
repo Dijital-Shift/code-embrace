@@ -10,7 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Eye, BellRing, ShieldCheck } from "lucide-react";
 import { revealWatchmanAlert } from "@/lib/watchman-alert";
-import { PENDING_INVITE_KEY, encodePendingInvite } from "@/lib/app-mode";
+import { PENDING_INVITE_KEY, encodePendingInvite, installBrowser } from "@/lib/app-mode";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
+import { InstallWalkthrough } from "@/components/InstallWalkthrough";
+import { Smartphone, Compass, Copy } from "lucide-react";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
@@ -345,6 +348,7 @@ function InvitePage() {
       )}
 
       <AppTip />
+      <SafariBanner />
       <Accordion type="single" collapsible value={dutyOpen} onValueChange={setDutyOpen} className="kp-invite-duty mb-6 border-y border-action-gold-edge">
         <AccordionItem ref={dutyRef} value="watchman-duty" className="border-0">
           <AccordionTrigger className="kp-briefing-title text-parchment text-lg font-semibold hover:no-underline py-5 gap-4 text-left [&_svg]:text-primary [&_svg]:h-5 [&_svg]:w-5">
@@ -364,6 +368,7 @@ function InvitePage() {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      <InstallDrawer />
       <div className="text-center mb-6">
         <Link to="/demo" search={{ invite: token, name: ownerName }} className="inline-block text-xs text-primary underline">
           How does this work?
@@ -455,5 +460,50 @@ function AppTip() {
         {copied ? "Copied ✓" : "Copy link"}
       </Button>
     </div>
+  );
+}
+
+// Warns iPhone visitors who opened the invite inside Messages, Mail, Chrome, etc.
+function SafariBanner() {
+  const [show, setShow] = useState(false);
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    const b = installBrowser(navigator.userAgent, navigator.maxTouchPoints, navigator.platform);
+    setShow(b === "ios-other" || (b === "inapp" && /iPhone|iPad|iPod/i.test(navigator.userAgent)));
+  }, []);
+  if (!show) return null;
+  async function copy() {
+    try { await navigator.clipboard.writeText(window.location.href); navigator.vibrate?.(25); setCopied(true); setTimeout(() => setCopied(false), 3000); } catch { /* blocked */ }
+  }
+  return (
+    <div role="note" className="mb-4 flex items-start gap-3 rounded-lg border border-primary/50 bg-card px-4 py-3">
+      <Compass aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+      <div className="flex-1 text-xs leading-relaxed text-foreground">
+        <p><span className="font-semibold text-primary">Open this page in Safari.</span> On iPhone, Watchman alarms only reach you when Kingdom Protocol is installed from Safari.</p>
+        <button type="button" onClick={copy} className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-primary px-3 font-semibold text-primary">
+          <Copy aria-hidden="true" size={13} />{copied ? "Link copied" : "Copy link"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Quiet trigger that opens the install guide without leaving the invitation.
+function InstallDrawer() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <button type="button" className="mb-4 flex min-h-11 w-full items-center justify-center gap-2 text-xs font-semibold text-primary">
+          <Smartphone aria-hidden="true" size={14} /> Installing on your phone? Tap for steps
+        </button>
+      </SheetTrigger>
+      <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto rounded-t-2xl pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+        <SheetHeader className="text-left">
+          <SheetTitle className="kp-briefing-title text-parchment">How to install</SheetTitle>
+          <SheetDescription>On iPhone, use Safari. On Android, use Chrome. Accept the invitation first, then install.</SheetDescription>
+        </SheetHeader>
+        <InstallWalkthrough />
+      </SheetContent>
+    </Sheet>
   );
 }

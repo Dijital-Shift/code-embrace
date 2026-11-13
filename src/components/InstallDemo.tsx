@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Download, MoreVertical, PlusSquare, Share } from "lucide-react";
+import { Download, MoreVertical, PlusSquare, Share , Compass } from "lucide-react";
 
 type Tab = "ios" | "android";
 const CREST = "/kingdom-protocol-logo.png";
@@ -21,7 +21,7 @@ export function InstallDemo({ tab }: { tab: Tab }) {
     <figure className="mx-auto mt-5 w-48" aria-label="Animated install walkthrough">
       <div className="relative h-80 overflow-hidden rounded-[2rem] border-4 border-border bg-background shadow-lg">
         <div className="flex items-center justify-between border-b border-border bg-card px-3 py-2 text-[9px] text-muted-foreground">
-          <span className="truncate">kingdomprotocol.app</span>
+          <span className="flex min-w-0 items-center gap-1 truncate">{tab === "ios" ? <><Compass size={10} className="shrink-0 text-primary" aria-hidden="true" /><span className="font-semibold text-primary">Safari</span><span aria-hidden="true">·</span></> : <><span className="font-semibold text-primary">Chrome</span><span aria-hidden="true">·</span></>}kingdomprotocol.app</span>
           {tab === "android" && <span className={`rounded p-0.5 text-foreground ${step === 0 ? ring : ""}`}><MoreVertical size={12} /></span>}
         </div>
         <div className="flex h-44 flex-col items-center justify-center gap-2 bg-background">

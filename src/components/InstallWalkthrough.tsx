@@ -32,7 +32,7 @@ export function InstallWalkthrough() {
         {(["ios", "android"] as const).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
             className={`rounded-lg py-2.5 text-sm font-semibold transition-colors ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
-            {t === "ios" ? "iPhone / iPad" : "Android"}
+            {t === "ios" ? "iPhone (Safari)" : "Android (Chrome)"}
           </button>
         ))}
       </div>
