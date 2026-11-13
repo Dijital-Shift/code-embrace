@@ -23,7 +23,6 @@ export function InstallWalkthrough() {
     try { await navigator.clipboard.writeText(window.location.href); setCopied(true); window.setTimeout(() => setCopied(false), 2500); } catch { /* steps still explain */ }
   }
 
-  const steps = installSteps(tab, browser);
   const oneTap = tab === "android" && (available || busy);
 
   return (
@@ -44,14 +43,17 @@ export function InstallWalkthrough() {
       {/* Short screens (iPhone SE) put the phone beside the steps so the guide never scrolls. */}
       <div className="short:flex short:items-start short:gap-3">
       {!["inapp", "ios-other", "android-other"].includes(browser) && <InstallDemo tab={tab} />}
-      <ol className="mt-3 grid gap-2 short:min-w-0 short:flex-1">
-        {steps.map((s, i) => (
-          <li key={`${tab}-${i}`} className="flex items-start gap-2.5 text-xs leading-5 text-foreground">
+      {/* Both tabs' steps share one grid cell so switching never changes the drawer height. */}
+      <div className="mt-3 grid short:min-w-0 short:flex-1">
+      {(["ios", "android"] as const).map((t) => (
+      <ol key={t} aria-hidden={tab !== t} className={`col-start-1 row-start-1 grid content-start gap-2 ${tab === t ? "" : "invisible"}`}>
+        {installSteps(t, browser).map((s, i) => (
+          <li key={`${t}-${i}`} className="flex items-start gap-2.5 text-xs leading-5 text-foreground">
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-primary text-[11px] font-semibold text-primary">{i + 1}</span>
             <div>
               {s.text}
               {s.copyLink && (
-                <button type="button" onClick={copyLink} className="mt-2 flex min-h-11 items-center gap-1.5 rounded-lg border border-primary px-3 text-xs font-semibold text-primary">
+                <button type="button" tabIndex={tab === t ? 0 : -1} onClick={copyLink} className="mt-2 flex min-h-11 items-center gap-1.5 rounded-lg border border-primary px-3 text-xs font-semibold text-primary">
                   {copied ? <Check size={13} /> : <Copy size={13} />}{copied ? "Link copied" : "Copy this page's link"}
                 </button>
               )}
@@ -59,6 +61,8 @@ export function InstallWalkthrough() {
           </li>
         ))}
       </ol>
+      ))}
+      </div>
       </div>
     </div>
   );
