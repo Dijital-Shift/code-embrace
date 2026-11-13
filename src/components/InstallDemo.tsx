@@ -59,7 +59,7 @@ export function InstallDemo({ tab }: { tab: Tab }) {
           </div>
         </div>
       </div>
-      <figcaption className="mt-3 text-center text-sm font-semibold text-primary">{step + 1}. {labels[step]}</figcaption>
+      <figcaption className="mt-3 min-h-10 text-center text-sm font-semibold text-primary">{step + 1}. {labels[step]}</figcaption>
     </figure>
   );
 }

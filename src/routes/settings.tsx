@@ -12,6 +12,7 @@ import { requestAccountDeletion, cancelAccountDeletion, deleteAccountNow } from 
 import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
+import { InstallGuideRow } from "@/components/InstallGuideRow";
 import { CallToWallCard } from "@/components/CallToWallCard";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
@@ -233,6 +234,7 @@ function Settings() {
             </span>
             <span className="text-[#c9a84c]">›</span>
           </a>
+          <InstallGuideRow />
           <Link to="/partner" className="flex items-center justify-between px-4 py-3.5 no-underline">
             <span>
               <span className="block text-sm text-[#ded8cc] font-medium">Watchman alerts</span>
