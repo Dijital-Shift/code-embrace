@@ -2,9 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getDashboard } from "@/lib/api.functions";
-import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
-import { CallToWallCard } from "@/components/CallToWallCard";
 import { AccessBanner, LifetimeBadge } from "@/components/AccessBanner";
 import { statusColor, statusLabel, settledWatchState, settledTally } from "@/lib/status";
 import { DayProgressBar, WatchmanPips, DashboardSkeleton } from "@/components/DashboardPieces";
@@ -33,9 +31,7 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const fn = useServerFn(getDashboard);
-  const refFn = useServerFn(getMyReferral);
   const { data, isLoading } = useQuery(dashboardOptions(fn));
-  const { data: ref } = useQuery({ queryKey: ["my-referral"], queryFn: () => refFn() });
   const [starterVisible, setStarterVisible] = useState(false);
   const [openLane, setOpenLane] = useState<string | null>(null);
   // Snapshot the words when opened so the modal survives the refetch that clears them.
@@ -66,7 +62,6 @@ function Dashboard() {
 
   const greeting = data?.profile?.first_name ? `${data.profile.first_name}.` : "Welcome.";
   const needsGender = data?.profile && !((data.profile as any).gender);
-  const refUrl = ref && "code" in ref ? `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${ref.code}` : "";
 
   const renderLane = (lane: (typeof lanes)[number]) => {
               const st = statusByLane.get(lane.lane_id) ?? "pending";
@@ -245,10 +240,6 @@ function Dashboard() {
         </div>
       )}
       </div>)}
-
-      {ref && "code" in ref && (
-        <CallToWallCard className="mt-8" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
-      )}
 
       {openLane && openWords.length > 0 && (
         <WatchmanWordsModal

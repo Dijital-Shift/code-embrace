@@ -175,12 +175,20 @@ export const listMyLanes = createServerFn({ method: 'GET' })
     for (const r of (unreadRows ?? []) as any[]) {
       unreadByPath.set(r.lane_id, (unreadByPath.get(r.lane_id) ?? 0) + 1);
     }
+    // Open Watchman invitations per path — lets each card show which Paths have an invite out.
+    const pendingByPath = new Map<string, number>();
+    if (lanes.length) {
+      const { data: inviteRows } = await supabase.from('lane_invites').select('lane_id')
+        .in('lane_id', lanes.map((l) => l.lane_id)).eq('status', 'pending').gt('expires_at', new Date().toISOString());
+      for (const r of inviteRows ?? []) pendingByPath.set(r.lane_id, (pendingByPath.get(r.lane_id) ?? 0) + 1);
+    }
     return lanes.map((l) => {
       const ws = watchmenByPath.get(l.lane_id) ?? [];
       return {
         ...l,
         watchman_count: ws.length,
         watchman_names: ws.map((w) => watchmanName(w)),
+        pending_invites: pendingByPath.get(l.lane_id) ?? 0,
         unread_encouragements: unreadByPath.get(l.lane_id) ?? 0,
       };
     });

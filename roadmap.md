@@ -1,4 +1,6 @@
 # Tasks
+- [x] Show "Invite sent — awaiting Watchman" and pending pips on Path list cards; move the referral link off the Dashboard into a Settings dialog with a "Not for adding a Watchman" warning. 98 tests pass, build OK.
+- [ ] Check the new Path card status and Settings referral dialog on a signed-in account — preview sign-in has no matching account; requires the user to sign into the preview.
 - [x] Add clear open/close chevron and bottom Collapse to encouragement cards; label late confessions "Breach declared after check-in" in Watchman push, alert history, and The Watch card. 90 tests pass.
 - [ ] Verify late-breach alert on a real Watchman phone and a real encouragement collapse — requires preview sign-in and a device check.
 - [x] Correct demo Read larger: single-line BookOpenText pill, Done stepper, real CSS text resizing and project colors; verified 100/115/130/150% computed sizes, unchanged mock widths/fonts, saved selection, light/dark color parity, and no overflow/errors at 320/390/414/1280px. Demo skill updated and active; build OK.

@@ -7,6 +7,7 @@ import { WatchmanPips } from "@/components/DashboardPieces";
 import { pathStartLabel } from "@/lib/path-start";
 import { WatchmanReminder } from "@/components/WatchmanReminder";
 import { pathsOptions } from "@/lib/app-page-queries";
+import { watchmanCoverage } from "@/lib/watchman-coverage";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [
@@ -48,7 +49,8 @@ function Lanes() {
           <div className="flex flex-col gap-2">
             {active.map((lane) => {
               const names = ((lane as any).watchman_names ?? []) as string[];
-              const hasWatchman = names.length > 0;
+              const pending = lane.pending_invites ?? 0;
+              const coverage = watchmanCoverage(names.length, pending);
               return (
                 <Link key={lane.lane_id} to="/paths/$id" params={{ id: lane.lane_id }} search={{ newlyCreated: false }} className="relative overflow-hidden kp-card flex justify-between items-center gap-3 px-4 py-4 text-white no-underline transition-colors hover:border-[#c9a84c]/50">
                   <div className="flex-1 min-w-0">
@@ -64,14 +66,16 @@ function Lanes() {
                       )}
                     </p>
                     {lane.description && <p className="text-xs text-[#b8b0a4] leading-relaxed mt-1 mb-1.5 line-clamp-2">{lane.description}</p>}
-                    <p className="text-[0.72rem]" style={{ color: hasWatchman ? "#4ade80" : "#c9a84c" }}>
-                      {hasWatchman
+                    <p className="text-[0.72rem]" style={{ color: coverage === "watched" ? "#4ade80" : coverage === "invited" ? "#e5af38" : "#9e968a" }}>
+                      {coverage === "watched"
                         ? `${names.length > 1 ? "Watchmen" : "Watchman"}: ${names.join(", ")}`
-                        : "No Watchman yet — tap to invite"}
+                        : coverage === "invited"
+                          ? "Invite sent — awaiting Watchman"
+                          : "No Watchman yet — tap to invite"}
                     </p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <WatchmanPips active={names.length} pending={0} />
+                    <WatchmanPips active={names.length} pending={pending} />
                     {lane.upcoming ? <span className="text-xs text-stone border border-border rounded-md px-2 py-1 max-w-24 text-center">{pathStartLabel(lane.starts_at ?? '', lane.ownerToday)}</span> : <span className="text-[0.62rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] border" style={{ background: "#0c2010", color: "#6ee7a0", borderColor: "rgba(110,231,160,0.3)" }}>Active</span>}
                   </div>
                 </Link>

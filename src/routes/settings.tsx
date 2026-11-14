@@ -13,7 +13,7 @@ import { getMyReferral } from "@/lib/referrals.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { AppUpdateSection } from "@/components/AppUpdateSection";
 import { InstallGuideRow } from "@/components/InstallGuideRow";
-import { CallToWallCard } from "@/components/CallToWallCard";
+import { ReferralRow } from "@/components/ReferralRow";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { formatPhone, isValidPhone } from "@/lib/phone";
@@ -195,10 +195,6 @@ function Settings() {
       </form>
 
 
-      {ref && "code" in ref && (
-        <CallToWallCard className="mt-10" url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
-      )}
-
       {archived.length > 0 && (
         <div className="mt-10">
           <p className={sectionLabel}>Archived paths · {archived.length}</p>
@@ -235,6 +231,9 @@ function Settings() {
             <span className="text-[#c9a84c]">›</span>
           </a>
           <InstallGuideRow />
+          {ref && "code" in ref && (
+            <ReferralRow url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />
+          )}
           <Link to="/partner" className="flex items-center justify-between px-4 py-3.5 no-underline">
             <span>
               <span className="block text-sm text-[#ded8cc] font-medium">Watchman alerts</span>
