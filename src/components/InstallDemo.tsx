@@ -19,7 +19,7 @@ export function InstallDemo({ tab }: { tab: Tab }) {
 
   return (
     <figure className="mx-auto mt-3 w-32 short:shrink-0" aria-label="Animated install walkthrough">
-      <div className="relative h-52 overflow-hidden rounded-[1.5rem] border-[3px] border-border bg-background shadow-lg">
+      <div className="relative h-52 overflow-hidden rounded-[1.5rem] border-[3px] border-primary/25 bg-card shadow-[0_10px_32px_rgba(0,0,0,0.65),inset_0_1px_0_hsl(var(--primary)/0.18)]">
         <div className="flex items-center justify-between border-b border-border bg-card px-2 py-1.5 text-[8px] text-muted-foreground">
           <span className="flex min-w-0 items-center gap-1 truncate">{tab === "ios" ? <><Compass size={9} className="shrink-0 text-primary" aria-hidden="true" /><span className="font-semibold text-primary">Safari</span><span aria-hidden="true">·</span></> : <><span className="font-semibold text-primary">Chrome</span><span aria-hidden="true">·</span></>}kingdomprotocol.app</span>
           {tab === "android" && <span className={`rounded p-0.5 text-foreground ${step === 0 ? ring : ""}`}><MoreVertical size={11} /></span>}
