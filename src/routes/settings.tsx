@@ -230,6 +230,13 @@ function Settings() {
             </span>
             <span className="text-[#c9a84c]">›</span>
           </a>
+          <Link to="/demo" className="flex items-center justify-between px-4 py-3.5 no-underline">
+            <span>
+              <span className="block text-sm text-[#ded8cc] font-medium">How it works</span>
+              <span className="block text-[0.7rem] text-[#8f887c]">See Kingdom Protocol screen by screen.</span>
+            </span>
+            <span className="text-[#c9a84c]">›</span>
+          </Link>
           <InstallGuideRow />
           {ref && "code" in ref && (
             <ReferralRow url={refUrl} invited={ref.invited ?? 0} walking={ref.walking ?? 0} />

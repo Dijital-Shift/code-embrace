@@ -21,20 +21,26 @@ import {
 import { ReadLargerControl, useReadScale } from "@/components/ReadLargerControl";
 
 export const Route = createFileRoute("/demo")({
-  head: () => ({
-    meta: [
-      { title: "Kingdom Protocol demo — user and watchman, side by side" },
-      { property: "og:title", content: "Kingdom Protocol demo — user and watchman, side by side" },
-      { property: "og:description", content: "Follow a scripture-backed accountability walk with a real Watchman." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      {
-        name: "description",
-        content:
-          "End-to-end walkthrough of Kingdom Protocol — pick a path, name your watchman, check in nightly, and let the silence be heard.",
-      },
-    ],
-  }),
+  head: () => {
+    const title = "Kingdom Protocol — How It Works";
+    const description =
+      "See Kingdom Protocol screen by screen: choose a Path, invite a Watchman, check in nightly, and see what happens when silence falls.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "Kingdom Protocol" },
+        { property: "og:url", content: "https://kingdomprotocol.app/demo" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: "https://kingdomprotocol.app/demo" }],
+    };
+  },
   validateSearch: (s: Record<string, unknown>): { invite?: string; name?: string } => ({
     invite: typeof s.invite === "string" && s.invite ? s.invite.slice(0, 200) : undefined,
     name: typeof s.name === "string" && s.name ? s.name.slice(0, 60) : undefined,

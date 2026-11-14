@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from "react";
-import { ArrowRight, Footprints, Shield } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, Footprints, PlayCircle, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { briefingDismissalKey, type BriefingRole } from "@/lib/role-briefing";
@@ -66,6 +67,14 @@ export function RoleBriefing({ role }: { role: BriefingRole }) {
       }}>
         {content.action}<ArrowRight aria-hidden="true" />
       </Button>
+      {role === "walker" && (
+        <div className="mt-4 border-t border-border/60 pt-4">
+          <Link to="/demo" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary no-underline">
+            <PlayCircle aria-hidden="true" className="size-4" /> New here? See how it works, screen by screen
+          </Link>
+          <p className="text-xs text-stone">You can return to it anytime from Settings → How it works.</p>
+        </div>
+      )}
     </section>
   );
 }
