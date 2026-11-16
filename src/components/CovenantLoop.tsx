@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  BellRing, Check, Eye, MessageSquare, Pause, Phone, Play, Plus, RotateCcw, Send, Shield, ShieldAlert, Users,
+  BellRing, Check, Eye, MessageSquare, Pause, Phone, Play, Plus, RotateCcw, Send, Shield, ShieldAlert, Users, Maximize2, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { breachAlertCopy } from "@/lib/watchman-alert";
@@ -27,6 +27,16 @@ export function CovenantLoop() {
   const [pos, setPos] = React.useState<LoopPosition>({ beat: 0, frame: 0 });
   const [playing, setPlaying] = React.useState(true);
   const [tick, setTick] = React.useState(0);
+  const [theater, setTheater] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!theater) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setTheater(false); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
+  }, [theater]);
 
   React.useEffect(() => {
     if (!playing) return;
@@ -79,55 +89,78 @@ export function CovenantLoop() {
         </div>
 
         <div className="min-w-0" data-demo-mock>
-          <div className="mb-4 grid grid-cols-5 gap-1 md:hidden" role="tablist" aria-label="Walkthrough steps">
-            {LOOP_BEATS.map((b, i) => {
-              const active = i === pos.beat;
-              return (
-                <button
-                  key={b.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => jump(i)}
-                  className={cn(
-                    "relative flex min-h-11 flex-col items-center justify-center overflow-hidden rounded-md border px-0.5 text-[10px] font-semibold leading-tight",
-                    active ? "border-primary/60 bg-card text-primary" : "border-border text-stone",
-                  )}
-                >
-                  <span className="font-mono text-[9px] opacity-70">{i + 1}</span>
-                  {COPY[b.id].label}
-                  {active && <span className="absolute inset-x-0 bottom-0"><Progress frame={pos.frame} frames={b.frames} playing={playing} bare /></span>}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mx-auto w-[15rem]">
-            <div className="mb-2 flex items-center justify-between">
-              <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", role === "walker" ? "bg-primary text-primary-foreground" : "border border-primary/40 bg-secondary text-parchment")}>
-                {role === "walker" ? <Shield className="h-3 w-3" aria-hidden="true" /> : <Users className="h-3 w-3" aria-hidden="true" />}
-                {role === "walker" ? "Your phone" : "Watchman's phone"}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPlaying((p) => !p)}
-                aria-label={playing ? "Pause walkthrough" : "Play walkthrough"}
-                className="flex h-11 w-11 items-center justify-center rounded-full text-stone hover:text-primary"
-              >
-                {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-              </button>
-            </div>
-            <Handset>
-              <Screen beat={beat.id} frame={pos.frame} />
-            </Handset>
-          </div>
-          <div className="mx-auto mt-4 max-w-xs text-center md:hidden" aria-live="polite">
-            <p className="rs-body font-semibold text-foreground">{pos.beat + 1}. {copy.title}</p>
-            <p className="rs-tip mt-1 text-parchment">{copy.body}</p>
-          </div>
+          <LoopStage pos={pos} playing={playing} role={role} copy={copy} jump={jump} togglePlay={() => setPlaying((p) => !p)} onExpand={() => setTheater(true)} />
         </div>
       </div>
+      {theater && (
+        <div role="dialog" aria-modal="true" aria-label="Walkthrough, full screen" className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-background">
+          <div className="flex shrink-0 items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
+            <span className="text-sm font-semibold text-parchment">The whole loop</span>
+            <button type="button" onClick={() => setTheater(false)} aria-label="Close full screen" className="flex h-11 w-11 items-center justify-center rounded-full text-stone hover:text-primary">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <LoopStage pos={pos} playing={playing} role={role} copy={copy} jump={jump} togglePlay={() => setPlaying((p) => !p)} alwaysTabs />
+          </div>
+        </div>
+      )}
     </section>
+  );
+}
+
+function LoopStage({ pos, playing, role, copy, jump, togglePlay, onExpand, alwaysTabs }: {
+  pos: LoopPosition; playing: boolean; role: ReturnType<typeof loopFrameRole>; copy: { title: string; body: string };
+  jump: (i: number) => void; togglePlay: () => void; onExpand?: () => void; alwaysTabs?: boolean;
+}) {
+  const beat = LOOP_BEATS[pos.beat];
+  return (
+    <>
+      <div className={cn("mb-3 grid grid-cols-5 gap-1", !alwaysTabs && "md:hidden")} role="tablist" aria-label="Walkthrough steps">
+        {LOOP_BEATS.map((b, i) => {
+          const active = i === pos.beat;
+          return (
+            <button key={b.id} type="button" role="tab" aria-selected={active} onClick={() => jump(i)}
+              className={cn("relative flex min-h-11 flex-col items-center justify-center overflow-hidden rounded-md border px-0.5 text-[10px] font-semibold leading-tight",
+                active ? "border-primary/60 bg-card text-primary" : "border-border text-stone")}>
+              <span className="font-mono text-[9px] opacity-70">{i + 1}</span>
+              {COPY[b.id].label}
+              {active && <span className="absolute inset-x-0 bottom-0"><Progress frame={pos.frame} frames={b.frames} playing={playing} bare /></span>}
+            </button>
+          );
+        })}
+      </div>
+      <div className={cn("mx-auto mb-3 min-h-[3.75rem] max-w-xs text-center", !alwaysTabs && "md:hidden")} aria-live="polite">
+        <p className="rs-body font-semibold text-foreground">{pos.beat + 1}. {copy.title}</p>
+        <p className="rs-tip mt-1 text-parchment">{copy.body}</p>
+      </div>
+      <div className="mx-auto w-[15rem]">
+        <div className="mb-2 flex items-center justify-between">
+          <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", role === "walker" ? "bg-primary text-primary-foreground" : "border border-primary/40 bg-secondary text-parchment")}>
+            {role === "walker" ? <Shield className="h-3 w-3" aria-hidden="true" /> : <Users className="h-3 w-3" aria-hidden="true" />}
+            {role === "walker" ? "Your phone" : "Watchman's phone"}
+          </span>
+          <span className="flex items-center">
+            {onExpand && (
+              <button type="button" onClick={onExpand} aria-label="Watch full screen" className="flex h-11 w-11 items-center justify-center rounded-full text-stone hover:text-primary">
+                <Maximize2 className="h-4 w-4" />
+              </button>
+            )}
+            <button type="button" onClick={togglePlay} aria-label={playing ? "Pause walkthrough" : "Play walkthrough"} className="flex h-11 w-11 items-center justify-center rounded-full text-stone hover:text-primary">
+              {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </button>
+          </span>
+        </div>
+        {onExpand ? (
+          <button type="button" onClick={onExpand} aria-label="Watch full screen" className="block w-full text-left">
+            <Handset compact><Screen beat={beat.id} frame={pos.frame} /></Handset>
+          </button>
+        ) : (
+          <Handset><Screen beat={beat.id} frame={pos.frame} /></Handset>
+        )}
+        {onExpand && <p className="mt-2 text-center text-[11px] text-stone md:hidden">Tap the phone to watch full screen</p>}
+      </div>
+    </>
   );
 }
 
@@ -142,9 +175,9 @@ function Progress({ frame, frames, playing, bare }: { frame: number; frames: num
   );
 }
 
-function Handset({ children }: { children: React.ReactNode }) {
+function Handset({ children, compact }: { children: React.ReactNode; compact?: boolean }) {
   return (
-    <div className="relative h-[25rem] overflow-hidden rounded-[2rem] border-[3px] border-primary/25 bg-card p-1.5 shadow-[0_14px_40px_rgba(0,0,0,0.65)]">
+    <div className={cn("relative overflow-hidden rounded-[2rem] border-[3px] border-primary/25 bg-card p-1.5 shadow-[0_14px_40px_rgba(0,0,0,0.65)]", compact ? "h-[21.5rem] md:h-[25rem]" : "h-[25rem]")}>
       <div className="relative h-full overflow-hidden rounded-[1.6rem] bg-background">
         <div className="flex items-center justify-between px-4 pt-2 text-[9px] font-semibold text-stone">
           <span>9:41</span>
