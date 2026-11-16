@@ -19,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { ReadLargerControl, useReadScale } from "@/components/ReadLargerControl";
+import { CovenantLoop } from "@/components/CovenantLoop";
 
 export const Route = createFileRoute("/demo")({
   head: () => {
@@ -575,6 +576,14 @@ function Demo() {
           </div>
         </div>
       </section>
+
+      <CovenantLoop />
+
+      <div className="mx-auto flex max-w-5xl items-center gap-3 px-6 pt-10 text-xs uppercase tracking-wider text-stone">
+        <div className="h-px flex-1 bg-border" />
+        <span>Every screen, in detail</span>
+        <div className="h-px flex-1 bg-border" />
+      </div>
 
       <main className="mx-auto max-w-5xl space-y-12 px-6 py-12 md:space-y-16 md:py-16">
         {SCENES.map((scene) => {

@@ -328,3 +328,12 @@ html.kp-splash body { overflow: hidden; }
 .kp-trail-open { border-color: var(--color-stone); opacity: 0.7; }
 .kp-trail-grace { border-color: var(--color-history-silent); box-shadow: 0 0 6px color-mix(in oklab, var(--color-history-silent) 60%, transparent); }
 .kp-trail-none { width: 0.4rem; height: 2px; border-radius: 1px; background: var(--color-action-stone-edge); }
+
+/* How It Works loop: frame entrances (disabled for reduced motion). */
+@keyframes kp-loop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes kp-loop-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes kp-loop-down { from { opacity: 0; transform: translateY(-1.25rem); } to { opacity: 1; transform: translateY(0); } }
+.kp-loop-in { animation: kp-loop-in 300ms ease-out both; }
+.kp-loop-up { animation: kp-loop-up 400ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.kp-loop-down { animation: kp-loop-down 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .kp-loop-in, .kp-loop-up, .kp-loop-down { animation: none; } }
