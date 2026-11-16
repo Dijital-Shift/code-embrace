@@ -11,8 +11,8 @@ test("after the Watchman answers, the loop begins again at creating a Path", () 
   assert.deepEqual(nextLoopPosition(last), { beat: 0, frame: 0 });
 });
 
-test("the whole loop plays in under 30 seconds", () => {
-  assert.ok(loopDurationMs() <= 30_000);
+test("the whole loop plays in about 45 seconds", () => {
+  assert.ok(loopDurationMs() >= 44_000 && loopDurationMs() <= 50_000);
 });
 
 test("the alarm and the answer are shown on the Watchman's phone", () => {

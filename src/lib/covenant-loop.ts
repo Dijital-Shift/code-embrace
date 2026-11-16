@@ -2,13 +2,13 @@
 export type LoopBeatId = "create" | "invite" | "checkin" | "alarm" | "watch";
 export type LoopRole = "walker" | "watchman";
 
-export const LOOP_FRAME_MS = 1800;
+export const LOOP_FRAME_MS = 2800;
 
 export const LOOP_BEATS: readonly { id: LoopBeatId; frames: number; roles: readonly LoopRole[] }[] = [
   { id: "create", frames: 3, roles: ["walker", "walker", "walker"] },
   { id: "invite", frames: 4, roles: ["walker", "walker", "watchman", "walker"] },
   { id: "checkin", frames: 4, roles: ["walker", "walker", "walker", "walker"] },
-  { id: "alarm", frames: 2, roles: ["watchman", "watchman"] },
+  { id: "alarm", frames: 3, roles: ["watchman", "watchman", "watchman"] },
   { id: "watch", frames: 3, roles: ["watchman", "watchman", "watchman"] },
 ];
 
