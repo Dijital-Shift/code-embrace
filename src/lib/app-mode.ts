@@ -62,6 +62,11 @@ export function readPendingInvite(raw: string | null, now: number): string | nul
   } catch { return null; }
 }
 
+/** Only a browser visit is remembered; inside the installed app the invitation is already open, so re-saving would trap every launch. */
+export function shouldRememberInvite(o: { standalone: boolean; open: boolean }) {
+  return o.open && !o.standalone;
+}
+
 /** Only the installed app on a page that isn't already the invitation resumes it. */
 export function shouldResumeInvite(o: { standalone: boolean; pathname: string; token: string | null }) {
   return o.standalone && !!o.token && !o.pathname.startsWith("/invite/");

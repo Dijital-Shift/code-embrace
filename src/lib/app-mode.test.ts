@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { encodePendingInvite, installBrowser, installSteps, mustOpenInApp, readPendingInvite, shouldResumeInvite } from "./app-mode";
+import { encodePendingInvite, installBrowser, installSteps, mustOpenInApp, readPendingInvite, shouldRememberInvite, shouldResumeInvite } from "./app-mode";
 
 const IPHONE = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1";
 
@@ -25,4 +25,9 @@ test("resumes the invitation only inside the installed app", () => {
   assert.equal(shouldResumeInvite({ standalone: true, pathname: "/dashboard", token: "t" }), true);
   assert.equal(shouldResumeInvite({ standalone: false, pathname: "/dashboard", token: "t" }), false);
   assert.equal(shouldResumeInvite({ standalone: true, pathname: "/invite/t", token: "t" }), false);
+});
+test("remembers an open invitation from the browser but never from inside the installed app", () => {
+  assert.equal(shouldRememberInvite({ standalone: false, open: true }), true);
+  assert.equal(shouldRememberInvite({ standalone: true, open: true }), false);
+  assert.equal(shouldRememberInvite({ standalone: false, open: false }), false);
 });

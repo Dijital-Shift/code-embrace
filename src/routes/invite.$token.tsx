@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Eye, BellRing, ShieldCheck } from "lucide-react";
 import { revealWatchmanAlert } from "@/lib/watchman-alert";
-import { PENDING_INVITE_KEY, encodePendingInvite, installBrowser } from "@/lib/app-mode";
+import { PENDING_INVITE_KEY, encodePendingInvite, installBrowser, shouldRememberInvite } from "@/lib/app-mode";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { InstallWalkthrough } from "@/components/InstallWalkthrough";
 import { Smartphone, Compass, Copy } from "lucide-react";
@@ -84,8 +84,11 @@ function InvitePage() {
   // Remember an open invitation so installing first never loses it; closed invitations are forgotten.
   useEffect(() => {
     try {
-      if (preview?.found && !preview.pathGone && !preview.expired && preview.status !== "accepted" && preview.status !== "revoked") localStorage.setItem(PENDING_INVITE_KEY, encodePendingInvite(token, Date.now()));
-      else if (preview) localStorage.removeItem(PENDING_INVITE_KEY);
+      if (!preview) return;
+      const open = !!preview.found && !preview.pathGone && !preview.expired && preview.status !== "accepted" && preview.status !== "revoked";
+      const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone === true;
+      if (shouldRememberInvite({ standalone, open })) localStorage.setItem(PENDING_INVITE_KEY, encodePendingInvite(token, Date.now()));
+      else localStorage.removeItem(PENDING_INVITE_KEY);
     } catch { /* storage blocked */ }
   }, [preview, token]);
 
@@ -98,6 +101,7 @@ function InvitePage() {
     acceptingRef.current = false;
     setAccepting(false);
     if (r?.alreadyWatchman) {
+      try { localStorage.removeItem(PENDING_INVITE_KEY); } catch { /* storage blocked */ }
       navigate({ to: "/partner" });
       return;
     }

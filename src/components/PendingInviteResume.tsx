@@ -11,6 +11,8 @@ export function PendingInviteResume() {
       const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone === true;
       if (!token) { localStorage.removeItem(PENDING_INVITE_KEY); return; }
       if (shouldResumeInvite({ standalone, pathname: window.location.pathname, token })) {
+        // One return only: forget it now so declining or leaving never loops the app back.
+        localStorage.removeItem(PENDING_INVITE_KEY);
         void navigate({ to: "/invite/$token", params: { token } });
       }
     } catch { /* storage blocked */ }
