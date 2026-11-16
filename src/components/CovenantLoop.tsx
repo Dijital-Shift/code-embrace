@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   BellRing, Check, Eye, MessageSquare, Pause, Phone, Play, Plus, RotateCcw, Send, Shield, ShieldAlert, Users, Maximize2, X,
 } from "lucide-react";
+import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "@/lib/utils";
 import { breachAlertCopy } from "@/lib/watchman-alert";
 import { LOOP_BEATS, LOOP_FRAME_MS, loopFrameRole, nextLoopPosition, type LoopPosition } from "@/lib/covenant-loop";
@@ -10,7 +11,7 @@ const CREST = "/kingdom-protocol-logo.png";
 const WALKER = "David";
 const WATCHMAN = "Marcus";
 const PATH = "No Fornication";
-const NOTE = "Fell after midnight. Not hiding it.";
+const NOTE = "Put myself in a situation I shouldn't have. Not hiding it.";
 
 const COPY: Record<(typeof LOOP_BEATS)[number]["id"], { label: string; title: string; body: string }> = {
   create: { label: "Create", title: "Create a Path", body: "Choose Pursue or Flee, name it, and anchor it in Scripture." },
@@ -28,15 +29,6 @@ export function CovenantLoop() {
   const [playing, setPlaying] = React.useState(true);
   const [tick, setTick] = React.useState(0);
   const [theater, setTheater] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!theater) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setTheater(false); };
-    window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
-  }, [theater]);
 
   React.useEffect(() => {
     if (!playing) return;
@@ -92,19 +84,34 @@ export function CovenantLoop() {
           <LoopStage pos={pos} playing={playing} role={role} copy={copy} jump={jump} togglePlay={() => setPlaying((p) => !p)} onExpand={() => setTheater(true)} />
         </div>
       </div>
-      {theater && (
-        <div role="dialog" aria-modal="true" aria-label="Walkthrough, full screen" className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-background">
-          <div className="flex shrink-0 items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
-            <span className="text-sm font-semibold text-parchment">The whole loop</span>
-            <button type="button" onClick={() => setTheater(false)} aria-label="Close full screen" className="flex h-11 w-11 items-center justify-center rounded-full text-stone hover:text-primary">
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            <LoopStage pos={pos} playing={playing} role={role} copy={copy} jump={jump} togglePlay={() => setPlaying((p) => !p)} alwaysTabs />
-          </div>
-        </div>
-      )}
+      <DrawerPrimitive.Root open={theater} onOpenChange={setTheater} shouldScaleBackground={false}>
+        <DrawerPrimitive.Portal>
+          <DrawerPrimitive.Overlay className="fixed inset-0 z-[100] bg-background/85 backdrop-blur-sm" />
+          <DrawerPrimitive.Content
+            aria-describedby={undefined}
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            className="fixed inset-x-0 bottom-0 z-[101] mx-auto flex h-[calc(100dvh-1.5rem)] max-w-lg flex-col rounded-t-[1.75rem] border border-b-0 border-primary/20 bg-background shadow-[0_-18px_48px_rgba(0,0,0,0.6)] outline-none"
+          >
+            <div className="flex shrink-0 cursor-grab justify-center pb-1 pt-3 active:cursor-grabbing" aria-hidden="true">
+              <span className="h-1.5 w-12 rounded-full bg-stone/40" />
+            </div>
+            <div className="flex shrink-0 items-center justify-between gap-3 px-5 pb-2">
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">Walkthrough</p>
+                <DrawerPrimitive.Title className="mt-0.5 text-lg font-bold leading-tight text-foreground">The Covenant Loop</DrawerPrimitive.Title>
+              </div>
+              <DrawerPrimitive.Close aria-label="Close walkthrough" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-stone outline-none transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-primary">
+                <X className="h-4 w-4" />
+              </DrawerPrimitive.Close>
+            </div>
+            <div className="mx-auto h-px w-[calc(100%-2.5rem)] shrink-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />
+            <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center overflow-y-auto px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
+              <LoopStage pos={pos} playing={playing} role={role} copy={copy} jump={jump} togglePlay={() => setPlaying((p) => !p)} alwaysTabs />
+              <p className="mt-3 text-center text-[11px] text-stone">Swipe down to close</p>
+            </div>
+          </DrawerPrimitive.Content>
+        </DrawerPrimitive.Portal>
+      </DrawerPrimitive.Root>
     </section>
   );
 }
