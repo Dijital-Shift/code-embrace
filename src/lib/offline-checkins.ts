@@ -85,6 +85,7 @@ export function useOfflineCheckinSync(enabled: boolean) {
         }
         qc.invalidateQueries({ queryKey: ["checkin"] });
         qc.invalidateQueries({ queryKey: ["dashboard"] });
+        qc.invalidateQueries({ queryKey: ["lanes"] });
       } catch { /* offline or not signed in — retry later */ }
       finally { syncing = false; }
     }

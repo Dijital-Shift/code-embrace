@@ -290,6 +290,7 @@ function PathRow({ lane, isLate = false, day = "today", date }: { lane: Lane; is
 
   function settle() {
     qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["lanes"] });
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
 
@@ -471,6 +472,7 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
     if (r?.error) { setErr(r.error); return; }
     setConfessing(false); setNote("");
     qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["lanes"] });
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
   const canUndo = pending || undoable(checkin);
@@ -483,6 +485,7 @@ function LoggedRow({ lane, checkin, dayTag, day = "today", date, graceOpen = fal
     setBusy(false);
     if (r?.error) { setErr(r.error); return; }
     qc.invalidateQueries({ queryKey: ["dashboard"] });
+    qc.invalidateQueries({ queryKey: ["lanes"] });
     qc.invalidateQueries({ queryKey: ["checkin"] });
   }
 

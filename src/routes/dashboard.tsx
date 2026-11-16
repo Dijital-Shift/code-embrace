@@ -15,6 +15,9 @@ import { pathStartLabel } from "@/lib/path-start";
 import { RoleBriefing } from "@/components/RoleBriefing";
 import { AppInstallCard } from "@/components/AppInstallCard";
 import { dashboardOptions } from "@/lib/app-page-queries";
+import { RecentTrail } from "@/components/RecentTrail";
+import { buildTrail } from "@/lib/recent-trail";
+import { pathIsDue } from "@/lib/path-start";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -70,6 +73,13 @@ function Dashboard() {
               const seats = data?.seatsByLane?.[lane.lane_id] ?? { active: 0, pending: 0 };
               const unread = unreadByLane.get(lane.lane_id) ?? 0;
               const isAvoid = lane.lane_type === "avoid";
+              const prior = (data as any)?.priorByLane?.[lane.lane_id] ?? {};
+              const trail = data?.today ? buildTrail({
+                today: data.today,
+                graceOpen: !!(data as any)?.graceOpen,
+                isDue: (d) => pathIsDue(lane, d, (data as any)?.tz ?? ""),
+                statusOn: (d) => d === data.today ? statusByLane.get(lane.lane_id) : prior[d],
+              }) : [];
               return (
                 <Link
                   key={lane.lane_id}
@@ -100,7 +110,10 @@ function Dashboard() {
                       )}
                     </p>
                     {lane.description && <p className="text-xs text-[#b8b0a4] leading-relaxed mt-1 mb-1.5 line-clamp-2">{lane.description}</p>}
-                    <p className="text-[0.72rem]" style={{ color: "#4ade80" }}>{standing} standing</p>
+                    <p className="text-[0.72rem] flex items-center flex-wrap gap-x-2.5 gap-y-1">
+                      <RecentTrail days={trail} today={data?.today ?? ""} />
+                      <span style={{ color: "#4ade80" }}>{standing} standing</span>
+                    </p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <WatchmanPips active={seats.active} pending={seats.pending} />

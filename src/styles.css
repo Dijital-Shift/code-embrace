@@ -315,3 +315,16 @@ html.kp-splash body { overflow: hidden; }
 @media (max-width: 600px) {
   .kp-subpage-bar { top: calc(44px + env(safe-area-inset-top)); margin-top: -1.25rem; }
 }
+
+/* Recent trail: two days ago · yesterday · today on Path cards. */
+.kp-trail { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.62rem; color: var(--color-stone); letter-spacing: 0.02em; }
+.kp-trail-day { display: inline-flex; align-items: center; gap: 0.25rem; }
+.kp-trail-day-grace { color: var(--color-history-silent); font-weight: 600; }
+.kp-trail-pip { width: 0.5rem; height: 0.5rem; border-radius: 999px; display: inline-block; border: 1.5px solid transparent; flex-shrink: 0; }
+.kp-trail-completed { background: var(--color-history-held); }
+.kp-trail-breached { background: var(--color-history-breach); }
+.kp-trail-missed { background: var(--color-history-silent); }
+.kp-trail-skipped { background: var(--color-history-sabbath); border-radius: 1px; width: 0.42rem; height: 0.42rem; transform: rotate(45deg); margin: 0 0.04rem; }
+.kp-trail-open { border-color: var(--color-stone); opacity: 0.7; }
+.kp-trail-grace { border-color: var(--color-history-silent); box-shadow: 0 0 6px color-mix(in oklab, var(--color-history-silent) 60%, transparent); }
+.kp-trail-none { width: 0.4rem; height: 2px; border-radius: 1px; background: var(--color-action-stone-edge); }

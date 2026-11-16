@@ -16,6 +16,7 @@ import { alertContextLabel } from './alert-context';
 import { removalNotice } from './watchman-removal';
 import { breachAlertCopy, isLateBreachMessage, watchmanAlertName } from './watchman-alert';
 import { defaultPathStart, resolvePathStart, pathStartDate, pathIsDue } from './path-start';
+import { buildTrail, trailDates } from './recent-trail';
 
 import {
   activeWatchmen,
@@ -182,10 +183,19 @@ export const listMyLanes = createServerFn({ method: 'GET' })
         .in('lane_id', lanes.map((l) => l.lane_id)).eq('status', 'pending').gt('expires_at', new Date().toISOString());
       for (const r of inviteRows ?? []) pendingByPath.set(r.lane_id, (pendingByPath.get(r.lane_id) ?? 0) + 1);
     }
+    // Last three days per Path — the card trail.
+    const statusOn = new Map<string, string>();
+    if (lanes.length) {
+      const { data: trailRows } = await supabase.from('checkins').select('lane_id, checkin_date, status')
+        .eq('user_id', userId).in('lane_id', lanes.map((l) => l.lane_id)).in('checkin_date', trailDates(today));
+      for (const r of trailRows ?? []) statusOn.set(`${r.lane_id}|${r.checkin_date}`, r.status);
+    }
+    const graceOpen = localHour(tz) < 10;
     return lanes.map((l) => {
       const ws = watchmenByPath.get(l.lane_id) ?? [];
       return {
         ...l,
+        trail: buildTrail({ today, graceOpen, isDue: (d) => pathIsDue(l, d, tz), statusOn: (d) => statusOn.get(`${l.lane_id}|${d}`) }),
         watchman_count: ws.length,
         watchman_names: ws.map((w) => watchmanName(w)),
         pending_invites: pendingByPath.get(l.lane_id) ?? 0,
@@ -532,6 +542,14 @@ export const getDashboard = createServerFn({ method: 'GET' })
     const ids = (lanes ?? []).map((l) => l.lane_id);
     const standingByLane: Record<string, number> = {};
     const seatsByLane: Record<string, { active: number; pending: number }> = {};
+    // Prior two days per Path; today's pip comes from todayCheckins so it moves with each tap.
+    const priorByLane: Record<string, Record<string, string>> = {};
+    if (ids.length) {
+      const [d2, d1] = trailDates(today);
+      const { data: priorRows } = await supabase.from('checkins').select('lane_id, checkin_date, status')
+        .eq('user_id', userId).in('lane_id', ids).in('checkin_date', [d2, d1]);
+      for (const r of priorRows ?? []) (priorByLane[r.lane_id] ??= {})[r.checkin_date] = r.status;
+    }
     if (ids.length) {
       const { tz } = await userDay(supabase, userId);
       const createdBy = new Map((lanes ?? []).map((l) => [l.lane_id, pathStartDate(l, tz)]));
@@ -556,6 +574,9 @@ export const getDashboard = createServerFn({ method: 'GET' })
       todayCheckins: todayChks ?? [],
       standingByLane,
       seatsByLane,
+      priorByLane,
+      graceOpen: localHour(tz) < 10,
+      tz,
       unreadEncouragements: unreadRows?.length ?? 0,
       unreadPaths: [...unreadByPath.entries()].map(([lane_id, count]) => ({
         lane_id, count, title: titles.get(lane_id) ?? 'a path',
