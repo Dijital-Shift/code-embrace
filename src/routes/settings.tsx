@@ -74,6 +74,18 @@ function Settings() {
     }
   }, [data]);
 
+  // Remember scroll depth so returning (Back / swipe) lands where the user left off.
+  useEffect(() => {
+    if (isLoading) return;
+    const key = (window.history.state as { key?: string; __TSR_key?: string } | null)?.__TSR_key ?? (window.history.state as any)?.key ?? "";
+    try {
+      const saved = JSON.parse(sessionStorage.getItem("kp_settings_scroll") || "null") as { key: string; y: number } | null;
+      if (saved && saved.key === key && saved.y > 0) requestAnimationFrame(() => window.scrollTo(0, saved.y));
+    } catch { /* ignore */ }
+    const save = () => sessionStorage.setItem("kp_settings_scroll", JSON.stringify({ key, y: window.scrollY }));
+    window.addEventListener("scroll", save, { passive: true });
+    return () => window.removeEventListener("scroll", save);
+  }, [isLoading]);
   if (isLoading) return <p className="text-[#9e968a]">Loading…</p>;
   const archived = data?.archivedLanes ?? [];
   const savedGender = ((data?.profile as any)?.gender ?? "") as "male" | "female" | "";

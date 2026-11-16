@@ -5,7 +5,7 @@ import {
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "@/lib/utils";
 import { breachAlertCopy } from "@/lib/watchman-alert";
-import { LOOP_BEATS, LOOP_FRAME_MS, loopFrameRole, nextLoopPosition, type LoopPosition } from "@/lib/covenant-loop";
+import { LOOP_BEATS, loopFrameMs, loopFrameRole, nextLoopPosition, type LoopPosition } from "@/lib/covenant-loop";
 
 const CREST = "/kingdom-protocol-logo.png";
 const WALKER = "David";
@@ -18,7 +18,7 @@ const COPY: Record<(typeof LOOP_BEATS)[number]["id"], { label: string; title: st
   invite: { label: "Invite", title: "Invite your Watchman", body: "Send one link. They accept with one tap." },
   checkin: { label: "Check in", title: "Check in each night", body: "Green if you held. Red if you breached, then say what happened." },
   alarm: { label: "Alarm", title: "Your Watchman is alerted", body: "A breach, or two silent days, sounds the alarm on their phone." },
-  watch: { label: "Answer", title: "Your Watchman answers", body: "They call, text, or send a word of strength. Tonight, the loop begins again." },
+  watch: { label: "Answer", title: "Your Watchman answers", body: "They call, text, or send a word of strength. Tomorrow night, the loop begins again." },
 };
 
 const TAP = "ring-2 ring-primary ring-offset-2 ring-offset-background motion-safe:animate-pulse";
@@ -32,9 +32,9 @@ export function CovenantLoop() {
 
   React.useEffect(() => {
     if (!playing) return;
-    const id = window.setInterval(() => setPos(nextLoopPosition), LOOP_FRAME_MS);
-    return () => window.clearInterval(id);
-  }, [playing, tick]);
+    const id = window.setTimeout(() => setPos(nextLoopPosition), loopFrameMs(pos));
+    return () => window.clearTimeout(id);
+  }, [playing, tick, pos]);
 
   const jump = (beat: number) => {
     setPos({ beat, frame: 0 });
@@ -97,8 +97,8 @@ export function CovenantLoop() {
             </div>
             <div className="flex shrink-0 items-center justify-between gap-3 px-5 pb-2">
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">Walkthrough</p>
-                <DrawerPrimitive.Title className="mt-0.5 text-lg font-bold leading-tight text-foreground">The Covenant Loop</DrawerPrimitive.Title>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">How it works</p>
+                <DrawerPrimitive.Title className="mt-0.5 text-lg font-bold leading-tight text-foreground">Walkthrough</DrawerPrimitive.Title>
               </div>
               <DrawerPrimitive.Close aria-label="Close walkthrough" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-stone outline-none transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-primary">
                 <X className="h-4 w-4" />
@@ -431,7 +431,7 @@ function WatchFrame({ frame }: { frame: number }) {
       )}
       {frame === 2 && (
         <div className="flex items-center justify-center gap-1.5 pt-1 text-[10px] font-semibold text-primary kp-loop-in">
-          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Tonight, the loop begins again.
+          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Tomorrow night, the loop begins again.
         </div>
       )}
     </div>

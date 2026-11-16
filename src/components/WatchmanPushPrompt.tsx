@@ -58,6 +58,9 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
   const [setupHere, setSetupHere] = useState(false);
 
   const check = useCallback(async () => {
+    // Wait for the signed-in session; an unauthenticated check would falsely report "not registered".
+    const { data: sess } = await supabase.auth.getSession();
+    if (!sess.session) return;
     const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
     const p: Perm = supported ? (Notification.permission as Perm) : "unsupported";
     setPerm(p);
@@ -70,7 +73,8 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
           const res = await fetch(`/api/push/test?endpoint=${encodeURIComponent(sub.endpoint)}`, {
             headers: await authHeader(),
           });
-          reg = res.ok && Boolean((await res.json()).registered);
+          if (!res.ok) return; // transient/auth failure — keep the previous state, re-check on focus
+          reg = Boolean((await res.json()).registered);
         }
       }
     } catch {
@@ -92,7 +96,9 @@ export function WatchmanPushPrompt({ variant = "watchman", onReadinessChange }: 
     window.addEventListener("focus", resume);
     document.addEventListener("visibilitychange", resume);
     void check();
+    const { data: authSub } = supabase.auth.onAuthStateChange((_e, s) => { if (s) void check(); });
     return () => {
+      authSub.subscription.unsubscribe();
       window.removeEventListener("focus", resume);
       document.removeEventListener("visibilitychange", resume);
     };

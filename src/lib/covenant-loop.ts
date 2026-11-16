@@ -2,14 +2,14 @@
 export type LoopBeatId = "create" | "invite" | "checkin" | "alarm" | "watch";
 export type LoopRole = "walker" | "watchman";
 
-export const LOOP_FRAME_MS = 2800;
 
-export const LOOP_BEATS: readonly { id: LoopBeatId; frames: number; roles: readonly LoopRole[] }[] = [
-  { id: "create", frames: 3, roles: ["walker", "walker", "walker"] },
-  { id: "invite", frames: 4, roles: ["walker", "walker", "watchman", "walker"] },
-  { id: "checkin", frames: 4, roles: ["walker", "walker", "walker", "walker"] },
-  { id: "alarm", frames: 3, roles: ["watchman", "watchman", "watchman"] },
-  { id: "watch", frames: 3, roles: ["watchman", "watchman", "watchman"] },
+/** Per-frame dwell: quick taps snap (~1.8s); reading and payoff frames hold (2.8–3.2s). */
+export const LOOP_BEATS: readonly { id: LoopBeatId; frames: number; roles: readonly LoopRole[]; dwell: readonly number[] }[] = [
+  { id: "create", frames: 3, roles: ["walker", "walker", "walker"], dwell: [1800, 1800, 2800] },
+  { id: "invite", frames: 4, roles: ["walker", "walker", "watchman", "walker"], dwell: [1800, 2800, 1800, 2800] },
+  { id: "checkin", frames: 4, roles: ["walker", "walker", "walker", "walker"], dwell: [1800, 1800, 3000, 3000] },
+  { id: "alarm", frames: 3, roles: ["watchman", "watchman", "watchman"], dwell: [2800, 3200, 3200] },
+  { id: "watch", frames: 3, roles: ["watchman", "watchman", "watchman"], dwell: [2800, 3200, 3200] },
 ];
 
 export type LoopPosition = { beat: number; frame: number };
@@ -26,6 +26,10 @@ export function loopFrameRole(p: LoopPosition): LoopRole {
   return LOOP_BEATS[p.beat]?.roles[p.frame] ?? "walker";
 }
 
+export function loopFrameMs(p: LoopPosition): number {
+  return LOOP_BEATS[p.beat]?.dwell[p.frame] ?? 2800;
+}
+
 export function loopDurationMs(): number {
-  return LOOP_BEATS.reduce((n, b) => n + b.frames, 0) * LOOP_FRAME_MS;
+  return LOOP_BEATS.reduce((n, b) => n + b.dwell.reduce((a, d) => a + d, 0), 0);
 }

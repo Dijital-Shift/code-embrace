@@ -39,7 +39,7 @@ export function FeedbackModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6"
+        className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[88dvh] overflow-y-auto overscroll-contain pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
         style={{ background: "#100d05", border: "1px solid #2a2518", boxShadow: "0 20px 60px rgba(0,0,0,0.6)" }}
       >
         {done ? (
@@ -102,7 +102,7 @@ export function FeedbackModal({ onClose }: { onClose: () => void }) {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Share your thoughts..."
-              rows={5}
+              rows={4}
               maxLength={4000}
               className="w-full px-4 py-3 rounded-md text-white outline-none resize-none"
               style={{ background: "#0a0800", border: "1px solid #222", fontSize: "16px" }}
