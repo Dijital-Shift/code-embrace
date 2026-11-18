@@ -661,12 +661,6 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
   }
 
 
-  function hoursLeft(expiresAt: string) {
-    const ms = new Date(expiresAt).getTime() - Date.now();
-    const h = Math.max(0, Math.floor(ms / 3600000));
-    if (h >= 24) return `${Math.floor(h / 24)}d ${h % 24}h`;
-    return `${h}h`;
-  }
 
   const slotCount = watchmen.length + activePending.length;
   const atCap = slotCount >= 2;
@@ -701,7 +695,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
               <Pill
-                label={`Invite pending · ${hoursLeft(inv.expires_at)}`}
+                label="Invite pending"
                 bg="#241a06"
                 fg="#e5c66a"
                 border="rgba(201,168,76,0.38)"
@@ -727,7 +721,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
             <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Dismiss</button>
           </div>
           <p className="text-xs text-[#9e968a] leading-relaxed">
-            Nobody accepted in time. The old link no longer works — send a fresh one.
+            This older link ran out before anyone accepted. New links stay open until filled or cancelled.
           </p>
           {!atCap && (
             <button
@@ -766,7 +760,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
       <p className="text-[0.8rem] text-[#9e968a] mt-3 leading-relaxed">
-        Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. Links expire in 48 hours.
+        Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. One link can go to several people — the first two to accept take the watch. Links stay open until then, or until you cancel.
       </p>
 
       {removing && <RemoveWatchmanDialog name={removing.name} onClose={() => setRemoving(null)} onRemove={confirmRemove} />}

@@ -1,0 +1,3 @@
+ALTER TABLE public.lane_invites ALTER COLUMN expires_at SET DEFAULT (now() + interval '100 years');
+COMMENT ON COLUMN public.lane_invites.expires_at IS 'Invites no longer time out; new links stay open until the Path is full or the owner cancels. Legacy 48-hour rows keep their original value.';
+UPDATE public.lane_invites SET expires_at = created_at + interval '100 years' WHERE status = 'pending' AND expires_at > now();

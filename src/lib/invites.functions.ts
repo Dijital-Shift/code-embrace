@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { removalReasonSchema } from './watchman-removal';
 import { canWatchAnotherPath, watchmanCapacityMessage } from './watchman-capacity';
+import { WATCHMEN_PER_PATH, linkAfterAccept } from './invite-link';
 
 // Generate URL-safe random token (~32 bytes → 43 base64url chars)
 function generateToken(): string {
@@ -63,7 +64,8 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
     });
 
     if (error) return { error: error.message };
-    return { token, expiresInHours: 48 };
+    // Links no longer time out; they stay open until the Path is full or the owner cancels.
+    return { token };
   });
 
 
@@ -87,6 +89,7 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
         isAvoid: true,
         status: 'pending' as 'pending' | 'accepted' | 'revoked' | 'expired',
         expired: false,
+        full: false,
         laneTitle: '',
         ownerFirstName: (owner?.first_name as string | null) ?? null,
         ownerEmail: null as string | null,
@@ -96,6 +99,7 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
     // The RPC doesn't expose the path description; fetch it for the invite screen.
     let laneDescription: string | null = null;
     let laneType: string | null = null;
+    let full = false;
     const { data: inv } = await supabaseAdmin
       .from('lane_invites').select('lane_id').eq('token', data.token).maybeSingle();
     if (inv?.lane_id) {
@@ -103,6 +107,11 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
         .from('lanes').select('description, lane_type').eq('lane_id', inv.lane_id).maybeSingle();
       laneDescription = l?.description ?? null;
       laneType = (l as any)?.lane_type ?? null;
+      // Only a yes/no is exposed — never who is watching.
+      const { count } = await supabaseAdmin
+        .from('path_watchmen').select('id', { count: 'exact', head: true })
+        .eq('path_id', inv.lane_id).eq('status', 'active');
+      full = (count ?? 0) >= WATCHMEN_PER_PATH;
     }
     return {
       found: true as const,
@@ -110,6 +119,7 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
       isAvoid: (laneType ?? 'avoid') !== 'complete',
       status: row.status as 'pending' | 'accepted' | 'revoked' | 'expired',
       expired: row.expired as boolean,
+      full,
       laneTitle: (row.lane_title as string | null) ?? '',
       pathGone: row.lane_title == null,
       ownerFirstName: (row.owner_first_name as string | null) ?? null,
@@ -155,10 +165,9 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       return { success: true, alreadyWatchman: true, laneId: lane.lane_id, laneTitle: lane.title };
     }
 
-    if (invite.status === 'accepted') return { error: 'This invite has already been used.' };
-    if (invite.status === 'revoked') return { error: 'This invitation has expired due to inactivity.' };
-    if (new Date(invite.expires_at) < new Date()) {
-      return { error: 'This invite has expired.' };
+    if (invite.status === 'accepted') return { error: 'The Watch is set — this Path already has its Watchmen.' };
+    if (invite.status === 'revoked' || new Date(invite.expires_at) < new Date()) {
+      return { error: 'This invitation has expired due to inactivity.' };
     }
     if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
     if (lane.status === 'archived') return { error: 'This path has been archived.' };
@@ -168,7 +177,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       .select('id', { count: 'exact', head: true })
       .eq('path_id', lane.lane_id)
       .eq('status', 'active');
-    if ((seatsTaken ?? 0) >= 2) return { error: 'This path already has two Watchmen.' };
+    if ((seatsTaken ?? 0) >= WATCHMEN_PER_PATH) return { error: 'The Watch is set — this Path already has its Watchmen.' };
 
     // Count active Paths for this owner only; other people's Paths never block acceptance.
     const { data: myAssignments, error: capacityError } = await supabaseAdmin
@@ -198,15 +207,34 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
 
     if (insErr) {
       const msg = insErr.message || '';
-      if (/at most 2 active watchmen/i.test(msg)) return { error: 'This path already has two Watchmen.' };
+      if (/at most 2 active watchmen/i.test(msg)) return { error: 'The Watch is set — this Path already has its Watchmen.' };
       if (/already assigned to 2 active paths/i.test(msg)) return { error: capacityMessage };
       return { error: msg };
     }
 
+    // One link can go to several people, first come first served. It stays open only
+    // while it alone covers the remaining seat; a full Path closes every open link.
+    const nowIso = new Date().toISOString();
+    const [{ count: activeNow }, { data: openLinks }] = await Promise.all([
+      supabaseAdmin.from('path_watchmen').select('id', { count: 'exact', head: true })
+        .eq('path_id', lane.lane_id).eq('status', 'active'),
+      supabaseAdmin.from('lane_invites').select('invite_id')
+        .eq('lane_id', lane.lane_id).eq('status', 'pending').gt('expires_at', nowIso)
+        .neq('invite_id', invite.invite_id),
+    ]);
+    const next = linkAfterAccept(activeNow ?? 0, (openLinks ?? []).length);
     await supabaseAdmin
       .from('lane_invites')
-      .update({ status: 'accepted', accepted_by: userId, accepted_at: new Date().toISOString() })
+      .update({
+        status: next === 'keep-open' ? 'pending' : 'accepted',
+        accepted_by: userId,
+        accepted_at: nowIso,
+      })
       .eq('invite_id', invite.invite_id);
+    if (next === 'close-all' && openLinks?.length) {
+      await supabaseAdmin.from('lane_invites').update({ status: 'revoked' })
+        .in('invite_id', openLinks.map((l) => l.invite_id));
+    }
 
     // Tell the Path owner their Watchman is now standing watch.
     try {

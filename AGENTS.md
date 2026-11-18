@@ -33,3 +33,4 @@
 - Path list cards classify Watchman posture with the client-safe watchman-coverage helper fed by listMyLanes' open-invite counts, so cards and pips agree with the reminder banner.
 - Three-day trails use the client-safe recent-trail builder with Check-In's absence rules (yesterday open until the 10 AM close, pre-start days owe nothing) and appear on Dashboard cards only — the Paths roster stays lean so Watchman coverage reads first; the Dashboard's today pip reads live today check-ins so taps move it at once.
 - The How It Works loop is a coded, client-only phone walkthrough sequenced by the pure covenant-loop helper and reusing real alert copy helpers, so it stays mute-proof, cheap, and in sync with shipped wording.
+- Invite links stay open until the Path is full or the owner cancels; the client-safe invite-link helper decides both what a link shows and whether a used link stays open, so one link can be shared first-come-first-served without exceeding two seats.

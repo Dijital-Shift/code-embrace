@@ -11,9 +11,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Eye, BellRing, ShieldCheck } from "lucide-react";
 import { revealWatchmanAlert } from "@/lib/watchman-alert";
 import { PENDING_INVITE_KEY, encodePendingInvite, installBrowser, shouldRememberInvite } from "@/lib/app-mode";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
-import { InstallWalkthrough } from "@/components/InstallWalkthrough";
+import { InstallGuideSheet } from "@/components/InstallWalkthrough";
 import { Smartphone, Compass, Copy } from "lucide-react";
+import { inviteLinkState } from "@/lib/invite-link";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
@@ -85,7 +85,7 @@ function InvitePage() {
   useEffect(() => {
     try {
       if (!preview) return;
-      const open = !!preview.found && !preview.pathGone && !preview.expired && preview.status !== "accepted" && preview.status !== "revoked";
+      const open = inviteLinkState(preview) === "open";
       const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone === true;
       if (shouldRememberInvite({ standalone, open })) localStorage.setItem(PENDING_INVITE_KEY, encodePendingInvite(token, Date.now()));
       else localStorage.removeItem(PENDING_INVITE_KEY);
@@ -206,21 +206,23 @@ function InvitePage() {
     );
   }
 
-  if (preview.status === "accepted") {
+  const state = inviteLinkState(preview);
+
+  // First come, first served: once both seats are filled, everyone else holding the
+  // link lands here. No names, no other Paths — only how Kingdom Protocol works.
+  if (state === "full") {
     return (
       <StatusCard
-        eyebrow="On the wall"
-        title="Already Standing"
-        body="This invite has already been accepted. If it was you, your watch is waiting."
-        action={user ? { to: "/partner", label: "Go to The Watch" } : { to: "/login", label: "Sign in to The Watch" }}
+        title="The Watch Is Set"
+        body={`${preview.ownerFirstName ?? "The sender"} has already filled the Watchmen for this Path.`}
+        footnote={user ? { to: "/partner", label: "Already standing watch? Open The Watch" } : undefined}
       />
     );
   }
 
-  if (preview.status === "revoked" || preview.expired) {
+  if (state === "closed") {
     return (
       <StatusCard
-        eyebrow="Invitation timed out"
         title="Invitation Expired"
         body={`This invitation has expired due to inactivity. If you still wish to stand watch, ask ${preview.ownerFirstName ?? "the sender"} for a fresh link.`}
       />
@@ -391,11 +393,13 @@ function StatusCard({
   title,
   body,
   action,
+  footnote,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   body: string;
   action?: { to: "/partner" | "/login"; label: string };
+  footnote?: { to: "/partner"; label: string };
 }) {
   return (
     <Shell>
@@ -403,7 +407,7 @@ function StatusCard({
         className="rounded-xl border border-[#c9a84c]/40 px-6 py-8 text-center"
         style={{ background: "linear-gradient(180deg, #161210 0%, #0f0c08 100%)", boxShadow: "0 0 40px rgba(201,168,76,0.08)" }}
       >
-        <p className="text-[0.65rem] text-[#c9a84c] uppercase tracking-[0.22em] mb-3">{eyebrow}</p>
+        {eyebrow && <p className="text-[0.65rem] text-[#c9a84c] uppercase tracking-[0.22em] mb-3">{eyebrow}</p>}
         <h1 className="text-2xl font-bold text-white mb-3">{title}</h1>
         <div className="mx-auto mb-4 h-px w-12 bg-[#c9a84c]/50" />
         <p className="text-sm text-[#b8b0a4] leading-relaxed">{body}</p>
@@ -417,7 +421,13 @@ function StatusCard({
         )}
       </div>
       <div className="mt-6 text-center">
-        <Link to="/" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-primary/60 bg-card px-5 text-sm font-semibold text-primary shadow-[0_0_24px_hsl(var(--primary)/0.15)] hover:border-primary focus-visible:outline-2 focus-visible:outline-primary">Learn more about Kingdom Protocol <span aria-hidden="true">→</span></Link>
+        {/* The walkthrough, not the pricing page: someone holding a closed link needs to see how it works first. */}
+        <Link to="/demo" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-primary/60 bg-card px-5 text-sm font-semibold text-primary shadow-[0_0_24px_hsl(var(--primary)/0.15)] hover:border-primary focus-visible:outline-2 focus-visible:outline-primary">See how Kingdom Protocol works <span aria-hidden="true">→</span></Link>
+        {footnote && (
+          <div className="mt-4">
+            <Link to={footnote.to} className="inline-flex min-h-11 items-center text-xs text-stone underline underline-offset-4">{footnote.label}</Link>
+          </div>
+        )}
       </div>
     </Shell>
   );
@@ -485,19 +495,10 @@ function SafariBanner() {
 // Quiet trigger that opens the install guide without leaving the invitation.
 function InstallDrawer() {
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <button type="button" className="mb-4 flex min-h-11 w-full items-center justify-center gap-2 text-xs font-semibold text-primary">
-          <Smartphone aria-hidden="true" size={14} /> Installing on your phone? Tap for steps
-        </button>
-      </SheetTrigger>
-      <SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()} className="max-h-[90dvh] overflow-y-auto rounded-t-2xl px-5 pt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <SheetHeader className="text-left">
-          <SheetTitle className="kp-briefing-title text-parchment">How to install</SheetTitle>
-          <SheetDescription>On iPhone, use Safari. On Android, use Chrome. Accept the invitation first, then install.</SheetDescription>
-        </SheetHeader>
-        <InstallWalkthrough />
-      </SheetContent>
-    </Sheet>
+    <InstallGuideSheet description="On iPhone, use Safari. On Android, use Chrome. Accept the invitation first, then install.">
+      <button type="button" className="mb-4 flex min-h-11 w-full items-center justify-center gap-2 text-xs font-semibold text-primary">
+        <Smartphone aria-hidden="true" size={14} /> Installing on your phone? Tap for steps
+      </button>
+    </InstallGuideSheet>
   );
 }

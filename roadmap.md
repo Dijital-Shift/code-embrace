@@ -1,4 +1,7 @@
 # Tasks
+- [x] Phase 1: links no longer expire (shared link, first two accept); full Path shows "The Watch Is Set"; closed cards drop the eyebrow and point to How It Works; Dashboard phone card gets a "Watch 10-second install guide" button. Feedback box already matched Send Scripture. 118 tests pass, build OK; filled and expired invite pages verified on a phone-size browser.
+- [ ] Verify the shared link with two real people accepting, and the Dashboard install button on a real phone — preview has no signed-in account for you.
+- [ ] Phase 2: "Walk Your Own Path" after a full link, then ask the new member to invite the person who sent the link; owner accepts in The Watch.
 - [x] Show "Invite sent — awaiting Watchman" and pending pips on Path list cards; move the referral link off the Dashboard into a Settings dialog with a "Not for adding a Watchman" warning. 98 tests pass, build OK.
 - [ ] Check the new Path card status and Settings referral dialog on a signed-in account — preview sign-in has no matching account; requires the user to sign into the preview.
 - [x] Add clear open/close chevron and bottom Collapse to encouragement cards; label late confessions "Breach declared after check-in" in Watchman push, alert history, and The Watch card. 90 tests pass.

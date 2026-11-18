@@ -3,6 +3,7 @@ import { Check, Copy, Download } from "lucide-react";
 import { deviceKind, installBrowser, installSteps, type InstallBrowser } from "@/lib/app-mode";
 import { useAppInstall } from "@/components/AppInstallProvider";
 import { InstallDemo } from "@/components/InstallDemo";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 type Tab = "ios" | "android";
 
@@ -65,5 +66,21 @@ export function InstallWalkthrough() {
       </div>
       </div>
     </div>
+  );
+}
+
+/** The install guide in a bottom drawer; the child element is the button that opens it. */
+export function InstallGuideSheet({ children, description }: { children: React.ReactElement; description: string }) {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>{children}</SheetTrigger>
+      <SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()} className="max-h-[90dvh] overflow-y-auto rounded-t-2xl px-5 pt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <SheetHeader className="text-left">
+          <SheetTitle className="kp-briefing-title text-parchment">How to install</SheetTitle>
+          <SheetDescription>{description}</SheetDescription>
+        </SheetHeader>
+        <InstallWalkthrough />
+      </SheetContent>
+    </Sheet>
   );
 }
