@@ -87,3 +87,4 @@
 - [x] Push the Path owner when a Watchman accepts their invite.
 - [x] Dashboard day bar fills left-to-right: settled slots lead, open slots trail. Verified with mixed statuses.
 - [x] Fit the install guide drawer on one screen: smaller phone animation, tighter numbered steps, side-by-side layout on short phones. Verified no scroll at 414x700, 390x664 and 375x548 (iPhone and Android tabs).
+- [x] Remove the three-day trail from the Paths roster so Watchman coverage reads first; trail stays on Dashboard cards only and the Paths query drops its check-in subquery. 111 tests pass, build OK, signed-in preview verified at 390px and 1280px with no page errors.
