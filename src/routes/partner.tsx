@@ -75,6 +75,8 @@ function Partner() {
 
   return (
     <div>
+      {/* A named request is the one thing waiting on this Watchman; it leads the page. */}
+      <WatchRequests />
       <RoleBriefing role="watchman" />
       {(data?.closureNotices ?? []).map((notice) => (
         <article key={notice.notification_id} className="mb-6 rounded-lg border border-primary/40 bg-card p-5">
@@ -102,7 +104,6 @@ function Partner() {
         )}
       </div>
 
-      <WatchRequests />
       <ClaimInviteCard />
 
       {showMicroPrompt && (

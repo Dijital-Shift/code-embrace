@@ -23,9 +23,11 @@ export function WatchRequests() {
     setBusyId(null);
     if (r?.error) { toast.error(r.error); return; }
     try { navigator.vibrate?.(25); } catch { /* unsupported */ }
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ["partner"] }),
+      qc.invalidateQueries({ queryKey: ["watch-requests"] }),
+    ]);
     toast.success(done);
-    void qc.invalidateQueries({ queryKey: ["watch-requests"] });
-    void qc.invalidateQueries({ queryKey: ["partner"] });
   }
 
   return (
