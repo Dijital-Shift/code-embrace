@@ -156,7 +156,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     }
 
     if (invite.status === 'accepted') return { error: 'This invite has already been used.' };
-    if (invite.status === 'revoked') return { error: 'This invite was cancelled.' };
+    if (invite.status === 'revoked') return { error: 'This invitation has expired due to inactivity.' };
     if (new Date(invite.expires_at) < new Date()) {
       return { error: 'This invite has expired.' };
     }

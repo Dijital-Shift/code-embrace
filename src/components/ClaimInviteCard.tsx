@@ -39,8 +39,7 @@ export function ClaimInviteCard() {
     setBusy(false);
     if (!p || !p.found) { setErr("This link is no longer active. Reach out to whoever sent it for a fresh link."); return; }
     if (p.pathGone) { setErr(`This path is no longer active. Reach out to ${p.ownerFirstName || "the sender"} directly.`); return; }
-    if (p.status === "revoked") { setErr("This invite was cancelled. Ask the sender for a fresh link."); return; }
-    if (p.expired || p.status === "expired") { setErr("This invite has expired. Ask the sender for a fresh link."); return; }
+    if (p.expired || p.status === "expired" || p.status === "revoked") { setErr("This invitation has expired due to inactivity. Ask the sender for a fresh link."); return; }
     if (p.status === "accepted") { setErr("This invite has already been accepted."); return; }
     setToken(t); setPreview(p);
   }

@@ -217,22 +217,12 @@ function InvitePage() {
     );
   }
 
-  if (preview.status === "revoked") {
+  if (preview.status === "revoked" || preview.expired) {
     return (
       <StatusCard
-        eyebrow="Invite closed"
-        title="Invite Cancelled"
-        body={`${preview.ownerFirstName ?? "The sender"} cancelled this invite. If that was a mistake, ask them for a fresh link.`}
-      />
-    );
-  }
-
-  if (preview.expired) {
-    return (
-      <StatusCard
-        eyebrow="Link timed out"
-        title="Invite Expired"
-        body={`Invites last 48 hours. Ask ${preview.ownerFirstName ?? "the sender"} to send a fresh link — it takes them one tap.`}
+        eyebrow="Invitation timed out"
+        title="Invitation Expired"
+        body={`This invitation has expired due to inactivity. If you still wish to stand watch, ask ${preview.ownerFirstName ?? "the sender"} for a fresh link.`}
       />
     );
   }
@@ -427,7 +417,7 @@ function StatusCard({
         )}
       </div>
       <div className="mt-6 text-center">
-        <Link to="/" className="text-xs text-[#9e968a] hover:text-[#c9a84c]">Learn about Kingdom Protocol</Link>
+        <Link to="/" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-primary/60 bg-card px-5 text-sm font-semibold text-primary shadow-[0_0_24px_hsl(var(--primary)/0.15)] hover:border-primary focus-visible:outline-2 focus-visible:outline-primary">Learn more about Kingdom Protocol <span aria-hidden="true">→</span></Link>
       </div>
     </Shell>
   );
