@@ -23,3 +23,6 @@ test("the used link closes when another open link already covers the second seat
 test("filling the second seat closes every open link on the Path", () => {
   assert.equal(linkAfterAccept(2, 1), "close-all");
 });
+test("a declined watch request reads as closed", () => {
+  assert.equal(inviteLinkState({ found: true, status: "declined" }), "closed");
+});

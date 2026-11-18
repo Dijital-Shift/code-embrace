@@ -161,13 +161,13 @@ function MockInviteWatchman() {
         <div className="text-[10px] text-[#4ade80]">Active · accepted yesterday</div>
       </div>
       <div className="rounded-md border border-[#3a2f12] bg-[#1a1408] p-3">
-        <div className="text-[11px] text-[#c9a84c] mb-2">Invite pending · expires in 47h</div>
+        <div className="text-[11px] text-[#c9a84c] mb-2">Invite pending</div>
         <div className="flex items-center gap-2">
           <input readOnly value="kingdom-protocol.app/invite/x9k…" className="flex-1 truncate rounded border border-[#222] bg-[#0a0800] px-2 py-1.5 text-[10px] text-[#b8b0a4] outline-none" />
           <button className="rounded bg-[#c9a84c] px-2 py-1.5 text-[10px] font-bold text-black">Copy</button>
         </div>
       </div>
-      <div className="text-[10px] leading-relaxed text-[#9e968a]">Up to two watchmen per path. Links expire in 48 hours.</div>
+      <div className="text-[10px] leading-relaxed text-[#9e968a]">Up to two watchmen per path. Links stay open until filled or cancelled.</div>
     </div>
   );
 }
@@ -655,7 +655,7 @@ function Demo() {
               Back to overview
             </Link>
             <Link to="/login" className="inline-flex items-center gap-2 rounded-md bg-[#c9a84c] px-5 py-2.5 text-sm font-bold text-black">
-              Get started <ArrowRight className="h-4 w-4" />
+              Walk Your Own Path <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
             </>

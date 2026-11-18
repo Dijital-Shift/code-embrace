@@ -15,6 +15,7 @@ import { SplashScreen, StaticSplash, SPLASH_BOOT_SCRIPT } from "@/components/Spl
 import { Toaster } from "@/components/ui/sonner";
 import { AppInstallProvider } from "@/components/AppInstallProvider";
 import { PendingInviteResume } from "@/components/PendingInviteResume";
+import { WatchReferralCapture } from "@/components/WatchReferralCapture";
 
 
 import appCss from "../styles.css?url";
@@ -178,6 +179,7 @@ function RootComponent() {
         <AppInstallProvider>
         <SplashScreen />
         <PendingInviteResume />
+        <WatchReferralCapture />
         <Outlet />
         <UpdateAvailablePill />
         <Toaster />

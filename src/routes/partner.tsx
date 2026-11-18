@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { statusLabel } from "@/lib/status";
 import { WatchmanPushPrompt } from "@/components/WatchmanPushPrompt";
 import { ClaimInviteCard } from "@/components/ClaimInviteCard";
+import { WatchRequests } from "@/components/WatchRequests";
 import { RoleBriefing } from "@/components/RoleBriefing";
 import { partnerOptions } from "@/lib/app-page-queries";
 
@@ -101,6 +102,7 @@ function Partner() {
         )}
       </div>
 
+      <WatchRequests />
       <ClaimInviteCard />
 
       {showMicroPrompt && (

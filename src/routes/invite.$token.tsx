@@ -14,6 +14,7 @@ import { PENDING_INVITE_KEY, encodePendingInvite, installBrowser, shouldRemember
 import { InstallGuideSheet } from "@/components/InstallWalkthrough";
 import { Smartphone, Compass, Copy } from "lucide-react";
 import { inviteLinkState } from "@/lib/invite-link";
+import { WATCH_REFERRAL_EVENT, WATCH_REFERRAL_KEY, encodeWatchReferral } from "@/lib/watch-referral";
 
 export const Route = createFileRoute("/invite/$token")({
   head: ({ params }) => ({ meta: [
@@ -89,6 +90,11 @@ function InvitePage() {
       const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone === true;
       if (shouldRememberInvite({ standalone, open })) localStorage.setItem(PENDING_INVITE_KEY, encodePendingInvite(token, Date.now()));
       else localStorage.removeItem(PENDING_INVITE_KEY);
+      // Whoever sent this link can later be asked to watch this visitor's own Path.
+      if (preview.found && !preview.pathGone) {
+        localStorage.setItem(WATCH_REFERRAL_KEY, encodeWatchReferral(token, Date.now()));
+        window.dispatchEvent(new Event(WATCH_REFERRAL_EVENT));
+      }
     } catch { /* storage blocked */ }
   }, [preview, token]);
 

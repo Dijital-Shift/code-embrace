@@ -20,6 +20,7 @@ import { Avatar } from "@/components/AvatarPicker";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AppLayout } from "@/components/AppLayout";
 import { WatchmanReminder } from "@/components/WatchmanReminder";
+import { StandWithCard } from "@/components/StandWithCard";
 // status helpers used by timeline
 import { toast } from "sonner";
 
@@ -381,6 +382,8 @@ function LaneDetail() {
       </div>}
 
 
+      {lane.status === "active" && <StandWithCard laneId={id} />}
+
       <WatchmenPanel laneId={id} watchmen={(data?.watchmen ?? []) as any} ownerName={data?.ownerFirstName ?? null} pathTitle={lane.title} isAvoid={isAvoid} />
 
       <div className="mt-8 flex gap-2 flex-wrap">
@@ -592,6 +595,12 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
   const activePending = invites.filter(
     (i: any) => i.status === "pending" && !isExpired(i),
   );
+  // Requests sent to one person by name hold a seat; shareable links don't need a card each.
+  const directPending = activePending.filter((i: any) => i.invitee_id);
+  const openLinks = activePending.filter((i: any) => !i.invitee_id);
+  const linkCards = Math.max(1, 2 - watchmen.length - directPending.length);
+  const shownLinks = openLinks.slice(0, linkCards);
+  const olderLinks = openLinks.slice(linkCards);
   // An expired link stays visible until it is reissued or dismissed — a slot
   // that silently reverts to "empty" looks like the invite was never sent.
   const expiredInvites = invites
@@ -662,8 +671,15 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
 
 
 
-  const slotCount = watchmen.length + activePending.length;
-  const atCap = slotCount >= 2;
+  async function cancelOlder() {
+    setCopied(null);
+    await Promise.all(olderLinks.map((l: any) => revokeFn({ data: { inviteId: l.invite_id } })));
+    toast.success("Older links canceled");
+    qc.invalidateQueries({ queryKey: ["invites", laneId] });
+  }
+
+  const slotCount = Math.min(2, watchmen.length + directPending.length + shownLinks.length);
+  const atCap = watchmen.length + activePending.length >= 2;
   // An expired link still holds its row on screen, so it doesn't also print a
   // blank "empty slot" beneath it.
   const emptySlots = Math.max(0, 2 - (slotCount + expiredInvites.length));
@@ -690,7 +706,17 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
       ))}
 
 
-      {activePending.map((inv: any) => {
+      {directPending.map((inv: any) => (
+        <div key={inv.invite_id} className="flex items-center justify-between gap-3 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
+          <div className="min-w-0">
+            <Pill label="Request sent" bg="#241a06" fg="#e5c66a" border="rgba(201,168,76,0.38)" dot="#c9a84c" />
+            <p className="text-[0.78rem] text-[#e8dfc4] leading-snug mt-2">Waiting on {inv.invitee_name} to accept.</p>
+          </div>
+          <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171] shrink-0">Cancel</button>
+        </div>
+      ))}
+
+      {shownLinks.map((inv: any) => {
         return (
           <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#3a2f12] mb-3" style={{ background: "#1a1408" }}>
             <div className="flex items-center justify-between gap-2">
@@ -713,6 +739,13 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
           </div>
         );
       })}
+
+      {olderLinks.length > 0 && (
+        <div className="flex items-center justify-between gap-3 px-1 mb-3">
+          <p className="text-xs text-[#9e968a] leading-relaxed">{olderLinks.length} older {olderLinks.length === 1 ? "link is" : "links are"} still open. Anyone holding one can still accept.</p>
+          <button onClick={cancelOlder} className="text-xs text-[#b8b0a4] hover:text-[#f87171] shrink-0 min-h-11">Cancel older</button>
+        </div>
+      )}
 
       {expiredInvites.map((inv: any) => (
         <div key={inv.invite_id} className="flex flex-col gap-2 p-3 rounded border border-[#2a2518] mb-3" style={{ background: "#14110a" }}>

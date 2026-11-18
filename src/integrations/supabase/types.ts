@@ -234,6 +234,7 @@ export type Database = {
           created_at: string
           expires_at: string
           invite_id: string
+          invitee_id: string | null
           lane_id: string
           owner_id: string
           relationship: string | null
@@ -246,6 +247,7 @@ export type Database = {
           created_at?: string
           expires_at?: string
           invite_id?: string
+          invitee_id?: string | null
           lane_id: string
           owner_id: string
           relationship?: string | null
@@ -258,13 +260,22 @@ export type Database = {
           created_at?: string
           expires_at?: string
           invite_id?: string
+          invitee_id?: string | null
           lane_id?: string
           owner_id?: string
           relationship?: string | null
           status?: string
           token?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lane_invites_invitee_id_fkey"
+            columns: ["invitee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       lanes: {
         Row: {
@@ -461,6 +472,7 @@ export type Database = {
           timezone_auto: boolean
           trial_ends_at: string | null
           user_id: string
+          watch_referral_token: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -481,6 +493,7 @@ export type Database = {
           timezone_auto?: boolean
           trial_ends_at?: string | null
           user_id: string
+          watch_referral_token?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -501,6 +514,7 @@ export type Database = {
           timezone_auto?: boolean
           trial_ends_at?: string | null
           user_id?: string
+          watch_referral_token?: string | null
         }
         Relationships: []
       }

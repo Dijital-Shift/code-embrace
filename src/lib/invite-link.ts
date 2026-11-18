@@ -14,7 +14,7 @@ export function inviteLinkState(p: InviteLinkPreview | null | undefined): "missi
   if (!p || !p.found) return "missing";
   if (p.pathGone) return "pathGone";
   if (p.full || p.status === "accepted") return "full";
-  if (p.expired || p.status === "revoked" || p.status === "expired") return "closed";
+  if (p.expired || p.status === "revoked" || p.status === "expired" || p.status === "declined") return "closed";
   return "open";
 }
 

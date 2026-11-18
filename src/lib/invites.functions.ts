@@ -138,7 +138,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
 
     const { data: invite } = await supabaseAdmin
       .from('lane_invites')
-      .select('invite_id, lane_id, owner_id, status, expires_at, relationship')
+      .select('invite_id, lane_id, owner_id, status, expires_at, relationship, invitee_id')
       .eq('token', data.token)
       .maybeSingle();
 
@@ -165,6 +165,9 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       return { success: true, alreadyWatchman: true, laneId: lane.lane_id, laneTitle: lane.title };
     }
 
+    // A watch request is addressed to one person; nobody else can take it.
+    if (invite.invitee_id && invite.invitee_id !== userId) return { error: 'This request was sent to someone else.' };
+    if (invite.status === 'declined') return { error: 'This request was declined.' };
     if (invite.status === 'accepted') return { error: 'The Watch is set — this Path already has its Watchmen.' };
     if (invite.status === 'revoked' || new Date(invite.expires_at) < new Date()) {
       return { error: 'This invitation has expired due to inactivity.' };
@@ -226,7 +229,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     await supabaseAdmin
       .from('lane_invites')
       .update({
-        status: next === 'keep-open' ? 'pending' : 'accepted',
+        status: next === 'keep-open' && !invite.invitee_id ? 'pending' : 'accepted',
         accepted_by: userId,
         accepted_at: nowIso,
       })
@@ -278,12 +281,19 @@ export const listLaneInvites = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const { data: rows } = await supabase
       .from('lane_invites')
-      .select('invite_id, token, status, expires_at, created_at, accepted_at, relationship')
+      .select('invite_id, token, status, expires_at, created_at, accepted_at, relationship, invitee_id')
       .eq('lane_id', data.laneId)
       .eq('owner_id', userId)
       .order('created_at', { ascending: false })
-      .limit(20);
-    return rows ?? [];
+      .limit(30);
+    const ids = [...new Set((rows ?? []).map((r) => r.invitee_id).filter(Boolean))] as string[];
+    let names = new Map<string, string>();
+    if (ids.length) {
+      const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+      const { data: people } = await supabaseAdmin.from('profiles').select('user_id, first_name').in('user_id', ids);
+      names = new Map((people ?? []).map((p) => [p.user_id as string, ((p.first_name as string | null) || 'them').split(' ')[0]]));
+    }
+    return (rows ?? []).map((r) => ({ ...r, invitee_name: r.invitee_id ? names.get(r.invitee_id) ?? 'them' : null }));
   });
 
 // Owner removes ONE specific Watchman — any other watchman on the path stays put.
