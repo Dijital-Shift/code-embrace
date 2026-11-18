@@ -31,5 +31,5 @@
 - Watchman capacity is scoped to active Paths for each owner/Watchman pair, never globally; shared capacity logic and database triggers protect all acceptance and legacy assignment paths.
 - Breach submits use shared two-tap BreachConfirmDialog, never hold gestures; late confession: Held Flee only, server-validated.
 - Path list cards classify Watchman posture with the client-safe watchman-coverage helper fed by listMyLanes' open-invite counts, so cards and pips agree with the reminder banner.
-- Path card three-day trails use the client-safe recent-trail builder with Check-In's absence rules (yesterday open until the 10 AM close, pre-start days owe nothing); the Dashboard's today pip reads live today check-ins so taps move it at once.
+- Three-day trails use the client-safe recent-trail builder with Check-In's absence rules (yesterday open until the 10 AM close, pre-start days owe nothing) and appear on Dashboard cards only — the Paths roster stays lean so Watchman coverage reads first; the Dashboard's today pip reads live today check-ins so taps move it at once.
 - The How It Works loop is a coded, client-only phone walkthrough sequenced by the pure covenant-loop helper and reusing real alert copy helpers, so it stays mute-proof, cheap, and in sync with shipped wording.

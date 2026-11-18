@@ -8,7 +8,6 @@ import { pathStartLabel } from "@/lib/path-start";
 import { WatchmanReminder } from "@/components/WatchmanReminder";
 import { pathsOptions } from "@/lib/app-page-queries";
 import { watchmanCoverage } from "@/lib/watchman-coverage";
-import { RecentTrail } from "@/components/RecentTrail";
 
 export const Route = createFileRoute("/paths/")({
   head: () => ({ meta: [
@@ -74,7 +73,6 @@ function Lanes() {
                           ? "Invite sent — awaiting Watchman"
                           : "No Watchman yet — tap to invite"}
                     </p>
-                    {!lane.upcoming && <div className="mt-1.5"><RecentTrail days={(lane as any).trail ?? []} today={lane.ownerToday} /></div>}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <WatchmanPips active={names.length} pending={pending} />

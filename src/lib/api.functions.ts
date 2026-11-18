@@ -16,7 +16,7 @@ import { alertContextLabel } from './alert-context';
 import { removalNotice } from './watchman-removal';
 import { breachAlertCopy, isLateBreachMessage, watchmanAlertName } from './watchman-alert';
 import { defaultPathStart, resolvePathStart, pathStartDate, pathIsDue } from './path-start';
-import { buildTrail, trailDates } from './recent-trail';
+import { trailDates } from './recent-trail';
 
 import {
   activeWatchmen,
@@ -183,19 +183,11 @@ export const listMyLanes = createServerFn({ method: 'GET' })
         .in('lane_id', lanes.map((l) => l.lane_id)).eq('status', 'pending').gt('expires_at', new Date().toISOString());
       for (const r of inviteRows ?? []) pendingByPath.set(r.lane_id, (pendingByPath.get(r.lane_id) ?? 0) + 1);
     }
-    // Last three days per Path — the card trail.
-    const statusOn = new Map<string, string>();
-    if (lanes.length) {
-      const { data: trailRows } = await supabase.from('checkins').select('lane_id, checkin_date, status')
-        .eq('user_id', userId).in('lane_id', lanes.map((l) => l.lane_id)).in('checkin_date', trailDates(today));
-      for (const r of trailRows ?? []) statusOn.set(`${r.lane_id}|${r.checkin_date}`, r.status);
-    }
-    const graceOpen = localHour(tz) < 10;
+    // The three-day trail lives on the Dashboard only; this roster stays lean.
     return lanes.map((l) => {
       const ws = watchmenByPath.get(l.lane_id) ?? [];
       return {
         ...l,
-        trail: buildTrail({ today, graceOpen, isDue: (d) => pathIsDue(l, d, tz), statusOn: (d) => statusOn.get(`${l.lane_id}|${d}`) }),
         watchman_count: ws.length,
         watchman_names: ws.map((w) => watchmanName(w)),
         pending_invites: pendingByPath.get(l.lane_id) ?? 0,
