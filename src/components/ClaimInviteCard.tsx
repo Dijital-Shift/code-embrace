@@ -41,7 +41,7 @@ export function ClaimInviteCard() {
     if (!p || !p.found) { setErr("This link is no longer active. Reach out to whoever sent it for a fresh link."); return; }
     if (p.pathGone) { setErr(`This path is no longer active. Reach out to ${p.ownerFirstName || "the sender"} directly.`); return; }
     const state = inviteLinkState(p);
-    if (state === "full") { setErr(`The Watch is set — ${p.ownerFirstName || "the sender"} has already filled the Watchmen for this Path.`); return; }
+    if (state === "full") { setErr(`The Wall Is Set — both seats on ${p.ownerFirstName || "the sender"}'s Path are filled.`); return; }
     if (state === "closed") { setErr("This invitation has expired due to inactivity. Ask the sender for a fresh link."); return; }
     setToken(t); setPreview(p);
   }

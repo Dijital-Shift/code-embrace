@@ -11,3 +11,17 @@ test("a Path with no Watchman and no invitation is unwatched", () => {
 test("an accepted Watchman outranks a pending invitation", () => {
   assert.equal(watchmanCoverage(1, 1), "watched");
 });
+
+import { seatPips } from "./watchman-coverage";
+test("one Watchman plus two open links draws exactly two pips", () => {
+  assert.deepEqual(seatPips(1, 2), ["manned", "pending"]);
+});
+test("no Watchman and four open links draws two pending pips, never more", () => {
+  assert.deepEqual(seatPips(0, 4), ["pending", "pending"]);
+});
+test("a full Path draws two manned pips even with stale links", () => {
+  assert.deepEqual(seatPips(2, 3), ["manned", "manned"]);
+});
+test("an empty Path draws two empty pips", () => {
+  assert.deepEqual(seatPips(0, 0), ["empty", "empty"]);
+});

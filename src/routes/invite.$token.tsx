@@ -219,9 +219,9 @@ function InvitePage() {
   if (state === "full") {
     return (
       <StatusCard
-        title="The Watch Is Set"
-        body={`${preview.ownerFirstName ?? "The sender"} has already filled the Watchmen for this Path.`}
-        footnote={user ? { to: "/partner", label: "Already standing watch? Open The Watch" } : undefined}
+        title="The Wall Is Set"
+        body={`Both seats on ${preview.ownerFirstName ?? "the sender"}'s Path are filled.`}
+        footnote={user ? { to: "/partner", label: "Already assigned? Open the app" } : undefined}
       />
     );
   }

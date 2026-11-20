@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { removalReasonSchema } from './watchman-removal';
 import { canWatchAnotherPath, watchmanCapacityMessage } from './watchman-capacity';
-import { WATCHMEN_PER_PATH, linkAfterAccept } from './invite-link';
+import { WATCHMEN_PER_PATH, linkAfterAccept, cleanSentTo } from './invite-link';
 
 // Generate URL-safe random token (~32 bytes → 43 base64url chars)
 function generateToken(): string {
@@ -21,6 +21,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
   .inputValidator(z.object({
     laneId: z.string().uuid(),
     relationship: z.string().max(24).optional().nullable(),
+    sentTo: z.string().max(200).optional().nullable(),
   }))
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
@@ -61,6 +62,7 @@ export const createLaneInvite = createServerFn({ method: 'POST' })
       owner_id: userId,
       token,
       relationship: rel,
+      sent_to: cleanSentTo(data.sentTo),
     });
 
     if (error) return { error: error.message };
@@ -138,7 +140,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
 
     const { data: invite } = await supabaseAdmin
       .from('lane_invites')
-      .select('invite_id, lane_id, owner_id, status, expires_at, relationship, invitee_id')
+      .select('invite_id, lane_id, owner_id, status, expires_at, relationship, invitee_id, created_at')
       .eq('token', data.token)
       .maybeSingle();
 
@@ -168,19 +170,25 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
     // A watch request is addressed to one person; nobody else can take it.
     if (invite.invitee_id && invite.invitee_id !== userId) return { error: 'This request was sent to someone else.' };
     if (invite.status === 'declined') return { error: 'This request was declined.' };
-    if (invite.status === 'accepted') return { error: 'The Watch is set — this Path already has its Watchmen.' };
-    if (invite.status === 'revoked' || new Date(invite.expires_at) < new Date()) {
+    if (invite.status !== 'pending' || new Date(invite.expires_at) < new Date()) {
       return { error: 'This invitation has expired due to inactivity.' };
     }
     if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
     if (lane.status === 'archived') return { error: 'This path has been archived.' };
+
+    // A removed Watchman can't walk back in on a link sent before the removal; only a fresh link can.
+    const { count: removedSince } = await supabaseAdmin
+      .from('notifications').select('id', { count: 'exact', head: true })
+      .eq('lane_id', lane.lane_id).eq('partner_id', userId).eq('type', 'watchman_removed')
+      .gt('sent_at', invite.created_at);
+    if ((removedSince ?? 0) > 0) return { error: 'This invitation has expired due to inactivity.' };
 
     const { count: seatsTaken } = await supabaseAdmin
       .from('path_watchmen')
       .select('id', { count: 'exact', head: true })
       .eq('path_id', lane.lane_id)
       .eq('status', 'active');
-    if ((seatsTaken ?? 0) >= WATCHMEN_PER_PATH) return { error: 'The Watch is set — this Path already has its Watchmen.' };
+    if ((seatsTaken ?? 0) >= WATCHMEN_PER_PATH) return { error: 'The Wall Is Set — both seats on this Path are filled.' };
 
     // Count active Paths for this owner only; other people's Paths never block acceptance.
     const { data: myAssignments, error: capacityError } = await supabaseAdmin
@@ -210,22 +218,18 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
 
     if (insErr) {
       const msg = insErr.message || '';
-      if (/at most 2 active watchmen/i.test(msg)) return { error: 'The Watch is set — this Path already has its Watchmen.' };
+      if (/at most 2 active watchmen/i.test(msg)) return { error: 'The Wall Is Set — both seats on this Path are filled.' };
       if (/already assigned to 2 active paths/i.test(msg)) return { error: capacityMessage };
       return { error: msg };
     }
 
-    // One link can go to several people, first come first served. It stays open only
-    // while it alone covers the remaining seat; a full Path closes every open link.
+    // One link can go to several people, first come first served. It stays open until
+    // both seats are manned; a full Path closes every open link.
     const nowIso = new Date().toISOString();
-    const [{ count: activeNow }, { data: openLinks }] = await Promise.all([
-      supabaseAdmin.from('path_watchmen').select('id', { count: 'exact', head: true })
-        .eq('path_id', lane.lane_id).eq('status', 'active'),
-      supabaseAdmin.from('lane_invites').select('invite_id')
-        .eq('lane_id', lane.lane_id).eq('status', 'pending').gt('expires_at', nowIso)
-        .neq('invite_id', invite.invite_id),
-    ]);
-    const next = linkAfterAccept(activeNow ?? 0, (openLinks ?? []).length);
+    const { count: activeNow } = await supabaseAdmin.from('path_watchmen')
+      .select('id', { count: 'exact', head: true })
+      .eq('path_id', lane.lane_id).eq('status', 'active');
+    const next = linkAfterAccept(activeNow ?? 0);
     await supabaseAdmin
       .from('lane_invites')
       .update({
@@ -234,9 +238,9 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
         accepted_at: nowIso,
       })
       .eq('invite_id', invite.invite_id);
-    if (next === 'close-all' && openLinks?.length) {
+    if (next === 'close-all') {
       await supabaseAdmin.from('lane_invites').update({ status: 'revoked' })
-        .in('invite_id', openLinks.map((l) => l.invite_id));
+        .eq('lane_id', lane.lane_id).eq('status', 'pending').neq('invite_id', invite.invite_id);
     }
 
     // Tell the Path owner their Watchman is now standing watch.
@@ -273,6 +277,22 @@ export const revokeLaneInvite = createServerFn({ method: 'POST' })
     return { success: true };
   });
 
+// Owner names who a link went to — a private note only the owner sees.
+export const labelLaneInvite = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ inviteId: z.string().uuid(), sentTo: z.string().max(200).nullable() }))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from('lane_invites')
+      .update({ sent_to: cleanSentTo(data.sentTo) })
+      .eq('invite_id', data.inviteId)
+      .eq('owner_id', userId)
+      .eq('status', 'pending');
+    if (error) return { error: error.message };
+    return { success: true };
+  });
+
 // Owner lists invites for a lane
 export const listLaneInvites = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -281,7 +301,7 @@ export const listLaneInvites = createServerFn({ method: 'POST' })
     const { supabase, userId } = context;
     const { data: rows } = await supabase
       .from('lane_invites')
-      .select('invite_id, token, status, expires_at, created_at, accepted_at, relationship, invitee_id')
+      .select('invite_id, token, status, expires_at, created_at, accepted_at, relationship, invitee_id, sent_to')
       .eq('lane_id', data.laneId)
       .eq('owner_id', userId)
       .order('created_at', { ascending: false })

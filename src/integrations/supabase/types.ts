@@ -238,6 +238,7 @@ export type Database = {
           lane_id: string
           owner_id: string
           relationship: string | null
+          sent_to: string | null
           status: string
           token: string
         }
@@ -251,6 +252,7 @@ export type Database = {
           lane_id: string
           owner_id: string
           relationship?: string | null
+          sent_to?: string | null
           status?: string
           token: string
         }
@@ -264,6 +266,7 @@ export type Database = {
           lane_id?: string
           owner_id?: string
           relationship?: string | null
+          sent_to?: string | null
           status?: string
           token?: string
         }

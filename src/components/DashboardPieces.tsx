@@ -1,3 +1,4 @@
+import { seatPips } from "@/lib/watchman-coverage";
 import { orderBarStatuses, statusColor } from "@/lib/status";
 
 /** One segment per active path, settled ones filled from the left. */
@@ -21,25 +22,22 @@ export function DayProgressBar({ statuses }: { statuses: string[] }) {
   );
 }
 
-/** Filled dot = active Watchman, outlined = invite pending, faint ring = empty seat. */
+/** Always two pips — one per seat. Filled = manned, outlined = link out, faint = empty. */
 export function WatchmanPips({ active, pending }: { active: number; pending: number }) {
-  if (active + pending === 0) {
-    return (
-      <span className="flex items-center gap-1" aria-label="No Watchman yet">
-        {[0, 1].map((i) => (
-          <span key={`e${i}`} className="w-2 h-2 rounded-full border border-[#c9a84c]/25" />
-        ))}
-      </span>
-    );
-  }
+  const pips = seatPips(active, pending);
+  const manned = pips.filter((p) => p === "manned").length;
+  const waiting = pips.filter((p) => p === "pending").length;
   return (
-    <span className="flex items-center gap-1" aria-label={`${active} watchman active, ${pending} pending`}>
-      {Array.from({ length: active }).map((_, i) => (
-        <span key={`a${i}`} className="w-2 h-2 rounded-full" style={{ background: "#e5af38", boxShadow: "0 0 6px #e5af3877" }} />
-      ))}
-      {Array.from({ length: pending }).map((_, i) => (
-        <span key={`p${i}`} className="w-2 h-2 rounded-full border border-[#c9a84c]" />
-      ))}
+    <span className="flex items-center gap-1" aria-label={`${manned} of 2 Watchmen${waiting ? `, ${waiting} invite pending` : ""}`}>
+      {pips.map((p, i) =>
+        p === "manned" ? (
+          <span key={i} className="w-2 h-2 rounded-full" style={{ background: "#e5af38", boxShadow: "0 0 6px #e5af3877" }} />
+        ) : p === "pending" ? (
+          <span key={i} className="w-2 h-2 rounded-full border border-[#c9a84c]" />
+        ) : (
+          <span key={i} className="w-2 h-2 rounded-full border border-[#c9a84c]/25" />
+        ),
+      )}
     </span>
   );
 }

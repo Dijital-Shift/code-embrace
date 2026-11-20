@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { pathDeletable } from "@/lib/path-endlock";
+import { SENT_TO_MAX } from "@/lib/invite-link";
 import { getLane, updateLaneStatus, deleteLane, markEncouragementsRead, extendCompletedLane, setEncouragementVisibility } from "@/lib/api.functions";
 import { Button } from "@/components/ui/button";
 import { Archive, Pencil, Pause, Play, EyeOff, RotateCcw, Trash2, ChevronDown, ChevronUp } from "lucide-react";
@@ -12,6 +13,7 @@ import { DateField } from "@/components/ScriptureFields";
 import {
   createLaneInvite,
   listLaneInvites,
+  labelLaneInvite,
   revokeLaneInvite,
   removeWatchman,
 } from "@/lib/invites.functions";
@@ -579,6 +581,10 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
   const listFn = useServerFn(listLaneInvites);
   const revokeFn = useServerFn(revokeLaneInvite);
   const removeFn = useServerFn(removeWatchman);
+  const labelFn = useServerFn(labelLaneInvite);
+  const [sentTo, setSentTo] = useState("");
+  const [naming, setNaming] = useState<string | null>(null);
+  const [nameDraft, setNameDraft] = useState("");
 
 
   const [copied, setCopied] = useState<string | null>(null);
@@ -612,7 +618,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
     setBusy(true);
     // Reissuing retires the dead token first so the panel never piles up links.
     if (revokeFirst) await revokeFn({ data: { inviteId: revokeFirst } });
-    const r = await createFn({ data: { laneId } });
+    const r = await createFn({ data: { laneId, sentTo: sentTo.trim() || null } });
     setBusy(false);
     qc.invalidateQueries({ queryKey: ["invites", laneId] });
     if ("error" in r && r.error) {
@@ -623,6 +629,14 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
       }
       return;
     }
+    setSentTo("");
+  }
+
+  async function saveName(inviteId: string) {
+    const r = await labelFn({ data: { inviteId, sentTo: nameDraft.trim() || null } });
+    if (r && "error" in r && r.error) { toast.error("Couldn't save the name. Try again."); return; }
+    setNaming(null);
+    qc.invalidateQueries({ queryKey: ["invites", laneId] });
   }
 
   async function copy(token: string) {
@@ -727,8 +741,32 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
                 border="rgba(201,168,76,0.38)"
                 dot="#c9a84c"
               />
-              <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171]">Cancel</button>
+              <div className="flex items-center gap-3 shrink-0">
+                {naming !== inv.invite_id && (
+                  <button onClick={() => { setNaming(inv.invite_id); setNameDraft(inv.sent_to ?? ""); }} className="text-xs text-[#b8b0a4] hover:text-[#e5c66a] min-h-11">
+                    {inv.sent_to ? "Rename" : "Add name"}
+                  </button>
+                )}
+                <button onClick={() => revoke(inv.invite_id)} className="text-xs text-[#b8b0a4] hover:text-[#f87171] min-h-11">Cancel</button>
+              </div>
             </div>
+            {inv.sent_to && naming !== inv.invite_id && (
+              <p className="text-sm text-[#e8dfc4] font-semibold break-words -mt-1">Sent to {inv.sent_to}</p>
+            )}
+            {naming === inv.invite_id && (
+              <form onSubmit={(e) => { e.preventDefault(); void saveName(inv.invite_id); }} className="flex items-center gap-2">
+                <input
+                  autoFocus
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value.slice(0, SENT_TO_MAX))}
+                  placeholder="Who did you send it to?"
+                  aria-label="Who did you send this link to?"
+                  className="min-w-0 flex-1 rounded-md border border-[#3a2f12] bg-[#0f0c08] px-3 py-2 text-base text-[#e8dfc4] placeholder:text-[#7d766b] focus:outline-none focus:border-[#c9a84c]"
+                />
+                <button type="submit" className="shrink-0 text-xs px-3 py-2 rounded-md border border-[#c9a84c]/60 text-[#e5c66a] font-semibold min-h-11">Save</button>
+                <button type="button" onClick={() => setNaming(null)} className="shrink-0 text-xs text-[#b8b0a4] min-h-11 px-1">Close</button>
+              </form>
+            )}
             <div className="flex items-center gap-3">
               <div className="min-w-0 flex-1">
                 <p className="text-[0.78rem] text-[#e8dfc4] leading-snug">{(ownerName || "Someone")} is inviting you to be their watchman.</p>
@@ -777,6 +815,15 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
 
 
 
+      {!atCap && (
+        <input
+          value={sentTo}
+          onChange={(e) => setSentTo(e.target.value.slice(0, SENT_TO_MAX))}
+          placeholder="Who is this for? (optional)"
+          aria-label="Who is this link for? Optional, only you see it"
+          className="mb-2 w-full rounded-md border border-[#2a2518] bg-[#0f0c08] px-3 py-2.5 text-base text-[#e8dfc4] placeholder:text-[#7d766b] focus:outline-none focus:border-[#c9a84c]"
+        />
+      )}
       <button
         onClick={() => generate()}
         disabled={busy || atCap}
@@ -793,7 +840,7 @@ function WatchmenPanel({ laneId, watchmen, ownerName, pathTitle, isAvoid }: { la
       {err && <p className="text-red-400 text-xs mt-2">{err}</p>}
 
       <p className="text-[0.8rem] text-[#9e968a] mt-3 leading-relaxed">
-        Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. One link can go to several people — the first two to accept take the watch. Links stay open until then, or until you cancel.
+        Up to two watchmen per path. They see your check-ins and get pinged when you breach or go silent. One link can go to several people — the first two to accept take the watch. Links stay open until then, or until you cancel. Names you add are private to you.
       </p>
 
       {removing && <RemoveWatchmanDialog name={removing.name} onClose={() => setRemoving(null)} onRemove={confirmRemove} />}
