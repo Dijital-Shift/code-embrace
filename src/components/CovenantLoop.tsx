@@ -50,7 +50,7 @@ export function CovenantLoop() {
     <section aria-labelledby="loop-title" className="border-b border-border">
       <div className="mx-auto grid max-w-5xl items-center gap-8 px-6 py-12 md:grid-cols-2 md:gap-12 md:py-16">
         <div className="min-w-0" data-demo-copy>
-          <h2 id="loop-title" className="rs-title font-bold">Walkthrough</h2>
+          <h2 id="loop-title" className="rs-title text-center font-bold md:text-left">Walkthrough</h2>
           <ol className="mt-6 hidden space-y-2 md:block">
             {LOOP_BEATS.map((b, i) => {
               const c = COPY[b.id];
