@@ -1,7 +1,24 @@
 import { useRef, useState, useLayoutEffect, useEffect } from "react";
+import { PATH_CATEGORIES, PATH_TEMPLATES, type PathTemplate } from "@/lib/path-templates";
 
 const CAT_KEY = "kp-library-cat";
-import { PATH_CATEGORIES, PATH_TEMPLATES, type PathTemplate } from "@/lib/path-templates";
+
+/** Forget the last opened category so a fresh visit lands on the top of the Library. */
+export function resetLibraryCategory(): void {
+  try { sessionStorage.removeItem(CAT_KEY); } catch { /* storage unavailable */ }
+}
+
+/** Bottom edge of any sticky/fixed header pinned to the top of the viewport. */
+function topChromeBottom(): number {
+  let bottom = 0;
+  document.querySelectorAll("header").forEach((h) => {
+    const pos = getComputedStyle(h).position;
+    if (pos !== "sticky" && pos !== "fixed") return;
+    const r = h.getBoundingClientRect();
+    if (r.top <= 1 && r.bottom > 0) bottom = Math.max(bottom, r.bottom);
+  });
+  return bottom;
+}
 
 /**
  * Category selector for path templates: every category visible in a sticky
@@ -16,6 +33,15 @@ export function PathCategoryAccordion({
   const gridRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const pendingScroll = useRef(false);
+  const [stickyTop, setStickyTop] = useState(0);
+
+  // Pin the grid directly beneath whatever header the page has (public or member shell).
+  useEffect(() => {
+    const measure = () => setStickyTop(topChromeBottom());
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   useEffect(() => {
     try {
@@ -38,9 +64,11 @@ export function PathCategoryAccordion({
       const content = contentRef.current;
       const grid = gridRef.current;
       if (!content || !grid) return;
-      const stickyTop = parseFloat(getComputedStyle(grid).top) || 0;
-      const y =
-        content.getBoundingClientRect().top + window.scrollY - stickyTop - grid.offsetHeight - 12;
+      const chrome = topChromeBottom();
+      const pinned = getComputedStyle(grid).position === "sticky";
+      // Mobile releases the grid (it flows with the page), so only the header covers content.
+      const cover = pinned ? chrome + grid.offsetHeight : chrome;
+      const y = content.getBoundingClientRect().top + window.scrollY - cover - 12;
       window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
     });
   }, [openCat]);
@@ -61,6 +89,7 @@ export function PathCategoryAccordion({
         ref={gridRef}
         className="kp-cat-sticky z-20 -mx-4 px-4 pt-3 pb-3 grid grid-cols-2 md:grid-cols-4 gap-2"
         style={{
+          top: stickyTop,
           background: "rgba(10,8,0,0.9)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",

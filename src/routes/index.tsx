@@ -14,6 +14,7 @@ import filmMp4 from "@/assets/videos/kingdom-protocol-explainer-v9.mp4.asset.jso
 import filmWebm from "@/assets/videos/kingdom-protocol-explainer-v9.webm.asset.json";
 import filmPoster from "@/assets/videos/kingdom-protocol-explainer-poster-v8.png.asset.json";
 import { PATH_CATEGORIES, PATH_TEMPLATES } from "@/lib/path-templates";
+import { resetLibraryCategory } from "@/components/PathCategoryAccordion";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -105,10 +106,10 @@ function Hero() {
             <AuthLink
               signup
               signedOutLabel="Start free"
-              className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]"
+              className="kp-press inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]"
               style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
             />
-            <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
+            <Link to="/demo" preload="viewport" className="kp-press inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
               How it works
             </Link>
           </div>
@@ -251,7 +252,7 @@ function LibraryPreview() {
           <span className="inline-flex items-center gap-1.5"><span aria-hidden className="w-1.5 h-1.5 rounded-full" style={{ background: "#f0957a" }} />Flee</span>
         </div>
         <div className="mt-8 text-center">
-          <Link to="/paths/library" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/60 text-[#c9a84c] font-semibold text-[0.95rem] hover:bg-[#171309]">
+          <Link to="/paths/library" preload="viewport" onClick={resetLibraryCategory} className="kp-press inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/60 text-[#c9a84c] font-semibold text-[0.95rem] hover:bg-[#171309]">
             Browse all {total} Paths with Scripture →
           </Link>
         </div>
@@ -291,6 +292,7 @@ function CheckoutCTA({
   const { data: access, isFetching: accessFetching } = useAccessState();
   const trialActive = !!access?.trialActive;
   const membership = homepageMembership(access);
+  className = `kp-press ${className ?? ""}`;
 
   if (loading || (user && !access)) {
     return <Button disabled variant="ghost" className={className} style={style}>Checking membership…</Button>;
@@ -744,8 +746,8 @@ function ClosingCall() {
           </p>
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <AuthLink signup signedOutLabel="Start free" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }} />
-          <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
+          <AuthLink signup signedOutLabel="Start free" className="kp-press inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }} />
+          <Link to="/demo" preload="viewport" className="kp-press inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
             How it works
           </Link>
         </div>
@@ -814,11 +816,18 @@ function useSignedInRedirect() {
   }, [user, loading, navigate]);
 }
 
+/** Light tick on any homepage tap target (Android; iPhone relies on the visual press). */
+function tapHaptic(e: React.PointerEvent) {
+  if (e.pointerType !== "touch") return;
+  if (!(e.target as HTMLElement).closest("a, button, [role='button']")) return;
+  try { navigator.vibrate?.(10); } catch { /* unsupported */ }
+}
+
 function Landing() {
   if (typeof window !== "undefined") useCaptureReferral();
   useSignedInRedirect();
   return (
-    <main className="min-h-[100dvh]" style={{ background: "#0a0800" }}>
+    <main className="kp-home min-h-[100dvh]" style={{ background: "#0a0800" }} onPointerDown={tapHaptic}>
       <PaymentTestModeBanner />
       <Header />
       <Hero />

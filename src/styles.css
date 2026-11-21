@@ -248,8 +248,26 @@ html.kp-splash body { overflow: hidden; }
 .kp-login { overflow-anchor: none; }
 .kp-login input { font-size: 16px; }
 .reactEasyCrop_CropArea { border-color: var(--color-primary) !important; }
+/* Phones: eight category chips are too tall to pin; let them scroll with the page. */
 @media (max-width: 600px) {
-  .kp-cat-sticky { top: calc(104px + env(safe-area-inset-top, 0px)); }
+  .kp-cat-sticky { position: static; }
+}
+
+/* Homepage tap feedback: instant press on touch so every tap visibly lands. */
+.kp-home :is(a, button) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.kp-press {
+  transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+}
+.kp-press:active {
+  transform: scale(0.96);
+  filter: brightness(1.18);
+}
+.kp-home a:not(.kp-press):active,
+.kp-home button:not(.kp-press):active {
+  opacity: 0.7;
 }
 
 /* Crop dialog: block iOS selection pins / callout while dragging */
