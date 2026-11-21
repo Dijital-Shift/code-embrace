@@ -1,4 +1,6 @@
 # Tasks
+- [x] Break-test fixes: public Path Library + homepage preview of all 36 Paths; "Start free" opens Create Account; FAQ invite/pay/Sabbath/cancel copy; "nothing charged unless you choose a plan"; up-to-10 wording; silent day counts as Fallen. 134 tests pass; verified at phone width signed out.
+- [ ] Publish a support email in the footer and legal pages — waiting on the user to confirm the real address.
 - [x] Phase 1: links no longer expire (shared link, first two accept); full Path shows "The Watch Is Set"; closed cards drop the eyebrow and point to How It Works; Dashboard phone card gets a "Watch 10-second install guide" button. Feedback box already matched Send Scripture. 118 tests pass, build OK; filled and expired invite pages verified on a phone-size browser.
 - [ ] Verify the shared link with two real people accepting, and the Dashboard install button on a real phone — preview has no signed-in account for you.
 - [ ] Phase 2: "Walk Your Own Path" after a full link, then ask the new member to invite the person who sent the link; owner accepts in The Watch.

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { claimReferral } from "@/lib/referrals.functions";
 import { setUpdateBlocked } from "@/lib/registerServiceWorker";
+import { initialLoginMode, parseLoginSearch } from "@/lib/login-mode";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/login")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
+  validateSearch: parseLoginSearch,
   component: Login,
 });
 
@@ -22,7 +24,8 @@ function Login() {
   const navigate = useNavigate();
   const claim = useServerFn(claimReferral);
   const [step, setStep] = useState<"email" | "code">("email");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const search = Route.useSearch();
+  const [mode, setMode] = useState<"signin" | "signup">(() => initialLoginMode(search));
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [err, setErr] = useState<string | null>(null);

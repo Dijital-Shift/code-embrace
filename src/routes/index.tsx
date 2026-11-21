@@ -13,6 +13,7 @@ import { KingdomExplainer } from "@/components/KingdomExplainer";
 import filmMp4 from "@/assets/videos/kingdom-protocol-explainer-v9.mp4.asset.json";
 import filmWebm from "@/assets/videos/kingdom-protocol-explainer-v9.webm.asset.json";
 import filmPoster from "@/assets/videos/kingdom-protocol-explainer-poster-v8.png.asset.json";
+import { PATH_CATEGORIES, PATH_TEMPLATES } from "@/lib/path-templates";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,11 +57,18 @@ const GOLD = "#c9a84c";
 
 
 
-function AuthLink({ className, style, signedOutLabel = "Sign in" }: { className?: string; style?: React.CSSProperties; signedOutLabel?: string }) {
+function AuthLink({ className, style, signedOutLabel = "Sign in", signup = false }: { className?: string; style?: React.CSSProperties; signedOutLabel?: string; signup?: boolean }) {
   const { user, loading } = useAuth();
   const signedIn = !loading && !!user;
+  if (!signedIn) {
+    return (
+      <Link to="/login" search={signup ? { mode: "signup" } : {}} className={className} style={style}>
+        {signedOutLabel}
+      </Link>
+    );
+  }
   return (
-    <Link to={signedIn ? "/dashboard" : "/login"} className={className} style={style}>
+    <Link to="/dashboard" className={className} style={style}>
       {signedIn ? "Dashboard" : signedOutLabel}
     </Link>
   );
@@ -95,6 +103,7 @@ function Hero() {
           {membership && <p role="status" className="mt-5 flex items-center gap-2 text-sm font-semibold text-primary"><Check size={16} aria-hidden="true" />{membership === "lifetime" ? "Lifetime member · You're set for life." : "Monthly Walk · Your plan is active."}</p>}
           <div className="mt-8 flex gap-2">
             <AuthLink
+              signup
               signedOutLabel="Start free"
               className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]"
               style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }}
@@ -188,7 +197,7 @@ function SilenceRule() {
           <p className="text-[#d6d0c4] text-lg max-w-2xl mx-auto">Three thresholds. The quieter you get, the louder it becomes — until a watchman shows up.</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-5">
-          <Threshold n="01" title="Miss one" body="You get a nudge. Life happens, but the day doesn't pass in silence." tone="muted" />
+          <Threshold n="01" title="Miss one" body="A private nudge. Your watchman isn't alerted yet, but the silent day counts as Fallen." tone="muted" />
           <Threshold n="02" title="Silence or breach" body="After two full days of silence — or a reported breach — your watchman is pinged. A real human, chosen by you, knows you've gone quiet, or that you fell." tone="warn" />
           <Threshold n="03" title="Watchman responds" body="They reach out — a call, a text, a verse, a meet-up. The loop closes with a watchman, not a banner." tone="alert" />
         </div>
@@ -204,6 +213,52 @@ function SilenceRule() {
   );
 }
 
+
+function LibraryPreview() {
+  const total = PATH_TEMPLATES.length;
+  return (
+    <section className="px-5 sm:px-8 py-14 border-t border-[#2a2418]">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-10">
+          <p className="text-[0.7rem] tracking-[0.28em] uppercase text-[#c2af80] mb-4">The Path Library</p>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#f3e6c4] mb-4">{total} Paths. Each with its Scripture.</h2>
+          <p className="text-[#d6d0c4] text-lg max-w-2xl mx-auto">See what's covered before you sign up. Pick from the library or write your own.</p>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+          {PATH_CATEGORIES.map((cat) => {
+            const items = PATH_TEMPLATES.filter((t) => t.category === cat);
+            return (
+              <div key={cat} className="kp-card p-3 sm:p-5 flex flex-col">
+                <div className="flex items-baseline justify-between gap-2 mb-2.5">
+                  <h3 className="text-sm sm:text-base font-semibold" style={{ color: GOLD }}>{cat}</h3>
+                  <span className="text-[0.6rem] sm:text-[0.65rem] uppercase tracking-wider text-[#a8957a] whitespace-nowrap">{items.length} Paths</span>
+                </div>
+                <ul className="space-y-1.5">
+                  {items.slice(0, 3).map((t) => (
+                    <li key={t.id} className="flex items-start gap-2 text-[0.72rem] sm:text-sm text-[#e6e2dc] leading-snug">
+                      <span aria-hidden className="mt-[0.4em] w-1.5 h-1.5 rounded-full shrink-0" style={{ background: t.lane_type === "avoid" ? "#f0957a" : "#6ee7a0" }} />
+                      <span>{t.title.split(" \u2014 ")[0]}</span>
+                    </li>
+                  ))}
+                </ul>
+                {items.length > 3 && <p className="mt-2 text-[0.65rem] sm:text-xs text-[#a8957a]">+{items.length - 3} more</p>}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-5 flex items-center justify-center gap-4 text-[0.7rem] text-[#b8b0a4]">
+          <span className="inline-flex items-center gap-1.5"><span aria-hidden className="w-1.5 h-1.5 rounded-full" style={{ background: "#6ee7a0" }} />Pursue</span>
+          <span className="inline-flex items-center gap-1.5"><span aria-hidden className="w-1.5 h-1.5 rounded-full" style={{ background: "#f0957a" }} />Flee</span>
+        </div>
+        <div className="mt-8 text-center">
+          <Link to="/paths/library" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/60 text-[#c9a84c] font-semibold text-[0.95rem] hover:bg-[#171309]">
+            Browse all {total} Paths with Scripture →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function Threshold({ n, title, body, tone }: { n: string; title: string; body: string; tone: "muted" | "warn" | "alert" }) {
   const color = tone === "muted" ? "#a8957a" : tone === "warn" ? "#e5af38" : "#f08a50";
@@ -242,7 +297,7 @@ function CheckoutCTA({
   }
   if (!user) {
     return (
-      <Link to="/login" className={className} style={style}>
+      <Link to="/login" search={{ mode: "signup" }} className={className} style={style}>
         {loggedOutLabel}
       </Link>
     );
@@ -301,7 +356,7 @@ function CheckMark({ color, glow }: { color: string; glow?: boolean }) {
 }
 
 const monthlyFeatures = [
-  "All 10 active Paths & Scripture",
+  "Up to 10 active Paths at once, from the full library",
   "Dedicated Watchman pairing",
   "One-tap breach call & text",
   "48-hour silence rule protection",
@@ -343,7 +398,7 @@ function Pricing() {
               <span className="pricing-display text-[15px] sm:text-[27px] text-[#bca77a]">/ month</span>
             </div>
             <p className="mt-2 sm:mt-4 min-h-[36px] sm:min-h-[48px] text-center text-[11px] sm:text-[14px] leading-relaxed text-[#d6d1c9]">
-              {membership === "monthly" ? "Your monthly walk is active. Cancel anytime." : membership === "lifetime" ? "Covered by your Lifetime membership." : "Billed after 30 days. Cancel anytime."}
+              {membership === "monthly" ? "Your monthly walk is active. Cancel anytime." : membership === "lifetime" ? "Covered by your Lifetime membership." : "No card today. Nothing is charged unless you choose a plan."}
             </p>
             <div className="mt-4 sm:mt-7 h-px w-full bg-[#6b5933]/60" />
             <div className="mt-4 sm:mt-8 flex flex-1 flex-col gap-3 sm:gap-6">
@@ -509,12 +564,16 @@ function FAQ() {
       a: "Hesitation is the flesh defending its exit door. You are not asking someone to judge you or manage your life; you are asking them to bear witness. Choose someone you trust and tell them what you want to be held accountable to. They can decide whether to stand watch. There is no daily homework: they see your Path and are alerted to a declared breach or two silent days. If asking feels heavy, remember: secrecy has never healed what it hid.",
     },
     {
-      q: "Does a Watchman link open the installed app?",
-      a: "An invite link may open your default browser or the app you tapped it in, rather than the Home Screen app. It does not always open Safari, and automatic opening of the installed app cannot be guaranteed. Accept in the browser, then open Kingdom Protocol from your Home Screen using the same account; the Path will appear in The Watch. Your browser and installed app can have separate sign-ins. If you prefer to accept in the installed app, copy the link and paste it in The Watch. That is an option, not a required step.",
+      q: "How do I accept a Watchman link?",
+      a: "Tap it and accept on the page that opens \u2014 in your browser or in the app, either works. Then open Kingdom Protocol from your Home Screen with the same email. The Path is waiting in The Watch.",
     },
     {
       q: "How many Paths can a Watchman cover?",
       a: "Up to two active Paths for each person. There is no total limit across different people — each Watchman chooses how much to take on. Each Path can have up to two Watchmen.",
+    },
+    {
+      q: "What is a Sabbath day?",
+      a: "An optional rest day on Pursue Paths. The day counts as kept, and your watchman gets a quiet Sabbath notice. Flee Paths have no Sabbath \u2014 every day counts.",
     },
     {
       q: "What does \"Protocol\" mean?",
@@ -562,7 +621,7 @@ function FAQ() {
     {
       q: "Why pay at all?",
       intro:
-        "Because by day thirty you've built something worth keeping. A daily rhythm of honesty. Paths you walk with intention. Watchmen standing on the wall around your life. That isn't a trial you finish \u2014 it's infrastructure for the rest of your walk. The subscription keeps it standing: the check-ins that hold your rhythm, the history that shows how far you've come, and the alerts that reach your watchman the moment you go quiet. Accountability was never for sale. What you're keeping is the wall you built with it.",
+        "Because by day thirty you've built something worth keeping: a daily rhythm of honesty, Paths you walk with intention, and Watchmen standing on the wall. The subscription keeps it standing \u2014 the check-ins, the history, and the alerts that reach your watchman after a breach or two silent days. No ads. You're not buying accountability; you're keeping the wall up.",
       verses: [
         {
           text: "For the scripture saith\u2026 The labourer is worthy of his reward.",
@@ -618,13 +677,14 @@ function FAQ() {
     },
     {
       q: "I don't want to use this anymore. What does that mean?",
-      intro: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because he's the one person who's actually been watching, and he deserves the same honesty he's been giving you.",
+      intro: "It means exactly what it sounds like \u2014 you're choosing to go back to walking without someone watching. That's worth being honest with yourself about, not something to slide past quietly. Ending an agreement isn't a sin; there's no verse condemning you for it. But you started this because silence alone hadn't been enough, and leaving doesn't undo that. It just removes the one thing built to catch it. Talk to your watchman before you go \u2014 not because the app requires it, but because they're the one person who's actually been watching, and they deserve the same honesty they've been giving you.",
       verses: [
         {
           text: "Two are better than one; because they have a good reward for their labour. For if they fall, the one will lift up his fellow: but woe to him that is alone when he falleth; for he hath not another to help him up.",
           ref: "Ecclesiastes 4:9\u201310 \u00b7 KJV",
         },
       ],
+      closing: "To stop paying, cancel anytime in Settings \u2192 Billing.",
     },
   ];
 
@@ -684,7 +744,7 @@ function ClosingCall() {
           </p>
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <AuthLink signedOutLabel="Start free" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }} />
+          <AuthLink signup signedOutLabel="Start free" className="inline-block px-6 py-3.5 rounded-xl bg-[#c9a84c] text-black font-bold text-[0.95rem]" style={{ boxShadow: "0 0 28px rgba(201,168,76,0.3)" }} />
           <Link to="/demo" className="inline-block px-6 py-3.5 rounded-xl border border-[#c9a84c]/40 text-[#c9a84c] font-semibold text-[0.95rem]">
             How it works
           </Link>
@@ -765,6 +825,7 @@ function Landing() {
       <KingdomExplainer mp4={filmMp4.url} webm={filmWebm.url} poster={filmPoster.url} />
       <ProblemTension />
       <SilenceRule />
+      <LibraryPreview />
       <WhoThisIsFor />
       <Pricing />
       <FAQ />

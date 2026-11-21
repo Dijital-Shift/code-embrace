@@ -36,3 +36,5 @@
 - Invite links stay open until the Path is full or the owner cancels; the client-safe invite-link helper decides both what a link shows and whether a used link stays open, so one link can be shared first-come-first-served without exceeding two seats.
 - Path cards draw Watchman seats only through the client-safe seatPips helper (always two pips), and invite "Sent to" names live in an owner-only column never returned by the public preview, so stale links never inflate the card and invitees never see private notes.
 - Reciprocal watch requests are lane_invites addressed by invitee_id; the client-safe watch-referral helper decides when "Invite {name}" appears (never on the starter Path), acceptance reuses acceptLaneInvite seat/pair limits, and declines stay silent to the owner.
+- The Path Library route is public: signed-in members get the app shell, visitors get a guest header and cards that open Create Account; homepage previews read the same path-templates data so counts and titles never drift.
+- "Start free" links pass `mode=signup` to /login through the client-safe login-mode helper so first-time visitors land on Create Account, never "Welcome back".

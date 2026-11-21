@@ -5,10 +5,13 @@ export function PathTemplateCard({
   template,
   variant = "full",
   onSelect,
+  guest = false,
 }: {
   template: PathTemplate;
   variant?: "full" | "condensed";
   onSelect?: (id: string) => void;
+  /** Signed-out visitors are sent to Create Account instead of the Path form. */
+  guest?: boolean;
 }) {
   const isAvoid = template.lane_type === "avoid";
   const chipBg = isAvoid ? "#241009" : "#0c2010";
@@ -33,7 +36,7 @@ export function PathTemplateCard({
         </p>
       )}
       <span className="inline-flex items-center gap-1 text-[0.72rem] font-semibold" style={{ color: "#c9a84c" }}>
-        Start this path <span aria-hidden>→</span>
+        {guest ? "Start free to walk this" : "Start this path"} <span aria-hidden>→</span>
       </span>
     </>
   );
@@ -46,6 +49,13 @@ export function PathTemplateCard({
       <button type="button" onClick={() => onSelect(template.id)} className={cls} style={style}>
         {inner}
       </button>
+    );
+  }
+  if (guest) {
+    return (
+      <Link to="/login" search={{ mode: "signup" }} className={cls} style={style}>
+        {inner}
+      </Link>
     );
   }
   return (
