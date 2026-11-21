@@ -87,6 +87,7 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
       return {
         found: true as const,
         pathGone: true,
+        concluded: false,
         laneDescription: null,
         isAvoid: true,
         status: 'pending' as 'pending' | 'accepted' | 'revoked' | 'expired',
@@ -102,11 +103,13 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
     let laneDescription: string | null = null;
     let laneType: string | null = null;
     let full = false;
+    let concluded = false;
     const { data: inv } = await supabaseAdmin
       .from('lane_invites').select('lane_id').eq('token', data.token).maybeSingle();
     if (inv?.lane_id) {
       const { data: l } = await supabaseAdmin
-        .from('lanes').select('description, lane_type').eq('lane_id', inv.lane_id).maybeSingle();
+        .from('lanes').select('description, lane_type, status').eq('lane_id', inv.lane_id).maybeSingle();
+      concluded = (l as any)?.status === 'archived';
       laneDescription = l?.description ?? null;
       laneType = (l as any)?.lane_type ?? null;
       // Only a yes/no is exposed — never who is watching.
@@ -122,6 +125,7 @@ export const getInvitePreview = createServerFn({ method: 'POST' })
       status: row.status as 'pending' | 'accepted' | 'revoked' | 'expired',
       expired: row.expired as boolean,
       full,
+      concluded,
       laneTitle: (row.lane_title as string | null) ?? '',
       pathGone: row.lane_title == null,
       ownerFirstName: (row.owner_first_name as string | null) ?? null,
@@ -174,7 +178,7 @@ export const acceptLaneInvite = createServerFn({ method: 'POST' })
       return { error: 'This invitation has expired due to inactivity.' };
     }
     if (invite.owner_id === userId) return { error: "You can't accept your own invite." };
-    if (lane.status === 'archived') return { error: 'This path has been archived.' };
+    if (lane.status === 'archived') return { error: 'This walk has concluded.', concluded: true };
 
     // A removed Watchman can't walk back in on a link sent before the removal; only a fresh link can.
     const { count: removedSince } = await supabaseAdmin

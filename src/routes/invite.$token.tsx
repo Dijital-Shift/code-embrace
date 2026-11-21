@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { getInvitePreview, acceptLaneInvite } from "@/lib/invites.functions";
@@ -54,6 +54,7 @@ function InvitePage() {
   const { user, loading } = useAuth();
   const previewFn = useServerFn(getInvitePreview);
   const acceptFn = useServerFn(acceptLaneInvite);
+  const qc = useQueryClient();
   const loaderData = Route.useLoaderData() as { preview?: Awaited<ReturnType<typeof getInvitePreview>> | null };
 
   const [accepting, setAccepting] = useState(false);
@@ -111,6 +112,7 @@ function InvitePage() {
       navigate({ to: "/partner" });
       return;
     }
+    if (r?.concluded) { qc.setQueryData(["invite-preview", token], { ...preview, concluded: true }); return; }
     if (r?.error) {
       setErr(r.error);
       return;
@@ -216,6 +218,17 @@ function InvitePage() {
 
   // First come, first served: once both seats are filled, everyone else holding the
   // link lands here. No names, no other Paths — only how Kingdom Protocol works.
+  // The owner retired this Path; the link closes with honor, not an error.
+  if (state === "concluded") {
+    const who = preview.ownerFirstName ?? "The sender";
+    return (
+      <StatusCard
+        title="Walk Concluded"
+        body={`${who} completed this walk on “${preview.laneTitle}” and sealed it in the archive. Thank you for being ready to stand on the wall.`}
+      />
+    );
+  }
+
   if (state === "full") {
     return (
       <StatusCard

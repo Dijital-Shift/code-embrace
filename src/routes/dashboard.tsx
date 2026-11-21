@@ -142,6 +142,21 @@ function Dashboard() {
       <AccessBanner />
 
       <RoleBriefing role="walker" />
+      {((data as any)?.completedCourses ?? []).map((c: { lane_id: string; title: string; ends_at: string; held: number; breached: number; silent: number; sabbath: number }) => (
+        <Link key={c.lane_id} to="/paths/$id" params={{ id: c.lane_id }} search={{ newlyCreated: false }}
+          className="block mb-5 p-4 rounded-xl border border-[#c9a84c]/50 no-underline active:scale-[0.99] transition-transform"
+          style={{ background: "linear-gradient(135deg, #1a1408 0%, #0a0800 100%)" }}>
+          <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[#c9a84c] font-semibold mb-1">Course complete · {c.ends_at}</p>
+          <p className="text-base font-semibold text-[#f3e6c4]">{c.title}</p>
+          <p className="text-xs mt-2 flex flex-wrap gap-x-3 gap-y-1">
+            <span className="text-[#4ade80]">{c.held} held</span>
+            <span className="text-[#f87171]">{c.breached} breached</span>
+            <span className="text-[#f59e0b]">{c.silent} silent</span>
+            {c.sabbath > 0 && <span className="text-[#c9a84c]">{c.sabbath} Sabbath</span>}
+          </p>
+          <p className="text-sm text-[#e8dfc4] mt-3">Extend the walk or seal it in the archive <span className="text-[#c9a84c]" aria-hidden="true">›</span></p>
+        </Link>
+      ))}
       <AppInstallCard />
 
       {(data?.unreadEncouragements ?? 0) > 0 && (() => {

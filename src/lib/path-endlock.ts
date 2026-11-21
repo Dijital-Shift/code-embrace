@@ -10,6 +10,12 @@ export function courseComplete(endsAt: string | null | undefined, today: string)
   return !!endsAt && endsAt < today;
 }
 
+/** Final ledger of a finished course: Held, Breached, Silent and Sabbath days. */
+export function courseTally(statuses: string[]): { held: number; breached: number; silent: number; sabbath: number } {
+  const n = (s: string) => statuses.filter((x) => x === s).length;
+  return { held: n('completed'), breached: n('breached'), silent: n('missed'), sabbath: n('skipped') };
+}
+
 /** Extension after completion: new end date must be after today, or null (open-ended). */
 export function validExtension(newEndsAt: string | null, today: string): boolean {
   return newEndsAt === null || newEndsAt > today;

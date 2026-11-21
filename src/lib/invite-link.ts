@@ -7,6 +7,7 @@ export type InviteLinkPreview = {
   found: boolean;
   pathGone?: boolean;
   full?: boolean;
+  concluded?: boolean;
   status?: string;
   expired?: boolean;
 };
@@ -16,9 +17,10 @@ export type InviteLinkPreview = {
  * Shared links stay pending until the wall fills, so a used link that is no longer pending
  * (closed by an earlier full wall) reads as expired, never as full.
  */
-export function inviteLinkState(p: InviteLinkPreview | null | undefined): "missing" | "pathGone" | "full" | "closed" | "open" {
+export function inviteLinkState(p: InviteLinkPreview | null | undefined): "missing" | "pathGone" | "concluded" | "full" | "closed" | "open" {
   if (!p || !p.found) return "missing";
   if (p.pathGone) return "pathGone";
+  if (p.concluded) return "concluded";
   if (p.full) return "full";
   if (p.expired || p.status === "accepted" || p.status === "revoked" || p.status === "expired" || p.status === "declined") return "closed";
   return "open";

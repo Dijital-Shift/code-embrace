@@ -17,6 +17,7 @@ import { removalNotice } from './watchman-removal';
 import { breachAlertCopy, isLateBreachMessage, watchmanAlertName } from './watchman-alert';
 import { defaultPathStart, resolvePathStart, pathStartDate, pathIsDue } from './path-start';
 import { trailDates } from './recent-trail';
+import { courseTally } from './path-endlock';
 
 import {
   activeWatchmen,
@@ -517,12 +518,24 @@ export const getDashboard = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { tz, today } = await userDay(supabase, userId);
-    const [{ data: profile }, { data: lanes }, { data: todayChks }, { data: unreadRows }] = await Promise.all([
+    const [{ data: profile }, { data: allLanes }, { data: todayChks }, { data: unreadRows }] = await Promise.all([
       supabase.from('profiles').select('first_name, gender').eq('user_id', userId).single(),
-      supabase.from('lanes').select('lane_id, title, status, lane_type, description, starts_at, created_at').eq('user_id', userId).eq('status', 'active'),
+      supabase.from('lanes').select('lane_id, title, status, lane_type, description, starts_at, created_at, ends_at').eq('user_id', userId).eq('status', 'active'),
       supabase.from('checkins').select('lane_id, status').eq('user_id', userId).eq('checkin_date', today),
       supabase.from('encouragements').select('id, lane_id, body, created_at, watchman_id').eq('owner_id', userId).is('read_at', null).is('hidden_at', null).order('created_at', { ascending: false }),
     ]);
+    // Finished courses leave the daily roll call and surface as a debrief instead.
+    const lanes = (allLanes ?? []).filter((l) => !courseComplete(l.ends_at, today));
+    const finished = (allLanes ?? []).filter((l) => courseComplete(l.ends_at, today));
+    let completedCourses: { lane_id: string; title: string; ends_at: string; held: number; breached: number; silent: number; sabbath: number }[] = [];
+    if (finished.length) {
+      const { data: rows } = await supabase.from('checkins').select('lane_id, status')
+        .eq('user_id', userId).in('lane_id', finished.map((l) => l.lane_id));
+      completedCourses = finished.map((l) => ({
+        lane_id: l.lane_id, title: l.title, ends_at: l.ends_at as string,
+        ...courseTally((rows ?? []).filter((r) => r.lane_id === l.lane_id).map((r) => r.status)),
+      }));
+    }
     // Which paths hold the unread words — so the banner can point at one.
     const unreadByPath = new Map<string, number>();
     for (const r of (unreadRows ?? []) as any[]) {
@@ -567,6 +580,7 @@ export const getDashboard = createServerFn({ method: 'GET' })
       standingByLane,
       seatsByLane,
       priorByLane,
+      completedCourses,
       graceOpen: localHour(tz) < 10,
       tz,
       unreadEncouragements: unreadRows?.length ?? 0,
@@ -605,8 +619,10 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { tz, today, yesterday: yest } = await userDay(supabase, userId);
-    const { data: lanes } = await supabase.from('lanes')
-      .select('lane_id, title, description, lane_type, created_at, starts_at').eq('user_id', userId).eq('status', 'active');
+    const { data: allLanes } = await supabase.from('lanes')
+      .select('lane_id, title, description, lane_type, created_at, starts_at, ends_at').eq('user_id', userId).eq('status', 'active');
+    // A finished course owes nothing today; its last day may still be owed as yesterday.
+    const lanes = (allLanes ?? []).filter((l) => !l.ends_at || l.ends_at >= yest);
     const ids = (lanes ?? []).map((l) => l.lane_id);
     const { data: chks } = ids.length
       ? await supabase.from('checkins').select('lane_id, checkin_date, status, completion_time')
@@ -622,7 +638,7 @@ export const getCheckinPage = createServerFn({ method: 'GET' })
       .map((l) => l.lane_id);
     const graceOpen = localHour(tz) < 10;
 
-    return { lanes: (lanes ?? []).filter((l) => pathIsDue(l, today, tz)), upcomingCount: (lanes ?? []).filter((l) => !pathIsDue(l, today, tz)).length, checkins: chks ?? [], today, yesterday: yest, catchUp, graceOpen };
+    return { lanes: (lanes ?? []).filter((l) => pathIsDue(l, today, tz) && !courseComplete(l.ends_at, today)), upcomingCount: (lanes ?? []).filter((l) => !pathIsDue(l, today, tz)).length, checkins: chks ?? [], today, yesterday: yest, catchUp, graceOpen };
   });
 
 export const logComplete = createServerFn({ method: 'POST' })

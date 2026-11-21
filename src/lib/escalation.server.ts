@@ -113,12 +113,11 @@ export async function markMissedCheckins() {
   const nowUtc = new Date();
   const utcToday = nowUtc.toISOString().split('T')[0];
 
-  // Auto-archive expired time-bound paths (date-based, tz-agnostic).
-  await supabaseAdmin.from('lanes').update({ status: 'archived' })
-    .eq('status', 'active').not('ends_at', 'is', null).lt('ends_at', utcToday);
+  void utcToday;
+  // Finished courses are NOT auto-archived: the owner chooses Extend or Archive.
 
   const { data: activeLanes } = await supabaseAdmin.from('lanes')
-    .select('lane_id, title, user_id, created_at, starts_at').eq('status', 'active');
+    .select('lane_id, title, user_id, created_at, starts_at, ends_at').eq('status', 'active');
   if (!activeLanes?.length) return { processed: 0, watchmenPinged: 0 };
 
   // Pull user timezones.
@@ -151,6 +150,8 @@ export async function markMissedCheckins() {
 
     // Never manufacture history: a path cannot be silent on a day it did not exist.
     if (!pathIsDue(lane, yesterdayLocal, tz)) continue;
+    // Nothing is owed after a course's final day.
+    if ((lane as any).ends_at && yesterdayLocal > (lane as any).ends_at) continue;
 
     // Skip if yesterday already has any check-in (held, breached, missed, skipped).
     const { data: existing } = await supabaseAdmin.from('checkins')
@@ -266,12 +267,12 @@ export async function sendBedtimeReminders() {
     if (!reminderAccess.has(p.user_id)) continue;
     const today = localDate((p as any).timezone || DEFAULT_TZ);
     const { data: lanes } = await supabaseAdmin.from('lanes')
-      .select('lane_id, created_at, starts_at').eq('user_id', p.user_id).eq('status', 'active');
+      .select('lane_id, created_at, starts_at, ends_at').eq('user_id', p.user_id).eq('status', 'active');
     if (!lanes?.length) continue;
     const { data: cs } = await supabaseAdmin.from('checkins')
       .select('lane_id').eq('user_id', p.user_id).eq('checkin_date', today);
     const checked = new Set((cs ?? []).map((c: any) => c.lane_id));
-    const pending = lanes.filter((l) => pathIsDue(l, today, p.timezone || DEFAULT_TZ) && !checked.has(l.lane_id)).length;
+    const pending = lanes.filter((l: any) => pathIsDue(l, today, p.timezone || DEFAULT_TZ) && !(l.ends_at && today > l.ends_at) && !checked.has(l.lane_id)).length;
     if (pending > 0) {
       await sendPushToUser(p.user_id, {
         title: 'Check-in reminder', body: `${pending} path${pending !== 1 ? 's' : ''} pending before bed.`, url: '/checkin',
@@ -300,14 +301,14 @@ export async function sendMorningReminders() {
     const today = localDate((p as any).timezone || DEFAULT_TZ, now);
     const yesterday = prevDay(today);
     const { data: lanes } = await supabaseAdmin.from('lanes')
-      .select('lane_id, created_at, starts_at').eq('user_id', p.user_id).eq('status', 'active');
+      .select('lane_id, created_at, starts_at, ends_at').eq('user_id', p.user_id).eq('status', 'active');
     if (!lanes?.length) continue;
     const { data: cs } = await supabaseAdmin.from('checkins')
       .select('lane_id, checkin_date').eq('user_id', p.user_id).in('checkin_date', [today, yesterday]);
     const got = new Set((cs ?? []).map((c: any) => `${c.lane_id}|${c.checkin_date}`));
     const owesYesterday = lanes.some((l: any) =>
-      pathIsDue(l, yesterday, p.timezone || DEFAULT_TZ) && !got.has(`${l.lane_id}|${yesterday}`));
-    const owesToday = lanes.some((l) => pathIsDue(l, today, p.timezone || DEFAULT_TZ) && !got.has(`${l.lane_id}|${today}`));
+      pathIsDue(l, yesterday, p.timezone || DEFAULT_TZ) && !(l.ends_at && yesterday > l.ends_at) && !got.has(`${l.lane_id}|${yesterday}`));
+    const owesToday = lanes.some((l: any) => pathIsDue(l, today, p.timezone || DEFAULT_TZ) && !(l.ends_at && today > l.ends_at) && !got.has(`${l.lane_id}|${today}`));
     if (!owesYesterday && !owesToday) continue;
     await sendPushToUser(p.user_id, {
       title: 'Kingdom Protocol',
